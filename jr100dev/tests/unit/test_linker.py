@@ -159,9 +159,48 @@ LABEL2: LDAA #$22
         entry=None,
         name="linked",
         comment="link test",
+        text_base=None,
+        data_base=None,
+        bss_base=None,
     )
     rc = run_link(args)
     assert rc == 0
     assert args.output.exists()
     assert args.bin.exists()
     assert args.map.exists()
+
+def test_cli_link_with_section_bases(tmp_path):
+    obj = _assemble_to_object(
+        tmp_path,
+        "segmented",
+        """
+        .org $8000
+        .code
+        LDAA DATA
+        .data
+DATA:   .byte $33
+        .bss
+BUF:    .res 4
+        """,
+    )
+
+    args = SimpleNamespace(
+        objects=[obj],
+        output=tmp_path / "seg.prg",
+        bin=tmp_path / "seg.bin",
+        map=tmp_path / "seg.map",
+        entry=None,
+        name="segmented",
+        comment="",
+        text_base=0x9000,
+        data_base=0xA000,
+        bss_base=0xB000,
+    )
+    rc = run_link(args)
+    assert rc == 0
+    image = (tmp_path / "seg.bin").read_bytes()
+    assert image[0] == 0xB6
+    assert image[0x1000] == 0x33
+    symbols = {line.split(" = ")[0]: int(line.split("$")[1], 16) for line in (tmp_path / "seg.map").read_text().splitlines() if line}
+    assert symbols["DATA"] == 0xA000
+    assert symbols["BUF"] == 0xB000

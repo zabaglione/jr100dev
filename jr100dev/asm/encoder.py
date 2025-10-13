@@ -132,7 +132,7 @@ class Assembler:
         origin: Optional[int] = None
         pc = 0
 
-        current_section_kind = "code"
+        current_section_kind = "text"
         for line in parsed_lines:
             state_bss_size = 0
             address = pc
@@ -161,7 +161,7 @@ class Assembler:
                     address = None
                     register_label = False
                 elif directive == '.code':
-                    current_section_kind = 'code'
+                    current_section_kind = 'text'
                     continue
                 elif directive == '.data':
                     current_section_kind = 'data'
@@ -467,8 +467,8 @@ class Assembler:
                             emitted = [0x00, 0x00]
                             relocations.append(
                                 Relocation(
-                                    section="text",
-                                    offset=start - origin,
+                                    section=state.section_kind,
+                                    offset=start,
                                     type="absolute16",
                                     target=target,
                                     addend=0,
@@ -536,12 +536,12 @@ class Assembler:
             elif spec.addressing == 'EXT':
                 operand = state.operands[0]
                 value, target = self._resolve_value(operand, symbols, line, allow_relocation=True)
-                operand_offset = (start - origin) + len(opcode_bytes)
+                operand_offset = start + len(opcode_bytes)
                 if target is not None:
                     operand_bytes.extend([0x00, 0x00])
                     relocations.append(
                         Relocation(
-                            section="text",
+                            section=state.section_kind,
                             offset=operand_offset,
                             type="absolute16",
                             target=target,
@@ -555,12 +555,12 @@ class Assembler:
             elif spec.addressing == 'DIR':
                 operand = state.operands[0]
                 value, target = self._resolve_value(operand, symbols, line, allow_relocation=True)
-                operand_offset = (start - origin) + len(opcode_bytes)
+                operand_offset = start + len(opcode_bytes)
                 if target is not None:
                     operand_bytes.append(0x00)
                     relocations.append(
                         Relocation(
-                            section="text",
+                            section=state.section_kind,
                             offset=operand_offset,
                             type="absolute8",
                             target=target,
@@ -574,7 +574,7 @@ class Assembler:
             elif spec.addressing == 'REL':
                 operand = state.operands[0]
                 value, target = self._resolve_value(operand, symbols, line, allow_relocation=True)
-                operand_offset = (start - origin) + len(opcode_bytes)
+                operand_offset = start + len(opcode_bytes)
                 if target is not None:
                     relocations.append(
                         Relocation(
