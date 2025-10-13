@@ -1,24 +1,75 @@
-# フェーズ3 DSL 拡張方針
+# 高レベルマクロ利用ガイド
 
-## 目的
-- `for` / `while` / `if` などの制御構造をアセンブラDSLで簡潔に記述できるようにする。
-- 変数定義と簡単な四則演算（足し算・引き算・簡単な掛け算／割り算）をマクロで提供する。
-- 生成命令数を最小限に抑え、16KB RAM 制約内で動作するコードを維持する。
+`jr100dev/std/ctl.inc` で提供する制御構造・算術マクロの使い方をまとめる。
 
-## 設計方針
-- 基本は既存マクロと同様、アセンブラへの前処理（`MACRO`）で展開する。追加のパーサ拡張は限定的にし、再配置やリンカの仕組みを変更しない。
-- セクション切り替えを伴わない単純な制御構造は、２～３命令で展開するマクロを設計し、ネストにも対応できるようラベルをユニーク化する。
-- 変数定義用マクロ（`VAR name, init`）は `.byte` / `.word` に薄いラッパーを提供し、デフォルトでは `.data` セクションを使用する。
-- 四則演算は 8 ビット値を基本とし、`ADD8 dest, value` などの形で `CLC` / `ADC` 等に展開。必要に応じて 16 ビット版 (`ADD16`) も提供するが、初期スコープでは 8 ビットのみを目標とする。
+## 取り込み
 
-## 展開案（初期）
-- `FOR_BEGIN counter, start, limit` → `LDAA #start`, `STAA counter`, ループトップラベル、比較 (`CMPA limit`, `BGT end`) と `FOR_END` で `INC counter`→ `BRA top` の構造。
-- `WHILE_BEGIN` + `WHILE_CHECK cond` + `WHILE_END` → 条件評価を呼び出し側に任せ、`WHILE_CHECK` で結果レジスタを確認する単純形式。
-- `IF_EQ cond, value` → `CMPA` と `BNE` 1 回で短いブランチ。`IF_NE`, `IF_LT`, `IF_GT` なども派生で追加可能。
-- 四則演算は `ADD8 dest, value` のように `LDA dest`→`ADDA value`→`STA dest` に展開。（`value` は即値またはメモリアドレスを許容）
+```asm
+        .include "macro.inc"
+        .include "ctl.inc"
+```
 
-## 次ステップ
-1. 制御構造マクロ（`FOR_*`, `WHILE_*`, `IF_*`）を `std/ctl.inc` に実装し、ネスト対応のため呼び出しごとにユニークラベルを生成する。
-2. 変数／算術マクロ（`VAR`, `ADD8`, `SUB8` など）を追加する際に `.data` / `.bss` と連携できるよう評価する。
-3. サンプル (`samples/io_demo`) を拡張し、高レベルマクロの使用例を追加する。
-4. 単体テストを整備し、マクロ展開結果が期待命令列になるかを検証する。
+- `macro.inc` と併用することで VRAM 出力や I/O マクロと組み合わせて記述できる。
+- マクロ中で使用するラベル（`FOR0_TOP` など）はユーザーが一意に命名する必要がある。
+
+## 変数宣言
+
+| マクロ | 展開 | 例 |
+| --- | --- | --- |
+| `VAR8 name, init` | `.byte init` | `VAR8 LOOP_I, 0` |
+| `VAR16 name, init` | `.word init` | `VAR16 PTR, $0300` |
+| `VARZ name, size` | `.res size` | `VARZ BUFFER, 32` |
+
+これらは `.data` / `.bss` セクションと併用できる。制御構造マクロと干渉しないようサンプルでも `.data` ブロック内にまとめて宣言する。
+
+## 8bit 算術ヘルパー
+
+- `ADD8 target, value` → `LDA target; ADDA value; STA target`
+- `SUB8 target, value` → `LDA target; SUBA value; STA target`
+- `INC8 target` → `INC target`
+- `DEC8 target` → `DEC target`
+
+`value` に即値を渡す場合は `#` を付与する。メモリアドレスも指定可能。
+
+## 制御構造
+
+### FOR ループ
+
+```asm
+FOR_BEGIN LOOP0_TOP, LOOP0_END, LOOP_I, 0, 9
+        ; ループ本体
+FOR_END LOOP0_TOP, LOOP0_END, LOOP_I
+```
+
+- ループ変数 `LOOP_I` を `start` で初期化し、`limit` 以上になると `LOOP0_END` へジャンプする。
+- ネストする場合はラベル名を変えて使用する。
+
+### WHILE ループ
+
+```asm
+WHILE_BEGIN LOOP1_TOP
+        LDAA FLAG
+        WHILE_IF_ZERO LOOP1_END, FLAG
+        ; 本体
+WHILE_END LOOP1_TOP, LOOP1_END
+```
+
+- 条件は利用者側で計算し、`WHILE_IF_ZERO` はゼロならループを抜ける。
+
+### IF 文
+
+```asm
+IF_EQ IF0_END, LAST_KEY, $01
+        BEEP
+IF_END IF0_END
+```
+
+- `IF_NE` も利用可能（等しければ飛ばす）。他の条件は `CMPA` との組み合わせで表現する。
+
+## サンプル
+
+- `samples/io_demo/main.asm` : FOR/WHILE/IF と VRAM・サウンド・キースキャンマクロを組み合わせた例。
+
+## テスト
+
+- `pytest jr100dev/tests/unit/test_ctl_macros.py`
