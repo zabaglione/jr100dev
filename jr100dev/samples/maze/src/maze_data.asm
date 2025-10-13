@@ -35,3 +35,13 @@ TMP_DIRS:
         .byte $00
 TMP_CHOICE:
         .byte $00
+CUR_CELL_X:
+        .byte $00
+CUR_CELL_Y:
+        .byte $00
+NEXT_CELL_X:
+        .byte $00
+NEXT_CELL_Y:
+        .byte $00
+STACK_POS:
+        .word $0000
