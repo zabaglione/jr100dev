@@ -79,6 +79,19 @@ LABEL:  LDAA #1
     assert obj["sections"][0]["content"] == "860139"
 
 
+def test_object_dict_relocations():
+    source = """
+        .org $8000
+        .word TARGET
+        RTS
+    """
+    assembler = Assembler(source, filename="reloc.asm")
+    result = assembler.assemble()
+    relocations = result.to_object_dict()["relocations"]
+    assert relocations[0]["target"] == "TARGET"
+    assert relocations[0]["type"] == "absolute16"
+
+
 def test_cli_object_output(tmp_path):
     src = tmp_path / "prog.asm"
     src.write_text(

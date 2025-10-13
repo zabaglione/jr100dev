@@ -83,6 +83,33 @@ def test_link_overlap_detected(tmp_path):
         raise AssertionError("Expected overlap to raise LinkError")
 
 
+def test_relocation_resolution(tmp_path):
+    obj1 = _assemble_to_object(
+        tmp_path,
+        "modA",
+        """
+        .org $8000
+        JSR TARGET
+        RTS
+        """,
+    )
+    obj2 = _assemble_to_object(
+        tmp_path,
+        "modB",
+        """
+        .org $8100
+TARGET: RTS
+        """,
+    )
+
+    objects = [load_object(obj1), load_object(obj2)]
+    result = link_objects(objects)
+    assert result.symbols["TARGET"] == 0x8100
+    offset = (0x8000 - result.origin) + 1
+    operand = (result.image[offset] << 8) | result.image[offset + 1]
+    assert operand == 0x8100
+
+
 def test_cli_link_command(tmp_path):
     obj1 = _assemble_to_object(
         tmp_path,

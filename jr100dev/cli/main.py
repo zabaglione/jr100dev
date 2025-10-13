@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 import argparse
+import json
 import pathlib
 import sys
 from typing import Iterable
 
-import json
 
 from ..asm.encoder import Assembler, AssemblyError
 from ..asm.encoder import LineEmission

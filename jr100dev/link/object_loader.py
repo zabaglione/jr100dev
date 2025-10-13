@@ -26,6 +26,16 @@ class LinkedObject:
     entry_point: int
     symbols: Dict[str, int]
     sections: List[LinkedSection]
+    relocations: List['LinkedRelocation']
+
+
+@dataclass
+class LinkedRelocation:
+    section: str
+    offset: int
+    type: str
+    target: str
+    addend: int = 0
 
 
 def load_object(path: Path) -> LinkedObject:
@@ -42,7 +52,7 @@ def load_object(path: Path) -> LinkedObject:
     except (KeyError, ValueError, TypeError) as exc:
         raise ObjectFormatError(f"Invalid origin or entry point in {path}") from exc
 
-    sections = []
+    sections: List[LinkedSection] = []
     for section in payload.get("sections", []):
         name = str(section.get("name", ""))
         kind = str(section.get("kind", "code"))
@@ -70,10 +80,34 @@ def load_object(path: Path) -> LinkedObject:
 
     entry_point = entry & 0xFFFF
 
+    relocations: List[LinkedRelocation] = []
+    for reloc in payload.get("relocations", []):
+        section_name = reloc.get("section")
+        offset = reloc.get("offset")
+        reloc_type = reloc.get("type")
+        target = reloc.get("target")
+        addend = reloc.get("addend", 0)
+        if not all(isinstance(value, str) for value in [section_name, reloc_type, target]):
+            raise ObjectFormatError(f"Invalid relocation entry in {path}")
+        if not isinstance(offset, int) or offset < 0:
+            raise ObjectFormatError(f"Invalid relocation offset in {path}")
+        if not isinstance(addend, int):
+            raise ObjectFormatError(f"Invalid relocation addend in {path}")
+        relocations.append(
+            LinkedRelocation(
+                section=section_name,
+                offset=offset,
+                type=reloc_type,
+                target=target,
+                addend=addend,
+            )
+        )
+
     return LinkedObject(
         source=str(payload.get("source", path.name)),
         origin=origin & 0xFFFF,
         entry_point=entry_point,
         symbols=symbols,
         sections=sections,
+        relocations=relocations,
     )

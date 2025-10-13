@@ -39,6 +39,7 @@ class AssemblyResult:
     emissions: List['LineEmission']
     sections: List['Section']
     source: str
+    relocations: List['Relocation']
 
     def to_object_dict(self) -> Dict[str, object]:
         section_payloads = [
@@ -55,6 +56,17 @@ class AssemblyResult:
             {"name": name, "value": value, "scope": "global"}
             for name, value in self.symbols.items()
         ]
+        relocation_entries = [
+            {
+                "section": relocation.section,
+                "offset": relocation.offset,
+                "type": relocation.type,
+                "target": relocation.target,
+                "addend": relocation.addend,
+            }
+            for relocation in self.relocations
+        ]
+
         return {
             "format": "jr100dev-object",
             "version": 1,
@@ -63,7 +75,7 @@ class AssemblyResult:
             "entry_point": self.entry_point,
             "sections": section_payloads,
             "symbols": symbol_entries,
-            "relocations": [],
+            "relocations": relocation_entries,
         }
 
 
@@ -80,6 +92,15 @@ class Section:
     kind: str
     address: int
     data: List[int]
+
+
+@dataclass
+class Relocation:
+    section: str
+    offset: int
+    type: str
+    target: str
+    addend: int = 0
 
 
 class Assembler:
@@ -161,7 +182,7 @@ class Assembler:
             raise AssemblyError("Missing .org directive")
 
         self._refine_states(states, symbols, origin)
-        machine, emissions = self._second_pass(states, symbols, origin)
+        machine, emissions, relocations = self._second_pass(states, symbols, origin)
         entry = origin
         ordered_symbols = dict(sorted(symbols.items()))
         sections = _build_sections(origin, machine)
@@ -173,6 +194,7 @@ class Assembler:
             emissions=emissions,
             sections=sections,
             source=self.filename,
+            relocations=relocations,
         )
 
     def _eval(self, expr: str, symbols: Dict[str, int], line: ParsedLine) -> int:
@@ -324,15 +346,33 @@ class Assembler:
         except ExpressionError:
             return None
 
+    def _resolve_value(
+        self,
+        expr: str,
+        symbols: Dict[str, int],
+        line: ParsedLine,
+        *,
+        allow_relocation: bool,
+    ) -> tuple[int, Optional[str]]:
+        try:
+            return self._eval(expr, symbols, line), None
+        except AssemblyError:
+            if allow_relocation:
+                target = _extract_symbol(expr)
+                if target is not None:
+                    return 0, target
+            raise
+
     def _second_pass(
         self,
         states: List[LineState],
         symbols: Dict[str, int],
         origin: int,
-    ) -> tuple[bytes, List['LineEmission']]:
+    ) -> tuple[bytes, List['LineEmission'], List['Relocation']]:
         data = bytearray()
         pc = origin
         emissions: List[LineEmission] = []
+        relocations: List[Relocation] = []
         for state in states:
             line = state.line
             if line.is_directive:
@@ -364,12 +404,22 @@ class Assembler:
                 elif line.op == '.word':
                     for operand in state.operands:
                         start = pc
-                        value = self._eval(operand, symbols, line)
-                        if not 0 <= value <= 0xFFFF:
-                            raise AssemblyError(_format_error(line, f"Word value out of range: {value}"))
-                        hi = (value >> 8) & 0xFF
-                        lo = value & 0xFF
-                        emitted = [hi, lo]
+                        value, target = self._resolve_value(operand, symbols, line, allow_relocation=True)
+                        if target is not None:
+                            emitted = [0x00, 0x00]
+                            relocations.append(
+                                Relocation(
+                                    section="text",
+                                    offset=start - origin,
+                                    type="absolute16",
+                                    target=target,
+                                    addend=0,
+                                )
+                            )
+                        else:
+                            if not 0 <= value <= 0xFFFF:
+                                raise AssemblyError(_format_error(line, f"Word value out of range: {value}"))
+                            emitted = [(value >> 8) & 0xFF, value & 0xFF]
                         _append_bytes(data, origin, start, emitted)
                         pc += 2
                         emissions.append(LineEmission(line=line, address=start, data=emitted))
@@ -412,6 +462,7 @@ class Assembler:
             spec = state.opcode
             opcode_bytes = [spec.opcode]
             operand_bytes: List[int] = []
+            start = pc
             if spec.addressing == 'INH':
                 pass
             elif spec.addressing == 'IMM':
@@ -422,10 +473,23 @@ class Assembler:
                 operand_bytes.append(value & 0xFF)
             elif spec.addressing == 'EXT':
                 operand = state.operands[0]
-                value = self._eval(operand, symbols, line)
-                if not 0 <= value <= 0xFFFF:
-                    raise AssemblyError(_format_error(line, f"Absolute value out of range: {value}"))
-                operand_bytes.extend([(value >> 8) & 0xFF, value & 0xFF])
+                value, target = self._resolve_value(operand, symbols, line, allow_relocation=True)
+                operand_offset = (start - origin) + len(opcode_bytes)
+                if target is not None:
+                    operand_bytes.extend([0x00, 0x00])
+                    relocations.append(
+                        Relocation(
+                            section="text",
+                            offset=operand_offset,
+                            type="absolute16",
+                            target=target,
+                            addend=0,
+                        )
+                    )
+                else:
+                    if not 0 <= value <= 0xFFFF:
+                        raise AssemblyError(_format_error(line, f"Absolute value out of range: {value}"))
+                    operand_bytes.extend([(value >> 8) & 0xFF, value & 0xFF])
             elif spec.addressing == 'DIR':
                 operand = state.operands[0]
                 value = self._eval(operand, symbols, line)
@@ -456,7 +520,7 @@ class Assembler:
             _append_bytes(data, origin, start, combined)
             pc += len(combined)
             emissions.append(LineEmission(line=line, address=start, data=combined))
-        return bytes(data), emissions
+        return bytes(data), emissions, relocations
 
 
 def _append_bytes(buffer: bytearray, origin: int, pc: int, values: List[int]) -> None:
@@ -575,3 +639,16 @@ def _alignment_padding(current: int, boundary: int) -> int:
     if remainder == 0:
         return 0
     return boundary - remainder
+
+
+def _extract_symbol(expr: str) -> Optional[str]:
+    token = expr.strip()
+    if not token:
+        return None
+    if token.startswith('<') or token.startswith('>'):
+        token = token[1:].strip()
+    if token.startswith('#'):
+        token = token[1:].strip()
+    if token.isidentifier():
+        return token.upper()
+    return None

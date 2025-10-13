@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict, Iterable, List, Sequence
 
-from .object_loader import LinkedObject, LinkedSection
+from .object_loader import LinkedObject, LinkedSection, LinkedRelocation
 
 
 class LinkError(RuntimeError):
@@ -67,4 +67,34 @@ def link_objects(objects: Sequence[LinkedObject], *, entry_override: int | None 
     else:
         entry_point = objects[0].entry_point & 0xFFFF
 
+    _apply_relocations(objects, origin, image, symbols)
+
     return LinkResult(origin=origin & 0xFFFF, entry_point=entry_point, image=bytes(image), symbols=symbols)
+
+
+def _apply_relocations(
+    objects: Sequence[LinkedObject],
+    origin: int,
+    image: bytearray,
+    symbols: Dict[str, int],
+) -> None:
+    for obj in objects:
+        section_map: Dict[str, LinkedSection] = {section.name: section for section in obj.sections}
+        for relocation in obj.relocations:
+            section = section_map.get(relocation.section)
+            if section is None:
+                raise LinkError(f"Relocation references unknown section {relocation.section}")
+            offset = relocation.offset
+            if offset < 0:
+                raise LinkError("Relocation offset cannot be negative")
+            absolute = section.address - origin + offset
+            if absolute < 0 or absolute + 1 >= len(image):
+                raise LinkError("Relocation offset outside of linked image")
+            if relocation.target not in symbols:
+                raise LinkError(f"Relocation target {relocation.target} is undefined")
+            value = (symbols[relocation.target] + relocation.addend) & 0xFFFF
+            if relocation.type == "absolute16":
+                image[absolute] = (value >> 8) & 0xFF
+                image[absolute + 1] = value & 0xFF
+            else:
+                raise LinkError(f"Unsupported relocation type {relocation.type}")
