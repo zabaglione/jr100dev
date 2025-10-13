@@ -3,7 +3,7 @@ from jr100dev.asm.encoder import Assembler
 
 def _assemble_with_macros(tmp_path, body: str):
     source = f"""
-        .org $8000
+        .org $0246
         .include "macro.inc"
 {body}
     """
@@ -25,8 +25,8 @@ def test_put_char_macro_expands(tmp_path):
     assert "STAA ,X" in emitted
     assert "INX" in emitted
     assert any(text.startswith("__STD_PRINT_STR:") and "STX STD_SRC_PTR" in text for text in emitted)
-    assert result.symbols["STD_VRAM_BASE"] == 0x6000
-    assert result.symbols["STD_SOUND_PORT"] == 0x2010
+    assert result.symbols["STD_VRAM_BASE"] == 0xC100
+    assert result.symbols["STD_SOUND_PORT"] == 0xC804
 
 
 def test_standard_macros_runtime_support(tmp_path):

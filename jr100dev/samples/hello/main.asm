@@ -1,4 +1,4 @@
-        .org $8000
+        .org $0246
 START:  LDAA #$41
-        STAA $6000
+        STAA $C100
         RTS

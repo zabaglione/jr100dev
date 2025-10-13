@@ -1,4 +1,4 @@
-        .org $8000
+        .org $0246
         .include "macro.inc"
 
 START:  LDX #STD_VRAM_BASE

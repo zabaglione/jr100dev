@@ -1,9 +1,9 @@
 ; JR-100 標準マクロ定義
 
-STD_VRAM_BASE:   .equ $6000
-STD_VRAM_END:    .equ $6400
-STD_SOUND_PORT:  .equ $2010
-STD_KBD_MATRIX:  .equ $2000
+STD_VRAM_BASE:   .equ $C100
+STD_VRAM_END:    .equ $C400
+STD_SOUND_PORT:  .equ $C804
+STD_KBD_MATRIX:  .equ $C800
 
 STD_VRAM_PTR:    .equ $00F0
 STD_SRC_PTR:     .equ $00F2
