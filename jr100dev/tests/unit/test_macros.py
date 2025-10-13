@@ -3,7 +3,7 @@ from jr100dev.asm.encoder import Assembler
 
 def _assemble_with_macros(tmp_path, body: str):
     source = f"""
-        .org $0246
+        .org $0300
         .include "macro.inc"
 {body}
     """

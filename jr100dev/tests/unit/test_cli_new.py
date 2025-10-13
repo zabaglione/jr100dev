@@ -23,7 +23,7 @@ def test_new_project_creates_skeleton(tmp_path):
     assert (target / ".gitignore").exists()
 
     main_text = (target / "src" / "main.asm").read_text(encoding="utf-8")
-    assert ".org $0246" in main_text
+    assert ".org $0300" in main_text
     assert '.include "macro.inc"' in main_text
     macro_text = (target / "std" / "macro.inc").read_text(encoding="utf-8")
     assert macro_text == _macro_template()

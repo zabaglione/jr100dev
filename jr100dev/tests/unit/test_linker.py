@@ -32,7 +32,7 @@ def test_link_objects_combines_sections(tmp_path):
         tmp_path,
         "part1",
         """
-        .org $0246
+        .org $0300
         PART1: LDAA #1
                RTS
         """,
@@ -41,7 +41,7 @@ def test_link_objects_combines_sections(tmp_path):
         tmp_path,
         "part2",
         """
-        .org $0260
+        .org $0320
         PART2: LDAA #2
                RTS
         """,
@@ -49,12 +49,12 @@ def test_link_objects_combines_sections(tmp_path):
 
     objects = [load_object(obj1_path), load_object(obj2_path)]
     result = link_objects(objects)
-    assert result.origin == 0x0246
-    assert result.entry_point in (0x0246, 0x0260)
-    assert result.symbols["PART1"] == 0x0246
-    assert result.symbols["PART2"] == 0x0260
-    assert [segment.address for segment in result.segments] == [0x0246, 0x0260]
-    offset = 0x0260 - result.origin
+    assert result.origin == 0x0300
+    assert result.entry_point in (0x0300, 0x0320)
+    assert result.symbols["PART1"] == 0x0300
+    assert result.symbols["PART2"] == 0x0320
+    assert [segment.address for segment in result.segments] == [0x0300, 0x0320]
+    offset = 0x0320 - result.origin
     assert result.image[0] == 0x86
     assert result.image[offset] == 0x86
 
@@ -64,13 +64,13 @@ def test_link_overlap_detected(tmp_path):
         tmp_path,
         "overlap",
         """
-        .org $0246
+        .org $0300
         LABEL: LDAA #1
                RTS
         """,
     )
     data = json.loads(obj_path.read_text())
-    data["sections"][0]["address"] = 0x0246
+    data["sections"][0]["address"] = 0x0300
     obj2_path = tmp_path / "overlap2.json"
     obj2_path.write_text(json.dumps(data), encoding="utf-8")
 
@@ -89,7 +89,7 @@ def test_relocation_resolution(tmp_path):
         tmp_path,
         "modA",
         """
-        .org $0246
+        .org $0300
         JSR TARGET
         BRA TARGET
         RTS
@@ -99,23 +99,23 @@ def test_relocation_resolution(tmp_path):
         tmp_path,
         "modB",
         """
-        .org $0290
+        .org $0350
 TARGET: RTS
         """,
     )
 
     objects = [load_object(obj1), load_object(obj2)]
     result = link_objects(objects)
-    assert result.symbols["TARGET"] == 0x0290
-    assert [segment.address for segment in result.segments] == [0x0246, 0x0290]
-    offset = (0x0246 - result.origin) + 1
+    assert result.symbols["TARGET"] == 0x0350
+    assert [segment.address for segment in result.segments] == [0x0300, 0x0350]
+    offset = (0x0300 - result.origin) + 1
     operand = (result.image[offset] << 8) | result.image[offset + 1]
-    assert operand == 0x0290
-    branch_offset = (0x0249 - result.origin) + 1
+    assert operand == 0x0350
+    branch_offset = (0x0303 - result.origin) + 1
     rel_value = result.image[branch_offset]
     signed = rel_value if rel_value < 0x80 else rel_value - 0x100
-    branch_target = 0x0249 + 2 + signed
-    assert branch_target == 0x0290
+    branch_target = 0x0303 + 2 + signed
+    assert branch_target == 0x0350
 
 
 def test_relative_relocation_backward(tmp_path):
@@ -123,7 +123,7 @@ def test_relative_relocation_backward(tmp_path):
         tmp_path,
         "rel_tgt",
         """
-        .org $0320
+        .org $0360
 TARGET: RTS
         """,
     )
@@ -131,7 +131,7 @@ TARGET: RTS
         tmp_path,
         "rel_src",
         """
-        .org $0340
+        .org $0380
         BRA TARGET
         RTS
         """,
@@ -139,7 +139,7 @@ TARGET: RTS
 
     objects = [load_object(branch_obj), load_object(target_obj)]
     result = link_objects(objects)
-    offset = (0x0340 - result.origin) + 1
+    offset = (0x0380 - result.origin) + 1
     rel_value = result.image[offset]
     signed = rel_value if rel_value < 0x80 else rel_value - 0x100
     assert signed == -0x22
@@ -166,7 +166,7 @@ def test_cli_link_command(tmp_path):
         tmp_path,
         "mod1",
         """
-        .org $0246
+        .org $0300
 LABEL1: LDAA #$11
         RTS
         """,
@@ -175,7 +175,7 @@ LABEL1: LDAA #$11
         tmp_path,
         "mod2",
         """
-        .org $0260
+        .org $0320
 LABEL2: LDAA #$22
         RTS
         """,
@@ -204,7 +204,7 @@ def test_cli_link_with_section_bases(tmp_path):
         tmp_path,
         "segmented",
         """
-        .org $0246
+        .org $0300
         .code
         LDAA DATA
         .data

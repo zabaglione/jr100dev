@@ -1,5 +1,5 @@
 [entry]
-pc = "$0246"
+pc = "$0300"
 sp = "$00FF"
 
 [vectors]
@@ -8,7 +8,7 @@ reset = "$FFFE"
 irq = "$FFFA"
 
 [mem]
-ram_start = "$0246"
+ram_start = "$0300"
 ram_end = "$7FFF"
 rom_start = "$8000"
 rom_end = "$FFFF"

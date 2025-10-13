@@ -1,7 +1,7 @@
 # 標準マクロ利用メモ
 
 ## 取り込み方法
-- ソース先頭で `.include "macro.inc"` を記述すると `jr100dev/std/macro.inc` を展開できる。
+- ソース先頭で `.include "macro.inc"` を記述すると `jr100dev/std/macro.inc` を展開できる。`jr100dev new` で生成される `src/main.asm` も `.org $0300` から開始する。
 - `.include` はソースファイルのディレクトリと `jr100dev/std/` を探索するため、追加設定は不要。
 
 ## 提供マクロ
