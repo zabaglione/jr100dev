@@ -2,11 +2,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 from . import opcodes_mb8861h
 from .eval import ExpressionError, evaluate
 from .parser import ParsedLine, ParserError, parse_source
+from .preprocessor import PreprocessError, preprocess_source
 
 
 class AssemblyError(RuntimeError):
@@ -120,10 +122,19 @@ class Assembler:
         self.source = source
         self.filename = filename
         self.opcode_table = _build_opcode_table()
+        include_dirs = _build_include_dirs(filename)
+        try:
+            self._processed_source = preprocess_source(
+                source,
+                filename=filename,
+                include_dirs=include_dirs,
+            )
+        except PreprocessError as err:
+            raise AssemblyError(str(err)) from err
 
     def assemble(self) -> AssemblyResult:
         try:
-            parsed_lines = parse_source(self.source)
+            parsed_lines = parse_source(self._processed_source)
         except ParserError as err:
             raise AssemblyError(str(err)) from err
 
@@ -530,9 +541,16 @@ class Assembler:
             elif spec.addressing == 'IMM':
                 operand = state.operands[0]
                 value = self._eval(operand[1:] if operand.startswith('#') else operand, symbols, line)
-                if not 0 <= value <= 0xFF:
-                    raise AssemblyError(_format_error(line, f"Immediate value out of range: {value}"))
-                operand_bytes.append(value & 0xFF)
+                if spec.size == 2:
+                    if not 0 <= value <= 0xFF:
+                        raise AssemblyError(_format_error(line, f"Immediate value out of range: {value}"))
+                    operand_bytes.append(value & 0xFF)
+                elif spec.size == 3:
+                    if not 0 <= value <= 0xFFFF:
+                        raise AssemblyError(_format_error(line, f"Immediate value out of range: {value}"))
+                    operand_bytes.extend([(value >> 8) & 0xFF, value & 0xFF])
+                else:
+                    raise AssemblyError(_format_error(line, f"Unsupported immediate size {spec.size}"))
             elif spec.addressing == 'EXT':
                 operand = state.operands[0]
                 value, target = self._resolve_value(operand, symbols, line, allow_relocation=True)
@@ -642,6 +660,17 @@ def _build_opcode_table() -> Dict[str, Dict[str, OpcodeSpec]]:
         )
         table.setdefault(spec.mnemonic, {})[spec.addressing] = spec
     return table
+
+
+def _build_include_dirs(filename: str) -> List[Path]:
+    dirs: List[Path] = []
+    path = Path(filename)
+    if path.parent and path.parent.exists():
+        dirs.append(path.parent.resolve())
+    std_dir = Path(__file__).resolve().parent.parent / "std"
+    if std_dir.exists():
+        dirs.append(std_dir)
+    return dirs
 
 
 def _build_sections(origin: int, machine: bytes, section_chunks: Dict[str, List[Tuple[int, List[int]]]], bss_entries: List[BssAllocation]) -> List[Section]:
