@@ -7,9 +7,6 @@ STD_VIA_ORA:     .equ $C801
 STD_VIA_DDRB:    .equ $C802
 STD_VIA_DDRA:    .equ $C803
 
-STD_VRAM_PTR:    .equ $00F0
-STD_SRC_PTR:     .equ $00F2
-
 MACRO PUT_CHAR
         STAA ,X
         INX
@@ -74,3 +71,8 @@ __STD_SCAN_KEY:    LDAA #$0F
                     STAA STD_VIA_ORA
                     LDAA STD_VIA_ORB
                     RTS
+
+.bss
+
+STD_VRAM_PTR: .res 2
+STD_SRC_PTR:  .res 2

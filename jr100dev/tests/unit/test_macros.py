@@ -54,7 +54,7 @@ GREETING: .ascii "HI\\0"
     assert any("STAA STD_VIA_DDRB" in text for text in emitted)
     assert any("STAA STD_VIA_ORB" in text for text in emitted)
     symbols = result.symbols
-    assert symbols["STD_VRAM_PTR"] == 0x00F0
-    assert symbols["STD_SRC_PTR"] == 0x00F2
+    assert symbols["STD_VRAM_PTR"] >= result.origin
+    assert symbols["STD_SRC_PTR"] >= result.origin
     assert "__STD_PRINT_STR" in symbols
     assert "__STD_CLEAR_VRAM" in symbols

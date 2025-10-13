@@ -13,7 +13,7 @@
 
 ## 常駐サブルーチンと変数
 - サブルーチン `__STD_PRINT_STR` / `__STD_CLEAR_VRAM` / `__STD_BEEP` / `__STD_SCAN_KEY` を自動生成。
-- ダイレクトページ $00F0〜$00F3 を内部ワーク（VRAM ポインタ／文字列ポインタ）として使用。
+- ワーク領域（`STD_VRAM_PTR` / `STD_SRC_PTR`）はマクロ内で `.bss` に確保されるため、BASIC ワーク RAM を汚さない。
 - 定数シンボル `STD_VRAM_BASE` / `STD_VRAM_END` / `STD_VIA_ORB` / `STD_VIA_ORA` / `STD_VIA_DDRB` / `STD_VIA_DDRA` を `.equ` で提供。
 
 ## 確認済みテスト
