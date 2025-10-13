@@ -1,7 +1,7 @@
 import json
+import struct
 from types import SimpleNamespace
 
-from jr100dev.asm.encoder import Assembler
 from jr100dev.cli.main import run_assemble, run_link
 from jr100dev.link.linker import LinkError, link_objects
 from jr100dev.link.object_loader import load_object
@@ -53,6 +53,7 @@ def test_link_objects_combines_sections(tmp_path):
     assert result.entry_point == 0x8000
     assert result.symbols["PART1"] == 0x8000
     assert result.symbols["PART2"] == 0x8010
+    assert [segment.address for segment in result.segments] == [0x8000, 0x8010]
     offset = 0x8010 - result.origin
     assert result.image[0] == 0x86
     assert result.image[offset] == 0x86
@@ -106,6 +107,7 @@ TARGET: RTS
     objects = [load_object(obj1), load_object(obj2)]
     result = link_objects(objects)
     assert result.symbols["TARGET"] == 0x8050
+    assert [segment.address for segment in result.segments] == [0x8000, 0x8050]
     offset = (0x8000 - result.origin) + 1
     operand = (result.image[offset] << 8) | result.image[offset + 1]
     assert operand == 0x8050
@@ -156,6 +158,7 @@ BUFFER: .res 8
     linked = link_objects([load_object(obj_bss)])
     offset = 0x8200 - linked.origin
     assert linked.image[offset:offset + 8] == bytes([0] * 8)
+    assert [segment.address for segment in linked.segments] == [0x8200]
 
 
 def test_cli_link_command(tmp_path):
@@ -231,3 +234,34 @@ BUF:    .res 4
     symbols = {line.split(" = ")[0]: int(line.split("$")[1], 16) for line in (tmp_path / "seg.map").read_text().splitlines() if line}
     assert symbols["DATA"] == 0xA000
     assert symbols["BUF"] == 0xB000
+    sections = _parse_prg_sections(args.output)
+    pbin_sections = [payload for ident, payload in sections if ident == "PBIN"]
+    assert len(pbin_sections) == 3
+    addresses = [struct.unpack_from("<I", payload, 0)[0] for payload in pbin_sections]
+    assert addresses == [0x9000, 0xA000, 0xB000]
+    lengths = [struct.unpack_from("<I", payload, 4)[0] for payload in pbin_sections]
+    assert lengths[0] > 0
+    assert lengths[1] == 1
+    assert lengths[2] == 4
+    entry_comment_len = struct.unpack_from("<I", pbin_sections[0], 8 + lengths[0])[0]
+    assert entry_comment_len > 0
+    assert struct.unpack_from("<I", pbin_sections[1], 8 + lengths[1])[0] == 0
+    assert struct.unpack_from("<I", pbin_sections[2], 8 + lengths[2])[0] == 0
+
+
+def _parse_prg_sections(path):
+    data = path.read_bytes()
+    assert data[:4] == b"PROG"
+    version = struct.unpack_from("<I", data, 4)[0]
+    assert version == 2
+    offset = 8
+    sections = []
+    while offset < len(data):
+        ident = data[offset:offset + 4].decode("ascii")
+        offset += 4
+        length = struct.unpack_from("<I", data, offset)[0]
+        offset += 4
+        payload = data[offset:offset + length]
+        offset += length
+        sections.append((ident, payload))
+    return sections

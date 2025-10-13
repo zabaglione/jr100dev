@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, Iterable, List, Sequence
+from typing import Dict, List, Sequence
 
 from .object_loader import LinkedObject, LinkedSection, LinkedRelocation
 
@@ -17,6 +17,13 @@ class LinkResult:
     entry_point: int
     image: bytes
     symbols: Dict[str, int]
+    segments: List['LinkSegment']
+
+
+@dataclass
+class LinkSegment:
+    address: int
+    data: bytes
 
 
 def link_objects(
@@ -128,7 +135,29 @@ def link_objects(
 
     trimmed_image = bytes(image[: used_end + 1]) if used_end >= 0 else bytes()
 
-    return LinkResult(origin=origin & 0xFFFF, entry_point=entry_point, image=trimmed_image, symbols=symbols)
+    merged_segments: List[tuple[int, bytearray]] = []
+    for section in sorted(adjusted_sections, key=lambda s: s.address):
+        length = len(section.data) if section.data else section.bss_size
+        if length == 0:
+            continue
+        payload = section.data if section.data else [0] * section.bss_size
+        data_bytes = bytearray(payload)
+        if merged_segments:
+            last_address, buffer = merged_segments[-1]
+            if last_address + len(buffer) == section.address:
+                buffer.extend(data_bytes)
+                continue
+        merged_segments.append((section.address, data_bytes))
+
+    segments = [LinkSegment(address=addr, data=bytes(buf)) for addr, buf in merged_segments]
+
+    return LinkResult(
+        origin=origin & 0xFFFF,
+        entry_point=entry_point,
+        image=trimmed_image,
+        symbols=symbols,
+        segments=segments,
+    )
 
 
 def _apply_relocations(

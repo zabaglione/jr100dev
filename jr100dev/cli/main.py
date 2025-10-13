@@ -140,7 +140,15 @@ def run_link(args: argparse.Namespace) -> int:
 
     program_name = (args.name or args.output.stem).upper()[:32]
     comment = args.comment or ""
-    prg_bytes = pack_prg(result.origin, result.image, result.entry_point, program_name=program_name, comment=comment)
+    segment_payloads = [(segment.address, segment.data) for segment in result.segments] or None
+    prg_bytes = pack_prg(
+        result.origin,
+        result.image,
+        result.entry_point,
+        program_name=program_name,
+        comment=comment,
+        segments=segment_payloads,
+    )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_bytes(prg_bytes)
 
