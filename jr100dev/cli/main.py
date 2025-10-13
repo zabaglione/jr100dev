@@ -36,6 +36,9 @@ def build_parser() -> argparse.ArgumentParser:
     link_cmd.add_argument("--entry", type=lambda v: int(v, 0), help="Entry address override")
     link_cmd.add_argument("--name", type=str, help="Program name stored in the PROG header")
     link_cmd.add_argument("--comment", type=str, help="Optional program comment")
+    link_cmd.add_argument("--text-base", type=lambda v: int(v, 0), help="Override code section base address")
+    link_cmd.add_argument("--data-base", type=lambda v: int(v, 0), help="Override data section base address")
+    link_cmd.add_argument("--bss-base", type=lambda v: int(v, 0), help="Override bss section base address")
 
     return parser
 
@@ -50,6 +53,10 @@ def main(argv: list[str] | None = None) -> int:
         return run_assemble(args)
     if args.command == "link":
         return run_link(args)
+    parser.error(f"Unknown command {args.command}")
+    return 1
+
+
     parser.error(f"Unknown command {args.command}")
     return 1
 
@@ -112,7 +119,13 @@ def run_link(args: argparse.Namespace) -> int:
         return 1
 
     try:
-        result = link_objects(objects, entry_override=args.entry)
+        result = link_objects(
+            objects,
+            entry_override=args.entry,
+            text_base=getattr(args, "text_base", None),
+            data_base=getattr(args, "data_base", None),
+            bss_base=getattr(args, "bss_base", None),
+        )
     except LinkError as err:
         print(f"Link failed: {err}", file=sys.stderr)
         return 1

@@ -98,24 +98,22 @@ def test_relocation_resolution(tmp_path):
         tmp_path,
         "modB",
         """
-        .org $8100
+        .org $8050
 TARGET: RTS
         """,
     )
 
     objects = [load_object(obj1), load_object(obj2)]
     result = link_objects(objects)
-    assert result.symbols["TARGET"] == 0x8100
+    assert result.symbols["TARGET"] == 0x8050
     offset = (0x8000 - result.origin) + 1
     operand = (result.image[offset] << 8) | result.image[offset + 1]
-    assert operand == 0x8100
+    assert operand == 0x8050
     branch_offset = (0x8003 - result.origin) + 1
     rel_value = result.image[branch_offset]
     signed = rel_value if rel_value < 0x80 else rel_value - 0x100
-    expected = 0x8100 - (0x8003 + 2)
-    if expected >= 0x80:
-        expected -= 0x100
-    assert signed == expected
+    branch_target = 0x8003 + 2 + signed
+    assert branch_target == 0x8050
 
 
 def test_bss_section_zero_filled(tmp_path):
