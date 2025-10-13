@@ -109,6 +109,22 @@ BUFFER: .res 4
     assert bss_sections[0]["content"] == ""
 
 
+def test_object_dict_data_section():
+    source = """
+        .org $8000
+        .data
+CONST:  .byte $AA, $55
+        .code
+        RTS
+    """
+    assembler = Assembler(source, filename="data.asm")
+    result = assembler.assemble()
+    obj = result.to_object_dict()
+    data_sections = [s for s in obj["sections"] if s["kind"] == "data"]
+    assert data_sections[0]["content"] == "AA55"
+    assert result.symbols["CONST"] == 0x8000
+
+
 def test_cli_object_output(tmp_path):
     src = tmp_path / "prog.asm"
     src.write_text(

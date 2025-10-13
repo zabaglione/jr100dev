@@ -29,6 +29,7 @@ class LineState:
     operands: List[str]
     forced_mode: Optional[str] = None
     bss_size: int = 0
+    section_kind: str = "code"
 
 
 @dataclass
@@ -131,6 +132,7 @@ class Assembler:
         origin: Optional[int] = None
         pc = 0
 
+        current_section_kind = "code"
         for line in parsed_lines:
             state_bss_size = 0
             address = pc
@@ -158,6 +160,15 @@ class Assembler:
                     symbols[line.label] = value & 0xFFFF
                     address = None
                     register_label = False
+                elif directive == '.code':
+                    current_section_kind = 'code'
+                    continue
+                elif directive == '.data':
+                    current_section_kind = 'data'
+                    continue
+                elif directive == '.bss':
+                    current_section_kind = 'bss'
+                    continue
                 elif directive == '.res':
                     if origin is None:
                         raise AssemblyError(_format_error(line, ".org must appear before data"))
@@ -201,6 +212,7 @@ class Assembler:
                     operands=state_operands,
                     forced_mode=forced_mode if not line.is_directive else None,
                     bss_size=state_bss_size,
+                    section_kind=current_section_kind,
                 )
             )
 
@@ -208,10 +220,10 @@ class Assembler:
             raise AssemblyError("Missing .org directive")
 
         self._refine_states(states, symbols, origin)
-        machine, emissions, relocations, bss_entries = self._second_pass(states, symbols, origin)
+        machine, emissions, relocations, bss_entries, section_chunks = self._second_pass(states, symbols, origin)
         entry = origin
         ordered_symbols = dict(sorted(symbols.items()))
-        sections = _build_sections(origin, machine, bss_entries)
+        sections = _build_sections(origin, machine, section_chunks, bss_entries)
         return AssemblyResult(
             origin=origin,
             entry_point=entry,
@@ -404,6 +416,7 @@ class Assembler:
         emissions: List[LineEmission] = []
         relocations: List[Relocation] = []
         bss_entries: List[BssAllocation] = []
+        section_chunks: Dict[str, List[Tuple[int, List[int]]]] = {}
         for state in states:
             line = state.line
             if line.is_directive:
@@ -434,6 +447,7 @@ class Assembler:
                         if operand.startswith('"') and operand.endswith('"'):
                             bytes_ = _parse_string(operand, line)
                             _append_bytes(data, origin, start, bytes_)
+                            _record_section_chunk(section_chunks, state.section_kind, start, bytes_)
                             pc += len(bytes_)
                             emissions.append(LineEmission(line=line, address=start, data=bytes_))
                         else:
@@ -442,6 +456,7 @@ class Assembler:
                                 raise AssemblyError(_format_error(line, f"Byte value out of range: {value}"))
                             emitted = [value & 0xFF]
                             _append_bytes(data, origin, start, emitted)
+                            _record_section_chunk(section_chunks, state.section_kind, start, emitted)
                             pc += 1
                             emissions.append(LineEmission(line=line, address=start, data=emitted))
                 elif line.op == '.word':
@@ -464,12 +479,14 @@ class Assembler:
                                 raise AssemblyError(_format_error(line, f"Word value out of range: {value}"))
                             emitted = [(value >> 8) & 0xFF, value & 0xFF]
                         _append_bytes(data, origin, start, emitted)
+                        _record_section_chunk(section_chunks, state.section_kind, start, emitted)
                         pc += 2
                         emissions.append(LineEmission(line=line, address=start, data=emitted))
                 elif line.op == '.ascii':
                     start = pc
                     string_bytes = _parse_string(state.operands[0], line)
                     _append_bytes(data, origin, start, string_bytes)
+                    _record_section_chunk(section_chunks, state.section_kind, start, string_bytes)
                     pc += len(string_bytes)
                     emissions.append(LineEmission(line=line, address=start, data=string_bytes))
                 elif line.op == '.fill':
@@ -481,6 +498,7 @@ class Assembler:
                     payload = [value] * count
                     start = pc
                     _append_bytes(data, origin, start, payload)
+                    _record_section_chunk(section_chunks, state.section_kind, start, payload)
                     pc += count
                     emissions.append(LineEmission(line=line, address=start, data=payload))
                 elif line.op == '.align':
@@ -495,6 +513,7 @@ class Assembler:
                         payload = [0] * padding
                         start = pc
                         _append_bytes(data, origin, start, payload)
+                        _record_section_chunk(section_chunks, state.section_kind, start, payload)
                         pc += padding
                         emissions.append(LineEmission(line=line, address=start, data=payload))
                 else:
@@ -587,9 +606,16 @@ class Assembler:
             combined = opcode_bytes + operand_bytes
             start = pc
             _append_bytes(data, origin, start, combined)
+            _record_section_chunk(section_chunks, state.section_kind, start, combined)
             pc += len(combined)
             emissions.append(LineEmission(line=line, address=start, data=combined))
-        return bytes(data), emissions, relocations, bss_entries
+        return bytes(data), emissions, relocations, bss_entries, section_chunks
+
+
+def _record_section_chunk(section_chunks: Dict[str, List[Tuple[int, List[int]]]], kind: str, address: int, payload: List[int]) -> None:
+    if kind == "bss":
+        return
+    section_chunks.setdefault(kind, []).append((address, list(payload)))
 
 
 def _append_bytes(buffer: bytearray, origin: int, pc: int, values: List[int]) -> None:
@@ -618,12 +644,25 @@ def _build_opcode_table() -> Dict[str, Dict[str, OpcodeSpec]]:
     return table
 
 
-def _build_sections(origin: int, machine: bytes, bss_entries: List[BssAllocation]) -> List[Section]:
+def _build_sections(origin: int, machine: bytes, section_chunks: Dict[str, List[Tuple[int, List[int]]]], bss_entries: List[BssAllocation]) -> List[Section]:
     sections: List[Section] = []
-    if machine:
-        sections.append(Section(name="text", kind="code", address=origin, data=list(machine), bss_size=0))
+    for kind, chunks in section_chunks.items():
+        if not chunks:
+            continue
+        sorted_chunks = sorted(chunks, key=lambda item: item[0])
+        base_names = {'code': 'text', 'data': 'data'}
+        base_address = min(addr for addr, _ in sorted_chunks)
+        end_address = max(addr + len(bytes_) for addr, bytes_ in sorted_chunks)
+        buffer = bytearray(end_address - base_address)
+        for address, data_bytes in sorted_chunks:
+            offset = address - base_address
+            buffer[offset:offset + len(data_bytes)] = bytearray(data_bytes)
+        base = base_names.get(kind, kind)
+        sections.append(
+            Section(name=base, kind=kind, address=base_address, data=list(buffer), bss_size=0)
+        )
     for index, entry in enumerate(bss_entries):
-        name = entry.name or f"BSS_{index}"
+        name = entry.name or f"bss_{index}"
         sections.append(
             Section(name=name, kind="bss", address=entry.address, data=[], bss_size=entry.size)
         )
