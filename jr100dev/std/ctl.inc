@@ -1,45 +1,90 @@
-; high-level control structure macros
+; High-level control structure and arithmetic macros for JR-100 DSL
+;
+; NOTE: ラベル名はユーザーが一意に指定する。例: `FOR0_TOP`, `FOR0_END`。
 
-MACRO VAR NAME, INIT
-NAME:  .byte \INIT
+; --- Variable helpers ----------------------------------------------------
+
+MACRO VAR8 NAME, INIT
+\NAME:  .byte \INIT
 ENDM
 
-MACRO FOR_BEGIN COUNTER, START, LIMIT
+MACRO VAR16 NAME, INIT
+\NAME:  .word \INIT
+ENDM
+
+MACRO VARZ NAME, SIZE
+\NAME:  .res \SIZE
+ENDM
+
+; --- Arithmetic helpers ---------------------------------------------------
+
+MACRO ADD8 TARGET, VALUE
+        LDAA \TARGET
+        ADDA \VALUE
+        STAA \TARGET
+ENDM
+
+MACRO SUB8 TARGET, VALUE
+        LDAA \TARGET
+        SUBA \VALUE
+        STAA \TARGET
+ENDM
+
+MACRO INC8 TARGET
+        INC \TARGET
+ENDM
+
+MACRO DEC8 TARGET
+        DEC \TARGET
+ENDM
+
+; --- FOR loop -------------------------------------------------------------
+
+MACRO FOR_BEGIN TOP, END, VAR, START, LIMIT
         LDAA #\START
-        STAA COUNTER
-\@FOR_TOP:
-        LDAA COUNTER
+        STAA \VAR
+\TOP:
+        LDAA \VAR
         CMPA #\LIMIT
-        BGT \@FOR_END
+        BHI \END
 ENDM
 
-MACRO FOR_END COUNTER
-        INC COUNTER
-        BRA \@FOR_TOP
-\@FOR_END:
+MACRO FOR_END TOP, END, VAR
+        INC \VAR
+        BRA \TOP
+\END:
 ENDM
 
-MACRO WHILE_BEGIN
-\@WHILE_START:
+; --- WHILE loop -----------------------------------------------------------
+
+MACRO WHILE_BEGIN TOP
+\TOP:
 ENDM
 
-MACRO WHILE_CHECK COND
-        LDAA \COND
-        BEQ \@WHILE_END
+MACRO WHILE_IF_ZERO END, ADDR
+        LDAA \ADDR
+        BEQ \END
 ENDM
 
-MACRO WHILE_END
-        BRA \@WHILE_START
-\@WHILE_END:
+MACRO WHILE_END TOP, END
+        BRA \TOP
+\END:
 ENDM
 
-MACRO IF_EQ COND, VALUE
-        LDAA \COND
+; --- IF statement ---------------------------------------------------------
+
+MACRO IF_EQ END, ADDR, VALUE
+        LDAA \ADDR
         CMPA #\VALUE
-        BNE \@IF_END
+        BNE \END
 ENDM
 
-MACRO IF_END
-\@IF_END:
+MACRO IF_NE END, ADDR, VALUE
+        LDAA \ADDR
+        CMPA #\VALUE
+        BEQ \END
 ENDM
 
+MACRO IF_END END
+\END:
+ENDM
