@@ -6,9 +6,11 @@ import pathlib
 import sys
 from typing import Iterable
 
+import json
+
 from ..asm.encoder import Assembler, AssemblyError
 from ..asm.encoder import LineEmission
-from ..link.pack_prg import pack_prg
+from ..link import LinkError, ObjectFormatError, link_objects, load_object, pack_prg
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -19,11 +21,21 @@ def build_parser() -> argparse.ArgumentParser:
     assemble.add_argument("source", type=pathlib.Path, help="Path to the source file")
     assemble.add_argument("-o", "--output", type=pathlib.Path, required=True, help="PRG output path")
     assemble.add_argument("--bin", type=pathlib.Path, help="Raw binary output path")
+    assemble.add_argument("--obj", type=pathlib.Path, help="Intermediate object (JSON) output path")
     assemble.add_argument("--map", type=pathlib.Path, help="Symbol map output path")
     assemble.add_argument("--lst", type=pathlib.Path, help="Listing file output path")
     assemble.add_argument("--entry", type=lambda v: int(v, 0), help="Entry address override")
     assemble.add_argument("--name", type=str, help="Program name stored in the PROG header")
     assemble.add_argument("--comment", type=str, help="Optional program comment")
+
+    link_cmd = sub.add_parser("link", help="Link JSON objects into a JR-100 binary")
+    link_cmd.add_argument("objects", type=pathlib.Path, nargs="+", help="Object files to link")
+    link_cmd.add_argument("-o", "--output", type=pathlib.Path, required=True, help="PRG output path")
+    link_cmd.add_argument("--bin", type=pathlib.Path, help="Raw binary output path")
+    link_cmd.add_argument("--map", type=pathlib.Path, help="Symbol map output path")
+    link_cmd.add_argument("--entry", type=lambda v: int(v, 0), help="Entry address override")
+    link_cmd.add_argument("--name", type=str, help="Program name stored in the PROG header")
+    link_cmd.add_argument("--comment", type=str, help="Optional program comment")
 
     return parser
 
@@ -36,6 +48,8 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "assemble":
         return run_assemble(args)
+    if args.command == "link":
+        return run_link(args)
     parser.error(f"Unknown command {args.command}")
     return 1
 
@@ -75,12 +89,51 @@ def run_assemble(args: argparse.Namespace) -> int:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_bytes(prg_bytes)
 
+    if args.obj:
+        args.obj.parent.mkdir(parents=True, exist_ok=True)
+        obj_payload = result.to_object_dict()
+        args.obj.write_text(json.dumps(obj_payload, indent=2), encoding="utf-8")
+
     if args.map:
         args.map.parent.mkdir(parents=True, exist_ok=True)
         _write_map(args.map, result.symbols.items())
     if args.lst:
         args.lst.parent.mkdir(parents=True, exist_ok=True)
         _write_listing(args.lst, result.emissions)
+
+    return 0
+
+
+def run_link(args: argparse.Namespace) -> int:
+    try:
+        objects = [load_object(path) for path in args.objects]
+    except ObjectFormatError as err:
+        print(f"Failed to read object: {err}", file=sys.stderr)
+        return 1
+
+    try:
+        result = link_objects(objects, entry_override=args.entry)
+    except LinkError as err:
+        print(f"Link failed: {err}", file=sys.stderr)
+        return 1
+
+    bin_path: pathlib.Path
+    if args.bin:
+        bin_path = args.bin
+    else:
+        bin_path = args.output.with_suffix(".bin")
+    bin_path.parent.mkdir(parents=True, exist_ok=True)
+    bin_path.write_bytes(result.image)
+
+    program_name = (args.name or args.output.stem).upper()[:32]
+    comment = args.comment or ""
+    prg_bytes = pack_prg(result.origin, result.image, result.entry_point, program_name=program_name, comment=comment)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_bytes(prg_bytes)
+
+    if args.map:
+        args.map.parent.mkdir(parents=True, exist_ok=True)
+        _write_map(args.map, result.symbols.items())
 
     return 0
 

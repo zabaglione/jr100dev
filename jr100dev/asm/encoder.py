@@ -37,12 +37,48 @@ class AssemblyResult:
     machine_code: bytes
     symbols: Dict[str, int]
     emissions: List['LineEmission']
+    sections: List['Section']
+    source: str
+
+    def to_object_dict(self) -> Dict[str, object]:
+        section_payloads = [
+            {
+                "name": section.name,
+                "kind": section.kind,
+                "address": section.address,
+                "size": len(section.data),
+                "content": ''.join(f"{byte:02X}" for byte in section.data),
+            }
+            for section in self.sections
+        ]
+        symbol_entries = [
+            {"name": name, "value": value, "scope": "global"}
+            for name, value in self.symbols.items()
+        ]
+        return {
+            "format": "jr100dev-object",
+            "version": 1,
+            "source": self.source,
+            "origin": self.origin,
+            "entry_point": self.entry_point,
+            "sections": section_payloads,
+            "symbols": symbol_entries,
+            "relocations": [],
+        }
 
 
 @dataclass
 class LineEmission:
     line: ParsedLine
     address: Optional[int]
+    data: List[int]
+
+
+@dataclass
+class Section:
+    name: str
+    kind: str
+    address: int
     data: List[int]
 
 
@@ -128,12 +164,15 @@ class Assembler:
         machine, emissions = self._second_pass(states, symbols, origin)
         entry = origin
         ordered_symbols = dict(sorted(symbols.items()))
+        sections = _build_sections(origin, machine)
         return AssemblyResult(
             origin=origin,
             entry_point=entry,
             machine_code=machine,
             symbols=ordered_symbols,
             emissions=emissions,
+            sections=sections,
+            source=self.filename,
         )
 
     def _eval(self, expr: str, symbols: Dict[str, int], line: ParsedLine) -> int:
@@ -444,6 +483,12 @@ def _build_opcode_table() -> Dict[str, Dict[str, OpcodeSpec]]:
         )
         table.setdefault(spec.mnemonic, {})[spec.addressing] = spec
     return table
+
+
+def _build_sections(origin: int, machine: bytes) -> List[Section]:
+    if not machine:
+        return []
+    return [Section(name="text", kind="code", address=origin, data=list(machine))]
 
 
 def _normalize_operands(raw_operands: List[str]) -> Tuple[List[str], Optional[str]]:

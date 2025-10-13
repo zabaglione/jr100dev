@@ -1,4 +1,8 @@
+import json
+from types import SimpleNamespace
+
 from jr100dev.asm.encoder import Assembler
+from jr100dev.cli.main import run_assemble
 
 
 def assemble(source: str):
@@ -56,3 +60,50 @@ FWD:    .equ $00FF
     assert result.machine_code == expected
     assert result.symbols["SMALL"] == 0x0020
     assert result.symbols["FWD"] == 0x00FF
+
+
+def test_object_dict_structure():
+    source = """
+        .org $8000
+LABEL:  LDAA #1
+        RTS
+    """
+    assembler = Assembler(source, filename="sample.asm")
+    result = assembler.assemble()
+    obj = result.to_object_dict()
+    assert obj["format"] == "jr100dev-object"
+    assert obj["origin"] == 0x8000
+    assert obj["entry_point"] == 0x8000
+    assert obj["source"].endswith("sample.asm")
+    assert obj["symbols"][0]["name"] == "LABEL"
+    assert obj["sections"][0]["content"] == "860139"
+
+
+def test_cli_object_output(tmp_path):
+    src = tmp_path / "prog.asm"
+    src.write_text(
+        """
+        .org $8000
+START:  LDAA #$42
+        RTS
+        """
+    )
+    obj_path = tmp_path / "prog.json"
+    args = SimpleNamespace(
+        source=src,
+        output=tmp_path / "prog.prg",
+        bin=None,
+        obj=obj_path,
+        map=None,
+        lst=None,
+        entry=None,
+        name=None,
+        comment=None,
+    )
+    rc = run_assemble(args)
+    assert rc == 0
+    data = json.loads(obj_path.read_text())
+    assert data["origin"] == 0x8000
+    assert data["sections"][0]["content"].startswith("86")
+    assert (tmp_path / "prog.bin").exists()
+    assert args.output.exists()
