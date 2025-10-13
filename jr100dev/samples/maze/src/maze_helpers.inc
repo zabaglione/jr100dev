@@ -11,9 +11,9 @@ WALL_S         .equ $02
 WALL_W         .equ $01
 
 DX_TABLE:
-        .byte 0, 1, 0, -1
+        .byte 0, 1, 0, 255
 DY_TABLE:
-        .byte -1, 0, 1, 0
+        .byte 255, 0, 1, 0
 OPPOSITE_TABLE:
         .byte DIR_S, DIR_W, DIR_N, DIR_E
 WALL_TABLE:
