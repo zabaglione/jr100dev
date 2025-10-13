@@ -81,7 +81,8 @@ def link_objects(
     used_end = -1
 
     for section in sorted(adjusted_sections, key=lambda s: s.address):
-        if section.kind == "bss":
+        length = len(section.data) if section.data else section.bss_size
+        if length == 0:
             continue
         offset = section.address - origin
         payload = section.data if section.data else [0] * section.bss_size
@@ -95,8 +96,9 @@ def link_objects(
                 )
             image[pos] = value & 0xFF
             filled[pos] = 1
-            if pos > used_end:
-                used_end = pos
+        section_end = offset + len(payload)
+        if section_end:
+            used_end = max(used_end, section_end - 1)
 
     def _adjust_symbol(value: int) -> int:
         for section in sections:
@@ -151,13 +153,14 @@ def _apply_relocations(
                 raise LinkError(f"Relocation target {relocation.target} is undefined")
             delta_source = delta_by_kind.get(original_section.kind, 0)
             if relocation.type == "relative8":
-                value = (symbols[relocation.target] + relocation.addend - delta_source) & 0xFFFF
-                signed = value if value < 0x80 else value - 0x100
-                if signed < -128 or signed > 127:
+                difference = symbols[relocation.target] + relocation.addend - delta_source
+                if difference < -128 or difference > 127:
                     raise LinkError(f"Relative relocation out of range for {relocation.target}")
-                image[absolute] = value & 0xFF
+                image[absolute] = difference & 0xFF
             elif relocation.type == "absolute16":
                 value = (symbols[relocation.target] + relocation.addend) & 0xFFFF
+                if absolute + 1 >= len(image):
+                    raise LinkError("Relocation write exceeds image size")
                 image[absolute] = (value >> 8) & 0xFF
                 image[absolute + 1] = value & 0xFF
             elif relocation.type == "absolute8":

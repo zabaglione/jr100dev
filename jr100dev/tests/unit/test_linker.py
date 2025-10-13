@@ -116,6 +116,33 @@ TARGET: RTS
     assert branch_target == 0x8050
 
 
+def test_relative_relocation_backward(tmp_path):
+    target_obj = _assemble_to_object(
+        tmp_path,
+        "rel_tgt",
+        """
+        .org $80F0
+TARGET: RTS
+        """,
+    )
+    branch_obj = _assemble_to_object(
+        tmp_path,
+        "rel_src",
+        """
+        .org $8100
+        BRA TARGET
+        RTS
+        """,
+    )
+
+    objects = [load_object(branch_obj), load_object(target_obj)]
+    result = link_objects(objects)
+    offset = (0x8100 - result.origin) + 1
+    rel_value = result.image[offset]
+    signed = rel_value if rel_value < 0x80 else rel_value - 0x100
+    assert signed == -0x12
+
+
 def test_bss_section_zero_filled(tmp_path):
     obj_bss = _assemble_to_object(
         tmp_path,
