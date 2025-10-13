@@ -28,6 +28,7 @@ class LineState:
     opcode: Optional[OpcodeSpec]
     operands: List[str]
     forced_mode: Optional[str] = None
+    bss_size: int = 0
 
 
 @dataclass
@@ -40,18 +41,20 @@ class AssemblyResult:
     sections: List['Section']
     source: str
     relocations: List['Relocation']
+    bss_entries: List['BssAllocation']
 
     def to_object_dict(self) -> Dict[str, object]:
-        section_payloads = [
-            {
+        section_payloads = []
+        for section in self.sections:
+            payload = {
                 "name": section.name,
                 "kind": section.kind,
                 "address": section.address,
-                "size": len(section.data),
-                "content": ''.join(f"{byte:02X}" for byte in section.data),
+                "size": len(section.data) if section.kind != "bss" else section.bss_size,
+                "content": ''.join(f"{byte:02X}" for byte in section.data) if section.data else "",
+                "bss_size": section.bss_size,
             }
-            for section in self.sections
-        ]
+            section_payloads.append(payload)
         symbol_entries = [
             {"name": name, "value": value, "scope": "global"}
             for name, value in self.symbols.items()
@@ -92,6 +95,7 @@ class Section:
     kind: str
     address: int
     data: List[int]
+    bss_size: int = 0
 
 
 @dataclass
@@ -101,6 +105,13 @@ class Relocation:
     type: str
     target: str
     addend: int = 0
+
+
+@dataclass
+class BssAllocation:
+    name: str
+    address: int
+    size: int
 
 
 class Assembler:
@@ -121,6 +132,7 @@ class Assembler:
         pc = 0
 
         for line in parsed_lines:
+            state_bss_size = 0
             address = pc
             opcode_spec: Optional[OpcodeSpec] = None
             normalized_operands, forced_mode = _normalize_operands(line.operands)
@@ -146,6 +158,19 @@ class Assembler:
                     symbols[line.label] = value & 0xFFFF
                     address = None
                     register_label = False
+                elif directive == '.res':
+                    if origin is None:
+                        raise AssemblyError(_format_error(line, ".org must appear before data"))
+                    if not normalized_operands:
+                        raise AssemblyError(_format_error(line, '.res requires a size operand'))
+                    size = self._eval(normalized_operands[0], symbols, line)
+                    if size < 0:
+                        raise AssemblyError(_format_error(line, '.res size must be non-negative'))
+                    address = pc
+                    pc += size
+                    normalized_operands = []
+                    opcode_spec = None
+                    state_bss_size = size
                 elif directive in ('.byte', '.word', '.ascii', '.fill', '.align'):
                     if origin is None:
                         raise AssemblyError(_format_error(line, ".org must appear before data"))
@@ -175,6 +200,7 @@ class Assembler:
                     opcode=opcode_spec,
                     operands=state_operands,
                     forced_mode=forced_mode if not line.is_directive else None,
+                    bss_size=state_bss_size,
                 )
             )
 
@@ -182,10 +208,10 @@ class Assembler:
             raise AssemblyError("Missing .org directive")
 
         self._refine_states(states, symbols, origin)
-        machine, emissions, relocations = self._second_pass(states, symbols, origin)
+        machine, emissions, relocations, bss_entries = self._second_pass(states, symbols, origin)
         entry = origin
         ordered_symbols = dict(sorted(symbols.items()))
-        sections = _build_sections(origin, machine)
+        sections = _build_sections(origin, machine, bss_entries)
         return AssemblyResult(
             origin=origin,
             entry_point=entry,
@@ -195,6 +221,7 @@ class Assembler:
             sections=sections,
             source=self.filename,
             relocations=relocations,
+            bss_entries=bss_entries,
         )
 
     def _eval(self, expr: str, symbols: Dict[str, int], line: ParsedLine) -> int:
@@ -287,6 +314,9 @@ class Assembler:
                         state.address = None
                     elif line.op == '.equ':
                         state.address = None
+                    elif line.op == '.res':
+                        state.address = pc
+                        pc += state.bss_size
                     else:
                         state.address = pc
                         size = self._estimate_directive_size(line.op, state.operands, symbols, line, pc)
@@ -373,6 +403,7 @@ class Assembler:
         pc = origin
         emissions: List[LineEmission] = []
         relocations: List[Relocation] = []
+        bss_entries: List[BssAllocation] = []
         for state in states:
             line = state.line
             if line.is_directive:
@@ -384,6 +415,18 @@ class Assembler:
                     emissions.append(LineEmission(line=line, address=None, data=[]))
                 elif line.op == '.equ':
                     emissions.append(LineEmission(line=line, address=None, data=[]))
+                    continue
+                elif line.op == '.res':
+                    if state.bss_size > 0:
+                        bss_entries.append(
+                            BssAllocation(
+                                name=line.label or f"BSS_{state.address:04X}",
+                                address=state.address if state.address is not None else pc,
+                                size=state.bss_size,
+                            )
+                        )
+                    emissions.append(LineEmission(line=line, address=state.address, data=[]))
+                    pc += state.bss_size
                     continue
                 elif line.op == '.byte':
                     for operand in state.operands:
@@ -520,7 +563,7 @@ class Assembler:
             _append_bytes(data, origin, start, combined)
             pc += len(combined)
             emissions.append(LineEmission(line=line, address=start, data=combined))
-        return bytes(data), emissions, relocations
+        return bytes(data), emissions, relocations, bss_entries
 
 
 def _append_bytes(buffer: bytearray, origin: int, pc: int, values: List[int]) -> None:
@@ -549,10 +592,16 @@ def _build_opcode_table() -> Dict[str, Dict[str, OpcodeSpec]]:
     return table
 
 
-def _build_sections(origin: int, machine: bytes) -> List[Section]:
-    if not machine:
-        return []
-    return [Section(name="text", kind="code", address=origin, data=list(machine))]
+def _build_sections(origin: int, machine: bytes, bss_entries: List[BssAllocation]) -> List[Section]:
+    sections: List[Section] = []
+    if machine:
+        sections.append(Section(name="text", kind="code", address=origin, data=list(machine), bss_size=0))
+    for index, entry in enumerate(bss_entries):
+        name = entry.name or f"BSS_{index}"
+        sections.append(
+            Section(name=name, kind="bss", address=entry.address, data=[], bss_size=entry.size)
+        )
+    return sections
 
 
 def _normalize_operands(raw_operands: List[str]) -> Tuple[List[str], Optional[str]]:

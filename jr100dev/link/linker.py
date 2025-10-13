@@ -31,7 +31,10 @@ def link_objects(objects: Sequence[LinkedObject], *, entry_override: int | None 
         raise LinkError("No sections present in objects")
 
     origin = min(section.address for section in sections)
-    end_address = max(section.address + len(section.data) for section in sections)
+    end_address = max(
+        section.address + (len(section.data) if section.data else section.bss_size)
+        for section in sections
+    )
     if end_address - origin > 0x10000:
         raise LinkError("Linked image exceeds 64 KiB address space")
 
@@ -41,7 +44,20 @@ def link_objects(objects: Sequence[LinkedObject], *, entry_override: int | None 
 
     for section in sorted(sections, key=lambda s: s.address):
         offset = section.address - origin
-        for index, value in enumerate(section.data):
+        if section.kind == "bss":
+            for index in range(section.bss_size):
+                pos = offset + index
+                if pos >= size:
+                    raise LinkError("Section exceeds allocated image size")
+                if not filled[pos]:
+                    image[pos] = 0
+                    filled[pos] = 1
+            continue
+        if section.data:
+            payload = section.data
+        else:
+            payload = [0] * section.bss_size
+        for index, value in enumerate(payload):
             pos = offset + index
             if pos >= size:
                 raise LinkError("Section exceeds allocated image size")

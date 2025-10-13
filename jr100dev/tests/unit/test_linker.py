@@ -110,6 +110,21 @@ TARGET: RTS
     assert operand == 0x8100
 
 
+def test_bss_section_zero_filled(tmp_path):
+    obj_bss = _assemble_to_object(
+        tmp_path,
+        "bss",
+        """
+        .org $8200
+BUFFER: .res 8
+        RTS
+        """,
+    )
+    linked = link_objects([load_object(obj_bss)])
+    offset = 0x8200 - linked.origin
+    assert linked.image[offset:offset + 8] == bytes([0] * 8)
+
+
 def test_cli_link_command(tmp_path):
     obj1 = _assemble_to_object(
         tmp_path,

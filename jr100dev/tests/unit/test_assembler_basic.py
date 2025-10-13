@@ -92,6 +92,20 @@ def test_object_dict_relocations():
     assert relocations[0]["type"] == "absolute16"
 
 
+def test_object_dict_bss_section():
+    source = """
+        .org $8000
+BUFFER: .res 4
+        RTS
+    """
+    assembler = Assembler(source, filename="bss.asm")
+    result = assembler.assemble()
+    obj = result.to_object_dict()
+    bss_sections = [s for s in obj["sections"] if s["kind"] == "bss"]
+    assert bss_sections[0]["bss_size"] == 4
+    assert bss_sections[0]["content"] == ""
+
+
 def test_cli_object_output(tmp_path):
     src = tmp_path / "prog.asm"
     src.write_text(

@@ -17,6 +17,7 @@ class LinkedSection:
     kind: str
     address: int
     data: List[int]
+    bss_size: int = 0
 
 
 @dataclass
@@ -68,7 +69,10 @@ def load_object(path: Path) -> LinkedObject:
             data = [int(content[i : i + 2], 16) for i in range(0, len(content), 2)]
         except ValueError as exc:
             raise ObjectFormatError(f"Section content is not hex in {path}") from exc
-        sections.append(LinkedSection(name=name, kind=kind, address=address, data=data))
+        bss_size = section.get("bss_size", 0)
+        if not isinstance(bss_size, int) or bss_size < 0:
+            raise ObjectFormatError(f"Invalid bss_size in {path}")
+        sections.append(LinkedSection(name=name, kind=kind, address=address, data=data, bss_size=bss_size))
 
     symbols: Dict[str, int] = {}
     for sym in payload.get("symbols", []):
