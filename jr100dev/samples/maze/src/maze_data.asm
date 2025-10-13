@@ -6,7 +6,7 @@ MAZE_MAP:
         .fill MAZE_CHAR_W * MAZE_CHAR_H, $00
 
 MAZE_CELLS:
-        .fill MAZE_CELL_W * MAZE_CELL_H, $0F ; walls(NESW) = 1
+        .fill MAZE_CELL_W * MAZE_CELL_H, $0F
 
 VISITED_MAP:
         .fill MAZE_CELL_W * MAZE_CELL_H, $00
@@ -38,4 +38,8 @@ TMP_CHOICE:
 STACK_POS:
         .word $0000
 CUR_CELL_POS:
+        .word $0000
+NEXT_CELL_POS:
+        .word $0000
+CELL_BUF:
         .word $0000

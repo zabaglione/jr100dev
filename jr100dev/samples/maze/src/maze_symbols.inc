@@ -13,3 +13,5 @@
         .equ TMP_CHOICE, TMP_DIRS + 1
         .equ STACK_POS, TMP_CHOICE + 1
         .equ CUR_CELL_POS, STACK_POS + 2
+        .equ NEXT_CELL_POS, CUR_CELL_POS + 2
+        .equ CELL_BUF, NEXT_CELL_POS + 2

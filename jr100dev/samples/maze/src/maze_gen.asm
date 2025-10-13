@@ -3,7 +3,37 @@
         .include "macro.inc"
         .include "ctl.inc"
         .include "common.inc"
+        .include "maze_helpers.inc"
         .include "maze_symbols.inc"
+
+
+; --- Helper routines ---------------------------------------------------
+
+STACK_PUSH:
+        LDD STACK_POS
+        STD STACK_TOP
+        LDAA CUR_CELL_POS+1
+        STAA STACK_Y, D
+        LDAA CUR_CELL_POS
+        STAA STACK_X, D
+        INCB
+        STAB STACK_POS
+        LDAA STACK_TOP
+        INCA
+        STAA STACK_TOP
+        RTS
+
+STACK_POP:
+        LDAA STACK_TOP
+        BEQ STACK_EMPTY
+        DECA
+        STAA STACK_TOP
+        LDX STACK_Y
+        LDAA STACK_TOP
+        STAA STACK_POS
+        RTS
+STACK_EMPTY:
+        RTS
 
 MAZE_INIT:
         ; Fill entire map with '#'
