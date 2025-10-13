@@ -2,6 +2,8 @@ import json
 import struct
 from types import SimpleNamespace
 
+import pytest
+
 from jr100dev.cli.main import run_assemble, run_link
 from jr100dev.link.linker import LinkError, link_objects
 from jr100dev.link.object_loader import load_object
@@ -143,6 +145,47 @@ TARGET: RTS
     rel_value = result.image[offset]
     signed = rel_value if rel_value < 0x80 else rel_value - 0x100
     assert signed == -0x22
+
+def test_relative_relocation_positive_boundary(tmp_path):
+    obj = _assemble_to_object(
+        tmp_path,
+        "branch_forward",
+        """
+        .org $0300
+        BRA TARGET
+        .fill $7F, $00
+TARGET: RTS
+        """,
+    )
+
+    result = link_objects([load_object(obj)])
+    offset = (0x0300 - result.origin) + 1
+    rel_value = result.image[offset]
+    assert rel_value == 0x7F  # +127
+
+
+def test_relative_relocation_overflow(tmp_path):
+    obj_branch = _assemble_to_object(
+        tmp_path,
+        "branch_fail",
+        """
+        .org $0300
+        BRA TARGET
+        RTS
+        """,
+    )
+
+    obj_target = _assemble_to_object(
+        tmp_path,
+        "far_target",
+        """
+        .org $0500
+TARGET: RTS
+        """,
+    )
+
+    with pytest.raises(LinkError):
+        link_objects([load_object(obj_branch), load_object(obj_target)])
 
 
 def test_bss_section_zero_filled(tmp_path):
