@@ -69,6 +69,7 @@ IF_END IF0_END
 ## サンプル
 
 - `samples/io_demo/main.asm` : FOR/WHILE/IF と VRAM・サウンド・キースキャンマクロを組み合わせた例。
+- `samples/counter/main.asm` : FOR マクロで 0-9 を描画し、キー入力でリセットする最小サンプル。
 
 ## テスト
 
