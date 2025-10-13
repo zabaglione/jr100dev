@@ -11,6 +11,7 @@ from typing import Iterable
 from ..asm.encoder import Assembler, AssemblyError
 from ..asm.encoder import LineEmission
 from ..link import LinkError, ObjectFormatError, link_objects, load_object, pack_prg
+from ..proj import ProjectGenerationError, create_project
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -40,6 +41,10 @@ def build_parser() -> argparse.ArgumentParser:
     link_cmd.add_argument("--data-base", type=lambda v: int(v, 0), help="Override data section base address")
     link_cmd.add_argument("--bss-base", type=lambda v: int(v, 0), help="Override bss section base address")
 
+    new_cmd = sub.add_parser("new", help="Create a new JR-100 project skeleton")
+    new_cmd.add_argument("path", type=pathlib.Path, help="Directory to create the project in")
+    new_cmd.add_argument("--force", action="store_true", help="Overwrite existing files if present")
+
     return parser
 
 
@@ -53,10 +58,8 @@ def main(argv: list[str] | None = None) -> int:
         return run_assemble(args)
     if args.command == "link":
         return run_link(args)
-    parser.error(f"Unknown command {args.command}")
-    return 1
-
-
+    if args.command == "new":
+        return run_new(args)
     parser.error(f"Unknown command {args.command}")
     return 1
 
@@ -156,6 +159,26 @@ def run_link(args: argparse.Namespace) -> int:
         args.map.parent.mkdir(parents=True, exist_ok=True)
         _write_map(args.map, result.symbols.items())
 
+    return 0
+
+
+def run_new(args: argparse.Namespace) -> int:
+    target: pathlib.Path = args.path
+    try:
+        result = create_project(target, force=args.force)
+    except ProjectGenerationError as err:
+        print(f"Project generation failed: {err}", file=sys.stderr)
+        return 1
+
+    print(f"Created project at {result.root}")
+    print("Generated files:")
+    for path in result.created:
+        rel = path.relative_to(result.root)
+        print(f"  {rel}")
+    print()
+    print("Next steps:")
+    print("  1. cd" , result.root)
+    print("  2. jr100dev assemble src/main.asm -o build/main.prg")
     return 0
 
 
