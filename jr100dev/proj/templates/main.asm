@@ -1,7 +1,9 @@
         .org $0300
+        JMP MAIN
+
         .include "macro.inc"
 
-START:  LDX #STD_VRAM_BASE
+MAIN:   LDX #STD_VRAM_BASE
         PRINT_STR MESSAGE
         RTS
 
