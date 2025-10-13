@@ -26,3 +26,12 @@ PYTHONPATH=/path/to/jr100dev jr100dev assemble src/main.asm -o build/main.prg
 
 1. `PYTHONPATH=/path/to/jr100dev pytest jr100dev/tests/unit` で単体テストを実行し、リンカやマクロの回帰を確認する。
 2. `PYTHONPATH=/path/to/jr100dev python -m jr100dev.cli.main new sample` で雛形を生成し、`build/main.prg` をエミュレーターへ読み込んで表示・ビープ・入力待ちを手動確認する。
+
+### `.prg` スモークテストの流れ
+
+1. `jr100dev assemble src/main.asm -o build/main.prg --bin build/main.bin --map build/main.map` を実行し、セクションが `PBIN` として複数化されているか `hexdump -C build/main.prg` で確認する（`PBIN` が複数あり最初のコメントに `entry=$xxxx` が出力されていること）。
+2. エミュレーター (`python -m jr100emu.app --rom datas/jr100rom.prg --load build/main.prg` 等) でロードし、VRAM 表示・ビープ・キー入力待ちが行えることを目視で確認する。
+   - VRAM に「HELLO JR-100!」が ASCII 変換済みコードで表示される。
+   - 起動直後に BEEP が鳴る。
+   - キー押下でループから抜け、再度メッセージが描画される（`samples/io_demo` 参照）。
+3. GUI 環境が無い場合は、`build/main.prg` の `PBIN` セグメント先頭アドレスと `build/main.map` のシンボルが一致するかをもって静的確認とする。
