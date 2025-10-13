@@ -1,10 +1,11 @@
         .equ MAZE_MAP, $0600
-        .equ VISITED_MAP, $3600
-        .equ STACK_X, $4200
-        .equ STACK_Y, $4E00
-        .equ STACK_TOP, $5A00
-        .equ PLAYER_X, $5A02
-        .equ PLAYER_Y, $5A03
-        .equ TEMP_PTR, $5A04
-        .equ ROW_INDEX, $5A06
-        .equ COL_INDEX, $5A07
+        .equ MAZE_CELLS, MAZE_MAP + MAZE_CHAR_W * MAZE_CHAR_H
+        .equ VISITED_MAP, MAZE_CELLS + MAZE_CELL_W * MAZE_CELL_H
+        .equ STACK_X, VISITED_MAP + MAZE_CELL_W * MAZE_CELL_H
+        .equ STACK_Y, STACK_X + MAZE_CELL_W * MAZE_CELL_H
+        .equ STACK_TOP, STACK_Y + MAZE_CELL_W * MAZE_CELL_H
+        .equ PLAYER_X, STACK_TOP + 2
+        .equ PLAYER_Y, PLAYER_X + 1
+        .equ TEMP_PTR, PLAYER_Y + 1
+        .equ ROW_INDEX, TEMP_PTR + 2
+        .equ COL_INDEX, ROW_INDEX + 1

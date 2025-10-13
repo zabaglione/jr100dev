@@ -1,9 +1,12 @@
-        .org $0600
+        .org MAZE_MAP
 
         .include "common.inc"
 
 MAZE_MAP:
         .fill MAZE_CHAR_W * MAZE_CHAR_H, $00
+
+MAZE_CELLS:
+        .fill MAZE_CELL_W * MAZE_CELL_H, $0F ; walls(NESW) = 1
 
 VISITED_MAP:
         .fill MAZE_CELL_W * MAZE_CELL_H, $00
