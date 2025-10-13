@@ -11,8 +11,5 @@
         .equ COL_INDEX, ROW_INDEX + 1
         .equ TMP_DIRS, COL_INDEX + 1
         .equ TMP_CHOICE, TMP_DIRS + 1
-        .equ CUR_CELL_X, TMP_CHOICE + 1
-        .equ CUR_CELL_Y, CUR_CELL_X + 1
-        .equ NEXT_CELL_X, CUR_CELL_Y + 1
-        .equ NEXT_CELL_Y, NEXT_CELL_X + 1
-        .equ STACK_POS, NEXT_CELL_Y + 1
+        .equ STACK_POS, TMP_CHOICE + 1
+        .equ CUR_CELL_POS, STACK_POS + 2
