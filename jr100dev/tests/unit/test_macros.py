@@ -26,7 +26,8 @@ def test_put_char_macro_expands(tmp_path):
     assert "INX" in emitted
     assert any(text.startswith("__STD_PRINT_STR:") and "STX STD_SRC_PTR" in text for text in emitted)
     assert result.symbols["STD_VRAM_BASE"] == 0xC100
-    assert result.symbols["STD_SOUND_PORT"] == 0xC804
+    assert result.symbols["STD_VIA_ORB"] == 0xC800
+    assert result.symbols["STD_VIA_DDRB"] == 0xC802
 
 
 def test_standard_macros_runtime_support(tmp_path):
@@ -50,6 +51,8 @@ GREETING: .ascii "HI\\0"
     assert "JSR __STD_BEEP" in emitted
     assert "JSR __STD_SCAN_KEY" in emitted
     assert any(text.startswith("__STD_PRINT_DONE:") and "LDX STD_VRAM_PTR" in text for text in emitted)
+    assert any("STAA STD_VIA_DDRB" in text for text in emitted)
+    assert any("STAA STD_VIA_ORB" in text for text in emitted)
     symbols = result.symbols
     assert symbols["STD_VRAM_PTR"] == 0x00F0
     assert symbols["STD_SRC_PTR"] == 0x00F2

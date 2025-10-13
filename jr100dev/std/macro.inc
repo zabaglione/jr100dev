@@ -2,8 +2,10 @@
 
 STD_VRAM_BASE:   .equ $C100
 STD_VRAM_END:    .equ $C400
-STD_SOUND_PORT:  .equ $C804
-STD_KBD_MATRIX:  .equ $C800
+STD_VIA_ORB:     .equ $C800
+STD_VIA_ORA:     .equ $C801
+STD_VIA_DDRB:    .equ $C802
+STD_VIA_DDRA:    .equ $C803
 
 STD_VRAM_PTR:    .equ $00F0
 STD_SRC_PTR:     .equ $00F2
@@ -56,11 +58,19 @@ __STD_CLEAR_LOOP:  STAA ,X
                     LDX #STD_VRAM_BASE
                     RTS
 
-__STD_BEEP:        LDAA #$FF
-                    STAA STD_SOUND_PORT
+__STD_BEEP:        LDAA #$80
+                    STAA STD_VIA_DDRB
+                    LDAA #$80
+                    STAA STD_VIA_ORB
                     LDAA #$00
-                    STAA STD_SOUND_PORT
+                    STAA STD_VIA_ORB
                     RTS
 
-__STD_SCAN_KEY:    LDAA STD_KBD_MATRIX
+__STD_SCAN_KEY:    LDAA #$0F
+                    STAA STD_VIA_DDRA
+                    LDAA #$00
+                    STAA STD_VIA_DDRB
+                    LDAA #$00
+                    STAA STD_VIA_ORA
+                    LDAA STD_VIA_ORB
                     RTS
