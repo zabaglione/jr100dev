@@ -90,6 +90,7 @@ def test_relocation_resolution(tmp_path):
         """
         .org $8000
         JSR TARGET
+        BRA TARGET
         RTS
         """,
     )
@@ -108,6 +109,13 @@ TARGET: RTS
     offset = (0x8000 - result.origin) + 1
     operand = (result.image[offset] << 8) | result.image[offset + 1]
     assert operand == 0x8100
+    branch_offset = (0x8003 - result.origin) + 1
+    rel_value = result.image[branch_offset]
+    signed = rel_value if rel_value < 0x80 else rel_value - 0x100
+    expected = 0x8100 - (0x8003 + 2)
+    if expected >= 0x80:
+        expected -= 0x100
+    assert signed == expected
 
 
 def test_bss_section_zero_filled(tmp_path):

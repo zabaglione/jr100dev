@@ -23,7 +23,7 @@
 ## 設計メモ
 - `sections[*]` は `kind` と `bss_size` を持ち、`kind="bss"` の場合は `content` を省略し `bss_size` で未初期化領域を確保する。
 - `symbols` はラベルや `.equ` を含み、`scope` は `local`/`global` で将来の公開制御に備える。
-- `relocations` は外部シンボル向けに生成される（MVP は `absolute16` のみ）。
+- `relocations` は外部シンボル向けに生成される（MVP は `absolute16` / `absolute8` / `relative8` をサポート）。
 - `origin` と `entry_point` はアセンブル時点の値を保持する。リンク後に再配置・上書き可能。
 
 ## 次ステップ

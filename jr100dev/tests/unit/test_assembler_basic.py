@@ -82,14 +82,17 @@ LABEL:  LDAA #1
 def test_object_dict_relocations():
     source = """
         .org $8000
-        .word TARGET
+        LDAA <EXTBUF
+        BRA EXTENTRY
         RTS
     """
     assembler = Assembler(source, filename="reloc.asm")
     result = assembler.assemble()
     relocations = result.to_object_dict()["relocations"]
-    assert relocations[0]["target"] == "TARGET"
-    assert relocations[0]["type"] == "absolute16"
+    assert {
+        (reloc["target"], reloc["type"])
+        for reloc in relocations
+    } == {("EXTBUF", "absolute8"), ("EXTENTRY", "relative8")}
 
 
 def test_object_dict_bss_section():

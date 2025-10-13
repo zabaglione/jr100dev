@@ -112,5 +112,13 @@ def _apply_relocations(
             if relocation.type == "absolute16":
                 image[absolute] = (value >> 8) & 0xFF
                 image[absolute + 1] = value & 0xFF
+            elif relocation.type == "absolute8":
+                image[absolute] = value & 0xFF
+            elif relocation.type == "relative8":
+                offset = value & 0xFF
+                signed = offset if offset < 0x80 else offset - 0x100
+                if signed < -128 or signed > 127:
+                    raise LinkError(f"Relative relocation out of range for {relocation.target}")
+                image[absolute] = offset
             else:
                 raise LinkError(f"Unsupported relocation type {relocation.type}")

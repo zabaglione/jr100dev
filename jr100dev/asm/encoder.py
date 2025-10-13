@@ -535,17 +535,43 @@ class Assembler:
                     operand_bytes.extend([(value >> 8) & 0xFF, value & 0xFF])
             elif spec.addressing == 'DIR':
                 operand = state.operands[0]
-                value = self._eval(operand, symbols, line)
-                if not 0 <= value <= 0xFF:
-                    raise AssemblyError(_format_error(line, f"Direct value out of range: {value}"))
-                operand_bytes.append(value & 0xFF)
+                value, target = self._resolve_value(operand, symbols, line, allow_relocation=True)
+                operand_offset = (start - origin) + len(opcode_bytes)
+                if target is not None:
+                    operand_bytes.append(0x00)
+                    relocations.append(
+                        Relocation(
+                            section="text",
+                            offset=operand_offset,
+                            type="absolute8",
+                            target=target,
+                            addend=0,
+                        )
+                    )
+                else:
+                    if not 0 <= value <= 0xFF:
+                        raise AssemblyError(_format_error(line, f"Direct value out of range: {value}"))
+                    operand_bytes.append(value & 0xFF)
             elif spec.addressing == 'REL':
                 operand = state.operands[0]
-                target = self._eval(operand, symbols, line)
-                offset = target - (pc + spec.size)
-                if offset < -128 or offset > 127:
-                    raise AssemblyError(_format_error(line, f"Branch target out of range ({offset})"))
-                operand_bytes.append(offset & 0xFF)
+                value, target = self._resolve_value(operand, symbols, line, allow_relocation=True)
+                operand_offset = (start - origin) + len(opcode_bytes)
+                if target is not None:
+                    relocations.append(
+                        Relocation(
+                            section="text",
+                            offset=operand_offset,
+                            type="relative8",
+                            target=target,
+                            addend=-(pc + spec.size),
+                        )
+                    )
+                    operand_bytes.append(0x00)
+                else:
+                    offset = value - (pc + spec.size)
+                    if offset < -128 or offset > 127:
+                        raise AssemblyError(_format_error(line, f"Branch target out of range ({offset})"))
+                    operand_bytes.append(offset & 0xFF)
             elif spec.addressing == 'IDX':
                 if len(state.operands) == 1 and state.operands[0].upper() == 'X':
                     operand_bytes.append(0)
