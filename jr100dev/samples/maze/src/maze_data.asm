@@ -1,0 +1,30 @@
+        .org $0600
+
+        .include "common.inc"
+
+MAZE_MAP:
+        .fill MAZE_CHAR_W * MAZE_CHAR_H, $00
+
+VISITED_MAP:
+        .fill MAZE_CELL_W * MAZE_CELL_H, $00
+
+STACK_X:
+        .fill MAZE_CELL_W * MAZE_CELL_H, $00
+
+STACK_Y:
+        .fill MAZE_CELL_W * MAZE_CELL_H, $00
+
+STACK_TOP:
+        .word $0000
+
+PLAYER_X:
+        .byte PLAYER_START_X
+PLAYER_Y:
+        .byte PLAYER_START_Y
+
+TEMP_PTR:
+        .word $0000
+ROW_INDEX:
+        .byte $00
+COL_INDEX:
+        .byte $00
