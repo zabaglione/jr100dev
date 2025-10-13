@@ -1,0 +1,23 @@
+[entry]
+pc = "$8000"
+sp = "$00FF"
+
+[vectors]
+nmi = "$FFFC"
+reset = "$FFFE"
+irq = "$FFFA"
+
+[mem]
+ram_start = "$0040"
+ram_end = "$7FFF"
+rom_start = "$8000"
+rom_end = "$FFFF"
+vram_base = "$6000"
+
+[io]
+kbd_matrix = "$2000"
+sound_port = "$2010"
+
+[cpu]
+model = "MB8861H"
+clock_hz = 894000
