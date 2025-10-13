@@ -38,6 +38,26 @@ MACRO DEC8 TARGET
         DEC \TARGET
 ENDM
 
+MACRO ADD16 TLO, THI, VLO, VHI
+        CLC
+        LDAA \TLO
+        ADDA \VLO
+        STAA \TLO
+        LDAA \THI
+        ADCA \VHI
+        STAA \THI
+ENDM
+
+MACRO SUB16 TLO, THI, VLO, VHI
+        SEC
+        LDAA \TLO
+        SBCA \VLO
+        STAA \TLO
+        LDAA \THI
+        SBCA \VHI
+        STAA \THI
+ENDM
+
 ; --- FOR loop -------------------------------------------------------------
 
 MACRO FOR_BEGIN TOP, END, VAR, START, LIMIT

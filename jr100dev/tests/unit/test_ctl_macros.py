@@ -62,3 +62,26 @@ MAIN:
     result = assemble(src)
     assert len(result.machine_code) > 0
     assert 0x20 in result.machine_code
+
+
+def test_add16_sub16_macros():
+    src = """
+        .org $0300
+        JMP MAIN
+        .include "macro.inc"
+        .include "ctl.inc"
+
+        .data
+VAR16 PTR, $C100
+VAR16 STEP, $0004
+
+        .code
+MAIN:
+        ADD16 PTR, PTR+1, STEP, STEP+1
+        SUB16 PTR, PTR+1, #$04, #$00
+        RTS
+    """
+    result = assemble(src)
+    code = result.machine_code
+    assert 0x0C in code  # CLC present
+    assert 0x0D in code  # SEC present
