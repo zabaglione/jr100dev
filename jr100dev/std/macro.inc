@@ -8,6 +8,7 @@ STD_VIA_DDRB:    .equ $C802
 STD_VIA_DDRA:    .equ $C803
 
 MACRO PUT_CHAR
+        JSR __STD_TO_VRAM
         STAA ,X
         INX
 ENDM
@@ -38,6 +39,7 @@ __STD_PRINT_LOOP:  LDX STD_SRC_PTR
                     BEQ __STD_PRINT_DONE
                     INX
                     STX STD_SRC_PTR
+                    JSR __STD_TO_VRAM
                     LDX STD_VRAM_PTR
                     STAA ,X
                     INX
@@ -47,7 +49,7 @@ __STD_PRINT_DONE:  LDX STD_VRAM_PTR
                     RTS
 
 __STD_CLEAR_VRAM:  LDX #STD_VRAM_BASE
-                    LDAA #' '
+                    CLRA
 __STD_CLEAR_LOOP:  STAA ,X
                     INX
                     CPX #STD_VRAM_END
@@ -70,6 +72,12 @@ __STD_SCAN_KEY:    LDAA #$0F
                     LDAA #$00
                     STAA STD_VIA_ORA
                     LDAA STD_VIA_ORB
+                    RTS
+
+__STD_TO_VRAM:     CMPA #$1F
+                    BLS __STD_TO_VRAM_EXIT
+                    SUBA #$20
+__STD_TO_VRAM_EXIT:
                     RTS
 
 .bss

@@ -50,6 +50,7 @@ GREETING: .ascii "HI\\0"
     assert any(text.startswith("__STD_CLEAR_VRAM:") for text in emitted)
     assert "JSR __STD_BEEP" in emitted
     assert "JSR __STD_SCAN_KEY" in emitted
+    assert "JSR __STD_TO_VRAM" in emitted
     assert any(text.startswith("__STD_PRINT_DONE:") and "LDX STD_VRAM_PTR" in text for text in emitted)
     assert any("STAA STD_VIA_DDRB" in text for text in emitted)
     assert any("STAA STD_VIA_ORB" in text for text in emitted)

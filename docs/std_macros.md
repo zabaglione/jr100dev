@@ -7,12 +7,13 @@
 ## 提供マクロ
 - `PUT_CHAR` : A レジスタの値を `(X)` に書き込み、X をインクリメント。
 - `PRINT_STR <label>` : VRAM アドレスを指す X を保存し、ラベルの 0 終端文字列を描画して X を更新。
+- `PRINT_STR <label>` : VRAM アドレスを指す X を保存し、ラベルの 0 終端文字列 (ASCII) を VRAM 文字コードへ変換して描画。
 - `CLR_VRAM` : VRAM (`$C100`〜`$C3FF`) をスペースでクリアし、X を先頭に戻す。
 - `BEEP` : VIA (`$C800`) の PB7 をトグルしてビープを鳴らす。
 - `SCAN_KEY` : VIA の下位ポートを使ってキーマトリクスを読み込む（低ニブルを選択→`$C800` から取得）。
 
 ## 常駐サブルーチンと変数
-- サブルーチン `__STD_PRINT_STR` / `__STD_CLEAR_VRAM` / `__STD_BEEP` / `__STD_SCAN_KEY` を自動生成。
+- サブルーチン `__STD_PRINT_STR` / `__STD_CLEAR_VRAM` / `__STD_BEEP` / `__STD_SCAN_KEY` / `__STD_TO_VRAM` を自動生成。
 - ワーク領域（`STD_VRAM_PTR` / `STD_SRC_PTR`）はマクロ内で `.bss` に確保されるため、BASIC ワーク RAM を汚さない。
 - 定数シンボル `STD_VRAM_BASE` / `STD_VRAM_END` / `STD_VIA_ORB` / `STD_VIA_ORA` / `STD_VIA_DDRB` / `STD_VIA_DDRA` を `.equ` で提供。
 
