@@ -12,6 +12,8 @@ jr100dev new mygame
 - `build/`: 出力先ディレクトリ（空）。
 - `.gitignore`: ビルド生成物 (`build/`, `*.bin`, `*.prg`) を除外。
 
+> 詳細は `docs/project_structure.md` を参照。
+
 ## 次のステップ
 1. `cd mygame`
 2. `jr100dev assemble src/main.asm -o build/main.prg`
