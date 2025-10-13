@@ -9,3 +9,5 @@
         .equ TEMP_PTR, PLAYER_Y + 1
         .equ ROW_INDEX, TEMP_PTR + 2
         .equ COL_INDEX, ROW_INDEX + 1
+        .equ TMP_DIRS, COL_INDEX + 1
+        .equ TMP_CHOICE, TMP_DIRS + 1

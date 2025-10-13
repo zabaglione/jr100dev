@@ -31,3 +31,7 @@ ROW_INDEX:
         .byte $00
 COL_INDEX:
         .byte $00
+TMP_DIRS:
+        .byte $00
+TMP_CHOICE:
+        .byte $00
