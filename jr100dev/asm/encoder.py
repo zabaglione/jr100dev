@@ -199,6 +199,11 @@ class Assembler:
                     address = pc
                     size = self._estimate_directive_size(directive, normalized_operands, symbols, line, pc)
                     pc += size
+                elif directive == '.label':
+                    if origin is None:
+                        raise AssemblyError(_format_error(line, ".org must appear before labels"))
+                    address = pc
+                    size = 0
                 else:
                     raise AssemblyError(_format_error(line, f"Unsupported directive {directive}"))
             else:
@@ -262,6 +267,8 @@ class Assembler:
         line: ParsedLine,
         current_pc: int,
     ) -> int:
+        if directive == '.label':
+            return 0
         if directive == '.byte':
             size = 0
             for operand in operands:
@@ -340,6 +347,8 @@ class Assembler:
                     elif line.op == '.res':
                         state.address = pc
                         pc += state.bss_size
+                    elif line.op == '.label':
+                        state.address = pc
                     else:
                         state.address = pc
                         size = self._estimate_directive_size(line.op, state.operands, symbols, line, pc)
@@ -406,14 +415,15 @@ class Assembler:
         line: ParsedLine,
         *,
         allow_relocation: bool,
-    ) -> tuple[int, Optional[str]]:
+    ) -> tuple[int, Optional[str], int]:
         try:
-            return self._eval(expr, symbols, line), None
+            return self._eval(expr, symbols, line), None, 0
         except AssemblyError:
             if allow_relocation:
-                target = _extract_symbol(expr)
-                if target is not None:
-                    return 0, target
+                extracted = _extract_symbol(expr, symbols, f"{self.filename}:{line.line_no}")
+                if extracted is not None:
+                    target, addend = extracted
+                    return 0, target, addend
             raise
 
     def _second_pass(
@@ -473,7 +483,7 @@ class Assembler:
                 elif line.op == '.word':
                     for operand in state.operands:
                         start = pc
-                        value, target = self._resolve_value(operand, symbols, line, allow_relocation=True)
+                        value, target, addend = self._resolve_value(operand, symbols, line, allow_relocation=True)
                         if target is not None:
                             emitted = [0x00, 0x00]
                             relocations.append(
@@ -482,7 +492,7 @@ class Assembler:
                                     offset=start,
                                     type="absolute16",
                                     target=target,
-                                    addend=0,
+                                    addend=addend,
                                 )
                             )
                         else:
@@ -527,6 +537,9 @@ class Assembler:
                         _record_section_chunk(section_chunks, state.section_kind, start, payload)
                         pc += padding
                         emissions.append(LineEmission(line=line, address=start, data=payload))
+                elif line.op == '.label':
+                    emissions.append(LineEmission(line=line, address=state.address, data=[]))
+                    continue
                 else:
                     raise AssemblyError(_format_error(line, f"Unsupported directive {line.op}"))
                 continue
@@ -540,20 +553,46 @@ class Assembler:
                 pass
             elif spec.addressing == 'IMM':
                 operand = state.operands[0]
-                value = self._eval(operand[1:] if operand.startswith('#') else operand, symbols, line)
+                expr = operand[1:] if operand.startswith('#') else operand
+                value, target, addend = self._resolve_value(expr, symbols, line, allow_relocation=True)
+                operand_offset = start + len(opcode_bytes)
                 if spec.size == 2:
-                    if not 0 <= value <= 0xFF:
-                        raise AssemblyError(_format_error(line, f"Immediate value out of range: {value}"))
-                    operand_bytes.append(value & 0xFF)
+                    if target is not None:
+                        operand_bytes.append(0x00)
+                        relocations.append(
+                            Relocation(
+                                section=state.section_kind,
+                                offset=operand_offset,
+                                type="absolute8",
+                                target=target,
+                                addend=addend,
+                            )
+                        )
+                    else:
+                        if not 0 <= value <= 0xFF:
+                            raise AssemblyError(_format_error(line, f"Immediate value out of range: {value}"))
+                        operand_bytes.append(value & 0xFF)
                 elif spec.size == 3:
-                    if not 0 <= value <= 0xFFFF:
-                        raise AssemblyError(_format_error(line, f"Immediate value out of range: {value}"))
-                    operand_bytes.extend([(value >> 8) & 0xFF, value & 0xFF])
+                    if target is not None:
+                        operand_bytes.extend([0x00, 0x00])
+                        relocations.append(
+                            Relocation(
+                                section=state.section_kind,
+                                offset=operand_offset,
+                                type="absolute16",
+                                target=target,
+                                addend=addend,
+                            )
+                        )
+                    else:
+                        if not 0 <= value <= 0xFFFF:
+                            raise AssemblyError(_format_error(line, f"Immediate value out of range: {value}"))
+                        operand_bytes.extend([(value >> 8) & 0xFF, value & 0xFF])
                 else:
                     raise AssemblyError(_format_error(line, f"Unsupported immediate size {spec.size}"))
             elif spec.addressing == 'EXT':
                 operand = state.operands[0]
-                value, target = self._resolve_value(operand, symbols, line, allow_relocation=True)
+                value, target, addend = self._resolve_value(operand, symbols, line, allow_relocation=True)
                 operand_offset = start + len(opcode_bytes)
                 if target is not None:
                     operand_bytes.extend([0x00, 0x00])
@@ -563,7 +602,7 @@ class Assembler:
                             offset=operand_offset,
                             type="absolute16",
                             target=target,
-                            addend=0,
+                            addend=addend,
                         )
                     )
                 else:
@@ -572,7 +611,7 @@ class Assembler:
                     operand_bytes.extend([(value >> 8) & 0xFF, value & 0xFF])
             elif spec.addressing == 'DIR':
                 operand = state.operands[0]
-                value, target = self._resolve_value(operand, symbols, line, allow_relocation=True)
+                value, target, addend = self._resolve_value(operand, symbols, line, allow_relocation=True)
                 operand_offset = start + len(opcode_bytes)
                 if target is not None:
                     operand_bytes.append(0x00)
@@ -582,7 +621,7 @@ class Assembler:
                             offset=operand_offset,
                             type="absolute8",
                             target=target,
-                            addend=0,
+                            addend=addend,
                         )
                     )
                 else:
@@ -591,7 +630,7 @@ class Assembler:
                     operand_bytes.append(value & 0xFF)
             elif spec.addressing == 'REL':
                 operand = state.operands[0]
-                value, target = self._resolve_value(operand, symbols, line, allow_relocation=True)
+                value, target, addend = self._resolve_value(operand, symbols, line, allow_relocation=True)
                 operand_offset = start + len(opcode_bytes)
                 if target is not None:
                     relocations.append(
@@ -600,7 +639,7 @@ class Assembler:
                             offset=operand_offset,
                             type="relative8",
                             target=target,
-                            addend=-(pc + spec.size),
+                            addend=addend - (pc + spec.size),
                         )
                     )
                     operand_bytes.append(0x00)
@@ -784,14 +823,33 @@ def _alignment_padding(current: int, boundary: int) -> int:
     return boundary - remainder
 
 
-def _extract_symbol(expr: str) -> Optional[str]:
+def _extract_symbol(expr: str, symbols: Dict[str, int], location: str) -> Optional[tuple[str, int]]:
     token = expr.strip()
     if not token:
         return None
-    if token.startswith('<') or token.startswith('>'):
+    while token and token[0] in ('#', '<', '>'):
         token = token[1:].strip()
-    if token.startswith('#'):
-        token = token[1:].strip()
-    if token.isidentifier():
-        return token.upper()
-    return None
+    if not token:
+        return None
+
+    symbol_part = token
+    addend_expr = ''
+    depth = 0
+    for idx, ch in enumerate(token):
+        if ch == '(':
+            depth += 1
+        elif ch == ')':
+            depth = max(depth - 1, 0)
+        elif depth == 0 and ch in '+-' and idx > 0:
+            symbol_part = token[:idx].strip()
+            addend_expr = token[idx:].strip()
+            break
+
+    if not symbol_part or not symbol_part.isidentifier():
+        return None
+
+    symbol_name = symbol_part.upper()
+    addend = 0
+    if addend_expr:
+        addend = evaluate(addend_expr, symbols, location)
+    return symbol_name, addend

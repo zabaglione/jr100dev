@@ -143,7 +143,18 @@ def run_link(args: argparse.Namespace) -> int:
 
     program_name = (args.name or args.output.stem).upper()[:32]
     comment = args.comment or ""
-    segment_payloads = [(segment.address, segment.data) for segment in result.segments] or None
+    segment_payloads = None
+    if result.segments:
+        segment_payloads = []
+        for segment in result.segments:
+            start = segment.address - result.origin
+            if start < 0 or start + len(segment.data) > len(result.image):
+                # Segment extends beyond generated image; skip (likely pure BSS)
+                continue
+            relocated = bytes(result.image[start : start + len(segment.data)])
+            segment_payloads.append((segment.address, relocated))
+        if not segment_payloads:
+            segment_payloads = None
     prg_bytes = pack_prg(
         result.origin,
         result.image,

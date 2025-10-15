@@ -1,13 +1,7 @@
         .org $0300
-        JMP START
 
-        .include "macro.inc"
-        .include "ctl.inc"
-        .include "common.inc"
-        .include "maze_symbols.inc"
-
-MAZE_GENERATE_ADDR .equ $0700
-
+; メインループは `maze_gen.asm` 内の MAZE_MAIN に処理を委譲し、
+; プレイ終了時も即座に再スタートする構成としている。
 START:
-        JSR MAZE_GENERATE_ADDR
-        RTS
+        JSR MAZE_MAIN
+        BRA START

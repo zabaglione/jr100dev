@@ -34,6 +34,16 @@ def parse_source(source: str) -> List[ParsedLine]:
             label = label_part.strip().upper()
             rest = rest_part.strip()
             if not rest:
+                lines.append(
+                    ParsedLine(
+                        line_no=idx,
+                        text=raw.rstrip(),
+                        label=label,
+                        op='.label',
+                        operands=[],
+                        is_directive=True,
+                    )
+                )
                 continue
         if not rest:
             raise ParserError(f"Missing statement after label at line {idx}")

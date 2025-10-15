@@ -125,6 +125,39 @@ CONST:  .byte $AA, $55
     assert result.symbols["CONST"] == 0x0300
 
 
+def test_label_only_line_preserves_symbol():
+    source = """
+        .org $0400
+HEAD:
+ENTRY:
+        NOP
+        BRA ENTRY
+    """
+    result = assemble(source)
+    assert result.machine_code == bytes([0x01, 0x20, 0xFD])
+    assert result.symbols["HEAD"] == 0x0400
+    assert result.symbols["ENTRY"] == 0x0400
+
+
+def test_relocations_with_addends():
+    source = """
+        .org $0200
+        LDAA #<EXTSYM+3
+        LDX #EXTSYM+4
+        BRA EXTLABEL
+    """
+    result = assemble(source)
+    reloc_entries = {
+        (reloc["target"], reloc["type"], reloc["addend"])
+        for reloc in result.to_object_dict()["relocations"]
+    }
+    assert reloc_entries == {
+        ("EXTSYM", "absolute8", 3),
+        ("EXTSYM", "absolute16", 4),
+        ("EXTLABEL", "relative8", -519),
+    }
+
+
 def test_cli_object_output(tmp_path):
     src = tmp_path / "prog.asm"
     src.write_text(
