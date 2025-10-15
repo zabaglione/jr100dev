@@ -82,6 +82,11 @@ MENU_OPTION_EASY:   .ascii "EASY   (11 X 11)\0"
 MENU_OPTION_NORMAL: .ascii "NORMAL (21 X 21)\0"
 MENU_OPTION_HARD:   .ascii "HARD   (41 X 41)\0"
 
+GOAL_MENU_HEADER:        .ascii "  MENU\0"
+GOAL_MENU_ITEM_RESTART:  .ascii " RESTART\0"
+GOAL_MENU_ITEM_TITLE:    .ascii "  TITLE\0"
+GOAL_MENU_ITEM_RESUME:   .ascii " RESUME\0"
+
 ; プレイヤー位置と描画・入力に関する状態変数。
 PLAYER_X:
         .byte PLAYER_START_X
@@ -112,6 +117,12 @@ INPUT_FLAGS:
 MOVE_COUNT_LO:
         .byte $00
 MOVE_COUNT_HI:
+        .byte $00
+GOAL_MENU_ACTIVE:
+        .byte $00
+GOAL_MENU_SELECTED:
+        .byte $00
+GOAL_MENU_WAIT_RELEASE:
         .byte $00
 DEBUG_NEXT_VISITED:
         .byte $00
