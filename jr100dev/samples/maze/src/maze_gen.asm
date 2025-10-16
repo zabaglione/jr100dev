@@ -1183,10 +1183,15 @@ MAZE_COL_LOOP:
         STX SCR_PTR_SRC
         CMPA #'#'
         BEQ MAZE_STORE_HASH
+        CMPA #'G'
+        BEQ MAZE_STORE_GOAL
         LDAA #$40
         BRA MAZE_STORE_CHAR
 MAZE_STORE_HASH:
         LDAA #$03
+        BRA MAZE_STORE_CHAR
+MAZE_STORE_GOAL:
+        JSR __STD_TO_VRAM
 MAZE_STORE_CHAR:
         LDX SCR_PTR_DST
         STAA ,X
@@ -1478,7 +1483,17 @@ MDO_ADD:
 
 ; ゴール到達時にメッセージを表示し、約3秒待機する。
 MAZE_DISPLAY_GOAL_MESSAGE:
-        CLR_VRAM
+        LDAA #GOAL_MSG_ROW
+        DECA
+        STAA ROW_INDEX
+        LDAA #GOAL_MSG_COL
+        STAA COL_INDEX
+        JSR MAZE_VRAM_PTR_FROM_RC
+        LDX TEMP_PTR
+        STX STD_VRAM_PTR
+        LDX #GOAL_MSG_PAD
+        JSR __STD_PRINT_STR
+
         LDAA #GOAL_MSG_ROW
         STAA ROW_INDEX
         LDAA #GOAL_MSG_COL
@@ -1488,14 +1503,25 @@ MAZE_DISPLAY_GOAL_MESSAGE:
         STX STD_VRAM_PTR
         LDX #GOAL_MESSAGE
         JSR __STD_PRINT_STR
+
+        LDAA #GOAL_MSG_ROW
+        INCA
+        STAA ROW_INDEX
+        LDAA #GOAL_MSG_COL
+        STAA COL_INDEX
+        JSR MAZE_VRAM_PTR_FROM_RC
+        LDX TEMP_PTR
+        STX STD_VRAM_PTR
+        LDX #GOAL_MSG_PAD
+        JSR __STD_PRINT_STR
         JSR MAZE_WAIT_GOAL_DELAY
         RTS
 
 MAZE_WAIT_GOAL_DELAY:
-        LDAA #6
+        LDAA #2
         STAA TMP_MASK
 MWGD_OUTER:
-        LDAB #255
+        LDAB #200
 MWGD_INNER:
         JSR WAIT_2MS
         DECB

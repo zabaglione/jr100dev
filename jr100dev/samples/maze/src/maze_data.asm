@@ -82,7 +82,8 @@ MENU_OPTION_EASY:   .ascii "EASY   (11 X 11)\0"
 MENU_OPTION_NORMAL: .ascii "NORMAL (21 X 21)\0"
 MENU_OPTION_HARD:   .ascii "HARD   (41 X 41)\0"
 
-GOAL_MESSAGE:       .ascii "GOAL!!!\0"
+GOAL_MESSAGE:       .ascii "  G O A L ! ! !  \0"
+GOAL_MSG_PAD:       .ascii "                 \0"
 
 ; プレイヤー位置と描画・入力に関する状態変数。
 PLAYER_X:
