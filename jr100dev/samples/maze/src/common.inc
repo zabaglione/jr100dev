@@ -27,4 +27,4 @@ PLAYER_START_Y: .equ 1
 PLAYER_GLYPH:   .equ '@'
 
 GOAL_MSG_ROW: .equ 11
-GOAL_MSG_COL: .equ 12
+GOAL_MSG_COL: .equ 9
