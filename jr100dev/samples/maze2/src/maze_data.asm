@@ -180,6 +180,10 @@ ENEMY_DIR:
         .fill ENEMY_MAX, $00
 ENEMY_TURN_DELAY:
         .fill ENEMY_MAX, $00
+ENEMY_TARGET_DIR:
+        .fill ENEMY_MAX, $00
+ENEMY_CHASE_TIMER:
+        .fill ENEMY_MAX, $00
 
 BULLET_ACTIVE:
         .byte $00

@@ -1554,6 +1554,243 @@ MCI_EXIT:
         STX SCR_PTR_DST
         RTS
 
+; 敵をプレイヤー方向へ一歩進める（即座の反転は禁止）。
+MAZE_UPDATE_ENEMIES:
+        LDAA ENEMY_COUNT
+        BNE MUE_INIT
+        RTS
+MUE_INIT:
+        STAA TMP_DIR_COUNT
+        LDX #ENEMY_ACTIVE
+        STX SCR_PTR_DST
+        LDX #ENEMY_X
+        STX SCR_PTR_SRC
+        LDX #ENEMY_Y
+        STX CUR_CELL_POS
+        LDX #ENEMY_DIR
+        STX NEXT_CELL_POS
+MUE_LOOP:
+        LDAA TMP_DIR_COUNT
+        BNE MUE_PROCESS
+        JMP MUE_DONE
+MUE_PROCESS:
+        LDX SCR_PTR_DST
+        LDAA ,X
+        BNE MUE_ACTIVE
+        JMP MUE_SKIP
+MUE_ACTIVE:
+
+        LDX SCR_PTR_SRC
+        LDAA ,X
+        STAA WORLD_COL
+        LDX CUR_CELL_POS
+        LDAA ,X
+        STAA WORLD_ROW
+        LDX NEXT_CELL_POS
+        LDAA ,X
+        STAA TMP_MASK
+
+        LDAA PLAYER_X
+        SUBA WORLD_COL
+        STAA TMP_CHOICE
+        LDAA PLAYER_Y
+        SUBA WORLD_ROW
+        STAA TMP_DIR_MASK
+
+        LDAA TMP_CHOICE
+        BPL MUE_AX_POS
+        EORA #$FF
+        ADDA #1
+MUE_AX_POS:
+        STAA CHAR_OFFSET_LO
+        LDAA TMP_DIR_MASK
+        BPL MUE_AY_POS
+        EORA #$FF
+        ADDA #1
+MUE_AY_POS:
+        STAA CHAR_OFFSET_HI
+
+        LDAA TMP_CHOICE
+        BNE MUE_HAVE_DX
+        LDAA TMP_DIR_MASK
+        BEQ MUE_DES_CUR
+        BRA MUE_USE_Y
+MUE_HAVE_DX:
+        LDAA CHAR_OFFSET_LO
+        CMPA CHAR_OFFSET_HI
+        BHI MUE_USE_X
+MUE_USE_Y:
+        LDAA TMP_DIR_MASK
+        BMI MUE_DES_N
+        LDAA #DIR_S
+        BRA MUE_DES_READY
+MUE_DES_N:
+        LDAA #DIR_N
+        BRA MUE_DES_READY
+MUE_USE_X:
+        LDAA TMP_CHOICE
+        BMI MUE_DES_W
+        LDAA #DIR_E
+        BRA MUE_DES_READY
+MUE_DES_W:
+        LDAA #DIR_W
+        BRA MUE_DES_READY
+MUE_DES_CUR:
+        LDAA TMP_MASK
+MUE_DES_READY:
+        STAA CHAR_OFFSET_HI      ; desired dir
+
+        LDAA TMP_MASK
+        CMPA #DIR_N
+        BEQ MUE_TBL_N
+        CMPA #DIR_E
+        BEQ MUE_TBL_E
+        CMPA #DIR_S
+        BEQ MUE_TBL_S
+        BRA MUE_TBL_W
+MUE_TBL_N:
+        LDAA #DIR_W
+        STAA CHAR_OFFSET_LO
+        LDAA #DIR_E
+        STAA TMP_CHOICE
+        LDAA #DIR_S
+        STAA TMP_DIR_MASK
+        BRA MUE_CHOOSE
+MUE_TBL_E:
+        LDAA #DIR_N
+        STAA CHAR_OFFSET_LO
+        LDAA #DIR_S
+        STAA TMP_CHOICE
+        LDAA #DIR_W
+        STAA TMP_DIR_MASK
+        BRA MUE_CHOOSE
+MUE_TBL_S:
+        LDAA #DIR_E
+        STAA CHAR_OFFSET_LO
+        LDAA #DIR_W
+        STAA TMP_CHOICE
+        LDAA #DIR_N
+        STAA TMP_DIR_MASK
+        BRA MUE_CHOOSE
+MUE_TBL_W:
+        LDAA #DIR_S
+        STAA CHAR_OFFSET_LO
+        LDAA #DIR_N
+        STAA TMP_CHOICE
+        LDAA #DIR_E
+        STAA TMP_DIR_MASK
+
+MUE_CHOOSE:
+        LDAA CHAR_OFFSET_HI      ; desired
+        CMPA TMP_MASK
+        BEQ MUE_KEEP
+        CMPA CHAR_OFFSET_LO
+        BEQ MUE_SET_LEFT
+        CMPA TMP_CHOICE
+        BEQ MUE_SET_RIGHT
+        CMPA TMP_DIR_MASK        ; opposite
+        BEQ MUE_SET_LEFT
+        LDAA CHAR_OFFSET_LO
+        BRA MUE_STORE
+MUE_SET_LEFT:
+        LDAA CHAR_OFFSET_LO
+        BRA MUE_STORE
+MUE_SET_RIGHT:
+        LDAA TMP_CHOICE
+        BRA MUE_STORE
+MUE_KEEP:
+        LDAA TMP_MASK
+MUE_STORE:
+        STAA TMP_MASK
+        LDX NEXT_CELL_POS
+        STAA ,X
+
+        LDAA WORLD_COL
+        STAA CHAR_COL_BASE
+        LDAA WORLD_ROW
+        STAA CHAR_ROW_BASE
+        LDAA TMP_MASK
+        CMPA #DIR_N
+        BEQ MUE_STEP_N
+        CMPA #DIR_E
+        BEQ MUE_STEP_E
+        CMPA #DIR_S
+        BEQ MUE_STEP_S
+        BRA MUE_STEP_W
+MUE_STEP_N:
+        LDAA CHAR_ROW_BASE
+        BEQ MUE_COLLISION
+        DECA
+        STAA CHAR_ROW_BASE
+        BRA MUE_CHECK_TILE
+MUE_STEP_S:
+        LDAA CHAR_ROW_BASE
+        CMPA CUR_CHAR_MAX_Y
+        BEQ MUE_COLLISION
+        INCA
+        STAA CHAR_ROW_BASE
+        BRA MUE_CHECK_TILE
+MUE_STEP_E:
+        LDAA CHAR_COL_BASE
+        CMPA CUR_CHAR_MAX_X
+        BEQ MUE_COLLISION
+        INCA
+        STAA CHAR_COL_BASE
+        BRA MUE_CHECK_TILE
+MUE_STEP_W:
+        LDAA CHAR_COL_BASE
+        BEQ MUE_COLLISION
+        DECA
+        STAA CHAR_COL_BASE
+
+MUE_CHECK_TILE:
+        LDAA CHAR_ROW_BASE
+        STAA ROW_INDEX
+        LDAA CHAR_COL_BASE
+        STAA COL_INDEX
+        JSR MAZE_MAP_PTR_FROM_COORD
+        LDX TEMP_PTR
+        LDAA ,X
+        CMPA #'#'
+        BEQ MUE_COLLISION
+        LDX SCR_PTR_SRC
+        LDAA CHAR_COL_BASE
+        STAA ,X
+        STAA WORLD_COL
+        LDX CUR_CELL_POS
+        LDAA CHAR_ROW_BASE
+        STAA ,X
+        STAA WORLD_ROW
+MUE_COLLISION:
+        LDAA WORLD_COL
+        CMPA PLAYER_X
+        BNE MUE_SKIP
+        LDAA WORLD_ROW
+        CMPA PLAYER_Y
+        BNE MUE_SKIP
+        LDAA STATUS_FLAGS
+        ORAA #STATUS_DEAD_FLAG
+        STAA STATUS_FLAGS
+
+MUE_SKIP:
+        LDX SCR_PTR_DST
+        INX
+        STX SCR_PTR_DST
+        LDX SCR_PTR_SRC
+        INX
+        STX SCR_PTR_SRC
+        LDX CUR_CELL_POS
+        INX
+        STX CUR_CELL_POS
+        LDX NEXT_CELL_POS
+        INX
+        STX NEXT_CELL_POS
+        DEC TMP_DIR_COUNT
+        JMP MUE_LOOP
+
+MUE_DONE:
+        RTS
+
 MAZE_DRAW_ENEMY_OVERLAY:
         LDAA ENEMY_COUNT
         BEQ MDE_DONE
@@ -1602,6 +1839,24 @@ MDE_DONE:
         RTS
 
 MAZE_DRAW_BULLET_OVERLAY:
+        RTS
+
+MAZE_UPDATE_BULLET:
+        RTS
+
+MAZE_ADVANCE_LEVEL:
+        LDAA STATUS_FLAGS
+        ANDA #$FB               ; clear STAGE_CLEAR flag
+        STAA STATUS_FLAGS
+        LDAA CURRENT_LEVEL_INDEX
+        CMPA #2                ; LEVEL_COUNT - 1
+        BCS MAL_NEXT_LEVEL
+        LDAA #0
+        STAA CURRENT_LEVEL_INDEX
+        RTS
+MAL_NEXT_LEVEL:
+        INCA
+        STAA CURRENT_LEVEL_INDEX
         RTS
 
 ; プレイヤーの見かけ位置を算出して VRAM 上に '@' を描画する。
@@ -1706,7 +1961,13 @@ MAZE_RUN_START:
         JSR MAZE_DRAW_PLAYER
 MAZE_RUNTIME_LOOP:
         JSR MAZE_TIMER_TICK
+        JSR MAZE_UPDATE_ENEMIES
+        JSR MAZE_UPDATE_BULLET
         LDAA STATUS_FLAGS
+        BITA #STATUS_DEAD_FLAG
+        BNE MRL_TIME_UP
+        BITA #STATUS_STAGE_CLEAR_FLAG
+        BNE MRL_STAGE_CLEAR
         BITA #STATUS_TIME_FLAG
         BNE MRL_TIME_UP
         JSR MAZE_POLL_INPUT
@@ -1715,6 +1976,10 @@ MAZE_RUNTIME_LOOP:
         JSR MAZE_PROCESS_INPUT
         CMPA #MAZE_EXIT_CONTINUE
         BEQ MAZE_RUNTIME_LOOP
+        RTS
+MRL_STAGE_CLEAR:
+        JSR MAZE_ADVANCE_LEVEL
+        LDAA #MAZE_EXIT_RESTART
         RTS
 MRL_TIME_UP:
         LDAA #MAZE_EXIT_TITLE
