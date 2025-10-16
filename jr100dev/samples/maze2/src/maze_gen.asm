@@ -1075,7 +1075,11 @@ MAZE_INIT_STATE:
         STAA INPUT_FLAGS
         STAA MOVE_COUNT_LO
         STAA MOVE_COUNT_HI
+        STAA BULLET_ACTIVE
+        STAA BULLET_DELAY
         JSR MAZE_CONFIGURE_INPUT
+        JSR MAZE_RESET_TIMER
+        JSR MAZE_RESET_ITEMS
         JSR MAZE_CENTER_VIEW
         JSR MAZE_FORMAT_STEPS
         RTS
@@ -1087,6 +1091,60 @@ MAZE_CONFIGURE_INPUT:
         CLRA
         STAA STD_VIA_DDRB
         STAA STD_VIA_ORA
+        RTS
+
+MAZE_RESET_TIMER:
+        LDAA #LEVEL_TIME_LIMIT
+        STAA TIME_REMAIN_LO
+        CLRA
+        STAA TIME_REMAIN_HI
+        LDAA TIME_TICK_RESET_LO
+        STAA TIME_TICK_LO
+        LDAA TIME_TICK_RESET_HI
+        STAA TIME_TICK_HI
+        RTS
+
+MAZE_RESET_ITEMS:
+        LDAA #ITEM_COUNT
+        STAA ITEM_REMAIN_COUNT
+        LDX #ITEM_COLLECTED
+        LDAB #ITEM_COUNT
+MRI_CLR_LOOP:
+        CLRA
+        STAA ,X
+        INX
+        DECB
+        BNE MRI_CLR_LOOP
+
+        LDAA CURRENT_LEVEL_INDEX
+        STAA TMP_CHOICE
+        LDX #LEVEL_ITEM_TABLE
+MRI_SKIP_LEVEL:
+        LDAA TMP_CHOICE
+        BEQ MRI_SOURCE_READY
+        LDAB #ITEM_PAIR_BYTES
+MRI_SKIP_BYTES:
+        INX
+        DECB
+        BNE MRI_SKIP_BYTES
+        DEC TMP_CHOICE
+        BRA MRI_SKIP_LEVEL
+MRI_SOURCE_READY:
+        STX SCR_PTR_SRC
+        LDX #ITEM_POSITIONS
+        STX SCR_PTR_DST
+        LDAB #ITEM_PAIR_BYTES
+MRI_COPY_LOOP:
+        LDX SCR_PTR_SRC
+        LDAA ,X
+        INX
+        STX SCR_PTR_SRC
+        LDX SCR_PTR_DST
+        STAA ,X
+        INX
+        STX SCR_PTR_DST
+        DECB
+        BNE MRI_COPY_LOOP
         RTS
 
 ; プレイヤーを画面中央に近づけるようビュー原点を調整する。
@@ -1169,6 +1227,7 @@ MRV_COL_PROCESS:
         LDAA VIEW_ORIGIN_Y
         ADDA TILE_ROW_REL
         STAA ROW_INDEX
+        STAA WORLD_ROW
         LDAA ROW_INDEX
         CMPA CUR_CHAR_H
         BCC MRV_ROW_IN_RANGE
@@ -1178,6 +1237,7 @@ MRV_ROW_IN_RANGE:
         LDAA VIEW_ORIGIN_X
         ADDA TILE_COL_REL
         STAA COL_INDEX
+        STAA WORLD_COL
         LDAA COL_INDEX
         CMPA CUR_CHAR_W
         BCC MRV_COL_IN_RANGE
@@ -1266,7 +1326,7 @@ MDTB_SUBROW_NEXT:
 MDTB_AFTER_BASE:
         LDAA TMP_MASK
         CMPA #'G'
-        BNE MDTB_DONE
+        BNE MDTB_ITEM_CHECK
         LDAA CHAR_ROW_BASE
         ADDA #MAZE_TILE_CENTER_OFF
         STAA ROW_INDEX
@@ -1278,7 +1338,109 @@ MDTB_AFTER_BASE:
         LDAA #'G'
         JSR __STD_TO_VRAM
         STAA ,X
+        BRA MDTB_ITEM_FINISH
+
+MDTB_ITEM_CHECK:
+        ; no additional overlay for base tile
+MDTB_ITEM_FINISH:
+        JSR MAZE_DRAW_ITEM_OVERLAY
 MDTB_DONE:
+        RTS
+
+MAZE_DRAW_ITEM_OVERLAY:
+        LDX #ITEM_POSITIONS
+        STX SCR_PTR_SRC
+        LDX #ITEM_COLLECTED
+        STX SCR_PTR_DST
+        LDAB #ITEM_COUNT
+MDIO_LOOP:
+        LDX SCR_PTR_DST
+        LDAA ,X
+        BNE MDIO_ADVANCE
+        LDX SCR_PTR_SRC
+        LDAA ,X
+        CMPA WORLD_COL
+        BNE MDIO_ADVANCE
+        LDAA 1,X
+        CMPA WORLD_ROW
+        BNE MDIO_ADVANCE
+        LDAA WORLD_ROW
+        STAA ROW_INDEX
+        LDAA WORLD_COL
+        STAA COL_INDEX
+        JSR MAZE_VRAM_PTR_FROM_RC
+        LDX TEMP_PTR
+        LDAA #ITEM_SYMBOL
+        JSR __STD_TO_VRAM
+        STAA ,X
+        BRA MDIO_AFTER
+MDIO_ADVANCE:
+        LDX SCR_PTR_SRC
+        INX
+        INX
+        STX SCR_PTR_SRC
+        LDX SCR_PTR_DST
+        INX
+        STX SCR_PTR_DST
+        DECB
+        BNE MDIO_LOOP
+        RTS
+MDIO_AFTER:
+        LDX SCR_PTR_SRC
+        INX
+        INX
+        STX SCR_PTR_SRC
+        LDX SCR_PTR_DST
+        INX
+        STX SCR_PTR_DST
+        DECB
+        BNE MDIO_LOOP
+        RTS
+
+MAZE_COLLECT_ITEM:
+        LDX #ITEM_POSITIONS
+        STX SCR_PTR_SRC
+        LDX #ITEM_COLLECTED
+        STX SCR_PTR_DST
+        LDAB #ITEM_COUNT
+MCI_LOOP:
+        LDX SCR_PTR_DST
+        LDAA ,X
+        BNE MCI_ADVANCE
+        LDX SCR_PTR_SRC
+        LDAA ,X
+        CMPA PLAYER_X
+        BNE MCI_ADVANCE
+        LDAA 1,X
+        CMPA PLAYER_Y
+        BNE MCI_ADVANCE
+        LDX SCR_PTR_DST
+        LDAA #1
+        STAA ,X
+        LDAA ITEM_REMAIN_COUNT
+        BEQ MCI_EXIT
+        DECA
+        STAA ITEM_REMAIN_COUNT
+        BRA MCI_EXIT
+MCI_ADVANCE:
+        LDX SCR_PTR_SRC
+        INX
+        INX
+        STX SCR_PTR_SRC
+        LDX SCR_PTR_DST
+        INX
+        STX SCR_PTR_DST
+        DECB
+        BNE MCI_LOOP
+        RTS
+MCI_EXIT:
+        LDX SCR_PTR_SRC
+        INX
+        INX
+        STX SCR_PTR_SRC
+        LDX SCR_PTR_DST
+        INX
+        STX SCR_PTR_DST
         RTS
 
 ; プレイヤーの見かけ位置を算出して VRAM 上に '@' を描画する。
@@ -1382,6 +1544,10 @@ MAZE_RUN_START:
         JSR MAZE_DRAW_OVERLAY
         JSR MAZE_DRAW_PLAYER
 MAZE_RUNTIME_LOOP:
+        JSR MAZE_TIMER_TICK
+        LDAA STATUS_FLAGS
+        BITA #STATUS_TIME_FLAG
+        BNE MRL_TIME_UP
         JSR MAZE_POLL_INPUT
         LDAA INPUT_FLAGS
         BEQ MAZE_RUNTIME_LOOP
@@ -1389,12 +1555,21 @@ MAZE_RUNTIME_LOOP:
         CMPA #MAZE_EXIT_CONTINUE
         BEQ MAZE_RUNTIME_LOOP
         RTS
+MRL_TIME_UP:
+        LDAA #MAZE_EXIT_TITLE
+        RTS
 
 ; 入力内容に応じてゲーム状態を更新する。ゴール後は再スタート待ちのみ。
 MAZE_PROCESS_INPUT:
         LDAA STATUS_FLAGS
+        BITA #STATUS_TIME_FLAG
+        BNE MPI_TIME_UP
+        LDAA STATUS_FLAGS
         BITA #STATUS_GOAL_FLAG
         BEQ MPI_HANDLE_MOVE
+        LDAA #MAZE_EXIT_TITLE
+        RTS
+MPI_TIME_UP:
         LDAA #MAZE_EXIT_TITLE
         RTS
 MPI_HANDLE_MOVE:
@@ -1490,6 +1665,7 @@ MHM_PASS_RIGHT:
 MHM_MOVED:
         JSR MAZE_INCREMENT_STEPS
         JSR MAZE_SCROLL_TO_PLAYER
+        JSR MAZE_COLLECT_ITEM
         JSR MAZE_RENDER_VIEW
         JSR MAZE_DRAW_OVERLAY
         JSR MAZE_DRAW_PLAYER
@@ -1589,27 +1765,37 @@ MSP_DONE_SCROLL:
 
 ; 画面下部にステップ数 (MOV) を描画する。
 MAZE_DRAW_OVERLAY:
-        JSR MAZE_FORMAT_STEPS
-        ; bottom row pointer
+        JSR MAZE_FORMAT_TIME
         LDAA #HUD_ROW_INDEX
-        STAA CHAR_OFFSET_LO
-        CLRA
-        STAA CHAR_OFFSET_HI
-        LDAA #5
-        STAA TEMP_SHIFT
-MDO_SHIFT:
-        LDAA TEMP_SHIFT
-        BEQ MDO_ADD
-        ASL CHAR_OFFSET_LO
-        ROL CHAR_OFFSET_HI
-        DEC TEMP_SHIFT
-        BRA MDO_SHIFT
-MDO_ADD:
-        LDX #STD_VRAM_BASE
-        STX TEMP_PTR
-        ADD16 TEMP_PTR+1, TEMP_PTR, CHAR_OFFSET_LO, CHAR_OFFSET_HI
+        STAA ROW_INDEX
+        LDAA #HUD_TIME_COL
+        STAA COL_INDEX
+        JSR MAZE_VRAM_PTR_FROM_RC
         LDX TEMP_PTR
-        PRINT_STR HUD_STEPS_BUF
+        STX STD_VRAM_PTR
+        LDX #HUD_TIME_BUF
+        JSR __STD_PRINT_STR
+
+        LDAA #HUD_ROW_INDEX
+        STAA ROW_INDEX
+        LDAA #HUD_ITEM_COL
+        STAA COL_INDEX
+        JSR MAZE_VRAM_PTR_FROM_RC
+        LDX TEMP_PTR
+        STX STD_VRAM_PTR
+        LDX #HUD_ITEM_BUF
+        JSR __STD_PRINT_STR
+
+        JSR MAZE_FORMAT_STEPS
+        LDAA #HUD_ROW_INDEX
+        STAA ROW_INDEX
+        LDAA #HUD_STEP_COL
+        STAA COL_INDEX
+        JSR MAZE_VRAM_PTR_FROM_RC
+        LDX TEMP_PTR
+        STX STD_VRAM_PTR
+        LDX #HUD_STEPS_BUF
+        JSR __STD_PRINT_STR
         RTS
 
 ; ゴール到達時にメッセージを表示し、約3秒待機する。
@@ -1714,6 +1900,105 @@ MAZE_FORMAT_STEPS:
         PULB
         RTS
 
+MAZE_FORMAT_TIME:
+        PSHB
+        LDAA #'0'
+        STAA HUD_TIME_BUF + 5
+        STAA HUD_TIME_BUF + 6
+        STAA HUD_TIME_BUF + 7
+        STAA HUD_TIME_BUF + 8
+
+        LDAA TIME_REMAIN_LO
+        STAA TIME_TMP_LO
+
+        CLRA
+        STAA TMP_CHOICE
+MFT_HUND_LOOP:
+        LDAA TIME_TMP_LO
+        CMPA #100
+        BCC MFT_HUND_DONE
+        SUBA #100
+        STAA TIME_TMP_LO
+        INC TMP_CHOICE
+        BRA MFT_HUND_LOOP
+MFT_HUND_DONE:
+        LDAA TMP_CHOICE
+        ADDA #'0'
+        STAA HUD_TIME_BUF + 6
+
+        CLRA
+        STAA TMP_CHOICE
+MFT_TENS_LOOP:
+        LDAA TIME_TMP_LO
+        CMPA #10
+        BCC MFT_TENS_DONE
+        SUBA #10
+        STAA TIME_TMP_LO
+        INC TMP_CHOICE
+        BRA MFT_TENS_LOOP
+MFT_TENS_DONE:
+        LDAA TMP_CHOICE
+        ADDA #'0'
+        STAA HUD_TIME_BUF + 7
+
+        LDAA TIME_TMP_LO
+        ADDA #'0'
+        STAA HUD_TIME_BUF + 8
+
+        LDAA ITEM_REMAIN_COUNT
+        ADDA #'0'
+        STAA HUD_ITEM_BUF + 5
+        PULB
+        RTS
+
+MAZE_TIMER_TICK:
+        JSR WAIT_2MS
+        LDAA TIME_TICK_LO
+        ORAA TIME_TICK_HI
+        BNE MTT_NOT_ZERO
+        JSR MAZE_DECREMENT_TIME
+        LDAA TIME_REMAIN_LO
+        ORAA TIME_REMAIN_HI
+        BNE MTT_RESET
+        LDAA STATUS_FLAGS
+        ORAA #STATUS_TIME_FLAG
+        STAA STATUS_FLAGS
+MTT_RESET:
+        LDAA TIME_TICK_RESET_LO
+        STAA TIME_TICK_LO
+        LDAA TIME_TICK_RESET_HI
+        STAA TIME_TICK_HI
+        RTS
+MTT_NOT_ZERO:
+        LDAA TIME_TICK_LO
+        BNE MTT_DEC_LO
+        LDAA TIME_TICK_HI
+        DECA
+        STAA TIME_TICK_HI
+        LDAA #$FF
+        STAA TIME_TICK_LO
+        RTS
+MTT_DEC_LO:
+        DECA
+        STAA TIME_TICK_LO
+        RTS
+
+MAZE_DECREMENT_TIME:
+        LDAA TIME_REMAIN_LO
+        BEQ MDT_CHECK_HI
+        DECA
+        STAA TIME_REMAIN_LO
+        RTS
+MDT_CHECK_HI:
+        LDAA TIME_REMAIN_HI
+        BEQ MDT_DONE
+        DECA
+        STAA TIME_REMAIN_HI
+        LDAA #$FF
+        STAA TIME_REMAIN_LO
+MDT_DONE:
+        RTS
+
 ; 約2ms待機 (CPUクロック 0.894MHz を前提とした概算)。
 WAIT_2MS:
         LDX #$0190              ; 400 ループ ≒ 0.5 秒 / 250 カウント
@@ -1725,8 +2010,3 @@ W2_LOOP:
         DEX
         BNE W2_LOOP
         RTS
-
-        .data
-HUD_STEPS_BUF:
-        .byte $4D,$4F,$56,$3A,$30,$30,$30,$30,$00
-        .code

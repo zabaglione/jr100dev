@@ -26,6 +26,9 @@ MAZE_VIEW_CHAR_Y_OFF:.equ 1
 MAZE_TILE_CENTER_OFF:.equ 1
 
 HUD_ROW_INDEX:       .equ 23
+HUD_TIME_COL:       .equ 2
+HUD_ITEM_COL:       .equ 16
+HUD_STEP_COL:       .equ 28
 
 ; ---- ゲーム要素 -------------------------------------------------------
 
@@ -34,6 +37,7 @@ PLAYER_START_Y:      .equ 1
 PLAYER_GLYPH:        .equ '@'
 
 ITEM_COUNT:          .equ 5
+ITEM_PAIR_BYTES:     .equ (ITEM_COUNT * 2)
 ENEMY_MAX:           .equ 4          ; ステージ同時出現上限
 BULLET_MAX:          .equ 1
 LEVEL_TIME_LIMIT:    .equ 180        ; 秒

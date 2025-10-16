@@ -73,6 +73,14 @@ MAZE_LEVEL_PARAMS:
         .byte 21,21,1
         .byte 41,41,2
 
+LEVEL_ITEM_TABLE:
+        ; EASY (11x11)
+        .byte 2,2, 4,5, 7,3, 8,7, 3,8
+        ; NORMAL (21x21)
+        .byte 3,3, 10,4, 15,9, 6,15, 18,12
+        ; HARD (41x41)
+        .byte 5,5, 12,7, 20,12, 30,18, 34,27
+
 MENU_OPTION_COUNT: .equ 3
 
 MENU_TITLE_LINE1: .ascii "          MAZE2 SAMPLE\0"
@@ -125,6 +133,18 @@ MOVE_COUNT_HI:
 TIME_REMAIN_LO:
         .byte $00
 TIME_REMAIN_HI:
+        .byte $00
+ITEM_REMAIN_COUNT:
+        .byte $00
+TIME_TICK_LO:
+        .byte $F4
+TIME_TICK_HI:
+        .byte $01
+TIME_TICK_RESET_LO:
+        .byte $F4
+TIME_TICK_RESET_HI:
+        .byte $01
+TIME_TMP_LO:
         .byte $00
 
 ; アイテム／敵／弾丸の状態
@@ -211,5 +231,18 @@ SUBROW_INDEX:
         .byte $00
 BULLET_DELAY:
         .byte $00
+WORLD_ROW:
+        .byte $00
+WORLD_COL:
+        .byte $00
 RNG_SEED:
         .byte $5A
+
+        .data
+HUD_TIME_BUF:
+        .byte $54,$49,$4D,$45,$3A,$30,$30,$30,$30,$00
+HUD_ITEM_BUF:
+        .byte $49,$54,$45,$4D,$3A,$30,$00
+HUD_STEPS_BUF:
+        .byte $4D,$4F,$56,$3A,$30,$30,$30,$30,$00
+        .code
