@@ -1073,9 +1073,6 @@ MAZE_INIT_STATE:
         STAA INPUT_FLAGS
         STAA MOVE_COUNT_LO
         STAA MOVE_COUNT_HI
-        STAA GOAL_MENU_ACTIVE
-        STAA GOAL_MENU_SELECTED
-        STAA GOAL_MENU_WAIT_RELEASE
         JSR MAZE_CONFIGURE_INPUT
         JSR MAZE_CENTER_VIEW
         JSR MAZE_FORMAT_STEPS
@@ -1247,7 +1244,7 @@ MAZE_POLL_INPUT:
         STAA INPUT_FLAGS
         RTS
 
-; キーボード行を順番にスキャンし、移動・再スタート・アクションの各ビットを立てる。
+; キーボード行を順番にスキャンし、移動・アクションの各ビットを立てる。
 MAZE_READ_KEYS:
         PSHB
         CLRB
@@ -1284,16 +1281,8 @@ MRK_ROW7:
         STAA STD_VIA_ORA
         LDAA STD_VIA_ORB
         BITA #$08
-        BNE MRK_ROW_R
-        ORAB #KEY_FLAG_DOWN
-MRK_ROW_R:
-        ; restart (R key / keyboard row 6 bit 0x08)
-        LDAA #6
-        STAA STD_VIA_ORA
-        LDAA STD_VIA_ORB
-        BITA #$08
         BNE MRK_DONE_SCAN
-        ORAB #KEY_FLAG_RESTART
+        ORAB #KEY_FLAG_DOWN
 MRK_DONE_SCAN:
         CLRA
         STAA STD_VIA_ORA
@@ -1307,16 +1296,13 @@ MAZE_RUN_START:
         JSR MAZE_INIT_STATE
         CLR_VRAM
         JSR MAZE_RENDER_VIEW
+        JSR MAZE_DRAW_GOAL
         JSR MAZE_DRAW_OVERLAY
         JSR MAZE_DRAW_PLAYER
 MAZE_RUNTIME_LOOP:
         JSR MAZE_POLL_INPUT
         LDAA INPUT_FLAGS
-        BNE MRL_HANDLE_INPUT
-        LDAA STATUS_FLAGS
-        BITA #STATUS_MENU_FLAG
         BEQ MAZE_RUNTIME_LOOP
-MRL_HANDLE_INPUT:
         JSR MAZE_PROCESS_INPUT
         CMPA #MAZE_EXIT_CONTINUE
         BEQ MAZE_RUNTIME_LOOP
@@ -1324,34 +1310,17 @@ MRL_HANDLE_INPUT:
 
 ; 入力内容に応じてゲーム状態を更新する。ゴール後は再スタート待ちのみ。
 MAZE_PROCESS_INPUT:
-        PSHB
-        LDAA STATUS_FLAGS
-        BITA #STATUS_MENU_FLAG
-        BEQ MPI_CHECK_GOAL
-        JSR MAZE_GOAL_MENU_UPDATE
-        PULB
-        RTS
-MPI_CHECK_GOAL:
         LDAA STATUS_FLAGS
         BITA #STATUS_GOAL_FLAG
         BEQ MPI_HANDLE_MOVE
-        LDAA INPUT_FLAGS
-        BITA #KEY_FLAG_ACTION
-        BEQ MPI_GOAL_IDLE
-        JSR MAZE_GOAL_MENU_OPEN
-MPI_GOAL_IDLE:
-        PULB
-        CLRA
+        LDAA #MAZE_EXIT_TITLE
         RTS
 MPI_HANDLE_MOVE:
         JSR MAZE_HANDLE_MOVEMENT
-        PULB
-        LDAA #0
         RTS
 
 ; 移動キーに従って座標を更新し、スクロールや描画を行う。
 MAZE_HANDLE_MOVEMENT:
-        PSHA
         LDAA INPUT_FLAGS
         BITA #KEY_FLAG_UP
         BEQ MHM_CHECK_DOWN
@@ -1366,10 +1335,9 @@ MAZE_HANDLE_MOVEMENT:
         LDAA ,X
         CMPA #' '
         BNE MHM_CHECK_DOWN
-        STAA TMP_MASK
         LDAA ROW_INDEX
         STAA PLAYER_Y
-        JMP MHM_MOVED
+        BRA MHM_MOVED
 MHM_CHECK_DOWN:
         LDAA INPUT_FLAGS
         BITA #KEY_FLAG_DOWN
@@ -1386,10 +1354,9 @@ MHM_CHECK_DOWN:
         LDAA ,X
         CMPA #' '
         BNE MHM_CHECK_LEFT
-        STAA TMP_MASK
         LDAA ROW_INDEX
         STAA PLAYER_Y
-        JMP MHM_MOVED
+        BRA MHM_MOVED
 MHM_CHECK_LEFT:
         LDAA INPUT_FLAGS
         BITA #KEY_FLAG_LEFT
@@ -1405,10 +1372,9 @@ MHM_CHECK_LEFT:
         LDAA ,X
         CMPA #' '
         BNE MHM_CHECK_RIGHT
-        STAA TMP_MASK
         LDAA COL_INDEX
         STAA PLAYER_X
-        JMP MHM_MOVED
+        BRA MHM_MOVED
 MHM_CHECK_RIGHT:
         LDAA INPUT_FLAGS
         BITA #KEY_FLAG_RIGHT
@@ -1425,37 +1391,45 @@ MHM_CHECK_RIGHT:
         LDAA ,X
         CMPA #' '
         BNE MHM_NO_MOVE
-        STAA TMP_MASK
         LDAA COL_INDEX
         STAA PLAYER_X
 MHM_MOVED:
         JSR MAZE_INCREMENT_STEPS
         JSR MAZE_SCROLL_TO_PLAYER
         JSR MAZE_RENDER_VIEW
+        JSR MAZE_DRAW_GOAL
         JSR MAZE_DRAW_OVERLAY
         JSR MAZE_DRAW_PLAYER
         JSR MAZE_CHECK_GOAL
-        BRA MHM_DONE
+        TSTA
+        BNE MHM_EXIT
+        CLRA
+        RTS
+MHM_EXIT:
+        RTS
 MHM_NO_MOVE:
-MHM_DONE:
-        PULA
-        LDAA #0
+        CLRA
         RTS
 
 ; プレイヤーがゴール座標に到達したか判定する。
 MAZE_CHECK_GOAL:
         LDAA PLAYER_X
         CMPA GOAL_X_CUR
-        BNE MCG_DONE
+        BNE MCG_NO_GOAL
         LDAA PLAYER_Y
         CMPA GOAL_Y_CUR
-        BNE MCG_DONE
+        BNE MCG_NO_GOAL
         LDAA STATUS_FLAGS
         BITA #STATUS_GOAL_FLAG
-        BNE MCG_DONE
+        BNE MCG_SIGNAL_EXIT
         ORAA #STATUS_GOAL_FLAG
         STAA STATUS_FLAGS
-MCG_DONE:
+        JSR MAZE_DISPLAY_GOAL_MESSAGE
+MCG_SIGNAL_EXIT:
+        LDAA #MAZE_EXIT_TITLE
+        RTS
+MCG_NO_GOAL:
+        CLRA
         RTS
 
 MAZE_MAP_PTR_FROM_COORD:
@@ -1492,224 +1466,61 @@ MDO_ADD:
         PRINT_STR HUD_STEPS_BUF
         RTS
 
-; ゴールメニューを開き、表示を初期化する。
-MAZE_GOAL_MENU_OPEN:
-        LDAA STATUS_FLAGS
-        ORAA #STATUS_MENU_FLAG
-        STAA STATUS_FLAGS
-        LDAA #1
-        STAA GOAL_MENU_ACTIVE
-        CLRA
-        STAA GOAL_MENU_SELECTED
-        STAA GOAL_MENU_WAIT_RELEASE
-        JSR MAZE_GOAL_MENU_DRAW_STATIC
-        JSR MAZE_GOAL_MENU_UPDATE_HILIGHT
-        LDAA #1
-        STAA GOAL_MENU_WAIT_RELEASE
-        CLRA
-        STAA INPUT_FLAGS
-        CLRA
+; ゴール座標が表示領域内にある場合に 'G' を描画する。
+MAZE_DRAW_GOAL:
+        LDAA GOAL_X_CUR
+        SUBA VIEW_ORIGIN_X
+        BPL MDG_STORE_X
         RTS
-
-; メニュー状態を更新し、必要なら選択肢の処理を行う。
-MAZE_GOAL_MENU_UPDATE:
-        LDAA GOAL_MENU_WAIT_RELEASE
-        BEQ MGMU_CHECK_INPUT
-        LDAA INPUT_FLAGS
-        BEQ MGMU_RELEASED
-        CLRA
+MDG_STORE_X:
+        CMPA VIEW_CHAR_W
+        BCS MDG_DONE
+        STAA WORLD_COL
+        LDAA GOAL_Y_CUR
+        SUBA VIEW_ORIGIN_Y
+        BPL MDG_STORE_Y
         RTS
-MGMU_RELEASED:
-        CLRA
-        STAA GOAL_MENU_WAIT_RELEASE
-MGMU_CHECK_INPUT:
-        LDAA INPUT_FLAGS
-        BITA #KEY_FLAG_UP
-        BEQ MGMU_CHECK_DOWN
-        LDAA GOAL_MENU_SELECTED
-        BEQ MGMU_CHECK_DOWN
-        DECA
-        STAA GOAL_MENU_SELECTED
-        JSR MAZE_GOAL_MENU_UPDATE_HILIGHT
-        LDAA #1
-        STAA GOAL_MENU_WAIT_RELEASE
-        CLRA
-        RTS
-MGMU_CHECK_DOWN:
-        LDAA INPUT_FLAGS
-        BITA #KEY_FLAG_DOWN
-        BEQ MGMU_CHECK_ACTION
-        LDAA GOAL_MENU_SELECTED
-        CMPA #GOAL_MENU_OPTION_LAST
-        BEQ MGMU_CHECK_ACTION
-        INCA
-        STAA GOAL_MENU_SELECTED
-        JSR MAZE_GOAL_MENU_UPDATE_HILIGHT
-        LDAA #1
-        STAA GOAL_MENU_WAIT_RELEASE
-        CLRA
-        RTS
-MGMU_CHECK_ACTION:
-        LDAA INPUT_FLAGS
-        BITA #KEY_FLAG_ACTION
-        BEQ MGMU_IDLE
-        LDAA GOAL_MENU_SELECTED
-        CMPA #GOAL_MENU_OPTION_RESTART
-        BEQ MGMU_SELECT_RESTART
-        CMPA #GOAL_MENU_OPTION_TITLE
-        BEQ MGMU_SELECT_TITLE
-        JSR MAZE_GOAL_MENU_RESUME
-        LDAA #MAZE_EXIT_CONTINUE
-        RTS
-MGMU_SELECT_RESTART:
-        JSR MAZE_GOAL_MENU_PREP_EXIT
-        LDAA #MAZE_EXIT_RESTART
-        RTS
-MGMU_SELECT_TITLE:
-        JSR MAZE_GOAL_MENU_PREP_EXIT
-        LDAA #MAZE_EXIT_TITLE
-        RTS
-MGMU_IDLE:
-        CLRA
-        RTS
-
-; メニュー表示領域を空白で初期化する。
-MAZE_GOAL_MENU_CLEAR_AREA:
-        LDAA #GOAL_MENU_ROW_TITLE
-        STAA TMP_CHOICE
-        LDAA #4
-        STAA TEMP_SHIFT
-MGMC_ROW_LOOP:
-        LDAA TMP_CHOICE
+MDG_STORE_Y:
+        CMPA VIEW_CHAR_H
+        BCS MDG_DONE
+        STAA WORLD_ROW
+        LDAA WORLD_ROW
         STAA ROW_INDEX
-        LDAA #GOAL_MENU_COL
+        LDAA WORLD_COL
         STAA COL_INDEX
         JSR MAZE_VRAM_PTR_FROM_RC
         LDX TEMP_PTR
-        LDAA #GOAL_MENU_WIDTH
+        LDAA #'G'
+        JSR __STD_TO_VRAM
+        STAA ,X
+MDG_DONE:
+        RTS
+
+; ゴール到達時にメッセージを表示し、約3秒待機する。
+MAZE_DISPLAY_GOAL_MESSAGE:
+        LDAA #GOAL_MSG_ROW
+        STAA ROW_INDEX
+        LDAA #GOAL_MSG_COL
+        STAA COL_INDEX
+        JSR MAZE_VRAM_PTR_FROM_RC
+        LDX TEMP_PTR
+        STX STD_VRAM_PTR
+        LDX #GOAL_MESSAGE
+        JSR __STD_PRINT_STR
+        JSR MAZE_WAIT_GOAL_DELAY
+        RTS
+
+MAZE_WAIT_GOAL_DELAY:
+        LDAA #6
         STAA TMP_MASK
-MGMC_COL_LOOP:
-        LDAA #$40
-        STAA ,X
-        INX
+MWGD_OUTER:
+        LDAB #255
+MWGD_INNER:
+        JSR WAIT_2MS
+        DECB
+        BNE MWGD_INNER
         DEC TMP_MASK
-        BNE MGMC_COL_LOOP
-        LDAA TMP_CHOICE
-        INCA
-        STAA TMP_CHOICE
-        DEC TEMP_SHIFT
-        BNE MGMC_ROW_LOOP
-        RTS
-
-; メニューの固定表示要素を描画する。
-MAZE_GOAL_MENU_DRAW_STATIC:
-        JSR MAZE_GOAL_MENU_CLEAR_AREA
-        LDAA #GOAL_MENU_ROW_TITLE
-        STAA ROW_INDEX
-        LDAA #GOAL_MENU_COL
-        STAA COL_INDEX
-        JSR MAZE_VRAM_PTR_FROM_RC
-        LDX TEMP_PTR
-        STX STD_VRAM_PTR
-        LDX #GOAL_MENU_HEADER
-        JSR __STD_PRINT_STR
-
-        LDAA #GOAL_MENU_ROW_OPTION_BASE
-        STAA ROW_INDEX
-        LDAA #GOAL_MENU_COL
-        STAA COL_INDEX
-        JSR MAZE_VRAM_PTR_FROM_RC
-        LDX TEMP_PTR
-        STX STD_VRAM_PTR
-        LDX #GOAL_MENU_ITEM_RESTART
-        JSR __STD_PRINT_STR
-
-        LDAA #GOAL_MENU_ROW_OPTION_BASE + 1
-        STAA ROW_INDEX
-        LDAA #GOAL_MENU_COL
-        STAA COL_INDEX
-        JSR MAZE_VRAM_PTR_FROM_RC
-        LDX TEMP_PTR
-        STX STD_VRAM_PTR
-        LDX #GOAL_MENU_ITEM_TITLE
-        JSR __STD_PRINT_STR
-
-        LDAA #GOAL_MENU_ROW_OPTION_BASE + 2
-        STAA ROW_INDEX
-        LDAA #GOAL_MENU_COL
-        STAA COL_INDEX
-        JSR MAZE_VRAM_PTR_FROM_RC
-        LDX TEMP_PTR
-        STX STD_VRAM_PTR
-        LDX #GOAL_MENU_ITEM_RESUME
-        JSR __STD_PRINT_STR
-        RTS
-
-; 選択中の行だけ反転表示にし、それ以外は通常表示に戻す。
-MAZE_GOAL_MENU_UPDATE_HILIGHT:
-        CLRA
-        STAA TMP_CHOICE
-MGH_LOOP:
-        LDAA TMP_CHOICE
-        CMPA #GOAL_MENU_OPTION_COUNT
-        BCS MGH_CONT
-        RTS
-MGH_CONT:
-        LDAA #GOAL_MENU_ROW_OPTION_BASE
-        ADDA TMP_CHOICE
-        STAA ROW_INDEX
-        LDAA #GOAL_MENU_COL
-        STAA COL_INDEX
-        JSR MAZE_VRAM_PTR_FROM_RC
-        LDX TEMP_PTR
-        LDAA #GOAL_MENU_WIDTH
-        STAA TEMP_SHIFT
-        LDAA GOAL_MENU_SELECTED
-        CMPA TMP_CHOICE
-        BEQ MGH_INVERT
-MGH_CLEAR:
-        LDAA ,X
-        ANDA #$7F
-        STAA ,X
-        INX
-        DEC TEMP_SHIFT
-        BNE MGH_CLEAR
-        BRA MGH_NEXT
-MGH_INVERT:
-        LDAA ,X
-        ORAA #$80
-        STAA ,X
-        INX
-        DEC TEMP_SHIFT
-        BNE MGH_INVERT
-MGH_NEXT:
-        LDAA TMP_CHOICE
-        INCA
-        STAA TMP_CHOICE
-        BRA MGH_LOOP
-
-; メニューを閉じる際に共通で実行する状態クリア処理。
-MAZE_GOAL_MENU_PREP_EXIT:
-        LDAA STATUS_FLAGS
-        ANDA #$FD                ; STATUS_MENU_FLAG を落とす
-        STAA STATUS_FLAGS
-        CLRA
-        STAA GOAL_MENU_ACTIVE
-        STAA GOAL_MENU_WAIT_RELEASE
-        STAA GOAL_MENU_SELECTED
-        STAA INPUT_FLAGS
-        RTS
-
-; RESUME 選択時はゴールフラグを外し、描画を再開する。
-MAZE_GOAL_MENU_RESUME:
-        JSR MAZE_GOAL_MENU_PREP_EXIT
-        LDAA STATUS_FLAGS
-        ANDA #$FE                ; STATUS_GOAL_FLAG を落とす
-        STAA STATUS_FLAGS
-        JSR MAZE_RENDER_VIEW
-        JSR MAZE_DRAW_OVERLAY
-        JSR MAZE_DRAW_PLAYER
-        CLRA
+        BNE MWGD_OUTER
         RTS
 
 ; 1 歩進むたびにステップカウンタを BCD で加算する。
