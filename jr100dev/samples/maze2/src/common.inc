@@ -39,8 +39,11 @@ PLAYER_GLYPH:        .equ '@'
 ITEM_COUNT:          .equ 5
 ITEM_PAIR_BYTES:     .equ (ITEM_COUNT * 2)
 ENEMY_MAX:           .equ 4          ; ステージ同時出現上限
+ENEMY_ENTRY_BYTES:   .equ 3
+ENEMY_TABLE_STRIDE:  .equ (1 + ENEMY_MAX * ENEMY_ENTRY_BYTES)
 BULLET_MAX:          .equ 1
 LEVEL_TIME_LIMIT:    .equ 180        ; 秒
+PLAYER_DEFAULT_DIR:  .equ 1          ; DIR_E
 
 ; ゴール表示演出位置（キャラクター座標）
 GOAL_MSG_ROW:        .equ 11

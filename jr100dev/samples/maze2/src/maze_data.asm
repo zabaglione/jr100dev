@@ -3,6 +3,11 @@
 
 .include "common.inc"
 
+DIR_N: .equ 0
+DIR_E: .equ 1
+DIR_S: .equ 2
+DIR_W: .equ 3
+
 
 
 ; 迷路サンプルで使用するワーク領域とプリセット迷路データ。
@@ -81,6 +86,14 @@ LEVEL_ITEM_TABLE:
         ; HARD (41x41)
         .byte 5,5, 12,7, 20,12, 30,18, 34,27
 
+LEVEL_ENEMY_TABLE:
+        ; EASY: count + (x,y,dir)*4
+        .byte 1, 5,5, DIR_E, 0,0,0, 0,0,0, 0,0,0
+        ; NORMAL
+        .byte 2, 8,10, DIR_N, 14,4, DIR_W, 0,0,0, 0,0,0
+        ; HARD
+        .byte 4, 6,6, DIR_E, 12,20, DIR_N, 25,10, DIR_W, 32,30, DIR_S
+
 MENU_OPTION_COUNT: .equ 3
 
 MENU_TITLE_LINE1: .ascii "          MAZE2 SAMPLE\0"
@@ -100,6 +113,8 @@ PLAYER_X:
         .byte PLAYER_START_X
 PLAYER_Y:
         .byte PLAYER_START_Y
+PLAYER_DIR:
+        .byte PLAYER_DEFAULT_DIR
 
 SCR_PTR_SRC:
         .word $0000
@@ -155,6 +170,8 @@ ITEM_POSITIONS:
 
 ENEMY_COUNT:
         .byte $00
+ENEMY_ACTIVE:
+        .fill ENEMY_MAX, $00
 ENEMY_X:
         .fill ENEMY_MAX, $00
 ENEMY_Y:

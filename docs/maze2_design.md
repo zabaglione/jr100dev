@@ -16,6 +16,7 @@
   * `BULLET_*`（単発弾）
   * `TIME_REMAIN_*`（180 秒カウントダウン用 BCD）
   * `PLAYER_SCREEN_TILE_*`（描画用タイル座標キャッシュ）
+- `LEVEL_ITEM_TABLE` と `LEVEL_ENEMY_TABLE` でレベル別のアイテム／敵初期配置を管理し、敵は 3×3 タイル中央に `E` を表示するところまで実装済み（まだ移動しない）。
 - Makefile は `common.inc` と `maze_helpers.inc` 変更時に再アセンブルされるよう依存関係を追加済み。`samples/maze2` で作業する場合でも `make clean`→`make build/maze.prg` を徹底すること。
 
 ## 次の実装項目

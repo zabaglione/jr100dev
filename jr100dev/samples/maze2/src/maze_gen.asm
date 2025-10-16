@@ -1147,6 +1147,117 @@ MRI_COPY_LOOP:
         BNE MRI_COPY_LOOP
         RTS
 
+MAZE_RESET_ENEMIES:
+        CLRA
+        STAA ENEMY_COUNT
+
+        LDAB #ENEMY_MAX
+        LDX #ENEMY_ACTIVE
+MRE_CLR_ACTIVE:
+        STAA ,X
+        INX
+        DECB
+        BNE MRE_CLR_ACTIVE
+
+        LDAB #ENEMY_MAX
+        LDX #ENEMY_X
+MRE_CLR_X:
+        STAA ,X
+        INX
+        DECB
+        BNE MRE_CLR_X
+
+        LDAB #ENEMY_MAX
+        LDX #ENEMY_Y
+MRE_CLR_Y:
+        STAA ,X
+        INX
+        DECB
+        BNE MRE_CLR_Y
+
+        LDAB #ENEMY_MAX
+        LDX #ENEMY_DIR
+MRE_CLR_DIR:
+        STAA ,X
+        INX
+        DECB
+        BNE MRE_CLR_DIR
+
+        LDAB #ENEMY_MAX
+        LDX #ENEMY_TURN_DELAY
+MRE_CLR_DELAY:
+        STAA ,X
+        INX
+        DECB
+        BNE MRE_CLR_DELAY
+
+        LDX #LEVEL_ENEMY_TABLE
+        LDAA CURRENT_LEVEL_INDEX
+        BEQ MRE_TABLE_READY
+MRE_ADVANCE_LEVEL:
+        LDAB #ENEMY_TABLE_STRIDE
+MRE_ADVANCE_BYTES:
+        INX
+        DECB
+        BNE MRE_ADVANCE_BYTES
+        DECA
+        BNE MRE_ADVANCE_LEVEL
+MRE_TABLE_READY:
+        LDAA ,X
+        STAA ENEMY_COUNT
+        INX
+        STX SCR_PTR_SRC
+        LDAA ENEMY_COUNT
+        BEQ MRE_DONE
+
+        LDAB ENEMY_COUNT
+        LDX #ENEMY_ACTIVE
+        STX SCR_PTR_DST
+        LDX #ENEMY_X
+        STX TEMP_PTR
+        LDX #ENEMY_Y
+        STX CUR_CELL_POS
+        LDX #ENEMY_DIR
+        STX NEXT_CELL_POS
+MRE_LOAD_LOOP:
+        LDX SCR_PTR_DST
+        LDAA #1
+        STAA ,X
+        INX
+        STX SCR_PTR_DST
+
+        LDX SCR_PTR_SRC
+        LDAA ,X
+        INX
+        STX SCR_PTR_SRC
+        LDX TEMP_PTR
+        STAA ,X
+        INX
+        STX TEMP_PTR
+
+        LDX SCR_PTR_SRC
+        LDAA ,X
+        INX
+        STX SCR_PTR_SRC
+        LDX CUR_CELL_POS
+        STAA ,X
+        INX
+        STX CUR_CELL_POS
+
+        LDX SCR_PTR_SRC
+        LDAA ,X
+        INX
+        STX SCR_PTR_SRC
+        LDX NEXT_CELL_POS
+        STAA ,X
+        INX
+        STX NEXT_CELL_POS
+
+        DECB
+        BNE MRE_LOAD_LOOP
+MRE_DONE:
+        RTS
+
 ; プレイヤーを画面中央に近づけるようビュー原点を調整する。
 MAZE_CENTER_VIEW:
         LDAA PLAYER_X
@@ -1344,26 +1455,30 @@ MDTB_ITEM_CHECK:
         ; no additional overlay for base tile
 MDTB_ITEM_FINISH:
         JSR MAZE_DRAW_ITEM_OVERLAY
+        JSR MAZE_DRAW_ENEMY_OVERLAY
+        JSR MAZE_DRAW_BULLET_OVERLAY
 MDTB_DONE:
         RTS
 
 MAZE_DRAW_ITEM_OVERLAY:
-        LDX #ITEM_POSITIONS
-        STX SCR_PTR_SRC
         LDX #ITEM_COLLECTED
         STX SCR_PTR_DST
+        LDX #ITEM_POSITIONS
+        STX SCR_PTR_SRC
         LDAB #ITEM_COUNT
 MDIO_LOOP:
         LDX SCR_PTR_DST
         LDAA ,X
-        BNE MDIO_ADVANCE
+        BEQ MDIO_CHECK
+        BRA MDIO_NEXT
+MDIO_CHECK:
         LDX SCR_PTR_SRC
         LDAA ,X
         CMPA WORLD_COL
-        BNE MDIO_ADVANCE
+        BNE MDIO_NEXT
         LDAA 1,X
         CMPA WORLD_ROW
-        BNE MDIO_ADVANCE
+        BNE MDIO_NEXT
         LDAA WORLD_ROW
         STAA ROW_INDEX
         LDAA WORLD_COL
@@ -1373,19 +1488,8 @@ MDIO_LOOP:
         LDAA #ITEM_SYMBOL
         JSR __STD_TO_VRAM
         STAA ,X
-        BRA MDIO_AFTER
-MDIO_ADVANCE:
-        LDX SCR_PTR_SRC
-        INX
-        INX
-        STX SCR_PTR_SRC
-        LDX SCR_PTR_DST
-        INX
-        STX SCR_PTR_DST
-        DECB
-        BNE MDIO_LOOP
         RTS
-MDIO_AFTER:
+MDIO_NEXT:
         LDX SCR_PTR_SRC
         INX
         INX
@@ -1398,31 +1502,38 @@ MDIO_AFTER:
         RTS
 
 MAZE_COLLECT_ITEM:
-        LDX #ITEM_POSITIONS
-        STX SCR_PTR_SRC
         LDX #ITEM_COLLECTED
         STX SCR_PTR_DST
+        LDX #ITEM_POSITIONS
+        STX SCR_PTR_SRC
         LDAB #ITEM_COUNT
 MCI_LOOP:
         LDX SCR_PTR_DST
         LDAA ,X
-        BNE MCI_ADVANCE
+        BEQ MCI_CHECK
+        BRA MCI_NEXT
+MCI_CHECK:
         LDX SCR_PTR_SRC
         LDAA ,X
         CMPA PLAYER_X
-        BNE MCI_ADVANCE
+        BNE MCI_NEXT
         LDAA 1,X
         CMPA PLAYER_Y
-        BNE MCI_ADVANCE
+        BNE MCI_NEXT
         LDX SCR_PTR_DST
         LDAA #1
         STAA ,X
         LDAA ITEM_REMAIN_COUNT
-        BEQ MCI_EXIT
+        BEQ MCI_SET_CLEAR
         DECA
         STAA ITEM_REMAIN_COUNT
         BRA MCI_EXIT
-MCI_ADVANCE:
+MCI_SET_CLEAR:
+        LDAA STATUS_FLAGS
+        ORAA #STATUS_STAGE_CLEAR_FLAG
+        STAA STATUS_FLAGS
+        BRA MCI_EXIT
+MCI_NEXT:
         LDX SCR_PTR_SRC
         INX
         INX
@@ -1441,6 +1552,56 @@ MCI_EXIT:
         LDX SCR_PTR_DST
         INX
         STX SCR_PTR_DST
+        RTS
+
+MAZE_DRAW_ENEMY_OVERLAY:
+        LDAA ENEMY_COUNT
+        BEQ MDE_DONE
+        STAA TMP_DIR_COUNT
+        LDX #ENEMY_ACTIVE
+        STX SCR_PTR_DST
+        LDX #ENEMY_X
+        STX SCR_PTR_SRC
+        LDX #ENEMY_Y
+        STX CUR_CELL_POS
+MDE_LOOP:
+        LDX SCR_PTR_DST
+        LDAA ,X
+        BEQ MDE_SKIP
+        LDX SCR_PTR_SRC
+        LDAA ,X
+        CMPA WORLD_COL
+        BNE MDE_SKIP
+        LDX CUR_CELL_POS
+        LDAA ,X
+        CMPA WORLD_ROW
+        BNE MDE_SKIP
+        LDAA WORLD_ROW
+        STAA ROW_INDEX
+        LDAA WORLD_COL
+        STAA COL_INDEX
+        JSR MAZE_VRAM_PTR_FROM_RC
+        LDX TEMP_PTR
+        LDAA #ENEMY_SYMBOL
+        JSR __STD_TO_VRAM
+        STAA ,X
+        RTS
+MDE_SKIP:
+        LDX SCR_PTR_SRC
+        INX
+        STX SCR_PTR_SRC
+        LDX CUR_CELL_POS
+        INX
+        STX CUR_CELL_POS
+        LDX SCR_PTR_DST
+        INX
+        STX SCR_PTR_DST
+        DEC TMP_DIR_COUNT
+        BNE MDE_LOOP
+MDE_DONE:
+        RTS
+
+MAZE_DRAW_BULLET_OVERLAY:
         RTS
 
 ; プレイヤーの見かけ位置を算出して VRAM 上に '@' を描画する。

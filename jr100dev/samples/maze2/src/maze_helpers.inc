@@ -29,8 +29,10 @@ DIR_BIT_TABLE:
 
 CELL_VISITED_FLAG: .equ $10
 
-STATUS_GOAL_FLAG: .equ $01
-STATUS_TIME_FLAG: .equ $02
+STATUS_GOAL_FLAG:       .equ $01
+STATUS_TIME_FLAG:       .equ $02
+STATUS_STAGE_CLEAR_FLAG:.equ $04
+STATUS_DEAD_FLAG:       .equ $08
 
 MAZE_EXIT_CONTINUE: .equ 0
 MAZE_EXIT_RESTART:  .equ 1
@@ -44,3 +46,10 @@ KEY_FLAG_ACTION:   .equ $10
 KEY_FLAG_DIR:      .equ (KEY_FLAG_UP | KEY_FLAG_DOWN | KEY_FLAG_LEFT | KEY_FLAG_RIGHT) ; 方向キー判定用マスク
 
 ITEM_SYMBOL:       .equ '$'
+ENEMY_SYMBOL:      .equ 'E'
+BULLET_SYMBOL:     .equ '*'
+
+DIR_LEFT_TABLE:
+        .byte DIR_W, DIR_N, DIR_E, DIR_S
+DIR_RIGHT_TABLE:
+        .byte DIR_E, DIR_S, DIR_W, DIR_N
