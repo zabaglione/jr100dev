@@ -544,7 +544,7 @@ MAZE_OPEN_START_GOAL:
         STAA COL_INDEX
         JSR MAZE_MAP_PTR_FROM_COORD
         LDX TEMP_PTR
-        LDAA #' '
+        LDAA #'G'
         STAA ,X
         RTS
 
@@ -1296,7 +1296,6 @@ MAZE_RUN_START:
         JSR MAZE_INIT_STATE
         CLR_VRAM
         JSR MAZE_RENDER_VIEW
-        JSR MAZE_DRAW_GOAL
         JSR MAZE_DRAW_OVERLAY
         JSR MAZE_DRAW_PLAYER
 MAZE_RUNTIME_LOOP:
@@ -1334,7 +1333,10 @@ MAZE_HANDLE_MOVEMENT:
         LDX TEMP_PTR
         LDAA ,X
         CMPA #' '
+        BEQ MHM_PASS_UP
+        CMPA #'G'
         BNE MHM_CHECK_DOWN
+MHM_PASS_UP:
         LDAA ROW_INDEX
         STAA PLAYER_Y
         BRA MHM_MOVED
@@ -1353,7 +1355,10 @@ MHM_CHECK_DOWN:
         LDX TEMP_PTR
         LDAA ,X
         CMPA #' '
+        BEQ MHM_PASS_DOWN
+        CMPA #'G'
         BNE MHM_CHECK_LEFT
+MHM_PASS_DOWN:
         LDAA ROW_INDEX
         STAA PLAYER_Y
         BRA MHM_MOVED
@@ -1371,7 +1376,10 @@ MHM_CHECK_LEFT:
         LDX TEMP_PTR
         LDAA ,X
         CMPA #' '
+        BEQ MHM_PASS_LEFT
+        CMPA #'G'
         BNE MHM_CHECK_RIGHT
+MHM_PASS_LEFT:
         LDAA COL_INDEX
         STAA PLAYER_X
         BRA MHM_MOVED
@@ -1390,14 +1398,16 @@ MHM_CHECK_RIGHT:
         LDX TEMP_PTR
         LDAA ,X
         CMPA #' '
+        BEQ MHM_PASS_RIGHT
+        CMPA #'G'
         BNE MHM_NO_MOVE
+MHM_PASS_RIGHT:
         LDAA COL_INDEX
         STAA PLAYER_X
 MHM_MOVED:
         JSR MAZE_INCREMENT_STEPS
         JSR MAZE_SCROLL_TO_PLAYER
         JSR MAZE_RENDER_VIEW
-        JSR MAZE_DRAW_GOAL
         JSR MAZE_DRAW_OVERLAY
         JSR MAZE_DRAW_PLAYER
         JSR MAZE_CHECK_GOAL
@@ -1466,38 +1476,9 @@ MDO_ADD:
         PRINT_STR HUD_STEPS_BUF
         RTS
 
-; ゴール座標が表示領域内にある場合に 'G' を描画する。
-MAZE_DRAW_GOAL:
-        LDAA GOAL_X_CUR
-        SUBA VIEW_ORIGIN_X
-        BPL MDG_STORE_X
-        RTS
-MDG_STORE_X:
-        CMPA VIEW_CHAR_W
-        BCS MDG_DONE
-        STAA WORLD_COL
-        LDAA GOAL_Y_CUR
-        SUBA VIEW_ORIGIN_Y
-        BPL MDG_STORE_Y
-        RTS
-MDG_STORE_Y:
-        CMPA VIEW_CHAR_H
-        BCS MDG_DONE
-        STAA WORLD_ROW
-        LDAA WORLD_ROW
-        STAA ROW_INDEX
-        LDAA WORLD_COL
-        STAA COL_INDEX
-        JSR MAZE_VRAM_PTR_FROM_RC
-        LDX TEMP_PTR
-        LDAA #'G'
-        JSR __STD_TO_VRAM
-        STAA ,X
-MDG_DONE:
-        RTS
-
 ; ゴール到達時にメッセージを表示し、約3秒待機する。
 MAZE_DISPLAY_GOAL_MESSAGE:
+        CLR_VRAM
         LDAA #GOAL_MSG_ROW
         STAA ROW_INDEX
         LDAA #GOAL_MSG_COL

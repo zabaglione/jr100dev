@@ -161,9 +161,5 @@ TEMP_SHIFT:
         .byte $00
 TMP_MASK:
         .byte $00
-WORLD_ROW:
-        .byte $00
-WORLD_COL:
-        .byte $00
 RNG_SEED:
         .byte $5A
