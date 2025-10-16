@@ -1536,12 +1536,12 @@ MAZE_INCREMENT_STEPS:
         ADDA #$01
         DAA
         STAA MOVE_COUNT_LO
-        BCC MFSK_UPDATE
+        BNE MFSK_UPDATE
         LDAA MOVE_COUNT_HI
         ADDA #$01
         DAA
         STAA MOVE_COUNT_HI
-        BCC MFSK_UPDATE
+        BNE MFSK_UPDATE
         LDAA #$99
         STAA MOVE_COUNT_HI
         LDAA #$99
