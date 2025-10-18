@@ -58,5 +58,18 @@ PYTHONPATH=$(pwd) pytest jr100dev/tests/unit
 - `docs/high_level_macros.md`: 制御構造／算術マクロ (`ctl.inc`) の使い方
 - `docs/prg_packaging_notes.md`: `.prg` 形式と `PBIN` セグメントの仕様
 
+## ユーザー定義キャラクターエディタ
+Python + Pygame で動作するモノクロドットエディタを `tools/char_editor.py` として提供しています。8x8 / 8x16 / 16x8 / 16x16 の 4 パターンに対応し、描画・消去・直線描画が可能です。
+
+```bash
+python tools/char_editor.py --output chars.json
+```
+
+- 左クリックでドットをトグルし、押しながらドラッグすると同じ状態で塗り伸ばせます。`L` で直線モード切替（赤いプレビュー表示、右クリックでキャンセル）、`R` で全消去、`S` で JSON 出力、`Esc` で終了します。
+- JSON には `pattern`, `width`, `height`, `hex` が含まれ、`hex` は各行を上位ビットから詰めて 16 進文字列化したものです。
+- `--output` を省略すると標準出力のみ、指定した場合は標準出力に加えてファイルにも書き出します。
+
+Pygame が未導入の場合は `pip install pygame` を事前に実行してください。
+
 ## ライセンス
 本リポジトリ全体のライセンスについてはプロジェクトルートに配置されたファイル・ヘッダーを参照してください。
