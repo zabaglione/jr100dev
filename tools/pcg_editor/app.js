@@ -4,6 +4,7 @@ import {
   bresenhamPoints,
   clearWorkspace,
   cloneProject,
+  constrainEndpoint,
   createProject,
   exportAssembly,
   flipWorkspace,
@@ -36,6 +37,14 @@ let clipboardMatrix = null;
 let undoStack = [];
 let redoStack = [];
 let activeGroupId = null;
+let gridVisible = true;
+
+const DIRECTION_KEYS = {
+  ArrowUp: { action: "shift-up", deltaX: 0, deltaY: -1 },
+  ArrowDown: { action: "shift-down", deltaX: 0, deltaY: 1 },
+  ArrowLeft: { action: "shift-left", deltaX: -1, deltaY: 0 },
+  ArrowRight: { action: "shift-right", deltaX: 1, deltaY: 0 },
+};
 
 function restoreProject() {
   try {
@@ -100,10 +109,25 @@ function workspacePixelSize() {
 function resizeEditorCanvas() {
   const dimensions = workspacePixelSize();
   const longest = Math.max(dimensions.width, dimensions.height);
-  const cellSize = Math.max(14, Math.min(48, Math.floor(560 / longest)));
+  const cellSize = Math.max(12, Math.min(48, Math.floor(520 / longest)));
   canvas.width = dimensions.width * cellSize;
   canvas.height = dimensions.height * cellSize;
   canvas.dataset.cellSize = String(cellSize);
+}
+
+function drawGridLines(count, vertical) {
+  for (let index = 0; index <= count; index += 1) {
+    if (!gridVisible && index % 8 !== 0) {
+      continue;
+    }
+    const position = index * Number(canvas.dataset.cellSize);
+    canvasContext.beginPath();
+    canvasContext.strokeStyle = index % 8 === 0 ? "#ac8738" : "#344339";
+    canvasContext.lineWidth = index % 8 === 0 ? 3 : 1;
+    canvasContext.moveTo(vertical ? position : 0, vertical ? 0 : position);
+    canvasContext.lineTo(vertical ? position : canvas.width, vertical ? canvas.height : position);
+    canvasContext.stroke();
+  }
 }
 
 function renderEditor() {
@@ -112,12 +136,14 @@ function renderEditor() {
   const dimensions = workspacePixelSize();
   canvasContext.fillStyle = "#09100b";
   canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+  const pixelInset = gridVisible ? 2 : 0;
+  const pixelTrim = gridVisible ? 3 : 0;
 
   for (let y = 0; y < dimensions.height; y += 1) {
     for (let x = 0; x < dimensions.width; x += 1) {
       if (getPixel(project.glyphs, workspace, x, y)) {
         canvasContext.fillStyle = "#f0c35a";
-        canvasContext.fillRect(x * cellSize + 2, y * cellSize + 2, cellSize - 3, cellSize - 3);
+        canvasContext.fillRect(x * cellSize + pixelInset, y * cellSize + pixelInset, cellSize - pixelTrim, cellSize - pixelTrim);
       }
     }
   }
@@ -135,22 +161,8 @@ function renderEditor() {
     canvasContext.strokeRect(hoverCell.x * cellSize + 2, hoverCell.y * cellSize + 2, cellSize - 4, cellSize - 4);
   }
 
-  for (let x = 0; x <= dimensions.width; x += 1) {
-    canvasContext.beginPath();
-    canvasContext.strokeStyle = x % 8 === 0 ? "#ac8738" : "#344339";
-    canvasContext.lineWidth = x % 8 === 0 ? 3 : 1;
-    canvasContext.moveTo(x * cellSize, 0);
-    canvasContext.lineTo(x * cellSize, canvas.height);
-    canvasContext.stroke();
-  }
-  for (let y = 0; y <= dimensions.height; y += 1) {
-    canvasContext.beginPath();
-    canvasContext.strokeStyle = y % 8 === 0 ? "#ac8738" : "#344339";
-    canvasContext.lineWidth = y % 8 === 0 ? 3 : 1;
-    canvasContext.moveTo(0, y * cellSize);
-    canvasContext.lineTo(canvas.width, y * cellSize);
-    canvasContext.stroke();
-  }
+  drawGridLines(dimensions.width, true);
+  drawGridLines(dimensions.height, false);
 }
 
 function drawGlyphPreview(context, glyph, x, y, scale, color) {
@@ -179,7 +191,12 @@ function renderSlotRack() {
     button.classList.toggle("used", used);
     button.classList.toggle("in-workspace", slot >= workspace.baseSlot && slot < workspaceEnd);
     button.setAttribute("role", "gridcell");
-    button.setAttribute("aria-label", `Slot ${slot}, code ${hex(0x80 + slot)}, ${project.names[slot] || (used ? "used" : "empty")}`);
+    const description = `Slot ${slot}, code ${hex(0x80 + slot)}, ${project.names[slot] || (used ? "used" : "empty")}`;
+    button.setAttribute("aria-label", description);
+    button.title = description;
+    if (slot >= workspace.baseSlot && slot < workspaceEnd) {
+      button.setAttribute("aria-current", "true");
+    }
     mini.width = 64;
     mini.height = 64;
     const miniContext = mini.getContext("2d");
@@ -270,6 +287,10 @@ function renderSavedGroups() {
     document.querySelector("#group-name").value = "";
   }
   document.querySelector("#delete-group").disabled = activeGroupId === null;
+  const activeGroup = project.groups.find((group) => group.id === activeGroupId);
+  document.querySelector("#group-summary").textContent = activeGroup
+    ? `${activeGroup.name} / ${activeGroup.width}x${activeGroup.height}`
+    : `${workspace.width}x${workspace.height} from slot ${workspace.baseSlot.toString().padStart(2, "0")}`;
 }
 
 function updateAssemblyOutput() {
@@ -278,6 +299,7 @@ function updateAssemblyOutput() {
 }
 
 function renderAll() {
+  clampHoverCellToWorkspace();
   renderEditor();
   renderSlotRack();
   renderCrt();
@@ -286,12 +308,36 @@ function renderAll() {
   renderSavedGroups();
   updateAssemblyOutput();
   updateToolButtons();
+  updateSizeButtons();
+}
+
+function clampHoverCellToWorkspace() {
+  if (!hoverCell) {
+    return;
+  }
+  const dimensions = workspacePixelSize();
+  hoverCell = {
+    x: Math.max(0, Math.min(dimensions.width - 1, hoverCell.x)),
+    y: Math.max(0, Math.min(dimensions.height - 1, hoverCell.y)),
+  };
+  updatePointerStatus(hoverCell);
 }
 
 function updateToolButtons() {
   document.querySelectorAll("[data-tool]").forEach((button) => {
     button.classList.toggle("active", button.dataset.tool === tool);
     button.setAttribute("aria-pressed", button.dataset.tool === tool ? "true" : "false");
+  });
+  const activeButton = document.querySelector(`[data-tool="${tool}"]`);
+  document.querySelector("#active-tool-status").textContent = activeButton?.textContent ?? tool;
+  canvas.dataset.tool = tool;
+}
+
+function updateSizeButtons() {
+  document.querySelectorAll("[data-size]").forEach((button) => {
+    const selected = button.dataset.size === `${workspace.width}x${workspace.height}`;
+    button.classList.toggle("active", selected);
+    button.setAttribute("aria-pressed", selected ? "true" : "false");
   });
 }
 
@@ -433,6 +479,7 @@ function beginGesture(event) {
     return;
   }
   event.preventDefault();
+  canvas.focus();
   const cell = cellFromPointer(event);
   if (!cell) {
     return;
@@ -470,15 +517,20 @@ function moveGesture(event) {
     renderEditor();
     return;
   }
+  let endpoint = cell;
+  if (event.shiftKey && (tool === "line" || tool === "rectangle")) {
+    const dimensions = workspacePixelSize();
+    endpoint = constrainEndpoint(gesture.start, cell, tool, dimensions);
+  }
   if (tool === "pencil" || tool === "eraser") {
     gesture.changed = paintLine(gesture.last, cell, gesture.value) || gesture.changed;
     gesture.last = cell;
   } else if (tool === "line") {
-    gesture.preview = bresenhamPoints(gesture.start.x, gesture.start.y, cell.x, cell.y);
-    gesture.last = cell;
+    gesture.preview = bresenhamPoints(gesture.start.x, gesture.start.y, endpoint.x, endpoint.y);
+    gesture.last = endpoint;
   } else if (tool === "rectangle") {
-    gesture.preview = rectanglePoints(gesture.start, cell);
-    gesture.last = cell;
+    gesture.preview = rectanglePoints(gesture.start, endpoint);
+    gesture.last = endpoint;
   }
   renderEditor();
 }
@@ -564,6 +616,58 @@ function pasteWorkspace() {
   }, "Clipboard pasted");
 }
 
+function moveCanvasCursor(deltaX, deltaY) {
+  const dimensions = workspacePixelSize();
+  const current = hoverCell ?? { x: 0, y: 0 };
+  hoverCell = {
+    x: Math.max(0, Math.min(dimensions.width - 1, current.x + deltaX)),
+    y: Math.max(0, Math.min(dimensions.height - 1, current.y + deltaY)),
+  };
+  updatePointerStatus(hoverCell);
+  renderEditor();
+}
+
+function paintCanvasCursor() {
+  const cell = hoverCell ?? { x: 0, y: 0 };
+  const value = tool === "eraser" ? 0 : 1;
+  if (getPixel(project.glyphs, workspace, cell.x, cell.y) === value) {
+    setMessage(value ? "Pixel is already on" : "Pixel is already off");
+    return;
+  }
+  snapshotMutation(() => setPixel(project.glyphs, workspace, cell.x, cell.y, value), value ? "Pixel drawn" : "Pixel erased");
+  hoverCell = cell;
+  updatePointerStatus(cell);
+  canvas.focus();
+}
+
+function selectAdjacentWorkspace(direction) {
+  const count = workspace.width * workspace.height;
+  const nextBase = Math.max(0, Math.min(32 - count, workspace.baseSlot + direction));
+  if (nextBase === workspace.baseSlot) {
+    return;
+  }
+  workspace = { ...workspace, baseSlot: nextBase };
+  activeGroupId = null;
+  document.querySelector("#group-name").value = "";
+  syncWorkspaceInputs();
+  renderAll();
+  canvas.focus();
+}
+
+function cancelGesture() {
+  if (!gesture) {
+    return false;
+  }
+  if (canvas.hasPointerCapture(gesture.pointerId)) {
+    canvas.releasePointerCapture(gesture.pointerId);
+  }
+  project = gesture.before;
+  gesture = null;
+  renderAll();
+  setMessage("Stroke cancelled");
+  return true;
+}
+
 function hex(value) {
   return `$${value.toString(16).toUpperCase().padStart(2, "0")}`;
 }
@@ -580,6 +684,10 @@ function downloadText(filename, text, type) {
 
 function handleKeyboard(event) {
   const target = event.target;
+  if (event.key === "Escape" && cancelGesture()) {
+    event.preventDefault();
+    return;
+  }
   if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
     return;
   }
@@ -604,6 +712,40 @@ function handleKeyboard(event) {
     pasteWorkspace();
     return;
   }
+  const direction = DIRECTION_KEYS[event.key];
+  if (event.altKey && direction) {
+    event.preventDefault();
+    applyTransform(direction.action);
+    canvas.focus();
+    return;
+  }
+  if (target === canvas && direction) {
+    event.preventDefault();
+    moveCanvasCursor(direction.deltaX, direction.deltaY);
+    return;
+  }
+  if (target === canvas && (event.key === " " || event.key === "Enter")) {
+    event.preventDefault();
+    paintCanvasCursor();
+    return;
+  }
+  if (target === canvas && (event.key === "[" || event.key === "]")) {
+    event.preventDefault();
+    selectAdjacentWorkspace(event.key === "[" ? -1 : 1);
+    return;
+  }
+  if (target === canvas && ["1", "2", "3"].includes(event.key)) {
+    event.preventDefault();
+    const size = Number(event.key);
+    useQuickSize(size, size);
+    return;
+  }
+  if (event.key.toLowerCase() === "x") {
+    tool = tool === "eraser" ? "pencil" : "eraser";
+    updateToolButtons();
+    setMessage(`${tool} tool selected`);
+    return;
+  }
   const toolKeys = { b: "pencil", e: "eraser", l: "line", r: "rectangle", g: "fill" };
   if (toolKeys[event.key.toLowerCase()]) {
     tool = toolKeys[event.key.toLowerCase()];
@@ -611,16 +753,7 @@ function handleKeyboard(event) {
     setMessage(`${tool} tool selected`);
     return;
   }
-  const actionKeys = {
-    ArrowUp: "shift-up",
-    ArrowDown: "shift-down",
-    ArrowLeft: "shift-left",
-    ArrowRight: "shift-right",
-  };
-  if (actionKeys[event.key]) {
-    event.preventDefault();
-    applyTransform(actionKeys[event.key]);
-  } else if (event.key === "Delete" || event.key === "Backspace") {
+  if (event.key === "Delete" || event.key === "Backspace") {
     event.preventDefault();
     applyTransform("clear");
   }
@@ -642,7 +775,10 @@ document.querySelectorAll("[data-size]").forEach((button) => {
 });
 
 document.querySelectorAll("[data-action]").forEach((button) => {
-  button.addEventListener("click", () => applyTransform(button.dataset.action));
+  button.addEventListener("click", () => {
+    applyTransform(button.dataset.action);
+    canvas.focus();
+  });
 });
 
 document.querySelector("#apply-workspace").addEventListener("click", applyWorkspaceInputs);
@@ -651,6 +787,11 @@ document.querySelector("#delete-group").addEventListener("click", deleteWorkspac
 document.querySelector("#saved-group").addEventListener("change", (event) => loadWorkspaceGroup(event.target.value));
 document.querySelector("#copy-selection").addEventListener("click", copyWorkspace);
 document.querySelector("#paste-selection").addEventListener("click", pasteWorkspace);
+document.querySelector("#show-grid").addEventListener("change", (event) => {
+  gridVisible = event.target.checked;
+  renderEditor();
+  canvas.focus();
+});
 document.querySelector("#undo").addEventListener("click", undo);
 document.querySelector("#redo").addEventListener("click", redo);
 
@@ -732,6 +873,13 @@ canvas.addEventListener("pointerdown", beginGesture);
 canvas.addEventListener("pointermove", moveGesture);
 canvas.addEventListener("pointerup", finishGesture);
 canvas.addEventListener("pointercancel", finishGesture);
+canvas.addEventListener("focus", () => {
+  if (!hoverCell) {
+    hoverCell = { x: 0, y: 0 };
+    updatePointerStatus(hoverCell);
+    renderEditor();
+  }
+});
 canvas.addEventListener("pointerleave", () => {
   if (!gesture) {
     hoverCell = null;

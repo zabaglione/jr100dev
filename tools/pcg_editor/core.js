@@ -142,6 +142,31 @@ export function bresenhamPoints(x0, y0, x1, y1) {
   }
 }
 
+export function constrainEndpoint(start, end, mode, { width = Infinity, height = Infinity } = {}) {
+  const deltaX = end.x - start.x;
+  const deltaY = end.y - start.y;
+  const distanceX = Math.abs(deltaX);
+  const distanceY = Math.abs(deltaY);
+  if (mode === "line" && distanceX >= distanceY * 2) {
+    return { x: end.x, y: start.y };
+  }
+  if (mode === "line" && distanceY >= distanceX * 2) {
+    return { x: start.x, y: end.y };
+  }
+  if (mode !== "line" && mode !== "rectangle") {
+    throw new RangeError("Constraint mode must be line or rectangle");
+  }
+  const directionX = Math.sign(deltaX) || 1;
+  const directionY = Math.sign(deltaY) || 1;
+  const horizontalLimit = directionX > 0 ? width - 1 - start.x : start.x;
+  const verticalLimit = directionY > 0 ? height - 1 - start.y : start.y;
+  const distance = Math.max(0, Math.min(Math.max(distanceX, distanceY), horizontalLimit, verticalLimit));
+  return {
+    x: start.x + directionX * distance,
+    y: start.y + directionY * distance,
+  };
+}
+
 export function workspaceToMatrix(glyphs, workspace) {
   assertWorkspace(workspace);
   return Array.from({ length: workspace.height * GLYPH_SIZE }, (_, y) =>

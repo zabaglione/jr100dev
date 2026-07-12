@@ -12,7 +12,7 @@
         <span class="brand-mark" aria-hidden="true">JR</span>
         <div>
           <h1>PCG Workbench</h1>
-          <p>32-slot character and composite editor</p>
+          <p>32-slot pixel editor</p>
         </div>
       </div>
       <div class="header-status" aria-live="polite">
@@ -39,7 +39,7 @@
           </div>
           <span class="address-chip">$C000-$C0FF</span>
         </div>
-        <p class="panel-intro">Click a slot to edit one glyph. Composite mode maps consecutive slots in row-major order.</p>
+        <p class="panel-intro">Select a glyph or map consecutive slots as one canvas.</p>
         <div id="slot-rack" class="slot-rack" role="grid" aria-label="32 PCG character slots"></div>
         <div class="legend" aria-label="Slot state legend">
           <span><i class="legend-frame active"></i>Current workspace</span>
@@ -67,13 +67,18 @@
           <button id="apply-workspace" type="button">Apply layout</button>
           <output id="workspace-summary">Slot 00 / 8x8 px</output>
         </div>
-        <div class="group-controls">
-          <label>Saved group <select id="saved-group"><option value="">Current layout</option></select></label>
-          <label>Name <input id="group-name" type="text" maxlength="40" placeholder="Player ship"></label>
-          <button id="save-group" type="button">Save group</button>
-          <button id="delete-group" type="button" class="danger" disabled>Delete group</button>
-          <span>Groups preserve composite layouts in project JSON.</span>
-        </div>
+        <details class="group-disclosure">
+          <summary>
+            <span>Saved composites</span>
+            <span id="group-summary">No saved layout selected</span>
+          </summary>
+          <div class="group-controls">
+            <label>Group <select id="saved-group"><option value="">Current layout</option></select></label>
+            <label>Name <input id="group-name" type="text" maxlength="40" placeholder="Player ship"></label>
+            <button id="save-group" type="button">Save</button>
+            <button id="delete-group" type="button" class="danger" disabled>Delete</button>
+          </div>
+        </details>
 
         <div class="tool-strip" role="toolbar" aria-label="Drawing tools">
           <button type="button" data-tool="pencil" class="active" title="Pencil (B)">Pencil</button>
@@ -84,23 +89,27 @@
           <span class="tool-rule" aria-hidden="true"></span>
           <button id="copy-selection" type="button" title="Copy workspace (Ctrl/Cmd+C)">Copy</button>
           <button id="paste-selection" type="button" title="Paste workspace (Ctrl/Cmd+V)">Paste</button>
+          <label class="check-label grid-toggle"><input id="show-grid" type="checkbox" checked> Grid</label>
         </div>
 
         <div class="canvas-stage">
           <canvas id="editor-canvas" width="384" height="384" tabindex="0" aria-label="PCG pixel editing grid"></canvas>
           <div class="stage-note">
-            <strong>Fast input</strong>
-            <span>Left drag draws. Right drag erases. Strokes cross 8x8 boundaries.</span>
+            <strong id="active-tool-status">Pencil</strong>
+            <span>Left draw</span>
+            <span>Right erase</span>
+            <span>Shift constrains shapes</span>
+            <span>Esc cancels stroke</span>
           </div>
         </div>
 
         <div class="transform-strip" aria-label="Workspace transforms">
           <div class="transform-group">
             <span>Shift</span>
-            <button type="button" data-action="shift-up" title="Shift up (Arrow Up)">Up</button>
-            <button type="button" data-action="shift-left" title="Shift left (Arrow Left)">Left</button>
-            <button type="button" data-action="shift-right" title="Shift right (Arrow Right)">Right</button>
-            <button type="button" data-action="shift-down" title="Shift down (Arrow Down)">Down</button>
+            <button type="button" data-action="shift-up" title="Shift up (Alt+Arrow Up)">Up</button>
+            <button type="button" data-action="shift-left" title="Shift left (Alt+Arrow Left)">Left</button>
+            <button type="button" data-action="shift-right" title="Shift right (Alt+Arrow Right)">Right</button>
+            <button type="button" data-action="shift-down" title="Shift down (Alt+Arrow Down)">Down</button>
             <label class="check-label"><input id="wrap-shift" type="checkbox"> Wrap</label>
           </div>
           <div class="transform-group">
@@ -122,7 +131,7 @@
           <span class="address-chip">32x24 cells</span>
         </div>
         <canvas id="crt-preview" width="256" height="192" aria-label="JR-100 screen preview"></canvas>
-        <p class="preview-caption">The clock row uses slots 00-10. The selected composite is centered below it.</p>
+        <p class="preview-caption">Selected composite is centered below the clock row.</p>
 
         <section class="subpanel" aria-labelledby="preset-title">
           <div class="subpanel-heading">
@@ -163,7 +172,7 @@
     <footer class="status-bar">
       <span id="pointer-status">Pointer outside canvas</span>
       <span id="message-status" role="status" aria-live="polite">Ready</span>
-      <span>Shortcuts: B pencil, E eraser, L line, R rectangle, G fill, arrows shift</span>
+      <span>B/E/L/R/G tools · Canvas arrows move cursor · Space paints · Alt+arrows shift</span>
     </footer>
 
     <script type="module" src="app.js"></script>

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import {
@@ -6,6 +7,7 @@ import {
   applyArcadeDigits,
   assertWorkspace,
   bresenhamPoints,
+  constrainEndpoint,
   createProject,
   exportAssembly,
   getPixel,
@@ -16,6 +18,9 @@ import {
   shiftWorkspace,
   upsertGroup,
 } from "../../tools/pcg_editor/core.js";
+
+const editorHtml = await readFile(new URL("../../tools/pcg_editor/index.html", import.meta.url), "utf8");
+const editorStyles = await readFile(new URL("../../tools/pcg_editor/styles.css", import.meta.url), "utf8");
 
 test("a project always contains 32 eight-byte glyphs", () => {
   const project = createProject();
@@ -65,6 +70,22 @@ test("line interpolation covers every cell between pointer samples", () => {
     [3, 2],
     [4, 2],
   ]);
+});
+
+test("shape constraints snap lines and rectangles without leaving the workspace", () => {
+  assert.deepEqual(constrainEndpoint({ x: 2, y: 2 }, { x: 7, y: 3 }, "line", { width: 8, height: 8 }), { x: 7, y: 2 });
+  assert.deepEqual(constrainEndpoint({ x: 2, y: 2 }, { x: 4, y: 7 }, "line", { width: 8, height: 8 }), { x: 2, y: 7 });
+  assert.deepEqual(constrainEndpoint({ x: 2, y: 2 }, { x: 5, y: 6 }, "rectangle", { width: 8, height: 8 }), { x: 6, y: 6 });
+  assert.deepEqual(constrainEndpoint({ x: 6, y: 6 }, { x: 7, y: 2 }, "rectangle", { width: 8, height: 8 }), { x: 7, y: 5 });
+});
+
+test("desktop layout keeps the editor in one viewport and compacts all 32 slots", () => {
+  assert.match(editorStyles, /height: calc\(100vh - 54px\)/);
+  assert.match(editorStyles, /grid-template-columns: repeat\(8, minmax\(0, 1fr\)\)/);
+  assert.match(editorStyles, /overflow: auto/);
+  assert.match(editorStyles, /@media \(max-width: 1180px\)/);
+  assert.match(editorHtml, /<details class="group-disclosure">/);
+  assert.match(editorHtml, /id="show-grid"/);
 });
 
 test("shifting a composite crosses slot boundaries", () => {
