@@ -71,6 +71,13 @@ test("VRAM-backed glyph source highlighting is optional and explained", () => {
   assert.doesNotMatch(editorHtml, /id="show-vram-source"[^>]*checked/);
 });
 
+test("symbol and semigraphic codes share one palette filter", () => {
+  assert.match(editorHtml, /<option value="symbolsAndSemigraphics"[^>]*data-i18n="crt\.symbolAndSemigraphicCodes"/);
+  assert.doesNotMatch(editorHtml, /<option value="semigraphics"/);
+  assert.match(ja["crt.symbolAndSemigraphicCodes"], /\$40-\$7F/);
+  assert.match(en["crt.symbolAndSemigraphicCodes"], /\$40-\$7F/);
+});
+
 test("a project always contains 32 eight-byte glyphs", () => {
   const project = createProject();
 

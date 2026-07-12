@@ -317,8 +317,7 @@ function paletteBounds(range) {
   const ranges = {
     all: [0x00, 0xff],
     text: [0x00, 0x3f],
-    symbols: [0x40, 0x5f],
-    semigraphics: [0x60, 0x7f],
+    symbolsAndSemigraphics: [0x40, 0x7f],
     upper: [0x80, project.screen.mode === DISPLAY_MODES.PCG ? 0x9f : 0xff],
     extended: [0xa0, 0xff],
   };
