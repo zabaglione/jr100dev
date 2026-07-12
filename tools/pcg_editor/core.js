@@ -1,8 +1,9 @@
 import { createFallbackRomGlyphs, extractCharacterRom } from "./rom_font.js";
+import { validateAnimationClips } from "./animation.js";
 
 export const SLOT_COUNT = 32;
 export const GLYPH_SIZE = 8;
-export const PROJECT_VERSION = 2;
+export const PROJECT_VERSION = 3;
 export const SCREEN_WIDTH = 32;
 export const SCREEN_HEIGHT = 24;
 export const SCREEN_CELL_COUNT = SCREEN_WIDTH * SCREEN_HEIGHT;
@@ -48,6 +49,7 @@ export function createProject({ withPreset = false } = {}) {
     glyphs: Array.from({ length: SLOT_COUNT }, () => Array(GLYPH_SIZE).fill(0)),
     names: Array(SLOT_COUNT).fill(""),
     groups: [],
+    animations: [],
     screen: createScreen(),
     romGlyphs: createFallbackRomGlyphs(),
     romSource: "Built-in approximation",
@@ -477,6 +479,7 @@ export function validateProjectShape(project) {
     }
     assertWorkspace(group);
   });
+  validateAnimationClips(project.animations);
   validateScreen(project.screen);
   if (!Array.isArray(project.romGlyphs) || project.romGlyphs.length !== 128) {
     throw new TypeError("Project must contain 128 ROM glyphs");
@@ -513,6 +516,9 @@ export function parseProject(text) {
   }
   if (typeof parsed.romSource !== "string") {
     parsed.romSource = "Built-in approximation";
+  }
+  if (!Array.isArray(parsed.animations)) {
+    parsed.animations = [];
   }
   parsed.version = PROJECT_VERSION;
   validateProjectShape(parsed);

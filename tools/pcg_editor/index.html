@@ -28,6 +28,7 @@
       <div class="view-switch" role="tablist" aria-label="Editor view" data-i18n-aria="view.label">
         <button id="show-pcg-view" class="active" type="button" role="tab" aria-selected="true" data-i18n="view.pcg">PCG Editor</button>
         <button id="show-screen-view" type="button" role="tab" aria-selected="false" data-i18n="view.crt">CRT Editor</button>
+        <button id="show-animation-view" type="button" role="tab" aria-selected="false" data-i18n="view.animation">Animation</button>
       </div>
       <nav class="header-actions" aria-label="Project actions" data-i18n-aria="actions.label">
         <button id="new-project" type="button" data-i18n="actions.new">New</button>
@@ -276,6 +277,94 @@
       </aside>
     </main>
 
+    <main id="animation-workbench" class="animation-workbench" hidden>
+      <aside class="panel animation-clip-panel" aria-labelledby="animation-clips-title">
+        <div class="panel-heading">
+          <div>
+            <span class="eyebrow" data-i18n="animation.library">Library</span>
+            <h2 id="animation-clips-title" data-i18n="animation.clips">Animation Clips</h2>
+          </div>
+          <button id="new-animation-clip" type="button" data-i18n="animation.newClip">New clip</button>
+        </div>
+        <p class="panel-intro" data-i18n="animation.clipIntro">Frames are stored as data while only the resident PCG slots are shown on screen.</p>
+        <div id="animation-clip-list" class="animation-clip-list"></div>
+        <section id="animation-settings" class="subpanel animation-settings">
+          <div class="subpanel-heading"><h3 data-i18n="animation.settings">Clip settings</h3><span id="animation-resident-range">$80-$83</span></div>
+          <label><span data-i18n="pcg.name">Name</span><input id="animation-name" type="text" maxlength="40" value="Player"></label>
+          <div class="animation-field-row">
+            <label><span data-i18n="pcg.baseSlot">Base slot</span><input id="animation-base-slot" type="number" min="0" max="31" value="0"></label>
+            <label><span data-i18n="pcg.columns">Columns</span><input id="animation-width" type="number" min="1" max="8" value="2"></label>
+            <label><span data-i18n="pcg.rows">Rows</span><input id="animation-height" type="number" min="1" max="4" value="2"></label>
+          </div>
+          <label><span data-i18n="animation.frameDuration">Frame duration</span><input id="animation-duration" type="number" min="16" max="60000" step="10" value="160"><span>ms</span></label>
+          <div class="animation-settings-actions">
+            <button id="save-animation-settings" class="primary" type="button" data-i18n="actions.save">Save</button>
+            <button id="delete-animation-clip" class="danger" type="button" data-i18n="animation.deleteClip">Delete clip</button>
+          </div>
+        </section>
+      </aside>
+
+      <section class="panel animation-editor-panel" aria-labelledby="animation-editor-title">
+        <div class="panel-heading">
+          <div>
+            <span class="eyebrow" data-i18n="animation.previewLabel">Runtime preview</span>
+            <h2 id="animation-editor-title" data-i18n="animation.editor">Frame Timeline</h2>
+          </div>
+          <output id="animation-frame-summary">0 frames</output>
+        </div>
+        <div class="animation-preview-stage">
+          <canvas id="animation-preview" width="512" height="512" tabindex="0" aria-label="Animation preview" data-i18n-aria="aria.animationPreview"></canvas>
+          <div class="animation-playback">
+            <button id="previous-animation-frame" type="button" data-i18n="animation.previous">Previous</button>
+            <button id="play-animation" class="primary" type="button" data-i18n="animation.play">Play</button>
+            <button id="next-animation-frame" type="button" data-i18n="animation.next">Next</button>
+            <span id="animation-playback-status" data-i18n="animation.stopped">Stopped</span>
+          </div>
+        </div>
+        <div class="animation-frame-toolbar">
+          <label><span data-i18n="animation.frameName">Frame name</span><input id="animation-frame-name" type="text" maxlength="40" placeholder="RIGHT_0"></label>
+          <button id="capture-animation-frame" class="primary" type="button" data-i18n="animation.capture">Capture resident slots</button>
+          <button id="update-animation-frame" type="button" data-i18n="animation.update">Update selected</button>
+          <button id="load-animation-frame" type="button" data-i18n="animation.editInPcg">Edit in PCG</button>
+          <button id="duplicate-animation-frame" type="button" data-i18n="animation.duplicate">Duplicate</button>
+          <button id="delete-animation-frame" class="danger" type="button" data-i18n="actions.delete">Delete</button>
+        </div>
+        <div id="animation-frame-list" class="animation-frame-list" aria-label="Animation frames" data-i18n-aria="aria.animationFrames"></div>
+      </section>
+
+      <aside class="panel animation-inspector" aria-labelledby="animation-memory-title">
+        <div class="panel-heading">
+          <div>
+            <span class="eyebrow" data-i18n="inspection.label">Inspection</span>
+            <h2 id="animation-memory-title" data-i18n="animation.memory">Runtime Memory</h2>
+          </div>
+        </div>
+        <section class="subpanel">
+          <div class="subpanel-heading"><h3 data-i18n="animation.residentPcg">Resident PCG</h3><span id="animation-resident-slots">4 slots</span></div>
+          <p data-i18n="animation.residentHelp">The screen always uses the same consecutive PCG codes. The program replaces their glyph bytes for each frame.</p>
+          <dl class="state-list animation-memory-list">
+            <div><dt data-i18n="animation.screenCodes">Screen codes</dt><dd id="animation-screen-codes">$80-$83</dd></div>
+            <div><dt data-i18n="animation.copyPerFrame">Copy per frame</dt><dd id="animation-copy-bytes">32 bytes</dd></div>
+            <div><dt data-i18n="animation.storedFrames">Stored frames</dt><dd id="animation-stored-frames">0</dd></div>
+            <div><dt data-i18n="animation.dataBytes">Frame data</dt><dd id="animation-data-bytes">0 bytes</dd></div>
+          </dl>
+        </section>
+        <section class="subpanel">
+          <div class="subpanel-heading"><h3 data-i18n="animation.workflow">Workflow</h3><span>1-2-3</span></div>
+          <ol class="animation-workflow">
+            <li data-i18n="animation.workflowEdit">Edit the resident slot range in PCG Editor.</li>
+            <li data-i18n="animation.workflowCapture">Capture it as a named frame such as RIGHT_0.</li>
+            <li data-i18n="animation.workflowRuntime">At runtime, copy the selected frame bytes to the resident PCG address.</li>
+          </ol>
+        </section>
+        <section class="subpanel">
+          <div class="subpanel-heading"><h3 data-i18n="animation.asmHint">Assembly interface</h3><span data-i18n="export.animation">Animation</span></div>
+          <p data-i18n="animation.asmHelp">ASM output includes frame labels, byte counts, and a frame pointer table for the driver.</p>
+          <button id="open-animation-export" type="button" data-i18n="actions.asm">ASM Output</button>
+        </section>
+      </aside>
+    </main>
+
     <section id="export-panel" class="export-panel" aria-labelledby="export-title" hidden>
       <div class="export-heading">
         <div>
@@ -287,6 +376,7 @@
             <option value="combined" data-i18n="export.combined">PCG + screen</option>
             <option value="pcg" data-i18n="export.pcg">PCG bank</option>
             <option value="screen" data-i18n="export.screen">Screen</option>
+            <option value="animation" data-i18n="export.animation">Animation</option>
           </select>
         </label>
         <label><span data-i18n="common.label">Label</span> <input id="assembly-label" type="text" value="PCG_DATA" spellcheck="false"></label>

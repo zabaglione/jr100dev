@@ -37,6 +37,16 @@ import {
   vramPcgSourceOffset,
 } from "./core.js";
 import { getLanguage, setLanguage, t, translateDocument } from "./i18n.js";
+import {
+  applyAnimationFrame,
+  captureAnimationFrame,
+  createAnimationClip,
+  duplicateAnimationFrame,
+  exportAnimationAssembly,
+  removeAnimationFrame,
+  replaceAnimationFrame,
+  validateAnimationClips,
+} from "./animation.js";
 
 const STORAGE_KEY = "jr100dev.pcg-workbench.v1";
 const HISTORY_LIMIT = 64;
@@ -48,6 +58,8 @@ const screenCanvas = document.querySelector("#screen-canvas");
 const screenContext = screenCanvas.getContext("2d");
 const vramGlyphCanvas = document.querySelector("#vram-glyph-canvas");
 const vramGlyphContext = vramGlyphCanvas.getContext("2d");
+const animationCanvas = document.querySelector("#animation-preview");
+const animationContext = animationCanvas.getContext("2d");
 
 translateDocument();
 document.querySelector("#language-select").value = getLanguage();
@@ -69,6 +81,9 @@ let screenGesture = null;
 let vramGlyphGesture = null;
 let activeView = "pcg";
 let vramSourceVisible = false;
+let activeAnimationId = null;
+let activeAnimationFrame = 0;
+let animationTimer = null;
 
 const DIRECTION_KEYS = {
   ArrowUp: { action: "shift-up", deltaX: 0, deltaY: -1 },
@@ -506,6 +521,7 @@ function updateAssemblyOutput() {
     pcg: () => exportAssembly(project, { label }),
     screen: () => exportScreenAssembly(project, { label }),
     combined: () => exportCombinedAssembly(project, { pcgLabel: label, screenLabel: "SCREEN_DATA" }),
+    animation: () => exportAnimationAssembly(project.animations, { label }),
   };
   document.querySelector("#assembly-output").value = exporters[target]();
 }
@@ -521,9 +537,219 @@ function renderAll() {
   renderByteInspector();
   renderUsage();
   renderSavedGroups();
+  renderAnimation();
   updateAssemblyOutput();
   updateToolButtons();
   updateSizeButtons();
+}
+
+function activeAnimation() {
+  const selected = project.animations.find((clip) => clip.id === activeAnimationId);
+  if (selected) {
+    return selected;
+  }
+  activeAnimationId = project.animations[0]?.id ?? null;
+  activeAnimationFrame = 0;
+  return project.animations[0] ?? null;
+}
+
+function drawAnimationFrame(clip, frame) {
+  animationContext.fillStyle = "#050906";
+  animationContext.fillRect(0, 0, animationCanvas.width, animationCanvas.height);
+  if (!clip || !frame) {
+    animationContext.fillStyle = "#718076";
+    animationContext.font = "16px sans-serif";
+    animationContext.textAlign = "center";
+    animationContext.fillText(t("animation.emptyPreview"), animationCanvas.width / 2, animationCanvas.height / 2);
+    return;
+  }
+  const scale = Math.max(1, Math.floor(Math.min(448 / (clip.width * 8), 448 / (clip.height * 8))));
+  const renderedWidth = clip.width * 8 * scale;
+  const renderedHeight = clip.height * 8 * scale;
+  const originX = Math.floor((animationCanvas.width - renderedWidth) / 2);
+  const originY = Math.floor((animationCanvas.height - renderedHeight) / 2);
+  frame.glyphs.forEach((glyph, offset) => {
+    const tileX = offset % clip.width;
+    const tileY = Math.floor(offset / clip.width);
+    drawGlyphPreview(
+      animationContext,
+      glyph,
+      originX + tileX * 8 * scale,
+      originY + tileY * 8 * scale,
+      scale,
+      "#8de3a2",
+    );
+  });
+  animationContext.strokeStyle = "#ac8738";
+  animationContext.lineWidth = 2;
+  for (let x = 0; x <= clip.width; x += 1) {
+    animationContext.beginPath();
+    animationContext.moveTo(originX + x * 8 * scale, originY);
+    animationContext.lineTo(originX + x * 8 * scale, originY + renderedHeight);
+    animationContext.stroke();
+  }
+  for (let y = 0; y <= clip.height; y += 1) {
+    animationContext.beginPath();
+    animationContext.moveTo(originX, originY + y * 8 * scale);
+    animationContext.lineTo(originX + renderedWidth, originY + y * 8 * scale);
+    animationContext.stroke();
+  }
+}
+
+function drawAnimationThumbnail(canvasElement, clip, frame) {
+  const context = canvasElement.getContext("2d");
+  context.fillStyle = "#050906";
+  context.fillRect(0, 0, canvasElement.width, canvasElement.height);
+  const scale = Math.max(1, Math.floor(Math.min(56 / (clip.width * 8), 56 / (clip.height * 8))));
+  const width = clip.width * 8 * scale;
+  const height = clip.height * 8 * scale;
+  const originX = Math.floor((64 - width) / 2);
+  const originY = Math.floor((64 - height) / 2);
+  frame.glyphs.forEach((glyph, offset) => {
+    drawGlyphPreview(
+      context,
+      glyph,
+      originX + (offset % clip.width) * 8 * scale,
+      originY + Math.floor(offset / clip.width) * 8 * scale,
+      scale,
+      "#8de3a2",
+    );
+  });
+}
+
+function renderAnimation() {
+  const clip = activeAnimation();
+  const clipList = document.querySelector("#animation-clip-list");
+  clipList.replaceChildren();
+  project.animations.forEach((candidate) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "animation-clip-card";
+    button.classList.toggle("selected", candidate.id === clip?.id);
+    button.innerHTML = `<strong></strong><span></span>`;
+    button.querySelector("strong").textContent = candidate.name;
+    button.querySelector("span").textContent = t("animation.clipMeta", {
+      width: candidate.width,
+      height: candidate.height,
+      frames: candidate.frames.length,
+      slot: candidate.baseSlot.toString().padStart(2, "0"),
+    });
+    button.addEventListener("click", () => {
+      activeAnimationId = candidate.id;
+      activeAnimationFrame = 0;
+      stopAnimationPlayback();
+      renderAnimation();
+    });
+    clipList.append(button);
+  });
+
+  const controls = document.querySelector("#animation-settings");
+  controls.classList.toggle("disabled-panel", !clip);
+  controls.querySelectorAll("input, button").forEach((control) => { control.disabled = !clip; });
+  const frameButtons = [
+    "#update-animation-frame",
+    "#load-animation-frame",
+    "#duplicate-animation-frame",
+    "#delete-animation-frame",
+    "#previous-animation-frame",
+    "#play-animation",
+    "#next-animation-frame",
+  ];
+  frameButtons.forEach((selector) => { document.querySelector(selector).disabled = !clip?.frames.length; });
+  document.querySelector("#capture-animation-frame").disabled = !clip;
+  if (!clip) {
+    document.querySelector("#animation-frame-list").replaceChildren();
+    document.querySelector("#animation-frame-summary").textContent = t("animation.frameCount", { count: 0 });
+    drawAnimationFrame(null, null);
+    document.querySelector("#animation-resident-slots").textContent = t("animation.slotCount", { count: 0 });
+    document.querySelector("#animation-copy-bytes").textContent = t("animation.byteCount", { count: 0 });
+    document.querySelector("#animation-stored-frames").textContent = "0";
+    document.querySelector("#animation-data-bytes").textContent = t("animation.byteCount", { count: 0 });
+    document.querySelector("#animation-resident-range").textContent = "--";
+    document.querySelector("#animation-screen-codes").textContent = "--";
+    document.querySelector("#animation-name").value = "";
+    return;
+  }
+
+  activeAnimationFrame = Math.max(0, Math.min(activeAnimationFrame, Math.max(0, clip.frames.length - 1)));
+  const slotCount = clip.width * clip.height;
+  const lastSlot = clip.baseSlot + slotCount - 1;
+  const firstCode = 0x80 + clip.baseSlot;
+  const lastCode = 0x80 + lastSlot;
+  document.querySelector("#animation-name").value = clip.name;
+  document.querySelector("#animation-base-slot").value = String(clip.baseSlot);
+  document.querySelector("#animation-width").value = String(clip.width);
+  document.querySelector("#animation-height").value = String(clip.height);
+  document.querySelector("#animation-duration").value = String(clip.frameDurationMs);
+  document.querySelector("#animation-width").disabled = clip.frames.length > 0;
+  document.querySelector("#animation-height").disabled = clip.frames.length > 0;
+  document.querySelector("#animation-base-slot").disabled = clip.frames.length > 0;
+  document.querySelector("#animation-resident-range").textContent = `${hex(firstCode)}-${hex(lastCode)}`;
+  document.querySelector("#animation-screen-codes").textContent = `${hex(firstCode)}-${hex(lastCode)}`;
+  document.querySelector("#animation-resident-slots").textContent = t("animation.slotCount", { count: slotCount });
+  document.querySelector("#animation-copy-bytes").textContent = t("animation.byteCount", { count: slotCount * 8 });
+  document.querySelector("#animation-stored-frames").textContent = String(clip.frames.length);
+  document.querySelector("#animation-data-bytes").textContent = t("animation.byteCount", { count: clip.frames.length * slotCount * 8 });
+  document.querySelector("#animation-frame-summary").textContent = t("animation.frameCount", { count: clip.frames.length });
+
+  const frameList = document.querySelector("#animation-frame-list");
+  frameList.replaceChildren();
+  clip.frames.forEach((frame, index) => {
+    const button = document.createElement("button");
+    const thumbnail = document.createElement("canvas");
+    const name = document.createElement("strong");
+    const number = document.createElement("span");
+    button.type = "button";
+    button.className = "animation-frame-card";
+    button.classList.toggle("selected", index === activeAnimationFrame);
+    thumbnail.width = 64;
+    thumbnail.height = 64;
+    name.textContent = frame.name;
+    number.textContent = `#${index.toString().padStart(2, "0")}`;
+    button.append(thumbnail, name, number);
+    button.addEventListener("click", () => {
+      activeAnimationFrame = index;
+      stopAnimationPlayback();
+      renderAnimation();
+    });
+    frameList.append(button);
+    drawAnimationThumbnail(thumbnail, clip, frame);
+  });
+  const selectedFrame = clip.frames[activeAnimationFrame];
+  document.querySelector("#animation-frame-name").value = selectedFrame?.name ?? `FRAME_${clip.frames.length}`;
+  drawAnimationFrame(clip, selectedFrame ?? null);
+}
+
+function stopAnimationPlayback() {
+  if (animationTimer !== null) {
+    clearInterval(animationTimer);
+    animationTimer = null;
+  }
+  document.querySelector("#play-animation").textContent = t("animation.play");
+  document.querySelector("#animation-playback-status").textContent = t("animation.stopped");
+}
+
+function toggleAnimationPlayback() {
+  const clip = activeAnimation();
+  if (!clip?.frames.length) return;
+  if (animationTimer !== null) {
+    stopAnimationPlayback();
+    return;
+  }
+  document.querySelector("#play-animation").textContent = t("animation.stop");
+  document.querySelector("#animation-playback-status").textContent = t("animation.playing", { duration: clip.frameDurationMs });
+  animationTimer = setInterval(() => {
+    activeAnimationFrame = (activeAnimationFrame + 1) % clip.frames.length;
+    renderAnimation();
+  }, clip.frameDurationMs);
+}
+
+function selectRelativeAnimationFrame(delta) {
+  const clip = activeAnimation();
+  if (!clip?.frames.length) return;
+  stopAnimationPlayback();
+  activeAnimationFrame = (activeAnimationFrame + delta + clip.frames.length) % clip.frames.length;
+  renderAnimation();
 }
 
 function clampHoverCellToWorkspace() {
@@ -916,22 +1142,142 @@ function downloadText(filename, text, type) {
 }
 
 function setActiveView(view) {
+  if (!new Set(["pcg", "screen", "animation"]).has(view)) {
+    throw new RangeError("Unknown editor view");
+  }
+  if (activeView === "animation" && view !== "animation") {
+    stopAnimationPlayback();
+  }
   activeView = view;
   const screenActive = view === "screen";
-  document.querySelector("#pcg-workbench").hidden = screenActive;
+  const animationActive = view === "animation";
+  document.querySelector("#pcg-workbench").hidden = screenActive || animationActive;
   document.querySelector("#screen-workbench").hidden = !screenActive;
-  document.querySelector("#show-pcg-view").classList.toggle("active", !screenActive);
+  document.querySelector("#animation-workbench").hidden = !animationActive;
+  document.querySelector("#show-pcg-view").classList.toggle("active", view === "pcg");
   document.querySelector("#show-screen-view").classList.toggle("active", screenActive);
-  document.querySelector("#show-pcg-view").setAttribute("aria-selected", screenActive ? "false" : "true");
+  document.querySelector("#show-animation-view").classList.toggle("active", animationActive);
+  document.querySelector("#show-pcg-view").setAttribute("aria-selected", view === "pcg" ? "true" : "false");
   document.querySelector("#show-screen-view").setAttribute("aria-selected", screenActive ? "true" : "false");
-  document.querySelector("#shortcut-help").textContent = screenActive
-    ? t("status.crtShortcuts")
-    : t("status.pcgShortcuts");
+  document.querySelector("#show-animation-view").setAttribute("aria-selected", animationActive ? "true" : "false");
+  document.querySelector("#shortcut-help").textContent = t(
+    screenActive ? "status.crtShortcuts" : animationActive ? "status.animationShortcuts" : "status.pcgShortcuts",
+  );
   if (screenActive) {
     screenCanvas.focus();
+  } else if (animationActive) {
+    animationCanvas.focus();
   } else {
     canvas.focus();
   }
+}
+
+function createNewAnimationClip() {
+  const clip = createAnimationClip({
+    id: `animation-${Date.now()}-${project.animations.length}`,
+    name: t("animation.defaultName"),
+    baseSlot: 0,
+    width: 2,
+    height: 2,
+    frameDurationMs: 160,
+  });
+  const before = cloneProject(project);
+  project.animations.push(clip);
+  activeAnimationId = clip.id;
+  activeAnimationFrame = 0;
+  commitHistory(before, t("message.animationCreated"));
+  renderAll();
+}
+
+function saveAnimationSettings() {
+  const clip = activeAnimation();
+  if (!clip) return;
+  const candidate = {
+    ...clip,
+    name: document.querySelector("#animation-name").value.trim(),
+    baseSlot: Number(document.querySelector("#animation-base-slot").value),
+    width: Number(document.querySelector("#animation-width").value),
+    height: Number(document.querySelector("#animation-height").value),
+    frameDurationMs: Number(document.querySelector("#animation-duration").value),
+  };
+  try {
+    validateAnimationClips([candidate]);
+    snapshotMutation(() => Object.assign(clip, candidate), t("message.animationSaved"));
+  } catch (error) {
+    setMessage(formatError(error), "error");
+  }
+}
+
+function deleteAnimationClip() {
+  const clip = activeAnimation();
+  if (!clip || !window.confirm(t("confirm.deleteAnimation", { name: clip.name }))) return;
+  stopAnimationPlayback();
+  snapshotMutation(() => {
+    project.animations = project.animations.filter((candidate) => candidate.id !== clip.id);
+    activeAnimationId = project.animations[0]?.id ?? null;
+    activeAnimationFrame = 0;
+  }, t("message.animationDeleted"));
+}
+
+function captureCurrentAnimationFrame() {
+  const clip = activeAnimation();
+  if (!clip) return;
+  const name = document.querySelector("#animation-frame-name").value.trim() || `FRAME_${clip.frames.length}`;
+  snapshotMutation(() => {
+    captureAnimationFrame(clip, project.glyphs, {
+      id: `frame-${Date.now()}-${clip.frames.length}`,
+      name,
+    });
+    activeAnimationFrame = clip.frames.length - 1;
+  }, t("message.animationCaptured", { name }));
+}
+
+function updateCurrentAnimationFrame() {
+  const clip = activeAnimation();
+  const frame = clip?.frames[activeAnimationFrame];
+  if (!frame) return;
+  const name = document.querySelector("#animation-frame-name").value.trim() || frame.name;
+  snapshotMutation(() => {
+    frame.name = name;
+    replaceAnimationFrame(clip, activeAnimationFrame, project.glyphs);
+  }, t("message.animationUpdated", { name }));
+}
+
+function loadCurrentAnimationFrame() {
+  const clip = activeAnimation();
+  const frame = clip?.frames[activeAnimationFrame];
+  if (!frame) return;
+  const before = cloneProject(project);
+  applyAnimationFrame(clip, activeAnimationFrame, project.glyphs);
+  workspace = { baseSlot: clip.baseSlot, width: clip.width, height: clip.height };
+  commitHistory(before, t("message.animationLoaded", { name: frame.name }));
+  syncWorkspaceInputs();
+  renderAll();
+  setActiveView("pcg");
+}
+
+function duplicateCurrentAnimationFrame() {
+  const clip = activeAnimation();
+  const frame = clip?.frames[activeAnimationFrame];
+  if (!frame) return;
+  snapshotMutation(() => {
+    duplicateAnimationFrame(clip, activeAnimationFrame, {
+      id: `frame-${Date.now()}-${clip.frames.length}`,
+      name: `${frame.name}_COPY`,
+    });
+    activeAnimationFrame += 1;
+  }, t("message.animationDuplicated"));
+}
+
+function deleteCurrentAnimationFrame() {
+  const clip = activeAnimation();
+  const frame = clip?.frames[activeAnimationFrame];
+  if (!frame) return;
+  stopAnimationPlayback();
+  snapshotMutation(() => {
+    removeAnimationFrame(clip, activeAnimationFrame);
+    activeAnimationFrame = Math.min(activeAnimationFrame, Math.max(0, clip.frames.length - 1));
+  }, t("message.animationFrameDeleted", { name: frame.name }));
 }
 
 function screenCellFromPointer(event) {
@@ -1100,6 +1446,16 @@ function handleKeyboard(event) {
     redo();
     return;
   }
+  if (target === animationCanvas && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
+    event.preventDefault();
+    selectRelativeAnimationFrame(event.key === "ArrowLeft" ? -1 : 1);
+    return;
+  }
+  if (target === animationCanvas && event.key === " ") {
+    event.preventDefault();
+    toggleAnimationPlayback();
+    return;
+  }
   if (modifier && event.key.toLowerCase() === "c") {
     event.preventDefault();
     copyWorkspace();
@@ -1209,7 +1565,27 @@ document.querySelector("#undo").addEventListener("click", undo);
 document.querySelector("#redo").addEventListener("click", redo);
 document.querySelector("#show-pcg-view").addEventListener("click", () => setActiveView("pcg"));
 document.querySelector("#show-screen-view").addEventListener("click", () => setActiveView("screen"));
+document.querySelector("#show-animation-view").addEventListener("click", () => setActiveView("animation"));
+document.querySelector("#new-animation-clip").addEventListener("click", createNewAnimationClip);
+document.querySelector("#save-animation-settings").addEventListener("click", saveAnimationSettings);
+document.querySelector("#delete-animation-clip").addEventListener("click", deleteAnimationClip);
+document.querySelector("#capture-animation-frame").addEventListener("click", captureCurrentAnimationFrame);
+document.querySelector("#update-animation-frame").addEventListener("click", updateCurrentAnimationFrame);
+document.querySelector("#load-animation-frame").addEventListener("click", loadCurrentAnimationFrame);
+document.querySelector("#duplicate-animation-frame").addEventListener("click", duplicateCurrentAnimationFrame);
+document.querySelector("#delete-animation-frame").addEventListener("click", deleteCurrentAnimationFrame);
+document.querySelector("#previous-animation-frame").addEventListener("click", () => selectRelativeAnimationFrame(-1));
+document.querySelector("#next-animation-frame").addEventListener("click", () => selectRelativeAnimationFrame(1));
+document.querySelector("#play-animation").addEventListener("click", toggleAnimationPlayback);
+document.querySelector("#open-animation-export").addEventListener("click", () => {
+  document.querySelector("#export-target").value = "animation";
+  document.querySelector("#assembly-label").value = "ANIMATION_DATA";
+  exportPanel.hidden = false;
+  updateAssemblyOutput();
+  document.querySelector("#assembly-output").focus();
+});
 document.querySelector("#language-select").addEventListener("change", (event) => {
+  stopAnimationPlayback();
   setLanguage(event.target.value);
   translateDocument();
   document.querySelector("#language-select").value = getLanguage();
@@ -1283,6 +1659,9 @@ document.querySelector("#new-project").addEventListener("click", () => {
   }
   undoStack.push(cloneProject(project));
   project = createProject({ withPreset: false });
+  stopAnimationPlayback();
+  activeAnimationId = null;
+  activeAnimationFrame = 0;
   activeGroupId = null;
   document.querySelector("#group-name").value = "";
   redoStack = [];
@@ -1305,6 +1684,9 @@ document.querySelector("#import-file").addEventListener("change", async (event) 
     const imported = parseProject(await file.text());
     undoStack.push(cloneProject(project));
     project = imported;
+    stopAnimationPlayback();
+    activeAnimationId = null;
+    activeAnimationFrame = 0;
     activeGroupId = null;
     document.querySelector("#group-name").value = "";
     redoStack = [];

@@ -33,6 +33,14 @@ import { extractCharacterRom } from "../../tools/pcg_editor/rom_font.js";
 import en from "../../tools/pcg_editor/locales/en.js";
 import ja from "../../tools/pcg_editor/locales/ja.js";
 import { getLanguage, resolveStoredLanguage, setLanguage, t } from "../../tools/pcg_editor/i18n.js";
+import {
+  applyAnimationFrame,
+  captureAnimationFrame,
+  createAnimationClip,
+  exportAnimationAssembly,
+  replaceAnimationFrame,
+  validateAnimationClips,
+} from "../../tools/pcg_editor/animation.js";
 
 const editorHtml = await readFile(new URL("../../tools/pcg_editor/index.html", import.meta.url), "utf8");
 const editorStyles = await readFile(new URL("../../tools/pcg_editor/styles.css", import.meta.url), "utf8");
@@ -84,6 +92,119 @@ test("a project always contains 32 eight-byte glyphs", () => {
   assert.equal(project.glyphs.length, 32);
   assert.ok(project.glyphs.every((glyph) => glyph.length === 8));
   assert.ok(project.glyphs.flat().every((value) => value === 0));
+  assert.deepEqual(project.animations, []);
+});
+
+test("a 2x2 animation keeps any number of frames outside its four resident slots", () => {
+  const project = createProject();
+  const clip = createAnimationClip({
+    id: "player",
+    name: "Player",
+    baseSlot: 12,
+    width: 2,
+    height: 2,
+    frameDurationMs: 120,
+  });
+
+  for (let frame = 0; frame < 8; frame += 1) {
+    for (let slot = 12; slot < 16; slot += 1) {
+      project.glyphs[slot] = Array(8).fill(frame * 4 + slot - 12);
+    }
+    captureAnimationFrame(clip, project.glyphs, {
+      id: `frame-${frame}`,
+      name: `Frame ${frame}`,
+    });
+  }
+
+  assert.equal(clip.frames.length, 8);
+  assert.equal(clip.frames[0].glyphs.length, 4);
+  assert.equal(clip.frames[0].glyphs.flat().length, 32);
+  assert.equal(clip.baseSlot, 12);
+  assert.equal(clip.width * clip.height, 4);
+  validateAnimationClips([clip]);
+});
+
+test("animation frames can replace and restore only the resident PCG range", () => {
+  const project = createProject();
+  const clip = createAnimationClip({ id: "player", name: "Player", baseSlot: 4, width: 2, height: 2 });
+  project.glyphs[3] = Array(8).fill(0x33);
+  project.glyphs[8] = Array(8).fill(0x88);
+  for (let slot = 4; slot < 8; slot += 1) {
+    project.glyphs[slot] = Array(8).fill(slot);
+  }
+  captureAnimationFrame(clip, project.glyphs, { id: "left-0", name: "LEFT_0" });
+
+  for (let slot = 4; slot < 8; slot += 1) {
+    project.glyphs[slot] = Array(8).fill(0xa0 + slot);
+  }
+  replaceAnimationFrame(clip, 0, project.glyphs);
+  project.glyphs.slice(4, 8).forEach((glyph) => glyph.fill(0));
+  applyAnimationFrame(clip, 0, project.glyphs);
+
+  assert.deepEqual(project.glyphs[3], Array(8).fill(0x33));
+  assert.deepEqual(project.glyphs[4], Array(8).fill(0xa4));
+  assert.deepEqual(project.glyphs[7], Array(8).fill(0xa7));
+  assert.deepEqual(project.glyphs[8], Array(8).fill(0x88));
+});
+
+test("animation assembly exports fixed-size frame data and pointer metadata", () => {
+  const project = createProject();
+  const clip = createAnimationClip({ id: "player", name: "Player", baseSlot: 0, width: 2, height: 2 });
+  captureAnimationFrame(clip, project.glyphs, { id: "left-0", name: "LEFT_0" });
+  project.glyphs[0][0] = 0x80;
+  captureAnimationFrame(clip, project.glyphs, { id: "left-1", name: "LEFT_1" });
+
+  const assembly = exportAnimationAssembly([clip], { label: "PLAYER_ANIMATION" });
+
+  assert.match(assembly, /PLAYER_ANIMATION_SLOT_COUNT: \.equ 4/);
+  assert.match(assembly, /PLAYER_ANIMATION_FRAME_BYTES: \.equ 32/);
+  assert.match(assembly, /PLAYER_ANIMATION_FRAME_00_LEFT_0:/);
+  assert.match(assembly, /PLAYER_ANIMATION_FRAME_01_LEFT_1:/);
+  assert.match(assembly, /PLAYER_ANIMATION_FRAME_POINTERS:/);
+  assert.match(assembly, /\.word PLAYER_ANIMATION_FRAME_00_LEFT_0, PLAYER_ANIMATION_FRAME_01_LEFT_1/);
+  assert.equal((assembly.match(/\.byte/g) ?? []).length, 8);
+  assert.doesNotMatch(assembly, /[\u3040-\u30ff\u3400-\u9fff]/u);
+});
+
+test("animation assembly labels stay unique when clip and frame names repeat", () => {
+  const project = createProject();
+  const first = createAnimationClip({ id: "first", name: "Player", width: 1, height: 1 });
+  const second = createAnimationClip({ id: "second", name: "Player", width: 1, height: 1 });
+  captureAnimationFrame(first, project.glyphs, { id: "a", name: "IDLE" });
+  captureAnimationFrame(first, project.glyphs, { id: "b", name: "IDLE" });
+  captureAnimationFrame(second, project.glyphs, { id: "c", name: "IDLE" });
+
+  const assembly = exportAnimationAssembly([first, second], { label: "ANIM" });
+  const labels = [...assembly.matchAll(/^([A-Z0-9_]+):/gm)].map((match) => match[1]);
+
+  assert.equal(new Set(labels).size, labels.length);
+  assert.match(assembly, /ANIM_CLIP_00_PLAYER_FRAME_00_IDLE:/);
+  assert.match(assembly, /ANIM_CLIP_00_PLAYER_FRAME_01_IDLE:/);
+  assert.match(assembly, /ANIM_CLIP_01_PLAYER_FRAME_00_IDLE:/);
+});
+
+test("animation clips survive project JSON round trips and old projects migrate", () => {
+  const project = createProject();
+  const clip = createAnimationClip({ id: "player", name: "Player", baseSlot: 0, width: 2, height: 2 });
+  captureAnimationFrame(clip, project.glyphs, { id: "down-0", name: "DOWN_0" });
+  project.animations.push(clip);
+
+  assert.deepEqual(parseProject(serializeProject(project)).animations, [clip]);
+
+  const legacy = JSON.parse(serializeProject(project));
+  delete legacy.animations;
+  legacy.version = 2;
+  assert.deepEqual(parseProject(JSON.stringify(legacy)).animations, []);
+});
+
+test("animation view exposes clip, frame, playback, and resident-slot controls", () => {
+  assert.match(editorHtml, /id="show-animation-view"/);
+  assert.match(editorHtml, /id="animation-workbench"/);
+  assert.match(editorHtml, /id="animation-base-slot"/);
+  assert.match(editorHtml, /id="capture-animation-frame"/);
+  assert.match(editorHtml, /id="update-animation-frame"/);
+  assert.match(editorHtml, /id="play-animation"/);
+  assert.match(editorHtml, /id="animation-frame-list"/);
 });
 
 test("composite coordinates map across 8x8 slot boundaries", () => {

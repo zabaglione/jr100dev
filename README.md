@@ -38,6 +38,7 @@ make -C samples/hello
 | [`key_display`](samples/key_display/) | VIAを直接使ったキーマトリクス読み取り |
 | [`multi`](samples/multi/) | 複数オブジェクトのアセンブルとリンク |
 | [`pcg_clock`](samples/pcg_clock/) | PCG数字を使った24時間時計 |
+| [`pcg_animation`](samples/pcg_animation/) | 4つの常駐PCGを書き換える2×2キャラクターアニメーション |
 | [`maze`](samples/maze/) | 迷路生成、入力、スクロールを含む実践例 |
 
 個別のサンプルは共通の操作でビルドできます。
