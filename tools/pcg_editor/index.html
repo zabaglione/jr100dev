@@ -410,7 +410,14 @@
           <input id="image-mosaic-threshold" type="range" min="0" max="1" step="0.02" value="0.5">
           <output id="image-mosaic-threshold-value">0.50</output>
         </label>
+        <label><span data-i18n="imageMosaic.edgeStrength">Edge enhancement</span>
+          <input id="image-mosaic-edge-strength" type="range" min="0" max="2" step="0.1" value="0.8">
+          <output id="image-mosaic-edge-strength-value">0.8</output>
+        </label>
         <label class="check-label"><input id="image-mosaic-invert" type="checkbox"> <span data-i18n="imageMosaic.invert">Invert brightness</span></label>
+        <label class="check-label"><input id="image-mosaic-generate-pcg" type="checkbox"> <span data-i18n="imageMosaic.generatePcg">Generate up to 32 PCG glyphs</span></label>
+        <p id="image-mosaic-pcg-warning" class="image-mosaic-warning" hidden data-i18n="imageMosaic.pcgWarning">Applying this preview replaces all 32 PCG slots.</p>
+        <p id="image-mosaic-pcg-mode-help" class="image-mosaic-warning" hidden data-i18n="imageMosaic.pcgModeHelp">Switch the display mode to ROM + PCG before using automatic PCG generation.</p>
       </div>
 
       <div class="image-mosaic-previews">

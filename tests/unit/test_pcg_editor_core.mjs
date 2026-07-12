@@ -42,10 +42,13 @@ import {
   validateAnimationClips,
 } from "../../tools/pcg_editor/animation.js";
 import {
+  applyImageMosaicResult,
   buildGlyphCandidates,
   convertLuminanceToScreen,
+  generatePcgMosaic,
   IMAGE_PIXEL_HEIGHT,
   IMAGE_PIXEL_WIDTH,
+  rgbaToEnhancedLuminance,
 } from "../../tools/pcg_editor/image_mosaic.js";
 
 const editorHtml = await readFile(new URL("../../tools/pcg_editor/index.html", import.meta.url), "utf8");
@@ -271,12 +274,110 @@ test("image mosaic supports inversion, thresholding, and ordered dithering", () 
   );
 });
 
+test("image mosaic edge enhancement detects equal-luminance color boundaries", () => {
+  const rgba = new Uint8ClampedArray(IMAGE_PIXEL_WIDTH * IMAGE_PIXEL_HEIGHT * 4);
+  for (let y = 0; y < IMAGE_PIXEL_HEIGHT; y += 1) {
+    for (let x = 0; x < IMAGE_PIXEL_WIDTH; x += 1) {
+      const offset = (y * IMAGE_PIXEL_WIDTH + x) * 4;
+      if (x < IMAGE_PIXEL_WIDTH / 2) {
+        rgba[offset] = 255;
+      } else {
+        rgba[offset + 1] = 76;
+      }
+      rgba[offset + 3] = 255;
+    }
+  }
+
+  const plain = rgbaToEnhancedLuminance(rgba, { edgeStrength: 0 });
+  const enhanced = rgbaToEnhancedLuminance(rgba, { edgeStrength: 1 });
+  const row = Math.floor(IMAGE_PIXEL_HEIGHT / 2) * IMAGE_PIXEL_WIDTH;
+
+  assert.ok(Math.abs(plain[row + 32] - plain[row + 224]) < 0.01);
+  assert.equal(enhanced[row + 32], plain[row + 32]);
+  assert.ok(enhanced[row + 127] < plain[row + 127]);
+  assert.ok(enhanced[row + 128] < plain[row + 128]);
+});
+
+test("image mosaic generates PCG glyphs for residual 8x8 patterns", () => {
+  const luminance = new Float32Array(IMAGE_PIXEL_WIDTH * IMAGE_PIXEL_HEIGHT);
+  const diagonal = [0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01];
+  diagonal.forEach((byte, y) => {
+    for (let x = 0; x < 8; x += 1) {
+      luminance[y * IMAGE_PIXEL_WIDTH + x] = (byte >> (7 - x)) & 1;
+    }
+  });
+
+  const result = generatePcgMosaic(
+    luminance,
+    [{ code: 0x00, glyph: Array(8).fill(0) }],
+    { toneMode: "threshold", threshold: 0.5 },
+  );
+
+  assert.deepEqual(result.glyphs, [diagonal]);
+  assert.equal(result.cells[0], 0x80);
+  assert.ok(result.cells.slice(1).every((code) => code === 0x00));
+  assert.equal(result.meanError, 0);
+});
+
+test("image mosaic limits generated PCG data to 32 glyphs", () => {
+  const luminance = new Float32Array(IMAGE_PIXEL_WIDTH * IMAGE_PIXEL_HEIGHT);
+  for (let cell = 0; cell < 40; cell += 1) {
+    const pixel = cell;
+    const x = (cell % 32) * 8 + (pixel % 8);
+    const y = Math.floor(cell / 32) * 8 + Math.floor(pixel / 8);
+    luminance[y * IMAGE_PIXEL_WIDTH + x] = 1;
+  }
+
+  const result = generatePcgMosaic(
+    luminance,
+    [{ code: 0x00, glyph: Array(8).fill(0) }],
+    { toneMode: "threshold", threshold: 0.5 },
+  );
+
+  assert.equal(result.glyphs.length, 32);
+  assert.ok(result.cells.every((code) => code === 0x00 || (code >= 0x80 && code <= 0x9f)));
+});
+
+test("image mosaic applies generated screen and PCG data as one project result", () => {
+  const project = createProject();
+  project.glyphs.forEach((glyph) => glyph.fill(0xff));
+  project.names[0] = "Old image slot";
+  project.names[1] = "Preserved slot";
+  project.groups = [
+    { id: "overlap", name: "Overlap", baseSlot: 0, width: 1, height: 1 },
+    { id: "preserved", name: "Preserved", baseSlot: 1, width: 1, height: 1 },
+  ];
+  project.animations = [
+    createAnimationClip({ id: "overlap-animation", name: "Overlap", baseSlot: 0 }),
+    createAnimationClip({ id: "preserved-animation", name: "Preserved", baseSlot: 1 }),
+  ];
+  const diagonal = [0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01];
+  const cells = Array(32 * 24).fill(0x80);
+
+  const pcgResult = { cells, glyphs: [diagonal], kind: "screen-pcg" };
+  const replacedPcg = applyImageMosaicResult(project, pcgResult);
+
+  assert.equal(replacedPcg, true);
+  assert.deepEqual(project.screen.cells, cells);
+  assert.deepEqual(project.glyphs[0], diagonal);
+  assert.deepEqual(project.glyphs[1], Array(8).fill(0xff));
+  assert.equal(project.names[0], "Image PCG 00");
+  assert.equal(project.names[1], "Preserved slot");
+  assert.deepEqual(project.groups.map(({ id }) => id), ["preserved"]);
+  assert.deepEqual(project.animations.map(({ id }) => id), ["preserved-animation"]);
+  setScreenMode(project.screen, DISPLAY_MODES.INVERSE);
+  assert.throws(() => applyImageMosaicResult(project, pcgResult), /CMODE PCG/);
+});
+
 test("CRT editor exposes the experimental image mosaic workflow", () => {
   assert.match(editorHtml, /id="open-image-mosaic"/);
   assert.match(editorHtml, /id="image-mosaic-dialog"/);
   assert.match(editorHtml, /id="image-mosaic-file"/);
   assert.match(editorHtml, /id="generate-image-mosaic"/);
   assert.match(editorHtml, /id="apply-image-mosaic"/);
+  assert.match(editorHtml, /id="image-mosaic-edge-strength"/);
+  assert.match(editorHtml, /id="image-mosaic-generate-pcg"/);
+  assert.match(editorHtml, /id="image-mosaic-pcg-mode-help"/);
   assert.match(editorHtml, /data-i18n="imageMosaic\.experimental"/);
   assert.match(editorApp, /typeof globalThis\.createImageBitmap === "function"/);
   assert.match(editorApp, /new Image\(\)/);

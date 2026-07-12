@@ -48,10 +48,15 @@ import {
   validateAnimationClips,
 } from "./animation.js";
 import {
+  applyImageMosaicResult,
   buildGlyphCandidates,
   convertLuminanceToScreen,
+  generatePcgMosaic,
   IMAGE_PIXEL_HEIGHT,
   IMAGE_PIXEL_WIDTH,
+  PCG_CODE_END,
+  PCG_CODE_START,
+  rgbaToEnhancedLuminance,
 } from "./image_mosaic.js";
 
 const STORAGE_KEY = "jr100dev.pcg-workbench.v1";
@@ -96,6 +101,7 @@ let activeAnimationId = null;
 let activeAnimationFrame = 0;
 let animationTimer = null;
 let imageMosaicBitmap = null;
+let imageMosaicRgba = null;
 let imageMosaicLuminance = null;
 let imageMosaicPreview = null;
 let imageMosaicLoadGeneration = 0;
@@ -790,19 +796,35 @@ function invalidateImageMosaicPreview() {
 function syncImageMosaicControls() {
   const contrast = Number(document.querySelector("#image-mosaic-contrast").value);
   const threshold = Number(document.querySelector("#image-mosaic-threshold").value);
+  const edgeStrength = Number(document.querySelector("#image-mosaic-edge-strength").value);
+  const generatePcgControl = document.querySelector("#image-mosaic-generate-pcg");
+  generatePcgControl.disabled = project.screen.mode !== DISPLAY_MODES.PCG;
+  if (generatePcgControl.disabled) generatePcgControl.checked = false;
   document.querySelector("#image-mosaic-contrast-value").textContent = contrast.toFixed(1);
   document.querySelector("#image-mosaic-threshold-value").textContent = threshold.toFixed(2);
-  const thresholdEnabled = document.querySelector("#image-mosaic-tone").value !== "grayscale";
+  document.querySelector("#image-mosaic-edge-strength-value").textContent = edgeStrength.toFixed(1);
+  const thresholdEnabled = document.querySelector("#image-mosaic-tone").value !== "grayscale" || generatePcgControl.checked;
   document.querySelector("#image-mosaic-threshold").disabled = !thresholdEnabled;
   const pcgOption = document.querySelector('#image-mosaic-palette option[value="pcg"]');
-  pcgOption.disabled = project.screen.mode !== DISPLAY_MODES.PCG;
+  pcgOption.disabled = project.screen.mode !== DISPLAY_MODES.PCG || generatePcgControl.checked;
   if (pcgOption.disabled && document.querySelector("#image-mosaic-palette").value === "pcg") {
     document.querySelector("#image-mosaic-palette").value = "compatible";
   }
+  document.querySelector("#image-mosaic-pcg-warning").hidden = !generatePcgControl.checked;
+  document.querySelector("#image-mosaic-pcg-mode-help").hidden = project.screen.mode === DISPLAY_MODES.PCG;
+}
+
+function updateImageMosaicLuminance() {
+  imageMosaicLuminance = imageMosaicRgba
+    ? rgbaToEnhancedLuminance(imageMosaicRgba, {
+      edgeStrength: Number(document.querySelector("#image-mosaic-edge-strength").value),
+    })
+    : null;
 }
 
 function renderImageMosaicSource() {
   if (!imageMosaicBitmap) {
+    imageMosaicRgba = null;
     imageMosaicLuminance = null;
     drawImageMosaicPlaceholder(imageMosaicSourceContext, "imageMosaic.noImage");
     invalidateImageMosaicPreview();
@@ -831,26 +853,21 @@ function renderImageMosaicSource() {
       drawHeight,
     );
   }
-  const rgba = imageMosaicSourceContext.getImageData(0, 0, width, height).data;
-  imageMosaicLuminance = new Float32Array(width * height);
-  for (let index = 0; index < imageMosaicLuminance.length; index += 1) {
-    const sourceIndex = index * 4;
-    imageMosaicLuminance[index] = (
-      rgba[sourceIndex] * 0.2126
-      + rgba[sourceIndex + 1] * 0.7152
-      + rgba[sourceIndex + 2] * 0.0722
-    ) / 255;
-  }
+  imageMosaicRgba = new Uint8ClampedArray(imageMosaicSourceContext.getImageData(0, 0, width, height).data);
+  updateImageMosaicLuminance();
   invalidateImageMosaicPreview();
 }
 
-function renderImageMosaicResult(cells) {
+function renderImageMosaicResult(preview) {
   imageMosaicResultContext.fillStyle = "#020503";
   imageMosaicResultContext.fillRect(0, 0, IMAGE_PIXEL_WIDTH, IMAGE_PIXEL_HEIGHT);
-  cells.forEach((code, index) => {
+  preview.cells.forEach((code, index) => {
+    const generatedGlyph = code >= PCG_CODE_START && code <= PCG_CODE_END
+      ? preview.glyphs?.[code - PCG_CODE_START]
+      : null;
     drawGlyphPreview(
       imageMosaicResultContext,
-      resolveScreenGlyph(project, code),
+      generatedGlyph ?? resolveScreenGlyph(project, code),
       (index % SCREEN_WIDTH) * 8,
       Math.floor(index / SCREEN_WIDTH) * 8,
       1,
@@ -866,18 +883,31 @@ function generateImageMosaic() {
     const candidates = buildGlyphCandidates(project, {
       palette: document.querySelector("#image-mosaic-palette").value,
     });
-    imageMosaicPreview = convertLuminanceToScreen(imageMosaicLuminance, candidates, {
+    const options = {
       contrast: Number(document.querySelector("#image-mosaic-contrast").value),
       invert: document.querySelector("#image-mosaic-invert").checked,
       threshold: Number(document.querySelector("#image-mosaic-threshold").value),
       toneMode: document.querySelector("#image-mosaic-tone").value,
-    });
-    renderImageMosaicResult(imageMosaicPreview.cells);
+    };
+    const generatePcg = document.querySelector("#image-mosaic-generate-pcg").checked;
+    imageMosaicPreview = generatePcg
+      ? generatePcgMosaic(imageMosaicLuminance, candidates, options)
+      : convertLuminanceToScreen(imageMosaicLuminance, candidates, options);
+    renderImageMosaicResult(imageMosaicPreview);
     document.querySelector("#apply-image-mosaic").disabled = false;
-    setImageMosaicStatus("imageMosaic.generated", {
-      candidates: candidates.length,
-      error: imageMosaicPreview.meanError.toFixed(3),
-    });
+    if (generatePcg) {
+      const baseCandidateCount = candidates.filter(({ code }) => code < PCG_CODE_START || code > PCG_CODE_END).length;
+      setImageMosaicStatus("imageMosaic.generatedPcg", {
+        candidates: baseCandidateCount,
+        pcg: imageMosaicPreview.glyphs.length,
+        error: imageMosaicPreview.meanError.toFixed(3),
+      });
+    } else {
+      setImageMosaicStatus("imageMosaic.generated", {
+        candidates: candidates.length,
+        error: imageMosaicPreview.meanError.toFixed(3),
+      });
+    }
   } catch (error) {
     setImageMosaicStatus("error.operationFailed", { detail: `: ${error.message}` });
     document.querySelector("#apply-image-mosaic").disabled = true;
@@ -886,9 +916,10 @@ function generateImageMosaic() {
 
 function applyImageMosaic() {
   if (!imageMosaicPreview) return;
+  const replacesPcg = imageMosaicPreview.kind === "screen-pcg";
   snapshotMutation(() => {
-    project.screen.cells = [...imageMosaicPreview.cells];
-  }, t("message.imageMosaicApplied"));
+    applyImageMosaicResult(project, imageMosaicPreview);
+  }, t(replacesPcg ? "message.imageMosaicPcgApplied" : "message.imageMosaicApplied"));
   imageMosaicDialog.close();
   screenCanvas.focus();
 }
@@ -1813,6 +1844,7 @@ document.querySelector("#image-mosaic-file").addEventListener("change", async (e
   const generation = ++imageMosaicLoadGeneration;
   imageMosaicBitmap?.close?.();
   imageMosaicBitmap = null;
+  imageMosaicRgba = null;
   imageMosaicLuminance = null;
   invalidateImageMosaicPreview();
   document.querySelector("#generate-image-mosaic").disabled = true;
@@ -1834,6 +1866,7 @@ document.querySelector("#image-mosaic-file").addEventListener("change", async (e
   } catch (error) {
     if (generation !== imageMosaicLoadGeneration) return;
     imageMosaicBitmap = null;
+    imageMosaicRgba = null;
     imageMosaicLuminance = null;
     imageMosaicPreview = null;
     document.querySelector("#generate-image-mosaic").disabled = true;
@@ -1845,7 +1878,12 @@ document.querySelector("#image-mosaic-file").addEventListener("change", async (e
   }
 });
 document.querySelector("#image-mosaic-fit").addEventListener("change", renderImageMosaicSource);
-document.querySelectorAll("#image-mosaic-palette, #image-mosaic-tone, #image-mosaic-contrast, #image-mosaic-threshold, #image-mosaic-invert")
+document.querySelector("#image-mosaic-edge-strength").addEventListener("input", () => {
+  syncImageMosaicControls();
+  updateImageMosaicLuminance();
+  invalidateImageMosaicPreview();
+});
+document.querySelectorAll("#image-mosaic-palette, #image-mosaic-tone, #image-mosaic-contrast, #image-mosaic-threshold, #image-mosaic-invert, #image-mosaic-generate-pcg")
   .forEach((control) => control.addEventListener("input", () => {
     syncImageMosaicControls();
     invalidateImageMosaicPreview();
