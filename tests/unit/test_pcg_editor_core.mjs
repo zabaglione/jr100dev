@@ -41,6 +41,12 @@ import {
   replaceAnimationFrame,
   validateAnimationClips,
 } from "../../tools/pcg_editor/animation.js";
+import {
+  buildGlyphCandidates,
+  convertLuminanceToScreen,
+  IMAGE_PIXEL_HEIGHT,
+  IMAGE_PIXEL_WIDTH,
+} from "../../tools/pcg_editor/image_mosaic.js";
 
 const editorHtml = await readFile(new URL("../../tools/pcg_editor/index.html", import.meta.url), "utf8");
 const editorStyles = await readFile(new URL("../../tools/pcg_editor/styles.css", import.meta.url), "utf8");
@@ -205,6 +211,77 @@ test("animation view exposes clip, frame, playback, and resident-slot controls",
   assert.match(editorHtml, /id="update-animation-frame"/);
   assert.match(editorHtml, /id="play-animation"/);
   assert.match(editorHtml, /id="animation-frame-list"/);
+});
+
+test("image mosaic candidate ranges follow JR-100 display compatibility", () => {
+  const project = createProject();
+
+  assert.deepEqual(buildGlyphCandidates(project, { palette: "rom" }).map(({ code }) => code),
+    Array.from({ length: 128 }, (_, code) => code));
+  assert.deepEqual(buildGlyphCandidates(project, { palette: "symbols" }).map(({ code }) => code),
+    Array.from({ length: 64 }, (_, index) => 0x40 + index));
+  assert.deepEqual(buildGlyphCandidates(project, { palette: "pcg" }).map(({ code }) => code),
+    Array.from({ length: 32 }, (_, index) => 0x80 + index));
+  assert.equal(buildGlyphCandidates(project, { palette: "compatible" }).length, 160);
+
+  setScreenMode(project.screen, DISPLAY_MODES.INVERSE);
+  assert.equal(buildGlyphCandidates(project, { palette: "compatible" }).length, 256);
+  assert.throws(() => buildGlyphCandidates(project, { palette: "pcg" }), /PCG palette/);
+});
+
+test("image mosaic recovers an exact 8x8 glyph from a 256x192 luminance image", () => {
+  const project = createProject();
+  project.romGlyphs[0] = Array(8).fill(0);
+  project.romGlyphs[1] = [0x18, 0x3c, 0x7e, 0xdb, 0xff, 0x24, 0x24, 0x00];
+  const luminance = new Float32Array(IMAGE_PIXEL_WIDTH * IMAGE_PIXEL_HEIGHT);
+  project.romGlyphs[1].forEach((byte, y) => {
+    for (let x = 0; x < 8; x += 1) {
+      luminance[y * IMAGE_PIXEL_WIDTH + x] = (byte >> (7 - x)) & 1;
+    }
+  });
+
+  const result = convertLuminanceToScreen(
+    luminance,
+    buildGlyphCandidates(project, { palette: "rom" }),
+  );
+
+  assert.equal(result.cells.length, 32 * 24);
+  assert.equal(result.cells[0], 1);
+  assert.ok(result.cells.slice(1).every((code) => code === 0));
+  assert.equal(result.meanError, 0);
+});
+
+test("image mosaic supports inversion, thresholding, and ordered dithering", () => {
+  const project = createProject();
+  project.romGlyphs[0] = Array(8).fill(0);
+  project.romGlyphs[1] = Array(8).fill(0xff);
+  project.romGlyphs[2] = [0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55];
+  const candidates = buildGlyphCandidates(project, { palette: "rom" }).slice(0, 3);
+  const white = new Float32Array(IMAGE_PIXEL_WIDTH * IMAGE_PIXEL_HEIGHT).fill(1);
+  const gray = new Float32Array(IMAGE_PIXEL_WIDTH * IMAGE_PIXEL_HEIGHT).fill(0.5);
+
+  assert.ok(convertLuminanceToScreen(white, candidates).cells.every((code) => code === 1));
+  assert.ok(convertLuminanceToScreen(white, candidates, { invert: true }).cells.every((code) => code === 0));
+  assert.equal(convertLuminanceToScreen(gray, candidates, { toneMode: "threshold", threshold: 0.6 }).cells[0], 0);
+  assert.ok(convertLuminanceToScreen(gray, candidates, { toneMode: "bayer", threshold: 0.5 }).cells
+    .every((code) => code === 2));
+  assert.throws(
+    () => convertLuminanceToScreen(gray, [{ code: 0, glyph: [0, 0, 0, 0, 0, 0, 0, "bad"] }]),
+    /eight byte values/,
+  );
+});
+
+test("CRT editor exposes the experimental image mosaic workflow", () => {
+  assert.match(editorHtml, /id="open-image-mosaic"/);
+  assert.match(editorHtml, /id="image-mosaic-dialog"/);
+  assert.match(editorHtml, /id="image-mosaic-file"/);
+  assert.match(editorHtml, /id="generate-image-mosaic"/);
+  assert.match(editorHtml, /id="apply-image-mosaic"/);
+  assert.match(editorHtml, /data-i18n="imageMosaic\.experimental"/);
+  assert.match(editorApp, /typeof globalThis\.createImageBitmap === "function"/);
+  assert.match(editorApp, /new Image\(\)/);
+  assert.match(editorApp, /imageMosaicLoadGeneration/);
+  assert.match(editorApp, /document\.querySelector\("dialog\[open\]"\)/);
 });
 
 test("composite coordinates map across 8x8 slot boundaries", () => {

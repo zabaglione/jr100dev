@@ -47,6 +47,12 @@ import {
   replaceAnimationFrame,
   validateAnimationClips,
 } from "./animation.js";
+import {
+  buildGlyphCandidates,
+  convertLuminanceToScreen,
+  IMAGE_PIXEL_HEIGHT,
+  IMAGE_PIXEL_WIDTH,
+} from "./image_mosaic.js";
 
 const STORAGE_KEY = "jr100dev.pcg-workbench.v1";
 const HISTORY_LIMIT = 64;
@@ -60,6 +66,11 @@ const vramGlyphCanvas = document.querySelector("#vram-glyph-canvas");
 const vramGlyphContext = vramGlyphCanvas.getContext("2d");
 const animationCanvas = document.querySelector("#animation-preview");
 const animationContext = animationCanvas.getContext("2d");
+const imageMosaicDialog = document.querySelector("#image-mosaic-dialog");
+const imageMosaicSourceCanvas = document.querySelector("#image-mosaic-source");
+const imageMosaicSourceContext = imageMosaicSourceCanvas.getContext("2d", { willReadFrequently: true });
+const imageMosaicResultCanvas = document.querySelector("#image-mosaic-result");
+const imageMosaicResultContext = imageMosaicResultCanvas.getContext("2d");
 
 translateDocument();
 document.querySelector("#language-select").value = getLanguage();
@@ -84,6 +95,10 @@ let vramSourceVisible = false;
 let activeAnimationId = null;
 let activeAnimationFrame = 0;
 let animationTimer = null;
+let imageMosaicBitmap = null;
+let imageMosaicLuminance = null;
+let imageMosaicPreview = null;
+let imageMosaicLoadGeneration = 0;
 
 const DIRECTION_KEYS = {
   ArrowUp: { action: "shift-up", deltaX: 0, deltaY: -1 },
@@ -750,6 +765,163 @@ function selectRelativeAnimationFrame(delta) {
   stopAnimationPlayback();
   activeAnimationFrame = (activeAnimationFrame + delta + clip.frames.length) % clip.frames.length;
   renderAnimation();
+}
+
+function drawImageMosaicPlaceholder(context, textKey) {
+  context.fillStyle = "#050906";
+  context.fillRect(0, 0, IMAGE_PIXEL_WIDTH, IMAGE_PIXEL_HEIGHT);
+  context.fillStyle = "#718076";
+  context.font = "11px sans-serif";
+  context.textAlign = "center";
+  context.fillText(t(textKey), IMAGE_PIXEL_WIDTH / 2, IMAGE_PIXEL_HEIGHT / 2);
+}
+
+function setImageMosaicStatus(key, values = {}) {
+  document.querySelector("#image-mosaic-status").textContent = t(key, values);
+}
+
+function invalidateImageMosaicPreview() {
+  imageMosaicPreview = null;
+  document.querySelector("#apply-image-mosaic").disabled = true;
+  drawImageMosaicPlaceholder(imageMosaicResultContext, "imageMosaic.noPreview");
+  setImageMosaicStatus(imageMosaicBitmap ? "imageMosaic.ready" : "imageMosaic.chooseImage");
+}
+
+function syncImageMosaicControls() {
+  const contrast = Number(document.querySelector("#image-mosaic-contrast").value);
+  const threshold = Number(document.querySelector("#image-mosaic-threshold").value);
+  document.querySelector("#image-mosaic-contrast-value").textContent = contrast.toFixed(1);
+  document.querySelector("#image-mosaic-threshold-value").textContent = threshold.toFixed(2);
+  const thresholdEnabled = document.querySelector("#image-mosaic-tone").value !== "grayscale";
+  document.querySelector("#image-mosaic-threshold").disabled = !thresholdEnabled;
+  const pcgOption = document.querySelector('#image-mosaic-palette option[value="pcg"]');
+  pcgOption.disabled = project.screen.mode !== DISPLAY_MODES.PCG;
+  if (pcgOption.disabled && document.querySelector("#image-mosaic-palette").value === "pcg") {
+    document.querySelector("#image-mosaic-palette").value = "compatible";
+  }
+}
+
+function renderImageMosaicSource() {
+  if (!imageMosaicBitmap) {
+    imageMosaicLuminance = null;
+    drawImageMosaicPlaceholder(imageMosaicSourceContext, "imageMosaic.noImage");
+    invalidateImageMosaicPreview();
+    return;
+  }
+  const width = IMAGE_PIXEL_WIDTH;
+  const height = IMAGE_PIXEL_HEIGHT;
+  const fit = document.querySelector("#image-mosaic-fit").value;
+  imageMosaicSourceContext.fillStyle = "#000";
+  imageMosaicSourceContext.fillRect(0, 0, width, height);
+  imageMosaicSourceContext.imageSmoothingEnabled = true;
+  imageMosaicSourceContext.imageSmoothingQuality = "high";
+  if (fit === "stretch") {
+    imageMosaicSourceContext.drawImage(imageMosaicBitmap, 0, 0, width, height);
+  } else {
+    const scale = fit === "contain"
+      ? Math.min(width / imageMosaicBitmap.width, height / imageMosaicBitmap.height)
+      : Math.max(width / imageMosaicBitmap.width, height / imageMosaicBitmap.height);
+    const drawWidth = imageMosaicBitmap.width * scale;
+    const drawHeight = imageMosaicBitmap.height * scale;
+    imageMosaicSourceContext.drawImage(
+      imageMosaicBitmap,
+      (width - drawWidth) / 2,
+      (height - drawHeight) / 2,
+      drawWidth,
+      drawHeight,
+    );
+  }
+  const rgba = imageMosaicSourceContext.getImageData(0, 0, width, height).data;
+  imageMosaicLuminance = new Float32Array(width * height);
+  for (let index = 0; index < imageMosaicLuminance.length; index += 1) {
+    const sourceIndex = index * 4;
+    imageMosaicLuminance[index] = (
+      rgba[sourceIndex] * 0.2126
+      + rgba[sourceIndex + 1] * 0.7152
+      + rgba[sourceIndex + 2] * 0.0722
+    ) / 255;
+  }
+  invalidateImageMosaicPreview();
+}
+
+function renderImageMosaicResult(cells) {
+  imageMosaicResultContext.fillStyle = "#020503";
+  imageMosaicResultContext.fillRect(0, 0, IMAGE_PIXEL_WIDTH, IMAGE_PIXEL_HEIGHT);
+  cells.forEach((code, index) => {
+    drawGlyphPreview(
+      imageMosaicResultContext,
+      resolveScreenGlyph(project, code),
+      (index % SCREEN_WIDTH) * 8,
+      Math.floor(index / SCREEN_WIDTH) * 8,
+      1,
+      "#8de3a2",
+    );
+  });
+}
+
+function generateImageMosaic() {
+  if (!imageMosaicLuminance) return;
+  try {
+    syncImageMosaicControls();
+    const candidates = buildGlyphCandidates(project, {
+      palette: document.querySelector("#image-mosaic-palette").value,
+    });
+    imageMosaicPreview = convertLuminanceToScreen(imageMosaicLuminance, candidates, {
+      contrast: Number(document.querySelector("#image-mosaic-contrast").value),
+      invert: document.querySelector("#image-mosaic-invert").checked,
+      threshold: Number(document.querySelector("#image-mosaic-threshold").value),
+      toneMode: document.querySelector("#image-mosaic-tone").value,
+    });
+    renderImageMosaicResult(imageMosaicPreview.cells);
+    document.querySelector("#apply-image-mosaic").disabled = false;
+    setImageMosaicStatus("imageMosaic.generated", {
+      candidates: candidates.length,
+      error: imageMosaicPreview.meanError.toFixed(3),
+    });
+  } catch (error) {
+    setImageMosaicStatus("error.operationFailed", { detail: `: ${error.message}` });
+    document.querySelector("#apply-image-mosaic").disabled = true;
+  }
+}
+
+function applyImageMosaic() {
+  if (!imageMosaicPreview) return;
+  snapshotMutation(() => {
+    project.screen.cells = [...imageMosaicPreview.cells];
+  }, t("message.imageMosaicApplied"));
+  imageMosaicDialog.close();
+  screenCanvas.focus();
+}
+
+function openImageMosaic() {
+  syncImageMosaicControls();
+  if (!imageMosaicBitmap) {
+    drawImageMosaicPlaceholder(imageMosaicSourceContext, "imageMosaic.noImage");
+  }
+  invalidateImageMosaicPreview();
+  imageMosaicDialog.showModal();
+}
+
+function decodeImageWithElement(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(image);
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new TypeError("Browser could not decode the selected image"));
+    };
+    image.src = url;
+  });
+}
+
+function decodeImageFile(file) {
+  return typeof globalThis.createImageBitmap === "function"
+    ? globalThis.createImageBitmap(file)
+    : decodeImageWithElement(file);
 }
 
 function clampHoverCellToWorkspace() {
@@ -1428,6 +1600,9 @@ function finishVramGlyphGesture(event) {
 
 function handleKeyboard(event) {
   const target = event.target;
+  if (document.querySelector("dialog[open]")) {
+    return;
+  }
   if (event.key === "Escape" && cancelGesture()) {
     event.preventDefault();
     return;
@@ -1630,6 +1805,53 @@ document.querySelector("#show-pcg-gallery").addEventListener("click", () => {
   document.querySelector("#palette-range").value = "all";
   screenCanvas.focus();
 });
+document.querySelector("#open-image-mosaic").addEventListener("click", openImageMosaic);
+document.querySelector("#close-image-mosaic").addEventListener("click", () => imageMosaicDialog.close());
+document.querySelector("#image-mosaic-file").addEventListener("change", async (event) => {
+  const [file] = event.target.files;
+  if (!file) return;
+  const generation = ++imageMosaicLoadGeneration;
+  imageMosaicBitmap?.close?.();
+  imageMosaicBitmap = null;
+  imageMosaicLuminance = null;
+  invalidateImageMosaicPreview();
+  document.querySelector("#generate-image-mosaic").disabled = true;
+  setImageMosaicStatus("imageMosaic.loading");
+  try {
+    const bitmap = await decodeImageFile(file);
+    if (generation !== imageMosaicLoadGeneration) {
+      bitmap.close?.();
+      return;
+    }
+    imageMosaicBitmap = bitmap;
+    renderImageMosaicSource();
+    document.querySelector("#generate-image-mosaic").disabled = false;
+    setImageMosaicStatus("imageMosaic.loaded", {
+      name: file.name,
+      width: bitmap.width,
+      height: bitmap.height,
+    });
+  } catch (error) {
+    if (generation !== imageMosaicLoadGeneration) return;
+    imageMosaicBitmap = null;
+    imageMosaicLuminance = null;
+    imageMosaicPreview = null;
+    document.querySelector("#generate-image-mosaic").disabled = true;
+    document.querySelector("#apply-image-mosaic").disabled = true;
+    drawImageMosaicPlaceholder(imageMosaicSourceContext, "imageMosaic.noImage");
+    drawImageMosaicPlaceholder(imageMosaicResultContext, "imageMosaic.noPreview");
+    event.target.value = "";
+    setImageMosaicStatus("error.operationFailed", { detail: `: ${error.message}` });
+  }
+});
+document.querySelector("#image-mosaic-fit").addEventListener("change", renderImageMosaicSource);
+document.querySelectorAll("#image-mosaic-palette, #image-mosaic-tone, #image-mosaic-contrast, #image-mosaic-threshold, #image-mosaic-invert")
+  .forEach((control) => control.addEventListener("input", () => {
+    syncImageMosaicControls();
+    invalidateImageMosaicPreview();
+  }));
+document.querySelector("#generate-image-mosaic").addEventListener("click", generateImageMosaic);
+document.querySelector("#apply-image-mosaic").addEventListener("click", applyImageMosaic);
 document.querySelector("#import-rom").addEventListener("click", () => document.querySelector("#rom-file").click());
 document.querySelector("#rom-file").addEventListener("change", async (event) => {
   const [file] = event.target.files;
