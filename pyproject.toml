@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jr100dev"
+version = "0.1.0"
+description = "JR-100 development rules, samples, and build tools"
+readme = "README.md"
+requires-python = ">=3.9"
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.scripts]
+jr100dev = "jr100dev.cli.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"jr100dev.proj" = ["jr100.toml", "templates/*"]
+"jr100dev.std" = ["*.inc"]

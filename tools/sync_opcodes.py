@@ -98,7 +98,7 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
     parser.add_argument(
         "--output",
         type=pathlib.Path,
-        default=pathlib.Path("jr100dev/asm/opcodes_mb8861h.py"),
+        default=pathlib.Path("src/jr100dev/asm/opcodes_mb8861h.py"),
         help="Target Python module path",
     )
     parser.add_argument(

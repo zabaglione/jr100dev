@@ -1,6 +1,6 @@
 # 高レベルマクロ利用ガイド
 
-`jr100dev/std/ctl.inc` で提供する制御構造・算術マクロの使い方をまとめる。
+`src/jr100dev/std/ctl.inc` で提供する制御構造・算術マクロの使い方をまとめる。
 
 ## 取り込み
 
@@ -73,4 +73,4 @@ IF_END IF0_END
 
 ## テスト
 
-- `pytest jr100dev/tests/unit/test_ctl_macros.py`
+- `pytest tests/unit/test_ctl_macros.py`

@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test ../../jr100dev/tests/unit/test_pcg_editor_core.mjs",
+    "test": "node --test ../../tests/unit/test_pcg_editor_core.mjs",
     "serve": "python3 -m http.server 8000",
-    "generate-clock": "node scripts/generate_clock_pcg.mjs ../../jr100dev/samples/pcg_clock/src/pcg_data.inc"
+    "generate-clock": "node scripts/generate_clock_pcg.mjs ../../samples/pcg_clock/src/pcg_data.inc"
   }
 }

@@ -1,10 +1,10 @@
 # Repository Guidelines
 
 ## プロジェクト構成とモジュール編成
-本 リポジトリ は JR-100 向け DSL ツールチェーン を 開発 する ため の 単一 モノリポ として 設計 されています。`cli/` は CLI エントリーポイント を 提供 し、`asm/` は 字句 解析 から 符号化 まで の コア アセンブラ を 担当 します。リンク と 梱包 は `link/` と `proj/` に 分かれ、`std/` には VRAM 初期化 や キーボード 入力 など の 標準 マクロ を 配置 します。命令 抽出 や 逆アセンブル 確認 の ツール は `tools/` に まとめ、`samples/` と `tests/` が 最小 サンプル と 網羅 的 テスト の 集合 を 持ちます。自動 生成 物 で ある `asm/opcodes_mb8861h.py` と `docs/isa_mb8861h.md` は 手動 で 編集 せず、同期 スクリプト に 任せて ください。
+本リポジトリは、JR-100向けの開発ルールと実行可能なサンプルコードを中心に構成します。`rules/`はCPU・メモリ・I/O・アセンブリの機種固有ルール、`samples/`はビルド可能な例、`src/jr100dev/`はそれらを支えるCLI・アセンブラ・リンカ・標準マクロです。`tests/`は単体・命令・統合テスト、`tools/`はPCGエディタや命令同期ツール、`docs/`は詳細仕様と設計記録を保持します。自動生成物である`src/jr100dev/asm/opcodes_mb8861h.py`と`docs/isa_mb8861h.md`は手動編集せず、同期スクリプトに任せてください。
 
 ## ビルド・テスト・開発コマンド
-`jr100dev assemble src/main.asm -o build/main.prg` は DSL ソース を 機械語 と `.prg` に 変換 します。`jr100dev link build/*.o -o build/game.prg` は 再配置 オブジェクト を 結合 し、`python -m jr100emu.app --rom datas/jr100rom.prg --load build/game.prg` で エミュレーター を 起動 します。統合 テスト は `pytest tests`、命令 同期 は `python tools/sync_opcodes.py`、往復 検証 は `python tools/disasm_check.py` を 実行 してください。
+`make -C samples/hello`は最小サンプル、`make samples`は全サンプルをビルドします。`jr100dev assemble src/main.asm -o build/main.prg`はDSLソースを機械語と`.prg`へ変換し、`jr100dev link build/*.json -o build/game.prg`は再配置オブジェクトを結合します。統合テストは`pytest tests`、命令同期は`python tools/sync_opcodes.py`、往復検証は`python tools/disasm_check.py`を実行してください。
 
 ## コーディングスタイルと命名規約
 Python コード は PEP 8 と 4 スペース インデント を 基本 とし、型 ヒント と dataclass を 積極 的 に 活用 します。モジュール 名 は 小文字 スネーク、クラス 名 は パスカル ケース、列挙 や 定数 は 全部 大文字 スネーク を 用います。DSL ニーモニック は 大文字、ラベル は 大文字 先頭 スネーク、マクロ 名 は パスカル で 統一 します。`black` と `ruff` で 自動 整形 と 静的 解析 を 行い、生成 物 とは 別 に 管理 してください。

@@ -1,9 +1,9 @@
 # 標準マクロ利用メモ
 
 ## 取り込み方法
-- ソース先頭で `.include "macro.inc"` を記述すると `jr100dev/std/macro.inc` を展開できる。`jr100dev new` で生成される `src/main.asm` も `.org $0300` から開始する。
+- ソース先頭で `.include "macro.inc"` を記述すると `src/jr100dev/std/macro.inc` を展開できる。`jr100dev new` で生成される `src/main.asm` も `.org $0300` から開始する。
 - 制御構造マクロを使用する場合は `.include "ctl.inc"` も併記する。
-- `.include` はソースファイルのディレクトリと `jr100dev/std/` を探索するため、追加設定は不要。
+- `.include` はソースファイルのディレクトリとパッケージ内の `src/jr100dev/std/` を探索するため、追加設定は不要。
 
 ## 提供マクロ
 - `PUT_CHAR` : A レジスタの値を `(X)` に書き込み、X をインクリメント。
@@ -25,5 +25,5 @@
 - `ADD8/SUB8/INC8/DEC8` : 8bit 変数に対する四則演算ヘルパー。即値を渡す場合は `#` を付ける。
 
 ## 確認済みテスト
-- `pytest jr100dev/tests/unit/test_macros.py`
-- `pytest jr100dev/tests/unit/test_ctl_macros.py`
+- `pytest tests/unit/test_macros.py`
+- `pytest tests/unit/test_ctl_macros.py`
