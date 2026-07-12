@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JR-100 PCG Workbench</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand-block">
+        <span class="brand-mark" aria-hidden="true">JR</span>
+        <div>
+          <h1>PCG Workbench</h1>
+          <p>32-slot character and composite editor</p>
+        </div>
+      </div>
+      <div class="header-status" aria-live="polite">
+        <span id="usage-status">0 / 32 slots used</span>
+        <span id="save-status">Ready</span>
+      </div>
+      <nav class="header-actions" aria-label="Project actions">
+        <button id="new-project" type="button">New</button>
+        <button id="import-project" type="button">Import</button>
+        <button id="save-project" type="button">Save JSON</button>
+        <button id="undo" type="button" title="Undo (Ctrl/Cmd+Z)">Undo</button>
+        <button id="redo" type="button" title="Redo (Ctrl/Cmd+Shift+Z)">Redo</button>
+        <button id="toggle-export" class="primary" type="button">ASM Output</button>
+        <input id="import-file" type="file" accept="application/json,.json" hidden>
+      </nav>
+    </header>
+
+    <main class="workbench-layout">
+      <aside class="panel slot-panel" aria-labelledby="slot-rack-title">
+        <div class="panel-heading">
+          <div>
+            <span class="eyebrow">Memory</span>
+            <h2 id="slot-rack-title">PCG Slot Rack</h2>
+          </div>
+          <span class="address-chip">$C000-$C0FF</span>
+        </div>
+        <p class="panel-intro">Click a slot to edit one glyph. Composite mode maps consecutive slots in row-major order.</p>
+        <div id="slot-rack" class="slot-rack" role="grid" aria-label="32 PCG character slots"></div>
+        <div class="legend" aria-label="Slot state legend">
+          <span><i class="legend-dot active"></i>Current workspace</span>
+          <span><i class="legend-dot used"></i>Contains pixels</span>
+        </div>
+      </aside>
+
+      <section class="panel editor-panel" aria-labelledby="editor-title">
+        <div class="panel-heading editor-heading">
+          <div>
+            <span class="eyebrow">Assembly Jig</span>
+            <h2 id="editor-title">Continuous Pixel Canvas</h2>
+          </div>
+          <div class="dimension-presets" aria-label="Quick composite sizes">
+            <button type="button" data-size="1x1">1x1</button>
+            <button type="button" data-size="2x2">2x2</button>
+            <button type="button" data-size="3x3">3x3</button>
+          </div>
+        </div>
+
+        <div class="workspace-controls">
+          <label>Base slot <input id="base-slot" type="number" min="0" max="31" value="0"></label>
+          <label>Columns <input id="workspace-width" type="number" min="1" max="32" value="1"></label>
+          <label>Rows <input id="workspace-height" type="number" min="1" max="4" value="1"></label>
+          <button id="apply-workspace" type="button">Apply layout</button>
+          <output id="workspace-summary">Slot 00 / 8x8 px</output>
+        </div>
+        <div class="group-controls">
+          <label>Saved group <select id="saved-group"><option value="">Current layout</option></select></label>
+          <label>Name <input id="group-name" type="text" maxlength="40" placeholder="Player ship"></label>
+          <button id="save-group" type="button">Save group</button>
+          <button id="delete-group" type="button" class="danger" disabled>Delete group</button>
+          <span>Groups preserve composite layouts in project JSON.</span>
+        </div>
+
+        <div class="tool-strip" role="toolbar" aria-label="Drawing tools">
+          <button type="button" data-tool="pencil" class="active" title="Pencil (B)">Pencil</button>
+          <button type="button" data-tool="eraser" title="Eraser (E)">Eraser</button>
+          <button type="button" data-tool="line" title="Line (L)">Line</button>
+          <button type="button" data-tool="rectangle" title="Rectangle (R)">Rectangle</button>
+          <button type="button" data-tool="fill" title="Fill (G)">Fill</button>
+          <span class="tool-rule" aria-hidden="true"></span>
+          <button id="copy-selection" type="button" title="Copy workspace (Ctrl/Cmd+C)">Copy</button>
+          <button id="paste-selection" type="button" title="Paste workspace (Ctrl/Cmd+V)">Paste</button>
+        </div>
+
+        <div class="canvas-stage">
+          <canvas id="editor-canvas" width="384" height="384" tabindex="0" aria-label="PCG pixel editing grid"></canvas>
+          <div class="stage-note">
+            <strong>Fast input</strong>
+            <span>Left drag draws. Right drag erases. Strokes cross 8x8 boundaries.</span>
+          </div>
+        </div>
+
+        <div class="transform-strip" aria-label="Workspace transforms">
+          <div class="transform-group">
+            <span>Shift</span>
+            <button type="button" data-action="shift-up" title="Shift up (Arrow Up)">Up</button>
+            <button type="button" data-action="shift-left" title="Shift left (Arrow Left)">Left</button>
+            <button type="button" data-action="shift-right" title="Shift right (Arrow Right)">Right</button>
+            <button type="button" data-action="shift-down" title="Shift down (Arrow Down)">Down</button>
+            <label class="check-label"><input id="wrap-shift" type="checkbox"> Wrap</label>
+          </div>
+          <div class="transform-group">
+            <span>Transform</span>
+            <button type="button" data-action="flip-horizontal">Flip H</button>
+            <button type="button" data-action="flip-vertical">Flip V</button>
+            <button type="button" data-action="invert">Invert</button>
+            <button type="button" data-action="clear" class="danger">Clear</button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel preview-panel" aria-labelledby="preview-title">
+        <div class="panel-heading">
+          <div>
+            <span class="eyebrow">Inspection</span>
+            <h2 id="preview-title">Live JR-100 CRT</h2>
+          </div>
+          <span class="address-chip">32x24 cells</span>
+        </div>
+        <canvas id="crt-preview" width="256" height="192" aria-label="JR-100 screen preview"></canvas>
+        <p class="preview-caption">The clock row uses slots 00-10. The selected composite is centered below it.</p>
+
+        <section class="subpanel" aria-labelledby="preset-title">
+          <div class="subpanel-heading">
+            <h3 id="preset-title">Arcade Digit Preset</h3>
+            <span>11 slots</span>
+          </div>
+          <p>Atari/Namco-inspired digits 0-9 plus a colon.</p>
+          <div class="preset-action">
+            <label>Start <input id="preset-start" type="number" min="0" max="21" value="0"></label>
+            <button id="apply-preset" class="primary" type="button">Apply preset</button>
+          </div>
+        </section>
+
+        <section class="subpanel byte-panel" aria-labelledby="byte-title">
+          <div class="subpanel-heading">
+            <h3 id="byte-title">Byte Inspector</h3>
+            <span>MSB is left</span>
+          </div>
+          <div id="byte-inspector" class="byte-inspector"></div>
+        </section>
+      </aside>
+    </main>
+
+    <section id="export-panel" class="export-panel" aria-labelledby="export-title" hidden>
+      <div class="export-heading">
+        <div>
+          <span class="eyebrow">Assembler Output</span>
+          <h2 id="export-title">256-byte PCG Bank</h2>
+        </div>
+        <label>Label <input id="assembly-label" type="text" value="PCG_DATA" spellcheck="false"></label>
+        <button id="copy-assembly" class="primary" type="button">Copy ASM</button>
+        <button id="download-assembly" type="button">Download .asm</button>
+        <button id="close-export" type="button">Close</button>
+      </div>
+      <textarea id="assembly-output" readonly spellcheck="false" aria-label="Generated assembly source"></textarea>
+    </section>
+
+    <footer class="status-bar">
+      <span id="pointer-status">Pointer outside canvas</span>
+      <span id="message-status" role="status" aria-live="polite">Ready</span>
+      <span>Shortcuts: B pencil, E eraser, L line, R rectangle, G fill, arrows shift</span>
+    </footer>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

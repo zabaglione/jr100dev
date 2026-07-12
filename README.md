@@ -17,6 +17,8 @@ JR-100 向けアセンブラ／リンカ／CLI を備えた DSL 開発環境で�
 | `jr100dev/samples/hello` | 最小の VRAM 出力サンプル |
 | `jr100dev/samples/io_demo` | 高レベルマクロ＋I/O のデモ |
 | `jr100dev/samples/counter` | `FOR` マクロを使ったカウンタ |
+| `jr100dev/samples/pcg_clock` | PCG数字を使った24時間時計サンプル |
+| `tools/pcg_editor` | 32文字・複合キャラクター対応Web PCGエディタ |
 | `docs/` | ビルド手順やマクロ仕様などのドキュメント |
 
 詳細な説明は `docs/project_structure.md` および `docs/std_macros.md` / `docs/high_level_macros.md` を参照してください。
@@ -58,18 +60,34 @@ PYTHONPATH=$(pwd) pytest jr100dev/tests/unit
 - `docs/high_level_macros.md`: 制御構造／算術マクロ (`ctl.inc`) の使い方
 - `docs/prg_packaging_notes.md`: `.prg` 形式と `PBIN` セグメントの仕様
 
-## ユーザー定義キャラクターエディタ
-Python + Pygame で動作するモノクロドットエディタを `tools/char_editor.py` として提供しています。8x8 / 8x16 / 16x8 / 16x16 の 4 パターンに対応し、描画・消去・直線描画が可能です。
+## Web PCGエディタ
+
+JR-100のPCG領域 `$C000-$C0FF` に対応する32文字を編集できるWebアプリを `tools/pcg_editor` に用意しています。1文字は8×8ドット・8バイトです。2×2や3×3などの連続スロットを一枚の大型キャンバスとして編集でき、8×8境界をまたいだマウス描画、Undo/Redo、シフト、反転、塗りつぶし、JSON保存、アセンブリ出力に対応します。
 
 ```bash
-python tools/char_editor.py --output chars.json
+cd tools/pcg_editor
+npm run serve
 ```
 
-- 左クリックでドットをトグルし、押しながらドラッグすると同じ状態で塗り伸ばせます。`L` で直線モード切替（赤いプレビュー表示、右クリックでキャンセル）、`R` で全消去、`S` で JSON 出力、`Esc` で終了します。
-- JSON には `pattern`, `width`, `height`, `hex` が含まれ、`hex` は各行を上位ビットから詰めて 16 進文字列化したものです。
-- `--output` を省略すると標準出力のみ、指定した場合は標準出力に加えてファイルにも書き出します。
+ブラウザーで `http://localhost:8000` を開いて使用します。外部ライブラリのインストールは不要です。
 
-Pygame が未導入の場合は `pip install pygame` を事前に実行してください。
+- 左ドラッグは描画、右ドラッグは消去です。高速ドラッグ時は座標間を補間します。
+- 32スロットのサムネイル、実機サイズの画面プレビュー、各行の16進値を常時確認できます。
+- ATARI / NAMCO系アーケードフォントを参考にした数字0〜9とコロンのプリセットを収録しています。
+- `ASM Output` は32文字・256バイトを `.byte` 形式で出力します。
+- `npm test --prefix tools/pcg_editor` で座標変換、複合編集、プリセット、出力処理をテストできます。
+
+従来のPython + Pygame版は `tools/char_editor.py` に残しています。
+
+## PCG時計サンプル
+
+Web PCGエディタと同じアーケード数字データを利用する時計サンプルを `jr100dev/samples/pcg_clock` に用意しています。
+
+```bash
+make -C jr100dev/samples/pcg_clock
+```
+
+`build/pcg_clock.prg` をロードして `A=USR($0300)` を実行すると、`12:00:00` から約1秒間隔で24時間時計を表示します。
 
 ## ライセンス
 本リポジトリ全体のライセンスについてはプロジェクトルートに配置されたファイル・ヘッダーを参照してください。
