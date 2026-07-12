@@ -1,6 +1,12 @@
+import { createFallbackRomGlyphs, extractCharacterRom } from "./rom_font.js";
+
 export const SLOT_COUNT = 32;
 export const GLYPH_SIZE = 8;
-export const PROJECT_VERSION = 1;
+export const PROJECT_VERSION = 2;
+export const SCREEN_WIDTH = 32;
+export const SCREEN_HEIGHT = 24;
+export const SCREEN_CELL_COUNT = SCREEN_WIDTH * SCREEN_HEIGHT;
+export const DISPLAY_MODES = Object.freeze({ INVERSE: "inverse", PCG: "pcg" });
 
 const ARCADE_GLYPHS = [
   [0x3c, 0x66, 0x6e, 0x76, 0x66, 0x66, 0x3c, 0x00],
@@ -42,11 +48,149 @@ export function createProject({ withPreset = false } = {}) {
     glyphs: Array.from({ length: SLOT_COUNT }, () => Array(GLYPH_SIZE).fill(0)),
     names: Array(SLOT_COUNT).fill(""),
     groups: [],
+    screen: createScreen(),
+    romGlyphs: createFallbackRomGlyphs(),
+    romSource: "Built-in approximation",
   };
   if (withPreset) {
     applyArcadeDigits(project, 0);
   }
   return project;
+}
+
+export function createScreen({ mode = DISPLAY_MODES.PCG, withPcgGallery = true } = {}) {
+  assertDisplayMode(mode);
+  const screen = {
+    mode,
+    cells: Array(SCREEN_CELL_COUNT).fill(0x00),
+  };
+  if (withPcgGallery && mode === DISPLAY_MODES.PCG) {
+    applyPcgGallery(screen);
+  }
+  return screen;
+}
+
+function assertDisplayMode(mode) {
+  if (!Object.values(DISPLAY_MODES).includes(mode)) {
+    throw new RangeError("Display mode must be inverse or pcg");
+  }
+}
+
+export function validateScreen(screen) {
+  if (!screen || typeof screen !== "object") {
+    throw new TypeError("Screen is required");
+  }
+  assertDisplayMode(screen.mode);
+  if (!Array.isArray(screen.cells) || screen.cells.length !== SCREEN_CELL_COUNT || !screen.cells.every(validateByte)) {
+    throw new TypeError("Screen must contain exactly 768 byte cells");
+  }
+  return screen;
+}
+
+function screenIndex(x, y) {
+  if (!Number.isInteger(x) || !Number.isInteger(y) || x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT) {
+    throw new RangeError("Screen cell is outside the 32x24 display");
+  }
+  return y * SCREEN_WIDTH + x;
+}
+
+export function getScreenCell(screen, x, y) {
+  validateScreen(screen);
+  return screen.cells[screenIndex(x, y)];
+}
+
+export function setScreenCell(screen, x, y, code) {
+  validateScreen(screen);
+  if (!validateByte(code)) {
+    throw new RangeError("Screen code must be a byte");
+  }
+  screen.cells[screenIndex(x, y)] = code;
+}
+
+export function setScreenMode(screen, mode) {
+  validateScreen(screen);
+  assertDisplayMode(mode);
+  screen.mode = mode;
+}
+
+export function fillScreen(screen, code = 0x00) {
+  validateScreen(screen);
+  if (!validateByte(code)) {
+    throw new RangeError("Screen code must be a byte");
+  }
+  screen.cells.fill(code);
+}
+
+export function applyPcgGallery(screen) {
+  validateScreen(screen);
+  screen.mode = DISPLAY_MODES.PCG;
+  for (let slot = 0; slot < SLOT_COUNT; slot += 1) {
+    const x = slot % 16 + 8;
+    const y = Math.floor(slot / 16) + 10;
+    setScreenCell(screen, x, y, 0x80 + slot);
+  }
+  return screen;
+}
+
+export function visiblePcgSlots(screen) {
+  validateScreen(screen);
+  if (screen.mode !== DISPLAY_MODES.PCG) {
+    return [];
+  }
+  return [...new Set(screen.cells.filter((code) => code >= 0x80 && code <= 0x9f).map((code) => code - 0x80))]
+    .sort((left, right) => left - right);
+}
+
+export function resolveScreenGlyph(project, code) {
+  if (!validateByte(code)) {
+    throw new RangeError("Screen code must be a byte");
+  }
+  if (code < 0x80) {
+    return project.romGlyphs[code];
+  }
+  if (project.screen.mode === DISPLAY_MODES.INVERSE) {
+    return project.romGlyphs[code - 0x80].map((value) => value ^ 0xff);
+  }
+  if (code <= 0x9f) {
+    return project.glyphs[code - 0x80];
+  }
+  const sourceOffset = vramPcgSourceOffset(code);
+  return project.screen.cells.slice(sourceOffset, sourceOffset + GLYPH_SIZE);
+}
+
+export function vramPcgSourceOffset(code) {
+  if (!Number.isInteger(code) || code < 0xa0 || code > 0xff) {
+    throw new RangeError("VRAM-backed PCG code must be between $A0 and $FF");
+  }
+  return (code - 0xa0) * GLYPH_SIZE;
+}
+
+export function setVramPcgPixel(screen, code, x, y, value) {
+  validateScreen(screen);
+  if (!Number.isInteger(x) || !Number.isInteger(y) || x < 0 || x >= GLYPH_SIZE || y < 0 || y >= GLYPH_SIZE) {
+    throw new RangeError("VRAM-backed PCG pixel is outside the 8x8 glyph");
+  }
+  const sourceOffset = vramPcgSourceOffset(code);
+  const mask = 1 << (7 - x);
+  screen.cells[sourceOffset + y] = value
+    ? (screen.cells[sourceOffset + y] | mask) & 0xff
+    : screen.cells[sourceOffset + y] & ~mask & 0xff;
+}
+
+export function asciiToRomCode(character) {
+  const source = String(character || " ").toUpperCase();
+  const value = source.codePointAt(0) ?? 0x20;
+  if (value >= 0x20 && value <= 0x5f) {
+    return value - 0x20;
+  }
+  return 0x1f;
+}
+
+export function loadCharacterRom(project, input) {
+  project.romGlyphs = extractCharacterRom(input);
+  project.romSource = "Imported $E000-$E3FF ROM";
+  validateProjectShape(project);
+  return project.romGlyphs;
 }
 
 export function cloneProject(project) {
@@ -333,6 +477,16 @@ export function validateProjectShape(project) {
     }
     assertWorkspace(group);
   });
+  validateScreen(project.screen);
+  if (!Array.isArray(project.romGlyphs) || project.romGlyphs.length !== 128) {
+    throw new TypeError("Project must contain 128 ROM glyphs");
+  }
+  if (project.romGlyphs.some((glyph) => !Array.isArray(glyph) || glyph.length !== GLYPH_SIZE || !glyph.every(validateByte))) {
+    throw new TypeError("Every ROM glyph must contain exactly eight bytes");
+  }
+  if (typeof project.romSource !== "string") {
+    throw new TypeError("Project ROM source must be text");
+  }
   return project;
 }
 
@@ -348,6 +502,19 @@ export function parseProject(text) {
   } catch (error) {
     throw new TypeError(`Invalid project JSON: ${error.message}`);
   }
+  if (!parsed.screen) {
+    parsed.screen = createScreen();
+  } else if (parsed.screen.mode === "normal") {
+    parsed.screen.mode = DISPLAY_MODES.INVERSE;
+  }
+  if (!parsed.romGlyphs) {
+    parsed.romGlyphs = createFallbackRomGlyphs();
+    parsed.romSource = "Built-in approximation";
+  }
+  if (typeof parsed.romSource !== "string") {
+    parsed.romSource = "Built-in approximation";
+  }
+  parsed.version = PROJECT_VERSION;
   validateProjectShape(parsed);
   return parsed;
 }
@@ -374,4 +541,24 @@ export function exportAssembly(project, { label = "PCG_DATA" } = {}) {
     lines.push(`        .byte ${glyph.map((value) => `$${value.toString(16).toUpperCase().padStart(2, "0")}`).join(", ")}`);
   });
   return `${lines.join("\n")}\n`;
+}
+
+export function exportScreenAssembly(project, { label = "SCREEN_DATA" } = {}) {
+  validateProjectShape(project);
+  const normalizedLabel = normalizeAssemblyLabel(label);
+  const modeValue = project.screen.mode === DISPLAY_MODES.PCG ? 1 : 0;
+  const lines = [
+    `; JR-100 display mode: ${project.screen.mode === DISPLAY_MODES.PCG ? "ROM/PCG" : "Normal/inverse"}`,
+    `${normalizedLabel}_MODE: .equ ${modeValue}`,
+    `${normalizedLabel}:`,
+  ];
+  for (let offset = 0; offset < project.screen.cells.length; offset += 16) {
+    const row = project.screen.cells.slice(offset, offset + 16);
+    lines.push(`        .byte ${row.map((value) => `$${value.toString(16).toUpperCase().padStart(2, "0")}`).join(", ")}`);
+  }
+  return `${lines.join("\n")}\n`;
+}
+
+export function exportCombinedAssembly(project, { pcgLabel = "PCG_DATA", screenLabel = "SCREEN_DATA" } = {}) {
+  return `${exportAssembly(project, { label: pcgLabel })}\n${exportScreenAssembly(project, { label: screenLabel })}`;
 }

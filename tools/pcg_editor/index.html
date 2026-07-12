@@ -19,6 +19,10 @@
         <span id="usage-status">0 / 32 slots used</span>
         <span id="save-status">Ready</span>
       </div>
+      <div class="view-switch" role="tablist" aria-label="Editor view">
+        <button id="show-pcg-view" class="active" type="button" role="tab" aria-selected="true">PCG Editor</button>
+        <button id="show-screen-view" type="button" role="tab" aria-selected="false">CRT Editor</button>
+      </div>
       <nav class="header-actions" aria-label="Project actions">
         <button id="new-project" type="button">New</button>
         <button id="import-project" type="button">Import</button>
@@ -30,7 +34,7 @@
       </nav>
     </header>
 
-    <main class="workbench-layout">
+    <main id="pcg-workbench" class="workbench-layout">
       <aside class="panel slot-panel" aria-labelledby="slot-rack-title">
         <div class="panel-heading">
           <div>
@@ -131,7 +135,7 @@
           <span class="address-chip">32x24 cells</span>
         </div>
         <canvas id="crt-preview" width="256" height="192" aria-label="JR-100 screen preview"></canvas>
-        <p class="preview-caption">Selected composite is centered below the clock row.</p>
+        <p class="preview-caption">This is the complete 32x24 CRT Editor screen.</p>
 
         <section class="subpanel" aria-labelledby="preset-title">
           <div class="subpanel-heading">
@@ -155,12 +159,129 @@
       </aside>
     </main>
 
+    <main id="screen-workbench" class="screen-workbench" hidden>
+      <aside class="panel character-panel" aria-labelledby="character-title">
+        <div class="panel-heading">
+          <div>
+            <span class="eyebrow">Character Set</span>
+            <h2 id="character-title">Character Palette</h2>
+          </div>
+          <span id="palette-range-address" class="address-chip">$00-$3F</span>
+        </div>
+        <div class="screen-field-stack">
+          <label>Display plane
+            <select id="display-mode">
+              <option value="pcg">ROM + PCG (CMODE PCG)</option>
+              <option value="inverse">Normal + inverse (CMODE inverse)</option>
+            </select>
+          </label>
+          <label>Palette
+            <select id="palette-range">
+              <option value="all">All codes $00-$FF</option>
+              <option value="text">Text $00-$3F</option>
+              <option value="symbols">Symbols $40-$5F</option>
+              <option value="semigraphics">Semigraphics $60-$7F</option>
+              <option value="upper">PCG $80-$9F</option>
+              <option value="extended">VRAM PCG $A0-$FF</option>
+            </select>
+          </label>
+        </div>
+        <div class="selected-character">
+          <canvas id="selected-character-preview" width="64" height="64" aria-hidden="true"></canvas>
+          <div>
+            <span>Selected code</span>
+            <strong id="selected-character-code">$00</strong>
+            <small id="selected-character-kind">ROM text</small>
+          </div>
+        </div>
+        <section id="vram-glyph-editor" class="vram-glyph-editor" aria-labelledby="vram-glyph-title" hidden>
+          <div class="subpanel-heading">
+            <h3 id="vram-glyph-title">VRAM-backed glyph</h3>
+            <span id="vram-glyph-address">$C100-$C107</span>
+          </div>
+          <canvas id="vram-glyph-canvas" width="256" height="256" aria-label="VRAM-backed PCG dot editor"></canvas>
+          <p>Left draws, right erases. The highlighted eight CRT cells are the glyph bytes.</p>
+        </section>
+        <p id="mode-compatibility" class="compatibility-note"></p>
+        <div id="character-palette" class="character-palette" role="grid" aria-label="JR-100 character codes"></div>
+      </aside>
+
+      <section class="panel screen-editor-panel" aria-labelledby="screen-editor-title">
+        <div class="panel-heading">
+          <div>
+            <span class="eyebrow">VRAM $C100-$C3FF</span>
+            <h2 id="screen-editor-title">32x24 CRT Editor</h2>
+          </div>
+          <output id="screen-cursor-summary">X 00 / Y 00 / $C100</output>
+        </div>
+        <div class="screen-toolbar" role="toolbar" aria-label="Screen tools">
+          <button id="screen-stamp-tool" class="active" type="button">Stamp</button>
+          <label>Text <input id="screen-text" type="text" maxlength="32" placeholder="JR-100"></label>
+          <button id="place-screen-text" type="button">Place text</button>
+          <button id="fill-screen" type="button">Fill</button>
+          <button id="clear-screen" class="danger" type="button">Clear</button>
+          <button id="show-pcg-gallery" type="button">Show all PCG</button>
+          <label class="check-label"><input id="show-screen-grid" type="checkbox" checked> Grid</label>
+        </div>
+        <div class="screen-stage">
+          <canvas id="screen-canvas" width="768" height="576" tabindex="0" aria-label="JR-100 32 by 24 screen editor"></canvas>
+          <div class="stage-note">
+            <strong>Stamp</strong>
+            <span>Left places selected code</span>
+            <span>Right places space</span>
+            <span>Arrows move cursor</span>
+            <span>Space paints</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel screen-inspector" aria-labelledby="screen-inspector-title">
+        <div class="panel-heading">
+          <div>
+            <span class="eyebrow">Inspection</span>
+            <h2 id="screen-inspector-title">Display State</h2>
+          </div>
+        </div>
+        <section class="subpanel">
+          <div class="subpanel-heading"><h3>Compatibility</h3><span id="display-plane-state">CMODE PCG</span></div>
+          <dl class="state-list">
+            <div><dt>ROM text</dt><dd>Available</dd></div>
+            <div><dt>ROM symbols</dt><dd>Available</dd></div>
+            <div><dt>Inverse</dt><dd id="inverse-state">Unavailable</dd></div>
+            <div><dt>PCG $80-$9F</dt><dd id="pcg-state">Available</dd></div>
+          </dl>
+        </section>
+        <section class="subpanel">
+          <div class="subpanel-heading"><h3>PCG Coverage</h3><span id="visible-pcg-count">0 / 32</span></div>
+          <div id="visible-pcg-slots" class="coverage-grid" aria-label="PCG slots visible on screen"></div>
+        </section>
+        <section class="subpanel">
+          <div class="subpanel-heading"><h3>Character ROM</h3><span>$E000-$E3FF</span></div>
+          <p id="rom-source">Built-in approximation</p>
+          <button id="import-rom" type="button">Import ROM / PROG</button>
+          <input id="rom-file" type="file" accept=".bin,.rom,.prg,application/octet-stream" hidden>
+          <p class="warning-note">Import a 1024-byte character ROM or a PROG file containing $E000-$E3FF for exact glyphs.</p>
+        </section>
+        <section class="subpanel warning-panel">
+          <div class="subpanel-heading"><h3>VRAM PCG $A0-$FF</h3><span>Advanced</span></div>
+          <p>These 96 glyphs reuse screen VRAM bytes. Editing their source rows also changes visible screen codes.</p>
+        </section>
+      </aside>
+    </main>
+
     <section id="export-panel" class="export-panel" aria-labelledby="export-title" hidden>
       <div class="export-heading">
         <div>
           <span class="eyebrow">Assembler Output</span>
-          <h2 id="export-title">256-byte PCG Bank</h2>
+          <h2 id="export-title">JR-100 Data</h2>
         </div>
+        <label>Output
+          <select id="export-target">
+            <option value="combined">PCG + screen</option>
+            <option value="pcg">PCG bank</option>
+            <option value="screen">Screen</option>
+          </select>
+        </label>
         <label>Label <input id="assembly-label" type="text" value="PCG_DATA" spellcheck="false"></label>
         <button id="copy-assembly" class="primary" type="button">Copy ASM</button>
         <button id="download-assembly" type="button">Download .asm</button>
@@ -172,7 +293,7 @@
     <footer class="status-bar">
       <span id="pointer-status">Pointer outside canvas</span>
       <span id="message-status" role="status" aria-live="polite">Ready</span>
-      <span>B/E/L/R/G tools · Canvas arrows move cursor · Space paints · Alt+arrows shift</span>
+      <span id="shortcut-help">B/E/L/R/G tools · Canvas arrows move cursor · Space paints · Alt+arrows shift</span>
     </footer>
 
     <script type="module" src="app.js"></script>

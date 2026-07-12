@@ -5,19 +5,31 @@ import test from "node:test";
 import {
   ARCADE_DIGITS,
   applyArcadeDigits,
+  asciiToRomCode,
   assertWorkspace,
   bresenhamPoints,
   constrainEndpoint,
+  createScreen,
   createProject,
+  DISPLAY_MODES,
   exportAssembly,
+  exportCombinedAssembly,
+  exportScreenAssembly,
   getPixel,
   parseProject,
+  resolveScreenGlyph,
   removeGroup,
   serializeProject,
   setPixel,
+  setScreenCell,
+  setScreenMode,
+  setVramPcgPixel,
   shiftWorkspace,
   upsertGroup,
+  visiblePcgSlots,
+  vramPcgSourceOffset,
 } from "../../tools/pcg_editor/core.js";
+import { extractCharacterRom } from "../../tools/pcg_editor/rom_font.js";
 
 const editorHtml = await readFile(new URL("../../tools/pcg_editor/index.html", import.meta.url), "utf8");
 const editorStyles = await readFile(new URL("../../tools/pcg_editor/styles.css", import.meta.url), "utf8");
@@ -86,6 +98,119 @@ test("desktop layout keeps the editor in one viewport and compacts all 32 slots"
   assert.match(editorStyles, /@media \(max-width: 1180px\)/);
   assert.match(editorHtml, /<details class="group-disclosure">/);
   assert.match(editorHtml, /id="show-grid"/);
+});
+
+test("CRT screen model can display every PCG slot", () => {
+  const screen = createScreen({ mode: "pcg" });
+  for (let slot = 0; slot < 32; slot += 1) {
+    setScreenCell(screen, slot, 0, 0x80 + slot);
+  }
+
+  assert.deepEqual(visiblePcgSlots(screen), Array.from({ length: 32 }, (_, slot) => slot));
+});
+
+test("screen codes resolve through the selected CMODE", () => {
+  const project = createProject();
+  project.romGlyphs[0] = [0x00, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40];
+  project.glyphs[0] = [0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01];
+  project.glyphs[9] = Array(8).fill(0x99);
+
+  assert.deepEqual(resolveScreenGlyph(project, 0x00), project.romGlyphs[0]);
+  assert.deepEqual(resolveScreenGlyph(project, 0x80), project.glyphs[0]);
+  assert.deepEqual(resolveScreenGlyph(project, 0x89), project.glyphs[9]);
+
+  setScreenMode(project.screen, DISPLAY_MODES.INVERSE);
+  assert.deepEqual(resolveScreenGlyph(project, 0x80), project.romGlyphs[0].map((byte) => byte ^ 0xff));
+});
+
+test("VRAM-backed PCG edits the eight screen bytes that define its glyph", () => {
+  const project = createProject();
+  const code = 0xa9;
+  const offset = vramPcgSourceOffset(code);
+
+  setVramPcgPixel(project.screen, code, 0, 0, 1);
+  setVramPcgPixel(project.screen, code, 7, 7, 1);
+
+  assert.equal(project.screen.cells[offset], 0x80);
+  assert.equal(project.screen.cells[offset + 7], 0x01);
+  assert.deepEqual(resolveScreenGlyph(project, code), [0x80, 0, 0, 0, 0, 0, 0, 0x01]);
+});
+
+test("all 256 VRAM codes are exposed by the CRT editor", () => {
+  assert.match(editorHtml, /All codes \$00-\$FF/);
+  assert.match(editorHtml, /id="screen-canvas"/);
+  assert.match(editorHtml, /Normal \+ inverse \(CMODE inverse\)/);
+  assert.match(editorHtml, /ROM \+ PCG \(CMODE PCG\)/);
+});
+
+test("screen and combined assembly exports include all 768 VRAM bytes", () => {
+  const project = createProject();
+  const screenAssembly = exportScreenAssembly(project);
+  const combined = exportCombinedAssembly(project);
+
+  assert.equal((screenAssembly.match(/\.byte/g) ?? []).length, 48);
+  assert.match(screenAssembly, /SCREEN_DATA_MODE: \.equ 1/);
+  assert.match(combined, /^PCG_DATA:/);
+  assert.match(combined, /SCREEN_DATA:/);
+  assert.doesNotMatch(combined, /[\u3040-\u30ff\u3400-\u9fff]/u);
+});
+
+test("ASCII text input maps to the ROM text code range", () => {
+  assert.equal(asciiToRomCode(" "), 0x00);
+  assert.equal(asciiToRomCode("0"), 0x10);
+  assert.equal(asciiToRomCode("A"), 0x21);
+  assert.equal(asciiToRomCode("z"), 0x3a);
+});
+
+test("character ROM import supports raw bytes and version 2 PROG sections", () => {
+  const raw = Uint8Array.from({ length: 1024 }, (_, index) => index & 0xff);
+  assert.deepEqual(extractCharacterRom(raw)[9], Array.from(raw.slice(72, 80)));
+
+  const name = new TextEncoder().encode("TEST");
+  const pnamPayload = new Uint8Array(4 + name.length);
+  new DataView(pnamPayload.buffer).setUint32(0, name.length, true);
+  pnamPayload.set(name, 4);
+  const binaryPayload = new Uint8Array(8 + raw.length);
+  const binaryView = new DataView(binaryPayload.buffer);
+  binaryView.setUint32(0, 0xe000, true);
+  binaryView.setUint32(4, raw.length, true);
+  binaryPayload.set(raw, 8);
+  const section = (identifier, payload) => {
+    const result = new Uint8Array(8 + payload.length);
+    result.set(new TextEncoder().encode(identifier), 0);
+    new DataView(result.buffer).setUint32(4, payload.length, true);
+    result.set(payload, 8);
+    return result;
+  };
+  const header = new Uint8Array(8);
+  header.set(new TextEncoder().encode("PROG"), 0);
+  new DataView(header.buffer).setUint32(4, 2, true);
+  const pnam = section("PNAM", pnamPayload);
+  const pbin = section("PBIN", binaryPayload);
+  const prog = new Uint8Array(header.length + pnam.length + pbin.length);
+  prog.set(header, 0);
+  prog.set(pnam, header.length);
+  prog.set(pbin, header.length + pnam.length);
+
+  assert.deepEqual(extractCharacterRom(prog)[9], Array.from(raw.slice(72, 80)));
+});
+
+test("character ROM import supports the emulator ROM version 1 PROG format", () => {
+  const rom = Uint8Array.from({ length: 0x2000 }, (_, index) => (index * 3) & 0xff);
+  const name = new TextEncoder().encode("JR100ROM");
+  const prog = new Uint8Array(24 + name.length + rom.length);
+  const view = new DataView(prog.buffer);
+  prog.set(new TextEncoder().encode("PROG"), 0);
+  view.setUint32(4, 1, true);
+  view.setUint32(8, name.length, true);
+  prog.set(name, 12);
+  const blockOffset = 12 + name.length;
+  view.setUint32(blockOffset, 0xe000, true);
+  view.setUint32(blockOffset + 4, rom.length, true);
+  view.setUint32(blockOffset + 8, 0, true);
+  prog.set(rom, blockOffset + 12);
+
+  assert.deepEqual(extractCharacterRom(prog)[9], Array.from(rom.slice(72, 80)));
 });
 
 test("shifting a composite crosses slot boundaries", () => {

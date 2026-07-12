@@ -1,24 +1,40 @@
 import {
   applyArcadeDigits,
+  applyPcgGallery,
+  asciiToRomCode,
   assertWorkspace,
   bresenhamPoints,
   clearWorkspace,
   cloneProject,
   constrainEndpoint,
   createProject,
+  DISPLAY_MODES,
   exportAssembly,
+  exportCombinedAssembly,
+  exportScreenAssembly,
+  fillScreen,
   flipWorkspace,
   floodFill,
   getPixel,
+  getScreenCell,
   invertWorkspace,
+  loadCharacterRom,
   matrixToWorkspace,
   parseProject,
   removeGroup,
   serializeProject,
+  setScreenCell,
+  setScreenMode,
+  setVramPcgPixel,
   setPixel,
   shiftWorkspace,
   upsertGroup,
   workspaceToMatrix,
+  resolveScreenGlyph,
+  SCREEN_HEIGHT,
+  SCREEN_WIDTH,
+  visiblePcgSlots,
+  vramPcgSourceOffset,
 } from "./core.js";
 
 const STORAGE_KEY = "jr100dev.pcg-workbench.v1";
@@ -27,6 +43,10 @@ const canvas = document.querySelector("#editor-canvas");
 const canvasContext = canvas.getContext("2d");
 const crtCanvas = document.querySelector("#crt-preview");
 const crtContext = crtCanvas.getContext("2d");
+const screenCanvas = document.querySelector("#screen-canvas");
+const screenContext = screenCanvas.getContext("2d");
+const vramGlyphCanvas = document.querySelector("#vram-glyph-canvas");
+const vramGlyphContext = vramGlyphCanvas.getContext("2d");
 
 let project = restoreProject();
 let workspace = { baseSlot: 0, width: 1, height: 1 };
@@ -38,6 +58,12 @@ let undoStack = [];
 let redoStack = [];
 let activeGroupId = null;
 let gridVisible = true;
+let screenGridVisible = true;
+let selectedScreenCode = 0x80;
+let screenCursor = { x: 0, y: 0 };
+let screenGesture = null;
+let vramGlyphGesture = null;
+let activeView = "pcg";
 
 const DIRECTION_KEYS = {
   ArrowUp: { action: "shift-up", deltaX: 0, deltaY: -1 },
@@ -70,13 +96,17 @@ function persistProject(message = "Autosaved") {
 function snapshotMutation(mutator, message) {
   const before = cloneProject(project);
   mutator();
+  commitHistory(before, message);
+  renderAll();
+}
+
+function commitHistory(before, message) {
   undoStack.push(before);
   if (undoStack.length > HISTORY_LIMIT) {
     undoStack.shift();
   }
   redoStack = [];
   persistProject(message);
-  renderAll();
 }
 
 function undo() {
@@ -220,28 +250,182 @@ function renderSlotRack() {
   });
 }
 
-function renderCrt() {
-  crtContext.fillStyle = "#020503";
-  crtContext.fillRect(0, 0, crtCanvas.width, crtCanvas.height);
-  crtContext.fillStyle = "rgba(48, 105, 57, 0.14)";
-  for (let y = 0; y < crtCanvas.height; y += 2) {
-    crtContext.fillRect(0, y, crtCanvas.width, 1);
-  }
-
-  const arcadeBase = project.groups.find((group) => group.id === "arcade-digits")?.baseSlot ?? 0;
-  const clock = [1, 2, 10, 3, 4, 10, 5, 6].map((slot) => arcadeBase + slot);
-  const clockX = 12;
-  const clockY = 4;
-  clock.forEach((slot, index) => drawGlyphPreview(crtContext, project.glyphs[slot], (clockX + index) * 8, clockY * 8, 1, "#a6ffb3"));
-
-  const startColumn = Math.floor((32 - workspace.width) / 2);
-  const startRow = 12;
-  for (let tileY = 0; tileY < workspace.height; tileY += 1) {
-    for (let tileX = 0; tileX < workspace.width; tileX += 1) {
-      const slot = workspace.baseSlot + tileY * workspace.width + tileX;
-      drawGlyphPreview(crtContext, project.glyphs[slot], (startColumn + tileX) * 8, (startRow + tileY) * 8, 1, "#74dc89");
+function renderScreenCanvas(context, target, scale, { cursor = false } = {}) {
+  context.fillStyle = "#020503";
+  context.fillRect(0, 0, target.width, target.height);
+  for (let y = 0; y < SCREEN_HEIGHT; y += 1) {
+    for (let x = 0; x < SCREEN_WIDTH; x += 1) {
+      const code = getScreenCell(project.screen, x, y);
+      drawGlyphPreview(context, resolveScreenGlyph(project, code), x * 8 * scale, y * 8 * scale, scale, "#8de3a2");
     }
   }
+  context.fillStyle = "rgba(31, 82, 43, 0.12)";
+  for (let y = 0; y < target.height; y += Math.max(2, scale * 2)) {
+    context.fillRect(0, y, target.width, Math.max(1, scale));
+  }
+  if (cursor) {
+    if (project.screen.mode === DISPLAY_MODES.PCG && selectedScreenCode >= 0xa0) {
+      const sourceOffset = vramPcgSourceOffset(selectedScreenCode);
+      context.strokeStyle = "#e97867";
+      context.lineWidth = 2;
+      for (let index = 0; index < 8; index += 1) {
+        const cellOffset = sourceOffset + index;
+        const sourceX = cellOffset % SCREEN_WIDTH;
+        const sourceY = Math.floor(cellOffset / SCREEN_WIDTH);
+        context.strokeRect(sourceX * 8 * scale + 2, sourceY * 8 * scale + 2, 8 * scale - 4, 8 * scale - 4);
+      }
+    }
+    context.strokeStyle = "#f0c35a";
+    context.lineWidth = 2;
+    context.strokeRect(screenCursor.x * 8 * scale + 1, screenCursor.y * 8 * scale + 1, 8 * scale - 2, 8 * scale - 2);
+    if (screenGridVisible) {
+      context.strokeStyle = "rgba(82, 117, 92, 0.28)";
+      context.lineWidth = 1;
+      for (let x = 0; x <= SCREEN_WIDTH; x += 1) {
+        context.beginPath();
+        context.moveTo(x * 8 * scale, 0);
+        context.lineTo(x * 8 * scale, target.height);
+        context.stroke();
+      }
+      for (let y = 0; y <= SCREEN_HEIGHT; y += 1) {
+        context.beginPath();
+        context.moveTo(0, y * 8 * scale);
+        context.lineTo(target.width, y * 8 * scale);
+        context.stroke();
+      }
+    }
+  }
+}
+
+function renderCrt() {
+  renderScreenCanvas(crtContext, crtCanvas, 1);
+  renderScreenCanvas(screenContext, screenCanvas, 3, { cursor: true });
+}
+
+function paletteBounds(range) {
+  const ranges = {
+    all: [0x00, 0xff],
+    text: [0x00, 0x3f],
+    symbols: [0x40, 0x5f],
+    semigraphics: [0x60, 0x7f],
+    upper: [0x80, project.screen.mode === DISPLAY_MODES.PCG ? 0x9f : 0xff],
+    extended: [0xa0, 0xff],
+  };
+  return ranges[range] ?? ranges.all;
+}
+
+function screenCodeKind(code) {
+  if (code < 0x40) return "ROM text";
+  if (code < 0x60) return "ROM symbol";
+  if (code < 0x80) return "ROM semigraphic";
+  if (project.screen.mode === DISPLAY_MODES.INVERSE) return "Inverse ROM";
+  if (code < 0xa0) return `PCG slot ${code - 0x80}`;
+  return "VRAM-backed PCG";
+}
+
+function renderCharacterPalette() {
+  const palette = document.querySelector("#character-palette");
+  const range = document.querySelector("#palette-range").value;
+  const [start, end] = paletteBounds(range);
+  palette.replaceChildren();
+  document.querySelector("#palette-range-address").textContent = `${hex(start)}-${hex(end)}`;
+  for (let code = start; code <= end; code += 1) {
+    const button = document.createElement("button");
+    const preview = document.createElement("canvas");
+    const label = document.createElement("span");
+    button.type = "button";
+    button.className = "character-card";
+    button.classList.toggle("selected", code === selectedScreenCode);
+    button.setAttribute("role", "gridcell");
+    button.setAttribute("aria-label", `VRAM code ${hex(code)}, ${screenCodeKind(code)}`);
+    preview.width = 64;
+    preview.height = 64;
+    const context = preview.getContext("2d");
+    context.fillStyle = "#050906";
+    context.fillRect(0, 0, 64, 64);
+    drawGlyphPreview(context, resolveScreenGlyph(project, code), 0, 0, 8, "#8de3a2");
+    label.textContent = hex(code);
+    button.append(preview, label);
+    button.addEventListener("click", () => {
+      selectedScreenCode = code;
+      renderCharacterPalette();
+      renderSelectedCharacter();
+      screenCanvas.focus();
+    });
+    palette.append(button);
+  }
+}
+
+function renderSelectedCharacter() {
+  const preview = document.querySelector("#selected-character-preview");
+  const context = preview.getContext("2d");
+  context.fillStyle = "#050906";
+  context.fillRect(0, 0, preview.width, preview.height);
+  drawGlyphPreview(context, resolveScreenGlyph(project, selectedScreenCode), 0, 0, 8, "#8de3a2");
+  document.querySelector("#selected-character-code").textContent = hex(selectedScreenCode);
+  document.querySelector("#selected-character-kind").textContent = screenCodeKind(selectedScreenCode);
+  renderVramGlyphEditor();
+}
+
+function renderVramGlyphEditor() {
+  const editor = document.querySelector("#vram-glyph-editor");
+  const available = project.screen.mode === DISPLAY_MODES.PCG && selectedScreenCode >= 0xa0;
+  editor.hidden = !available;
+  if (!available) return;
+  const sourceOffset = vramPcgSourceOffset(selectedScreenCode);
+  const startAddress = 0xc100 + sourceOffset;
+  document.querySelector("#vram-glyph-address").textContent = `$${startAddress.toString(16).toUpperCase()}-$${(startAddress + 7).toString(16).toUpperCase()}`;
+  vramGlyphContext.fillStyle = "#050906";
+  vramGlyphContext.fillRect(0, 0, vramGlyphCanvas.width, vramGlyphCanvas.height);
+  drawGlyphPreview(vramGlyphContext, resolveScreenGlyph(project, selectedScreenCode), 0, 0, 32, "#8de3a2");
+  vramGlyphContext.strokeStyle = "#344339";
+  vramGlyphContext.lineWidth = 2;
+  for (let index = 0; index <= 8; index += 1) {
+    const position = index * 32;
+    vramGlyphContext.beginPath();
+    vramGlyphContext.moveTo(position, 0);
+    vramGlyphContext.lineTo(position, 256);
+    vramGlyphContext.stroke();
+    vramGlyphContext.beginPath();
+    vramGlyphContext.moveTo(0, position);
+    vramGlyphContext.lineTo(256, position);
+    vramGlyphContext.stroke();
+  }
+}
+
+function renderDisplayState() {
+  const pcgMode = project.screen.mode === DISPLAY_MODES.PCG;
+  document.querySelector("#display-mode").value = project.screen.mode;
+  document.querySelector("#display-plane-state").textContent = pcgMode ? "CMODE PCG" : "CMODE inverse";
+  document.querySelector("#inverse-state").textContent = pcgMode ? "Unavailable" : "Available";
+  document.querySelector("#pcg-state").textContent = pcgMode ? "Available" : "Unavailable";
+  document.querySelector("#mode-compatibility").textContent = pcgMode
+    ? "Codes $00-$7F use ROM glyphs. $80-$9F use PCG. Inverse glyphs are unavailable."
+    : "Codes $00-$7F use ROM glyphs. $80-$FF use inverse ROM glyphs. PCG is unavailable.";
+  document.querySelector("#rom-source").textContent = project.romSource;
+  const upperOption = document.querySelector('#palette-range option[value="upper"]');
+  const extendedOption = document.querySelector('#palette-range option[value="extended"]');
+  upperOption.textContent = pcgMode ? "PCG $80-$9F" : "Inverse $80-$FF";
+  extendedOption.textContent = pcgMode ? "VRAM PCG $A0-$FF" : "Inverse $A0-$FF";
+  document.querySelector(".warning-panel").hidden = !pcgMode;
+  const visible = new Set(visiblePcgSlots(project.screen));
+  document.querySelector("#visible-pcg-count").textContent = `${visible.size} / 32`;
+  const coverage = document.querySelector("#visible-pcg-slots");
+  coverage.replaceChildren();
+  for (let slot = 0; slot < 32; slot += 1) {
+    const cell = document.createElement("span");
+    cell.className = "coverage-cell";
+    cell.classList.toggle("visible", visible.has(slot));
+    cell.textContent = slot.toString().padStart(2, "0");
+    coverage.append(cell);
+  }
+  updateScreenCursorSummary();
+}
+
+function updateScreenCursorSummary() {
+  const address = 0xc100 + screenCursor.y * SCREEN_WIDTH + screenCursor.x;
+  const code = getScreenCell(project.screen, screenCursor.x, screenCursor.y);
+  document.querySelector("#screen-cursor-summary").textContent = `X ${screenCursor.x.toString().padStart(2, "0")} / Y ${screenCursor.y.toString().padStart(2, "0")} / $${address.toString(16).toUpperCase()} / ${hex(code)}`;
 }
 
 function renderByteInspector() {
@@ -295,7 +479,13 @@ function renderSavedGroups() {
 
 function updateAssemblyOutput() {
   const label = document.querySelector("#assembly-label").value;
-  document.querySelector("#assembly-output").value = exportAssembly(project, { label });
+  const target = document.querySelector("#export-target").value;
+  const exporters = {
+    pcg: () => exportAssembly(project, { label }),
+    screen: () => exportScreenAssembly(project, { label }),
+    combined: () => exportCombinedAssembly(project, { pcgLabel: label, screenLabel: "SCREEN_DATA" }),
+  };
+  document.querySelector("#assembly-output").value = exporters[target]();
 }
 
 function renderAll() {
@@ -303,6 +493,9 @@ function renderAll() {
   renderEditor();
   renderSlotRack();
   renderCrt();
+  renderCharacterPalette();
+  renderSelectedCharacter();
+  renderDisplayState();
   renderByteInspector();
   renderUsage();
   renderSavedGroups();
@@ -507,6 +700,7 @@ function beginGesture(event) {
     gesture.preview = [[cell.x, cell.y]];
   }
   renderEditor();
+  renderCrt();
 }
 
 function moveGesture(event) {
@@ -533,6 +727,7 @@ function moveGesture(event) {
     gesture.last = endpoint;
   }
   renderEditor();
+  renderCrt();
 }
 
 function finishGesture(event) {
@@ -548,12 +743,7 @@ function finishGesture(event) {
     }
   }
   if (gesture.changed) {
-    undoStack.push(gesture.before);
-    if (undoStack.length > HISTORY_LIMIT) {
-      undoStack.shift();
-    }
-    redoStack = [];
-    persistProject("Stroke saved");
+    commitHistory(gesture.before, "Stroke saved");
   }
   gesture = null;
   renderAll();
@@ -682,6 +872,171 @@ function downloadText(filename, text, type) {
   URL.revokeObjectURL(url);
 }
 
+function setActiveView(view) {
+  activeView = view;
+  const screenActive = view === "screen";
+  document.querySelector("#pcg-workbench").hidden = screenActive;
+  document.querySelector("#screen-workbench").hidden = !screenActive;
+  document.querySelector("#show-pcg-view").classList.toggle("active", !screenActive);
+  document.querySelector("#show-screen-view").classList.toggle("active", screenActive);
+  document.querySelector("#show-pcg-view").setAttribute("aria-selected", screenActive ? "false" : "true");
+  document.querySelector("#show-screen-view").setAttribute("aria-selected", screenActive ? "true" : "false");
+  document.querySelector("#shortcut-help").textContent = screenActive
+    ? "CRT arrows move cursor · Space places code · Right click places space"
+    : "B/E/L/R/G tools · Canvas arrows move cursor · Space paints · Alt+arrows shift";
+  if (screenActive) {
+    screenCanvas.focus();
+  } else {
+    canvas.focus();
+  }
+}
+
+function screenCellFromPointer(event) {
+  const rect = screenCanvas.getBoundingClientRect();
+  const x = Math.floor(((event.clientX - rect.left) / rect.width) * SCREEN_WIDTH);
+  const y = Math.floor(((event.clientY - rect.top) / rect.height) * SCREEN_HEIGHT);
+  if (x < 0 || y < 0 || x >= SCREEN_WIDTH || y >= SCREEN_HEIGHT) {
+    return null;
+  }
+  return { x, y };
+}
+
+function paintScreenCell(cell, code) {
+  if (getScreenCell(project.screen, cell.x, cell.y) === code) {
+    return false;
+  }
+  setScreenCell(project.screen, cell.x, cell.y, code);
+  return true;
+}
+
+function beginScreenGesture(event) {
+  if (event.button !== 0 && event.button !== 2) {
+    return;
+  }
+  const cell = screenCellFromPointer(event);
+  if (!cell) {
+    return;
+  }
+  event.preventDefault();
+  screenCanvas.focus();
+  screenCanvas.setPointerCapture(event.pointerId);
+  screenCursor = cell;
+  screenGesture = {
+    pointerId: event.pointerId,
+    code: event.button === 2 ? 0x00 : selectedScreenCode,
+    before: cloneProject(project),
+    changed: false,
+    last: null,
+  };
+  moveScreenGesture(event);
+}
+
+function moveScreenGesture(event) {
+  const cell = screenCellFromPointer(event);
+  if (!cell) {
+    return;
+  }
+  screenCursor = cell;
+  updateScreenCursorSummary();
+  if (!screenGesture || screenGesture.pointerId !== event.pointerId) {
+    renderCrt();
+    return;
+  }
+  const previous = screenGesture.last ?? cell;
+  if (!screenGesture.last || previous.x !== cell.x || previous.y !== cell.y) {
+    for (const [x, y] of bresenhamPoints(previous.x, previous.y, cell.x, cell.y)) {
+      screenGesture.changed = paintScreenCell({ x, y }, screenGesture.code) || screenGesture.changed;
+    }
+    screenGesture.last = cell;
+    renderCrt();
+  }
+}
+
+function finishScreenGesture(event) {
+  if (!screenGesture || screenGesture.pointerId !== event.pointerId) {
+    return;
+  }
+  if (screenGesture.changed) {
+    commitHistory(screenGesture.before, "Screen stroke saved");
+  }
+  screenGesture = null;
+  renderAll();
+}
+
+function moveScreenCursor(deltaX, deltaY) {
+  screenCursor = {
+    x: Math.max(0, Math.min(SCREEN_WIDTH - 1, screenCursor.x + deltaX)),
+    y: Math.max(0, Math.min(SCREEN_HEIGHT - 1, screenCursor.y + deltaY)),
+  };
+  updateScreenCursorSummary();
+  renderCrt();
+}
+
+function stampScreenCursor(code = selectedScreenCode) {
+  if (getScreenCell(project.screen, screenCursor.x, screenCursor.y) === code) {
+    return;
+  }
+  snapshotMutation(() => setScreenCell(project.screen, screenCursor.x, screenCursor.y, code), `Code ${hex(code)} placed`);
+  screenCanvas.focus();
+}
+
+function placeScreenText() {
+  const text = document.querySelector("#screen-text").value;
+  if (!text) return;
+  snapshotMutation(() => {
+    [...text].slice(0, SCREEN_WIDTH - screenCursor.x).forEach((character, offset) => {
+      setScreenCell(project.screen, screenCursor.x + offset, screenCursor.y, asciiToRomCode(character));
+    });
+  }, "Screen text placed");
+  screenCanvas.focus();
+}
+
+function vramGlyphCellFromPointer(event) {
+  const rect = vramGlyphCanvas.getBoundingClientRect();
+  const x = Math.floor(((event.clientX - rect.left) / rect.width) * 8);
+  const y = Math.floor(((event.clientY - rect.top) / rect.height) * 8);
+  return x >= 0 && x < 8 && y >= 0 && y < 8 ? { x, y } : null;
+}
+
+function beginVramGlyphGesture(event) {
+  if ((event.button !== 0 && event.button !== 2) || selectedScreenCode < 0xa0) return;
+  const cell = vramGlyphCellFromPointer(event);
+  if (!cell) return;
+  event.preventDefault();
+  vramGlyphCanvas.setPointerCapture(event.pointerId);
+  vramGlyphGesture = {
+    pointerId: event.pointerId,
+    code: selectedScreenCode,
+    value: event.button === 2 ? 0 : 1,
+    before: cloneProject(project),
+    changed: false,
+    last: null,
+  };
+  moveVramGlyphGesture(event);
+}
+
+function moveVramGlyphGesture(event) {
+  const cell = vramGlyphCellFromPointer(event);
+  if (!cell || !vramGlyphGesture || vramGlyphGesture.pointerId !== event.pointerId) return;
+  const previous = vramGlyphGesture.last ?? cell;
+  for (const [x, y] of bresenhamPoints(previous.x, previous.y, cell.x, cell.y)) {
+    const sourceOffset = vramPcgSourceOffset(vramGlyphGesture.code);
+    const before = project.screen.cells[sourceOffset + y];
+    setVramPcgPixel(project.screen, vramGlyphGesture.code, x, y, vramGlyphGesture.value);
+    vramGlyphGesture.changed = project.screen.cells[sourceOffset + y] !== before || vramGlyphGesture.changed;
+  }
+  vramGlyphGesture.last = cell;
+  renderVramGlyphEditor();
+  renderCrt();
+}
+
+function finishVramGlyphGesture(event) {
+  if (!vramGlyphGesture || vramGlyphGesture.pointerId !== event.pointerId) return;
+  if (vramGlyphGesture.changed) commitHistory(vramGlyphGesture.before, "VRAM-backed glyph saved");
+  vramGlyphGesture = null;
+  renderAll();
+}
+
 function handleKeyboard(event) {
   const target = event.target;
   if (event.key === "Escape" && cancelGesture()) {
@@ -713,6 +1068,21 @@ function handleKeyboard(event) {
     return;
   }
   const direction = DIRECTION_KEYS[event.key];
+  if (target === screenCanvas && direction) {
+    event.preventDefault();
+    moveScreenCursor(direction.deltaX, direction.deltaY);
+    return;
+  }
+  if (target === screenCanvas && (event.key === " " || event.key === "Enter")) {
+    event.preventDefault();
+    stampScreenCursor();
+    return;
+  }
+  if (target === screenCanvas && (event.key === "Delete" || event.key === "Backspace")) {
+    event.preventDefault();
+    stampScreenCursor(0x00);
+    return;
+  }
   if (event.altKey && direction) {
     event.preventDefault();
     applyTransform(direction.action);
@@ -794,6 +1164,51 @@ document.querySelector("#show-grid").addEventListener("change", (event) => {
 });
 document.querySelector("#undo").addEventListener("click", undo);
 document.querySelector("#redo").addEventListener("click", redo);
+document.querySelector("#show-pcg-view").addEventListener("click", () => setActiveView("pcg"));
+document.querySelector("#show-screen-view").addEventListener("click", () => setActiveView("screen"));
+document.querySelector("#display-mode").addEventListener("change", (event) => {
+  snapshotMutation(() => setScreenMode(project.screen, event.target.value), `CMODE set to ${event.target.value}`);
+  screenCanvas.focus();
+});
+document.querySelector("#palette-range").addEventListener("change", renderCharacterPalette);
+document.querySelector("#show-screen-grid").addEventListener("change", (event) => {
+  screenGridVisible = event.target.checked;
+  renderCrt();
+  screenCanvas.focus();
+});
+document.querySelector("#place-screen-text").addEventListener("click", placeScreenText);
+document.querySelector("#screen-text").addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    placeScreenText();
+  }
+});
+document.querySelector("#fill-screen").addEventListener("click", () => {
+  snapshotMutation(() => fillScreen(project.screen, selectedScreenCode), `Screen filled with ${hex(selectedScreenCode)}`);
+  screenCanvas.focus();
+});
+document.querySelector("#clear-screen").addEventListener("click", () => {
+  snapshotMutation(() => fillScreen(project.screen, 0x00), "Screen cleared");
+  screenCanvas.focus();
+});
+document.querySelector("#show-pcg-gallery").addEventListener("click", () => {
+  snapshotMutation(() => applyPcgGallery(project.screen), "All 32 PCG slots placed");
+  document.querySelector("#palette-range").value = "all";
+  screenCanvas.focus();
+});
+document.querySelector("#import-rom").addEventListener("click", () => document.querySelector("#rom-file").click());
+document.querySelector("#rom-file").addEventListener("change", async (event) => {
+  const [file] = event.target.files;
+  if (!file) return;
+  try {
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    snapshotMutation(() => loadCharacterRom(project, bytes), "Character ROM imported");
+  } catch (error) {
+    setMessage(error.message, "error");
+  } finally {
+    event.target.value = "";
+  }
+});
 
 document.querySelector("#apply-preset").addEventListener("click", () => {
   const start = Number(document.querySelector("#preset-start").value);
@@ -854,6 +1269,7 @@ document.querySelector("#close-export").addEventListener("click", () => {
   exportPanel.hidden = true;
 });
 document.querySelector("#assembly-label").addEventListener("input", updateAssemblyOutput);
+document.querySelector("#export-target").addEventListener("change", updateAssemblyOutput);
 document.querySelector("#copy-assembly").addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(document.querySelector("#assembly-output").value);
@@ -864,7 +1280,7 @@ document.querySelector("#copy-assembly").addEventListener("click", async () => {
   }
 });
 document.querySelector("#download-assembly").addEventListener("click", () => {
-  downloadText("pcg_data.inc", document.querySelector("#assembly-output").value, "text/plain");
+  downloadText("jr100_data.inc", document.querySelector("#assembly-output").value, "text/plain");
   setMessage("Assembly include downloaded");
 });
 
@@ -887,7 +1303,18 @@ canvas.addEventListener("pointerleave", () => {
     renderEditor();
   }
 });
+screenCanvas.addEventListener("contextmenu", (event) => event.preventDefault());
+screenCanvas.addEventListener("pointerdown", beginScreenGesture);
+screenCanvas.addEventListener("pointermove", moveScreenGesture);
+screenCanvas.addEventListener("pointerup", finishScreenGesture);
+screenCanvas.addEventListener("pointercancel", finishScreenGesture);
+vramGlyphCanvas.addEventListener("contextmenu", (event) => event.preventDefault());
+vramGlyphCanvas.addEventListener("pointerdown", beginVramGlyphGesture);
+vramGlyphCanvas.addEventListener("pointermove", moveVramGlyphGesture);
+vramGlyphCanvas.addEventListener("pointerup", finishVramGlyphGesture);
+vramGlyphCanvas.addEventListener("pointercancel", finishVramGlyphGesture);
 window.addEventListener("keydown", handleKeyboard);
 
 syncWorkspaceInputs();
 renderAll();
+setActiveView(activeView);

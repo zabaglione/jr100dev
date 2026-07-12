@@ -1,6 +1,6 @@
-# JR-100 PCG Workbench
+# JR-100 PCG / CRT Workbench
 
-JR-100 のユーザー定義文字 32 スロットを編集する、依存ライブラリ不要の Web アプリです。各文字は 8×8 ドット・8 バイトで、`$C000-$C0FF` に対応します。
+JR-100 のPCGと32×24文字画面を一つのプロジェクトで編集する、依存ライブラリ不要のWebアプリです。PCG Editorはユーザー定義文字32スロット（`$C000-$C0FF`）を扱い、CRT Editorは画面VRAM 768バイト（`$C100-$C3FF`）を扱います。
 
 ## 起動
 
@@ -15,6 +15,8 @@ npm run serve
 
 ## 主な操作
 
+### PCG Editor
+
 - 左ドラッグ: ドットを描画
 - 右ドラッグ: ドットを消去
 - `Shift`を押しながらLineを描画: 水平・垂直・45度へ制約
@@ -27,8 +29,34 @@ npm run serve
 - Shift / Flip / Invert / Clear: 編集中キャンバス全体の変形
 - Undo / Redo: ストロークまたは一括操作単位で復元
 - Arcade Digit Preset: ATARI / NAMCO 系アーケードフォントを参考にした数字 0〜9 とコロンを11スロットへ配置
-- ASM Output: 32文字・256バイトを `.byte` 形式でコピーまたはダウンロード
+- ASM Output: PCG 256バイト、画面VRAM 768バイト、または両方を `.byte` 形式でコピーまたはダウンロード
 - Save JSON / Import: 編集プロジェクトを保存・復元
+
+### CRT Editor
+
+- PCG Editor / CRT Editor: ヘッダーから編集画面を切り替え
+- Character Palette: VRAMコード`$00-$FF`の全256値、または文字種別の絞り込みから選択
+- 左ドラッグ: 選択中のVRAMコードを画面へ配置
+- 右ドラッグ: 空白コードを配置
+- 矢印キー: 画面カーソルを移動
+- `Space`または`Enter`: カーソル位置へ選択コードを配置
+- Text / Place text: ASCII文字列をJR-100のROM文字コードへ変換して配置
+- Fill / Clear: 画面を選択コードまたは空白で埋める
+- Show all PCG: `$80-$9F`を画面へ並べ、全32 PCGスロットを同時確認
+- Grid: 文字セル境界の表示切替
+- PCG Coverage: 現在の画面に配置されているPCGスロットを一覧表示
+- VRAM-backed glyph: `$A0-$FF`選択時に、定義元となる画面VRAM 8バイトを8×8ドットとして直接編集。該当する画面セルも赤枠で表示
+
+## 表示モードと文字コード
+
+VRAMのbit 7は各セルの文字属性として扱います。bit 7が0の`$00-$7F`は、どちらのCMODEでもROMの全128文字を表示します。
+
+- CMODE PCG: `$80-$9F`は通常の32 PCG文字、`$A0-$FF`は画面VRAMと定義領域が重なる追加96 PCG文字
+- CMODE inverse: `$80-$FF`は対応するROM文字の反転表示
+
+ROM文字、記号、セミグラフィックはPCGと同一画面で使用できます。PCGと反転文字は同じCMODEでは使用できません。
+
+内蔵フォントは、ROMファイルを同梱しないための近似表示です。実機と同じ全128 ROM字形で編集する場合は、JR-100 ROMのPROGファイルをCRT EditorのImport ROM / PROGで読み込んでください。エミュレーターのROMローダーが使うversion 1形式と、複数PBINセクションを持てるversion 2形式に対応し、`$E000-$E3FF`を含むバイナリ領域から1024バイトを切り出します。読み込んだ字形、画面、PCGはJSONプロジェクトへまとめて保存されます。
 
 プロジェクトはブラウザーの `localStorage` にも自動保存されます。
 
@@ -43,4 +71,4 @@ cd tools/pcg_editor
 npm test
 ```
 
-座標からPCGスロットへの変換、複合キャンバス境界、シフト、プリセット、JSON、アセンブリ出力をテストします。
+座標からPCGスロットへの変換、複合キャンバス境界、画面コード解決、CMODE、全32 PCG表示、Character ROM読込、JSON、アセンブリ出力をテストします。
