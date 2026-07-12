@@ -37,6 +37,7 @@ import {
   vramPcgSourceOffset,
 } from "./core.js";
 import { getLanguage, setLanguage, t, translateDocument } from "./i18n.js";
+import { createFrameScheduler } from "./frame_scheduler.js";
 import {
   applyAnimationFrame,
   captureAnimationFrame,
@@ -105,6 +106,11 @@ let imageMosaicRgba = null;
 let imageMosaicLuminance = null;
 let imageMosaicPreview = null;
 let imageMosaicLoadGeneration = 0;
+const imageMosaicGenerationScheduler = createFrameScheduler({
+  requestFrame: (callback) => requestAnimationFrame(callback),
+  cancelFrame: (frameId) => cancelAnimationFrame(frameId),
+  task: generateImageMosaic,
+});
 
 const DIRECTION_KEYS = {
   ArrowUp: { action: "shift-up", deltaX: 0, deltaY: -1 },
@@ -787,10 +793,22 @@ function setImageMosaicStatus(key, values = {}) {
 }
 
 function invalidateImageMosaicPreview() {
+  imageMosaicGenerationScheduler.cancel();
   imageMosaicPreview = null;
   document.querySelector("#apply-image-mosaic").disabled = true;
   drawImageMosaicPlaceholder(imageMosaicResultContext, "imageMosaic.noPreview");
   setImageMosaicStatus(imageMosaicBitmap ? "imageMosaic.ready" : "imageMosaic.chooseImage");
+}
+
+function scheduleImageMosaicGeneration() {
+  if (!imageMosaicLuminance) {
+    invalidateImageMosaicPreview();
+    return;
+  }
+  imageMosaicPreview = null;
+  document.querySelector("#apply-image-mosaic").disabled = true;
+  setImageMosaicStatus("imageMosaic.updating");
+  imageMosaicGenerationScheduler.schedule();
 }
 
 function syncImageMosaicControls() {
@@ -855,7 +873,7 @@ function renderImageMosaicSource() {
   }
   imageMosaicRgba = new Uint8ClampedArray(imageMosaicSourceContext.getImageData(0, 0, width, height).data);
   updateImageMosaicLuminance();
-  invalidateImageMosaicPreview();
+  scheduleImageMosaicGeneration();
 }
 
 function renderImageMosaicResult(preview) {
@@ -928,8 +946,10 @@ function openImageMosaic() {
   syncImageMosaicControls();
   if (!imageMosaicBitmap) {
     drawImageMosaicPlaceholder(imageMosaicSourceContext, "imageMosaic.noImage");
+    invalidateImageMosaicPreview();
+  } else {
+    scheduleImageMosaicGeneration();
   }
-  invalidateImageMosaicPreview();
   imageMosaicDialog.showModal();
 }
 
@@ -1847,7 +1867,6 @@ document.querySelector("#image-mosaic-file").addEventListener("change", async (e
   imageMosaicRgba = null;
   imageMosaicLuminance = null;
   invalidateImageMosaicPreview();
-  document.querySelector("#generate-image-mosaic").disabled = true;
   setImageMosaicStatus("imageMosaic.loading");
   try {
     const bitmap = await decodeImageFile(file);
@@ -1856,20 +1875,18 @@ document.querySelector("#image-mosaic-file").addEventListener("change", async (e
       return;
     }
     imageMosaicBitmap = bitmap;
-    renderImageMosaicSource();
-    document.querySelector("#generate-image-mosaic").disabled = false;
     setImageMosaicStatus("imageMosaic.loaded", {
       name: file.name,
       width: bitmap.width,
       height: bitmap.height,
     });
+    renderImageMosaicSource();
   } catch (error) {
     if (generation !== imageMosaicLoadGeneration) return;
     imageMosaicBitmap = null;
     imageMosaicRgba = null;
     imageMosaicLuminance = null;
     imageMosaicPreview = null;
-    document.querySelector("#generate-image-mosaic").disabled = true;
     document.querySelector("#apply-image-mosaic").disabled = true;
     drawImageMosaicPlaceholder(imageMosaicSourceContext, "imageMosaic.noImage");
     drawImageMosaicPlaceholder(imageMosaicResultContext, "imageMosaic.noPreview");
@@ -1881,14 +1898,13 @@ document.querySelector("#image-mosaic-fit").addEventListener("change", renderIma
 document.querySelector("#image-mosaic-edge-strength").addEventListener("input", () => {
   syncImageMosaicControls();
   updateImageMosaicLuminance();
-  invalidateImageMosaicPreview();
+  scheduleImageMosaicGeneration();
 });
 document.querySelectorAll("#image-mosaic-palette, #image-mosaic-tone, #image-mosaic-contrast, #image-mosaic-threshold, #image-mosaic-invert, #image-mosaic-generate-pcg")
   .forEach((control) => control.addEventListener("input", () => {
     syncImageMosaicControls();
-    invalidateImageMosaicPreview();
+    scheduleImageMosaicGeneration();
   }));
-document.querySelector("#generate-image-mosaic").addEventListener("click", generateImageMosaic);
 document.querySelector("#apply-image-mosaic").addEventListener("click", applyImageMosaic);
 document.querySelector("#import-rom").addEventListener("click", () => document.querySelector("#rom-file").click());
 document.querySelector("#rom-file").addEventListener("change", async (event) => {

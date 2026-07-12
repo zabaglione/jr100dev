@@ -33,6 +33,7 @@ import { extractCharacterRom } from "../../tools/pcg_editor/rom_font.js";
 import en from "../../tools/pcg_editor/locales/en.js";
 import ja from "../../tools/pcg_editor/locales/ja.js";
 import { getLanguage, resolveStoredLanguage, setLanguage, t } from "../../tools/pcg_editor/i18n.js";
+import { createFrameScheduler } from "../../tools/pcg_editor/frame_scheduler.js";
 import {
   applyAnimationFrame,
   captureAnimationFrame,
@@ -373,7 +374,7 @@ test("CRT editor exposes the experimental image mosaic workflow", () => {
   assert.match(editorHtml, /id="open-image-mosaic"/);
   assert.match(editorHtml, /id="image-mosaic-dialog"/);
   assert.match(editorHtml, /id="image-mosaic-file"/);
-  assert.match(editorHtml, /id="generate-image-mosaic"/);
+  assert.doesNotMatch(editorHtml, /id="generate-image-mosaic"/);
   assert.match(editorHtml, /id="apply-image-mosaic"/);
   assert.match(editorHtml, /id="image-mosaic-edge-strength"/);
   assert.match(editorHtml, /id="image-mosaic-generate-pcg"/);
@@ -382,7 +383,47 @@ test("CRT editor exposes the experimental image mosaic workflow", () => {
   assert.match(editorApp, /typeof globalThis\.createImageBitmap === "function"/);
   assert.match(editorApp, /new Image\(\)/);
   assert.match(editorApp, /imageMosaicLoadGeneration/);
+  assert.match(editorApp, /scheduleImageMosaicGeneration/);
+  assert.ok((editorApp.match(/scheduleImageMosaicGeneration\(\)/g) ?? []).length >= 4);
+  assert.match(editorApp, /imageMosaicPreview = null;\s+document\.querySelector\("#apply-image-mosaic"\)\.disabled = true;/);
+  assert.match(editorApp, /imageMosaicGenerationScheduler\.cancel\(\)/);
+  assert.match(editorApp, /#image-mosaic-palette, #image-mosaic-tone, #image-mosaic-contrast, #image-mosaic-threshold, #image-mosaic-invert, #image-mosaic-generate-pcg/);
   assert.match(editorApp, /document\.querySelector\("dialog\[open\]"\)/);
+});
+
+test("image mosaic preview scheduler coalesces continuous input into the next frame", () => {
+  let callback = null;
+  let requested = 0;
+  let canceled = 0;
+  let generated = 0;
+  const scheduler = createFrameScheduler({
+    requestFrame: (next) => {
+      callback = next;
+      requested += 1;
+      return requested;
+    },
+    cancelFrame: () => {
+      canceled += 1;
+    },
+    task: () => {
+      generated += 1;
+    },
+  });
+
+  assert.equal(scheduler.schedule(), true);
+  assert.equal(scheduler.schedule(), false);
+  assert.equal(scheduler.schedule(), false);
+  assert.equal(requested, 1);
+  assert.equal(canceled, 0);
+  assert.equal(scheduler.isPending(), true);
+
+  callback();
+  assert.equal(generated, 1);
+  assert.equal(scheduler.isPending(), false);
+  assert.equal(scheduler.schedule(), true);
+  assert.equal(scheduler.cancel(), true);
+  assert.equal(canceled, 1);
+  assert.equal(scheduler.isPending(), false);
 });
 
 test("composite coordinates map across 8x8 slot boundaries", () => {
