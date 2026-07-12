@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,25 +11,31 @@
       <div class="brand-block">
         <span class="brand-mark" aria-hidden="true">JR</span>
         <div>
-          <h1>PCG Workbench</h1>
-          <p>32-slot pixel editor</p>
+          <h1 data-i18n="app.title">PCG Workbench</h1>
+          <p data-i18n="app.subtitle">32-slot pixel editor</p>
         </div>
       </div>
       <div class="header-status" aria-live="polite">
         <span id="usage-status">0 / 32 slots used</span>
-        <span id="save-status">Ready</span>
+        <span id="save-status" data-i18n="status.ready">Ready</span>
+        <label class="language-control"><span data-i18n="language.label">Language</span>
+          <select id="language-select" aria-label="Language" data-i18n-aria="language.label">
+            <option value="ja" selected data-i18n="language.japanese">Japanese</option>
+            <option value="en" data-i18n="language.english">English</option>
+          </select>
+        </label>
       </div>
-      <div class="view-switch" role="tablist" aria-label="Editor view">
-        <button id="show-pcg-view" class="active" type="button" role="tab" aria-selected="true">PCG Editor</button>
-        <button id="show-screen-view" type="button" role="tab" aria-selected="false">CRT Editor</button>
+      <div class="view-switch" role="tablist" aria-label="Editor view" data-i18n-aria="view.label">
+        <button id="show-pcg-view" class="active" type="button" role="tab" aria-selected="true" data-i18n="view.pcg">PCG Editor</button>
+        <button id="show-screen-view" type="button" role="tab" aria-selected="false" data-i18n="view.crt">CRT Editor</button>
       </div>
-      <nav class="header-actions" aria-label="Project actions">
-        <button id="new-project" type="button">New</button>
-        <button id="import-project" type="button">Import</button>
-        <button id="save-project" type="button">Save JSON</button>
-        <button id="undo" type="button" title="Undo (Ctrl/Cmd+Z)">Undo</button>
-        <button id="redo" type="button" title="Redo (Ctrl/Cmd+Shift+Z)">Redo</button>
-        <button id="toggle-export" class="primary" type="button">ASM Output</button>
+      <nav class="header-actions" aria-label="Project actions" data-i18n-aria="actions.label">
+        <button id="new-project" type="button" data-i18n="actions.new">New</button>
+        <button id="import-project" type="button" data-i18n="actions.import">Import</button>
+        <button id="save-project" type="button" data-i18n="actions.saveJson">Save JSON</button>
+        <button id="undo" type="button" title="Undo (Ctrl/Cmd+Z)" data-i18n="actions.undo" data-i18n-title="actions.undoTitle">Undo</button>
+        <button id="redo" type="button" title="Redo (Ctrl/Cmd+Shift+Z)" data-i18n="actions.redo" data-i18n-title="actions.redoTitle">Redo</button>
+        <button id="toggle-export" class="primary" type="button" data-i18n="actions.asm">ASM Output</button>
         <input id="import-file" type="file" accept="application/json,.json" hidden>
       </nav>
     </header>
@@ -38,26 +44,26 @@
       <aside class="panel slot-panel" aria-labelledby="slot-rack-title">
         <div class="panel-heading">
           <div>
-            <span class="eyebrow">Memory</span>
-            <h2 id="slot-rack-title">PCG Slot Rack</h2>
+            <span class="eyebrow" data-i18n="pcg.memory">Memory</span>
+            <h2 id="slot-rack-title" data-i18n="pcg.slotRack">PCG Slot Rack</h2>
           </div>
           <span class="address-chip">$C000-$C0FF</span>
         </div>
-        <p class="panel-intro">Select a glyph or map consecutive slots as one canvas.</p>
-        <div id="slot-rack" class="slot-rack" role="grid" aria-label="32 PCG character slots"></div>
-        <div class="legend" aria-label="Slot state legend">
-          <span><i class="legend-frame active"></i>Current workspace</span>
-          <span><i class="legend-frame used"></i>Contains pixels</span>
+        <p class="panel-intro" data-i18n="pcg.slotIntro">Select a glyph or map consecutive slots as one canvas.</p>
+        <div id="slot-rack" class="slot-rack" role="grid" aria-label="32 PCG character slots" data-i18n-aria="aria.slotGrid"></div>
+        <div class="legend" aria-label="Slot state legend" data-i18n-aria="aria.slotLegend">
+          <span><i class="legend-frame active"></i><span data-i18n="pcg.currentWorkspace">Current workspace</span></span>
+          <span><i class="legend-frame used"></i><span data-i18n="pcg.containsPixels">Contains pixels</span></span>
         </div>
       </aside>
 
       <section class="panel editor-panel" aria-labelledby="editor-title">
         <div class="panel-heading editor-heading">
           <div>
-            <span class="eyebrow">Assembly Jig</span>
-            <h2 id="editor-title">Continuous Pixel Canvas</h2>
+            <span class="eyebrow" data-i18n="pcg.assemblyJig">Assembly Jig</span>
+            <h2 id="editor-title" data-i18n="pcg.canvas">Continuous Pixel Canvas</h2>
           </div>
-          <div class="dimension-presets" aria-label="Quick composite sizes">
+          <div class="dimension-presets" aria-label="Quick composite sizes" data-i18n-aria="aria.quickSizes">
             <button type="button" data-size="1x1">1x1</button>
             <button type="button" data-size="2x2">2x2</button>
             <button type="button" data-size="3x3">3x3</button>
@@ -65,63 +71,63 @@
         </div>
 
         <div class="workspace-controls">
-          <label>Base slot <input id="base-slot" type="number" min="0" max="31" value="0"></label>
-          <label>Columns <input id="workspace-width" type="number" min="1" max="32" value="1"></label>
-          <label>Rows <input id="workspace-height" type="number" min="1" max="4" value="1"></label>
-          <button id="apply-workspace" type="button">Apply layout</button>
+          <label><span data-i18n="pcg.baseSlot">Base slot</span> <input id="base-slot" type="number" min="0" max="31" value="0"></label>
+          <label><span data-i18n="pcg.columns">Columns</span> <input id="workspace-width" type="number" min="1" max="32" value="1"></label>
+          <label><span data-i18n="pcg.rows">Rows</span> <input id="workspace-height" type="number" min="1" max="4" value="1"></label>
+          <button id="apply-workspace" type="button" data-i18n="pcg.applyLayout">Apply layout</button>
           <output id="workspace-summary">Slot 00 / 8x8 px</output>
         </div>
         <details class="group-disclosure">
           <summary>
-            <span>Saved composites</span>
+            <span data-i18n="pcg.savedComposites">Saved composites</span>
             <span id="group-summary">No saved layout selected</span>
           </summary>
           <div class="group-controls">
-            <label>Group <select id="saved-group"><option value="">Current layout</option></select></label>
-            <label>Name <input id="group-name" type="text" maxlength="40" placeholder="Player ship"></label>
-            <button id="save-group" type="button">Save</button>
-            <button id="delete-group" type="button" class="danger" disabled>Delete</button>
+            <label><span data-i18n="pcg.group">Group</span> <select id="saved-group"><option value="" data-i18n="pcg.currentLayout">Current layout</option></select></label>
+            <label><span data-i18n="pcg.name">Name</span> <input id="group-name" type="text" maxlength="40" placeholder="Player ship" data-i18n-placeholder="pcg.groupPlaceholder"></label>
+            <button id="save-group" type="button" data-i18n="actions.save">Save</button>
+            <button id="delete-group" type="button" class="danger" disabled data-i18n="actions.delete">Delete</button>
           </div>
         </details>
 
-        <div class="tool-strip" role="toolbar" aria-label="Drawing tools">
-          <button type="button" data-tool="pencil" class="active" title="Pencil (B)">Pencil</button>
-          <button type="button" data-tool="eraser" title="Eraser (E)">Eraser</button>
-          <button type="button" data-tool="line" title="Line (L)">Line</button>
-          <button type="button" data-tool="rectangle" title="Rectangle (R)">Rectangle</button>
-          <button type="button" data-tool="fill" title="Fill (G)">Fill</button>
+        <div class="tool-strip" role="toolbar" aria-label="Drawing tools" data-i18n-aria="aria.drawingTools">
+          <button type="button" data-tool="pencil" class="active" title="Pencil (B)" data-i18n="tool.pencil" data-i18n-title="tool.pencilTitle">Pencil</button>
+          <button type="button" data-tool="eraser" title="Eraser (E)" data-i18n="tool.eraser" data-i18n-title="tool.eraserTitle">Eraser</button>
+          <button type="button" data-tool="line" title="Line (L)" data-i18n="tool.line" data-i18n-title="tool.lineTitle">Line</button>
+          <button type="button" data-tool="rectangle" title="Rectangle (R)" data-i18n="tool.rectangle" data-i18n-title="tool.rectangleTitle">Rectangle</button>
+          <button type="button" data-tool="fill" title="Fill (G)" data-i18n="tool.fill" data-i18n-title="tool.fillTitle">Fill</button>
           <span class="tool-rule" aria-hidden="true"></span>
-          <button id="copy-selection" type="button" title="Copy workspace (Ctrl/Cmd+C)">Copy</button>
-          <button id="paste-selection" type="button" title="Paste workspace (Ctrl/Cmd+V)">Paste</button>
-          <label class="check-label grid-toggle"><input id="show-grid" type="checkbox" checked> Grid</label>
+          <button id="copy-selection" type="button" title="Copy workspace (Ctrl/Cmd+C)" data-i18n="actions.copy" data-i18n-title="tool.copyTitle">Copy</button>
+          <button id="paste-selection" type="button" title="Paste workspace (Ctrl/Cmd+V)" data-i18n="actions.paste" data-i18n-title="tool.pasteTitle">Paste</button>
+          <label class="check-label grid-toggle"><input id="show-grid" type="checkbox" checked> <span data-i18n="common.grid">Grid</span></label>
         </div>
 
         <div class="canvas-stage">
-          <canvas id="editor-canvas" width="384" height="384" tabindex="0" aria-label="PCG pixel editing grid"></canvas>
+          <canvas id="editor-canvas" width="384" height="384" tabindex="0" aria-label="PCG pixel editing grid" data-i18n-aria="aria.pixelCanvas"></canvas>
           <div class="stage-note">
-            <strong id="active-tool-status">Pencil</strong>
-            <span>Left draw</span>
-            <span>Right erase</span>
-            <span>Shift constrains shapes</span>
-            <span>Esc cancels stroke</span>
+            <strong id="active-tool-status" data-i18n="tool.pencil">Pencil</strong>
+            <span data-i18n="tool.leftDraw">Left draw</span>
+            <span data-i18n="tool.rightErase">Right erase</span>
+            <span data-i18n="tool.shiftConstraint">Shift constrains shapes</span>
+            <span data-i18n="tool.escapeCancel">Esc cancels stroke</span>
           </div>
         </div>
 
-        <div class="transform-strip" aria-label="Workspace transforms">
+        <div class="transform-strip" aria-label="Workspace transforms" data-i18n-aria="aria.transforms">
           <div class="transform-group">
-            <span>Shift</span>
-            <button type="button" data-action="shift-up" title="Shift up (Alt+Arrow Up)">Up</button>
-            <button type="button" data-action="shift-left" title="Shift left (Alt+Arrow Left)">Left</button>
-            <button type="button" data-action="shift-right" title="Shift right (Alt+Arrow Right)">Right</button>
-            <button type="button" data-action="shift-down" title="Shift down (Alt+Arrow Down)">Down</button>
-            <label class="check-label"><input id="wrap-shift" type="checkbox"> Wrap</label>
+            <span data-i18n="tool.shift">Shift</span>
+            <button type="button" data-action="shift-up" title="Shift up (Alt+Arrow Up)" data-i18n="tool.up" data-i18n-title="tool.shiftUpTitle">Up</button>
+            <button type="button" data-action="shift-left" title="Shift left (Alt+Arrow Left)" data-i18n="tool.left" data-i18n-title="tool.shiftLeftTitle">Left</button>
+            <button type="button" data-action="shift-right" title="Shift right (Alt+Arrow Right)" data-i18n="tool.right" data-i18n-title="tool.shiftRightTitle">Right</button>
+            <button type="button" data-action="shift-down" title="Shift down (Alt+Arrow Down)" data-i18n="tool.down" data-i18n-title="tool.shiftDownTitle">Down</button>
+            <label class="check-label"><input id="wrap-shift" type="checkbox"> <span data-i18n="tool.wrap">Wrap</span></label>
           </div>
           <div class="transform-group">
-            <span>Transform</span>
-            <button type="button" data-action="flip-horizontal">Flip H</button>
-            <button type="button" data-action="flip-vertical">Flip V</button>
-            <button type="button" data-action="invert">Invert</button>
-            <button type="button" data-action="clear" class="danger">Clear</button>
+            <span data-i18n="tool.transform">Transform</span>
+            <button type="button" data-action="flip-horizontal" data-i18n="tool.flipH">Flip H</button>
+            <button type="button" data-action="flip-vertical" data-i18n="tool.flipV">Flip V</button>
+            <button type="button" data-action="invert" data-i18n="tool.invert">Invert</button>
+            <button type="button" data-action="clear" class="danger" data-i18n="tool.clear">Clear</button>
           </div>
         </div>
       </section>
@@ -129,30 +135,30 @@
       <aside class="panel preview-panel" aria-labelledby="preview-title">
         <div class="panel-heading">
           <div>
-            <span class="eyebrow">Inspection</span>
-            <h2 id="preview-title">Live JR-100 CRT</h2>
+            <span class="eyebrow" data-i18n="inspection.label">Inspection</span>
+            <h2 id="preview-title" data-i18n="inspection.liveCrt">Live JR-100 CRT</h2>
           </div>
-          <span class="address-chip">32x24 cells</span>
+          <span class="address-chip" data-i18n="inspection.cells">32x24 cells</span>
         </div>
-        <canvas id="crt-preview" width="256" height="192" aria-label="JR-100 screen preview"></canvas>
-        <p class="preview-caption">This is the complete 32x24 CRT Editor screen.</p>
+        <canvas id="crt-preview" width="256" height="192" aria-label="JR-100 screen preview" data-i18n-aria="aria.crtPreview"></canvas>
+        <p class="preview-caption" data-i18n="inspection.previewCaption">This is the complete 32x24 CRT Editor screen.</p>
 
         <section class="subpanel" aria-labelledby="preset-title">
           <div class="subpanel-heading">
-            <h3 id="preset-title">Arcade Digit Preset</h3>
-            <span>11 slots</span>
+            <h3 id="preset-title" data-i18n="inspection.arcadePreset">Arcade Digit Preset</h3>
+            <span data-i18n="inspection.slots11">11 slots</span>
           </div>
-          <p>Atari/Namco-inspired digits 0-9 plus a colon.</p>
+          <p data-i18n="inspection.arcadeDescription">Atari/Namco-inspired digits 0-9 plus a colon.</p>
           <div class="preset-action">
-            <label>Start <input id="preset-start" type="number" min="0" max="21" value="0"></label>
-            <button id="apply-preset" class="primary" type="button">Apply preset</button>
+            <label><span data-i18n="inspection.start">Start</span> <input id="preset-start" type="number" min="0" max="21" value="0"></label>
+            <button id="apply-preset" class="primary" type="button" data-i18n="inspection.applyPreset">Apply preset</button>
           </div>
         </section>
 
         <section class="subpanel byte-panel" aria-labelledby="byte-title">
           <div class="subpanel-heading">
-            <h3 id="byte-title">Byte Inspector</h3>
-            <span>MSB is left</span>
+            <h3 id="byte-title" data-i18n="inspection.bytes">Byte Inspector</h3>
+            <span data-i18n="inspection.msb">MSB is left</span>
           </div>
           <div id="byte-inspector" class="byte-inspector"></div>
         </section>
@@ -163,24 +169,24 @@
       <aside class="panel character-panel" aria-labelledby="character-title">
         <div class="panel-heading">
           <div>
-            <span class="eyebrow">Character Set</span>
-            <h2 id="character-title">Character Palette</h2>
+            <span class="eyebrow" data-i18n="crt.characterSet">Character Set</span>
+            <h2 id="character-title" data-i18n="crt.palette">Character Palette</h2>
           </div>
           <span id="palette-range-address" class="address-chip">$00-$3F</span>
         </div>
         <div class="screen-field-stack">
-          <label>Display plane
+          <label><span data-i18n="crt.displayMode">Display mode</span>
             <select id="display-mode">
-              <option value="pcg">ROM + PCG (CMODE PCG)</option>
-              <option value="inverse">Normal + inverse (CMODE inverse)</option>
+              <option value="pcg" data-i18n="crt.modePcg">ROM + PCG (CMODE PCG)</option>
+              <option value="inverse" data-i18n="crt.modeInverse">Normal + inverse (CMODE inverse)</option>
             </select>
           </label>
-          <label>Palette
+          <label><span data-i18n="crt.paletteFilter">Palette</span>
             <select id="palette-range">
-              <option value="all">All codes $00-$FF</option>
-              <option value="text">Text $00-$3F</option>
-              <option value="symbols">Symbols $40-$5F</option>
-              <option value="semigraphics">Semigraphics $60-$7F</option>
+              <option value="all" data-i18n="crt.allCodes">All codes $00-$FF</option>
+              <option value="text" data-i18n="crt.textCodes">Text $00-$3F</option>
+              <option value="symbols" data-i18n="crt.symbolCodes">Symbols $40-$5F</option>
+              <option value="semigraphics" data-i18n="crt.semigraphics">Semigraphics $60-$7F</option>
               <option value="upper">PCG $80-$9F</option>
               <option value="extended">VRAM PCG $A0-$FF</option>
             </select>
@@ -189,82 +195,84 @@
         <div class="selected-character">
           <canvas id="selected-character-preview" width="64" height="64" aria-hidden="true"></canvas>
           <div>
-            <span>Selected code</span>
+            <span data-i18n="crt.selectedCode">Selected code</span>
             <strong id="selected-character-code">$00</strong>
             <small id="selected-character-kind">ROM text</small>
           </div>
         </div>
         <section id="vram-glyph-editor" class="vram-glyph-editor" aria-labelledby="vram-glyph-title" hidden>
           <div class="subpanel-heading">
-            <h3 id="vram-glyph-title">VRAM-backed glyph</h3>
+            <h3 id="vram-glyph-title" data-i18n="crt.vramGlyph">VRAM-backed glyph</h3>
             <span id="vram-glyph-address">$C100-$C107</span>
           </div>
-          <canvas id="vram-glyph-canvas" width="256" height="256" aria-label="VRAM-backed PCG dot editor"></canvas>
-          <p>Left draws, right erases. The highlighted eight CRT cells are the glyph bytes.</p>
+          <canvas id="vram-glyph-canvas" width="256" height="256" aria-label="VRAM-backed PCG dot editor" data-i18n-aria="aria.vramGlyphCanvas"></canvas>
+          <p data-i18n="crt.vramGlyphHelp">Left draws, right erases. The highlighted eight CRT cells are the glyph bytes.</p>
         </section>
         <p id="mode-compatibility" class="compatibility-note"></p>
-        <div id="character-palette" class="character-palette" role="grid" aria-label="JR-100 character codes"></div>
+        <div id="character-palette" class="character-palette" role="grid" aria-label="JR-100 character codes" data-i18n-aria="aria.characterCodes"></div>
       </aside>
 
       <section class="panel screen-editor-panel" aria-labelledby="screen-editor-title">
         <div class="panel-heading">
           <div>
             <span class="eyebrow">VRAM $C100-$C3FF</span>
-            <h2 id="screen-editor-title">32x24 CRT Editor</h2>
+            <h2 id="screen-editor-title" data-i18n="crt.editor">32x24 CRT Editor</h2>
           </div>
           <output id="screen-cursor-summary">X 00 / Y 00 / $C100</output>
         </div>
-        <div class="screen-toolbar" role="toolbar" aria-label="Screen tools">
-          <button id="screen-stamp-tool" class="active" type="button">Stamp</button>
-          <label>Text <input id="screen-text" type="text" maxlength="32" placeholder="JR-100"></label>
-          <button id="place-screen-text" type="button">Place text</button>
-          <button id="fill-screen" type="button">Fill</button>
-          <button id="clear-screen" class="danger" type="button">Clear</button>
-          <button id="show-pcg-gallery" type="button">Show all PCG</button>
-          <label class="check-label"><input id="show-screen-grid" type="checkbox" checked> Grid</label>
+        <div class="screen-toolbar" role="toolbar" aria-label="Screen tools" data-i18n-aria="aria.screenTools">
+          <button id="screen-stamp-tool" class="active" type="button" data-i18n="crt.stamp">Stamp</button>
+          <label><span data-i18n="crt.text">Text</span> <input id="screen-text" type="text" maxlength="32" placeholder="JR-100"></label>
+          <button id="place-screen-text" type="button" data-i18n="crt.placeText">Place text</button>
+          <button id="fill-screen" type="button" data-i18n="tool.fill">Fill</button>
+          <button id="clear-screen" class="danger" type="button" data-i18n="tool.clear">Clear</button>
+          <button id="show-pcg-gallery" type="button" data-i18n="crt.showAllPcg">Show all PCG</button>
+          <label class="check-label"><input id="show-screen-grid" type="checkbox" checked> <span data-i18n="common.grid">Grid</span></label>
+          <label id="source-highlight-control" class="check-label" hidden><input id="show-vram-source" type="checkbox"> <span data-i18n="crt.showSource">Show VRAM glyph source</span></label>
         </div>
         <div class="screen-stage">
-          <canvas id="screen-canvas" width="768" height="576" tabindex="0" aria-label="JR-100 32 by 24 screen editor"></canvas>
+          <canvas id="screen-canvas" width="768" height="576" tabindex="0" aria-label="JR-100 32 by 24 screen editor" data-i18n-aria="aria.screenCanvas"></canvas>
           <div class="stage-note">
-            <strong>Stamp</strong>
-            <span>Left places selected code</span>
-            <span>Right places space</span>
-            <span>Arrows move cursor</span>
-            <span>Space paints</span>
+            <strong data-i18n="crt.stamp">Stamp</strong>
+            <span data-i18n="crt.leftPlace">Left places selected code</span>
+            <span data-i18n="crt.rightSpace">Right places space</span>
+            <span data-i18n="crt.arrows">Arrows move cursor</span>
+            <span data-i18n="crt.spacePaints">Space paints</span>
           </div>
+          <div id="source-highlight-legend" class="source-highlight-legend" hidden><i></i><span data-i18n="crt.sourceLegend">Red outlines: eight screen VRAM bytes that define the selected $A0-$FF glyph</span></div>
         </div>
       </section>
 
       <aside class="panel screen-inspector" aria-labelledby="screen-inspector-title">
         <div class="panel-heading">
           <div>
-            <span class="eyebrow">Inspection</span>
-            <h2 id="screen-inspector-title">Display State</h2>
+            <span class="eyebrow" data-i18n="inspection.label">Inspection</span>
+            <h2 id="screen-inspector-title" data-i18n="crt.displayState">Display State</h2>
           </div>
         </div>
         <section class="subpanel">
-          <div class="subpanel-heading"><h3>Compatibility</h3><span id="display-plane-state">CMODE PCG</span></div>
+          <div class="subpanel-heading"><h3 data-i18n="crt.compatibility">Compatibility</h3><span id="display-plane-state">CMODE PCG</span></div>
           <dl class="state-list">
-            <div><dt>ROM text</dt><dd>Available</dd></div>
-            <div><dt>ROM symbols</dt><dd>Available</dd></div>
-            <div><dt>Inverse</dt><dd id="inverse-state">Unavailable</dd></div>
+            <div><dt data-i18n="crt.romText">ROM text</dt><dd data-i18n="common.available">Available</dd></div>
+            <div><dt data-i18n="crt.romSymbols">ROM symbols</dt><dd data-i18n="common.available">Available</dd></div>
+            <div><dt data-i18n="crt.inverse">Inverse</dt><dd id="inverse-state">Unavailable</dd></div>
             <div><dt>PCG $80-$9F</dt><dd id="pcg-state">Available</dd></div>
           </dl>
         </section>
         <section class="subpanel">
-          <div class="subpanel-heading"><h3>PCG Coverage</h3><span id="visible-pcg-count">0 / 32</span></div>
-          <div id="visible-pcg-slots" class="coverage-grid" aria-label="PCG slots visible on screen"></div>
+          <div class="subpanel-heading"><h3 data-i18n="crt.coverage">PCG Coverage</h3><span id="visible-pcg-count">0 / 32</span></div>
+          <div id="visible-pcg-slots" class="coverage-grid" aria-label="PCG slots visible on screen" data-i18n-aria="aria.coverage"></div>
         </section>
         <section class="subpanel">
-          <div class="subpanel-heading"><h3>Character ROM</h3><span>$E000-$E3FF</span></div>
+          <div class="subpanel-heading"><h3 data-i18n="crt.characterRom">Character ROM</h3><span>$E000-$E3FF</span></div>
           <p id="rom-source">Built-in approximation</p>
-          <button id="import-rom" type="button">Import ROM / PROG</button>
+          <button id="import-rom" type="button" data-i18n="crt.importRom">Import ROM / PROG</button>
           <input id="rom-file" type="file" accept=".bin,.rom,.prg,application/octet-stream" hidden>
-          <p class="warning-note">Import a 1024-byte character ROM or a PROG file containing $E000-$E3FF for exact glyphs.</p>
+          <p class="warning-note" data-i18n="crt.importRomHelp">Import a 1024-byte character ROM or a PROG file containing $E000-$E3FF for exact glyphs.</p>
         </section>
         <section class="subpanel warning-panel">
-          <div class="subpanel-heading"><h3>VRAM PCG $A0-$FF</h3><span>Advanced</span></div>
-          <p>These 96 glyphs reuse screen VRAM bytes. Editing their source rows also changes visible screen codes.</p>
+          <div class="subpanel-heading"><h3>VRAM PCG $A0-$FF</h3><span data-i18n="common.advanced">Advanced</span></div>
+          <p data-i18n="crt.vramPcgHelp">These 96 glyphs reuse screen VRAM bytes. Editing their source rows also changes visible screen codes.</p>
         </section>
       </aside>
     </main>
@@ -272,28 +280,28 @@
     <section id="export-panel" class="export-panel" aria-labelledby="export-title" hidden>
       <div class="export-heading">
         <div>
-          <span class="eyebrow">Assembler Output</span>
-          <h2 id="export-title">JR-100 Data</h2>
+          <span class="eyebrow" data-i18n="export.assembler">Assembler Output</span>
+          <h2 id="export-title" data-i18n="export.data">JR-100 Data</h2>
         </div>
-        <label>Output
+        <label><span data-i18n="common.output">Output</span>
           <select id="export-target">
-            <option value="combined">PCG + screen</option>
-            <option value="pcg">PCG bank</option>
-            <option value="screen">Screen</option>
+            <option value="combined" data-i18n="export.combined">PCG + screen</option>
+            <option value="pcg" data-i18n="export.pcg">PCG bank</option>
+            <option value="screen" data-i18n="export.screen">Screen</option>
           </select>
         </label>
-        <label>Label <input id="assembly-label" type="text" value="PCG_DATA" spellcheck="false"></label>
-        <button id="copy-assembly" class="primary" type="button">Copy ASM</button>
-        <button id="download-assembly" type="button">Download .asm</button>
-        <button id="close-export" type="button">Close</button>
+        <label><span data-i18n="common.label">Label</span> <input id="assembly-label" type="text" value="PCG_DATA" spellcheck="false"></label>
+        <button id="copy-assembly" class="primary" type="button" data-i18n="export.copy">Copy ASM</button>
+        <button id="download-assembly" type="button" data-i18n="export.download">Download .asm</button>
+        <button id="close-export" type="button" data-i18n="actions.close">Close</button>
       </div>
-      <textarea id="assembly-output" readonly spellcheck="false" aria-label="Generated assembly source"></textarea>
+      <textarea id="assembly-output" readonly spellcheck="false" aria-label="Generated assembly source" data-i18n-aria="aria.assembly"></textarea>
     </section>
 
     <footer class="status-bar">
-      <span id="pointer-status">Pointer outside canvas</span>
-      <span id="message-status" role="status" aria-live="polite">Ready</span>
-      <span id="shortcut-help">B/E/L/R/G tools · Canvas arrows move cursor · Space paints · Alt+arrows shift</span>
+      <span id="pointer-status" data-i18n="status.pointerOutside">Pointer outside canvas</span>
+      <span id="message-status" role="status" aria-live="polite" data-i18n="status.ready">Ready</span>
+      <span id="shortcut-help" data-i18n="status.pcgShortcuts">B/E/L/R/G tools · Canvas arrows move cursor · Space paints · Alt+arrows shift</span>
     </footer>
 
     <script type="module" src="app.js"></script>

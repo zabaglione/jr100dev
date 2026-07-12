@@ -36,6 +36,7 @@ import {
   visiblePcgSlots,
   vramPcgSourceOffset,
 } from "./core.js";
+import { getLanguage, setLanguage, t, translateDocument } from "./i18n.js";
 
 const STORAGE_KEY = "jr100dev.pcg-workbench.v1";
 const HISTORY_LIMIT = 64;
@@ -47,6 +48,9 @@ const screenCanvas = document.querySelector("#screen-canvas");
 const screenContext = screenCanvas.getContext("2d");
 const vramGlyphCanvas = document.querySelector("#vram-glyph-canvas");
 const vramGlyphContext = vramGlyphCanvas.getContext("2d");
+
+translateDocument();
+document.querySelector("#language-select").value = getLanguage();
 
 let project = restoreProject();
 let workspace = { baseSlot: 0, width: 1, height: 1 };
@@ -64,6 +68,7 @@ let screenCursor = { x: 0, y: 0 };
 let screenGesture = null;
 let vramGlyphGesture = null;
 let activeView = "pcg";
+let vramSourceVisible = false;
 
 const DIRECTION_KEYS = {
   ArrowUp: { action: "shift-up", deltaX: 0, deltaY: -1 },
@@ -87,7 +92,12 @@ function setMessage(message, tone = "normal") {
   output.style.color = tone === "error" ? "var(--red)" : "var(--green)";
 }
 
-function persistProject(message = "Autosaved") {
+function formatError(error) {
+  const detail = getLanguage() === "en" && error?.message ? `: ${error.message}` : "";
+  return t("error.operationFailed", { detail });
+}
+
+function persistProject(message = t("message.autosaved")) {
   localStorage.setItem(STORAGE_KEY, serializeProject(project));
   document.querySelector("#save-status").textContent = message;
   setMessage(message);
@@ -115,7 +125,7 @@ function undo() {
   }
   redoStack.push(cloneProject(project));
   project = undoStack.pop();
-  persistProject("Undo applied");
+  persistProject(t("message.undo"));
   renderAll();
 }
 
@@ -125,7 +135,7 @@ function redo() {
   }
   undoStack.push(cloneProject(project));
   project = redoStack.pop();
-  persistProject("Redo applied");
+  persistProject(t("message.redo"));
   renderAll();
 }
 
@@ -221,7 +231,8 @@ function renderSlotRack() {
     button.classList.toggle("used", used);
     button.classList.toggle("in-workspace", slot >= workspace.baseSlot && slot < workspaceEnd);
     button.setAttribute("role", "gridcell");
-    const description = `Slot ${slot}, code ${hex(0x80 + slot)}, ${project.names[slot] || (used ? "used" : "empty")}`;
+    const state = project.names[slot] || (used ? t("common.customGlyph") : t("common.empty"));
+    const description = t("pcg.slotDescription", { slot, code: hex(0x80 + slot), state });
     button.setAttribute("aria-label", description);
     button.title = description;
     if (slot >= workspace.baseSlot && slot < workspaceEnd) {
@@ -236,7 +247,7 @@ function renderSlotRack() {
     meta.className = "slot-meta";
     meta.innerHTML = `<span>${slot.toString().padStart(2, "0")}</span><span>${hex(0x80 + slot)}</span>`;
     name.className = "slot-name";
-    name.textContent = project.names[slot] || (used ? "Custom glyph" : "Empty");
+    name.textContent = project.names[slot] || (used ? t("common.customGlyph") : t("common.empty"));
     button.append(mini, meta, name);
     button.addEventListener("click", () => {
       workspace = { baseSlot: slot, width: 1, height: 1 };
@@ -264,7 +275,7 @@ function renderScreenCanvas(context, target, scale, { cursor = false } = {}) {
     context.fillRect(0, y, target.width, Math.max(1, scale));
   }
   if (cursor) {
-    if (project.screen.mode === DISPLAY_MODES.PCG && selectedScreenCode >= 0xa0) {
+    if (vramSourceVisible && project.screen.mode === DISPLAY_MODES.PCG && selectedScreenCode >= 0xa0) {
       const sourceOffset = vramPcgSourceOffset(selectedScreenCode);
       context.strokeStyle = "#e97867";
       context.lineWidth = 2;
@@ -315,12 +326,12 @@ function paletteBounds(range) {
 }
 
 function screenCodeKind(code) {
-  if (code < 0x40) return "ROM text";
-  if (code < 0x60) return "ROM symbol";
-  if (code < 0x80) return "ROM semigraphic";
-  if (project.screen.mode === DISPLAY_MODES.INVERSE) return "Inverse ROM";
-  if (code < 0xa0) return `PCG slot ${code - 0x80}`;
-  return "VRAM-backed PCG";
+  if (code < 0x40) return t("crt.romTextKind");
+  if (code < 0x60) return t("crt.romSymbolKind");
+  if (code < 0x80) return t("crt.romSemigraphicKind");
+  if (project.screen.mode === DISPLAY_MODES.INVERSE) return t("crt.inverseRomKind");
+  if (code < 0xa0) return t("crt.pcgSlotKind", { slot: code - 0x80 });
+  return t("crt.vramPcgKind");
 }
 
 function renderCharacterPalette() {
@@ -337,7 +348,7 @@ function renderCharacterPalette() {
     button.className = "character-card";
     button.classList.toggle("selected", code === selectedScreenCode);
     button.setAttribute("role", "gridcell");
-    button.setAttribute("aria-label", `VRAM code ${hex(code)}, ${screenCodeKind(code)}`);
+    button.setAttribute("aria-label", t("crt.codeDescription", { code: hex(code), kind: screenCodeKind(code) }));
     preview.width = 64;
     preview.height = 64;
     const context = preview.getContext("2d");
@@ -350,6 +361,8 @@ function renderCharacterPalette() {
       selectedScreenCode = code;
       renderCharacterPalette();
       renderSelectedCharacter();
+      renderDisplayState();
+      renderCrt();
       screenCanvas.focus();
     });
     palette.append(button);
@@ -397,17 +410,23 @@ function renderDisplayState() {
   const pcgMode = project.screen.mode === DISPLAY_MODES.PCG;
   document.querySelector("#display-mode").value = project.screen.mode;
   document.querySelector("#display-plane-state").textContent = pcgMode ? "CMODE PCG" : "CMODE inverse";
-  document.querySelector("#inverse-state").textContent = pcgMode ? "Unavailable" : "Available";
-  document.querySelector("#pcg-state").textContent = pcgMode ? "Available" : "Unavailable";
+  document.querySelector("#inverse-state").textContent = pcgMode ? t("common.unavailable") : t("common.available");
+  document.querySelector("#pcg-state").textContent = pcgMode ? t("common.available") : t("common.unavailable");
   document.querySelector("#mode-compatibility").textContent = pcgMode
-    ? "Codes $00-$7F use ROM glyphs. $80-$9F use PCG. Inverse glyphs are unavailable."
-    : "Codes $00-$7F use ROM glyphs. $80-$FF use inverse ROM glyphs. PCG is unavailable.";
-  document.querySelector("#rom-source").textContent = project.romSource;
+    ? t("crt.modePcgHelp")
+    : t("crt.modeInverseHelp");
+  document.querySelector("#rom-source").textContent = project.romSource === "Built-in approximation"
+    ? t("crt.romBuiltIn")
+    : t("crt.romImported");
   const upperOption = document.querySelector('#palette-range option[value="upper"]');
   const extendedOption = document.querySelector('#palette-range option[value="extended"]');
-  upperOption.textContent = pcgMode ? "PCG $80-$9F" : "Inverse $80-$FF";
-  extendedOption.textContent = pcgMode ? "VRAM PCG $A0-$FF" : "Inverse $A0-$FF";
+  upperOption.textContent = pcgMode ? t("crt.pcgCodes") : t("crt.inverseCodes");
+  extendedOption.textContent = pcgMode ? t("crt.vramPcgCodes") : t("crt.inverseExtended");
   document.querySelector(".warning-panel").hidden = !pcgMode;
+  const sourceAvailable = pcgMode && selectedScreenCode >= 0xa0;
+  document.querySelector("#source-highlight-control").hidden = !sourceAvailable;
+  document.querySelector("#show-vram-source").checked = vramSourceVisible;
+  document.querySelector("#source-highlight-legend").hidden = !sourceAvailable || !vramSourceVisible;
   const visible = new Set(visiblePcgSlots(project.screen));
   document.querySelector("#visible-pcg-count").textContent = `${visible.size} / 32`;
   const coverage = document.querySelector("#visible-pcg-slots");
@@ -438,7 +457,11 @@ function renderByteInspector() {
     const heading = document.createElement("strong");
     const code = document.createElement("code");
     entry.className = "byte-entry";
-    heading.textContent = `SLOT ${slot.toString().padStart(2, "0")} / CODE ${hex(0x80 + slot)}${project.names[slot] ? ` / ${project.names[slot]}` : ""}`;
+    heading.textContent = t("inspection.slotCode", {
+      slot: slot.toString().padStart(2, "0"),
+      code: hex(0x80 + slot),
+      name: project.names[slot] ? ` / ${project.names[slot]}` : "",
+    });
     code.textContent = project.glyphs[slot]
       .map((value, row) => `${row}: ${hex(value)}  ${value.toString(2).padStart(8, "0")}`)
       .join("\n");
@@ -449,7 +472,7 @@ function renderByteInspector() {
 
 function renderUsage() {
   const used = project.glyphs.filter((glyph) => glyph.some(Boolean)).length;
-  document.querySelector("#usage-status").textContent = `${used} / 32 slots used`;
+  document.querySelector("#usage-status").textContent = t("status.usage", { used });
   document.querySelector("#undo").disabled = undoStack.length === 0;
   document.querySelector("#redo").disabled = redoStack.length === 0;
   document.querySelector("#paste-selection").disabled = clipboardMatrix === null;
@@ -458,7 +481,7 @@ function renderUsage() {
 function renderSavedGroups() {
   const select = document.querySelector("#saved-group");
   const selected = activeGroupId ?? "";
-  select.replaceChildren(new Option("Current layout", ""));
+  select.replaceChildren(new Option(t("pcg.currentLayout"), ""));
   project.groups.forEach((group) => {
     const start = group.baseSlot.toString().padStart(2, "0");
     select.add(new Option(`${group.name} (${group.width}x${group.height}, S${start})`, group.id));
@@ -473,8 +496,8 @@ function renderSavedGroups() {
   document.querySelector("#delete-group").disabled = activeGroupId === null;
   const activeGroup = project.groups.find((group) => group.id === activeGroupId);
   document.querySelector("#group-summary").textContent = activeGroup
-    ? `${activeGroup.name} / ${activeGroup.width}x${activeGroup.height}`
-    : `${workspace.width}x${workspace.height} from slot ${workspace.baseSlot.toString().padStart(2, "0")}`;
+    ? t("pcg.groupSummary", { name: activeGroup.name, width: activeGroup.width, height: activeGroup.height })
+    : t("pcg.currentSummary", { width: workspace.width, height: workspace.height, slot: workspace.baseSlot.toString().padStart(2, "0") });
 }
 
 function updateAssemblyOutput() {
@@ -541,9 +564,13 @@ function syncWorkspaceInputs() {
   const count = workspace.width * workspace.height;
   const end = workspace.baseSlot + count - 1;
   const slots = count === 1
-    ? `Slot ${workspace.baseSlot.toString().padStart(2, "0")}`
-    : `Slots ${workspace.baseSlot.toString().padStart(2, "0")}-${end.toString().padStart(2, "0")}`;
-  document.querySelector("#workspace-summary").textContent = `${slots} / ${workspace.width * 8}x${workspace.height * 8} px`;
+    ? t("pcg.singleSlot", { start: workspace.baseSlot.toString().padStart(2, "0") })
+    : t("pcg.slotRange", { start: workspace.baseSlot.toString().padStart(2, "0"), end: end.toString().padStart(2, "0") });
+  document.querySelector("#workspace-summary").textContent = t("pcg.workspaceSummary", {
+    slots,
+    width: workspace.width * 8,
+    height: workspace.height * 8,
+  });
 }
 
 function applyWorkspaceInputs() {
@@ -559,9 +586,9 @@ function applyWorkspaceInputs() {
     document.querySelector("#group-name").value = "";
     syncWorkspaceInputs();
     renderAll();
-    setMessage(`Editing ${candidate.width}x${candidate.height} composite from slot ${candidate.baseSlot}`);
+    setMessage(t("message.editingComposite", { width: candidate.width, height: candidate.height, slot: candidate.baseSlot }));
   } catch (error) {
-    setMessage(error.message, "error");
+    setMessage(formatError(error), "error");
   }
 }
 
@@ -592,7 +619,7 @@ function saveWorkspaceGroup() {
       activeGroupId = globalThis.crypto?.randomUUID?.() ?? `group-${Date.now()}`;
       upsertGroup(project, { id: activeGroupId, name, ...workspace });
     }
-  }, `Group ${name} saved`);
+  }, t("message.groupSaved", { name }));
   document.querySelector("#group-name").value = name;
 }
 
@@ -626,7 +653,7 @@ function deleteWorkspaceGroup() {
   snapshotMutation(() => {
     removeGroup(project, activeGroupId);
     activeGroupId = null;
-  }, `Group ${group.name} deleted`);
+  }, t("message.groupDeleted", { name: group.name }));
   document.querySelector("#group-name").value = "";
 }
 
@@ -743,7 +770,7 @@ function finishGesture(event) {
     }
   }
   if (gesture.changed) {
-    commitHistory(gesture.before, "Stroke saved");
+    commitHistory(gesture.before, t("message.strokeSaved"));
   }
   gesture = null;
   renderAll();
@@ -752,14 +779,20 @@ function finishGesture(event) {
 function updatePointerStatus(cell) {
   const output = document.querySelector("#pointer-status");
   if (!cell) {
-    output.textContent = "Pointer outside canvas";
+    output.textContent = t("status.pointerOutside");
     return;
   }
   const tileX = Math.floor(cell.x / 8);
   const tileY = Math.floor(cell.y / 8);
   const slot = workspace.baseSlot + tileY * workspace.width + tileX;
   const row = cell.y % 8;
-  output.textContent = `X ${cell.x.toString().padStart(2, "0")}  Y ${cell.y.toString().padStart(2, "0")}  SLOT ${slot.toString().padStart(2, "0")}  ROW ${row}  ${getPixel(project.glyphs, workspace, cell.x, cell.y) ? "ON" : "OFF"}`;
+  output.textContent = t("status.pointer", {
+    x: cell.x.toString().padStart(2, "0"),
+    y: cell.y.toString().padStart(2, "0"),
+    slot: slot.toString().padStart(2, "0"),
+    row,
+    state: getPixel(project.glyphs, workspace, cell.x, cell.y) ? t("status.on") : t("status.off"),
+  });
 }
 
 const TRANSFORM_ACTIONS = {
@@ -773,22 +806,33 @@ const TRANSFORM_ACTIONS = {
   clear: () => clearWorkspace(project.glyphs, workspace),
 };
 
+const TRANSFORM_LABELS = {
+  "shift-up": "tool.up",
+  "shift-down": "tool.down",
+  "shift-left": "tool.left",
+  "shift-right": "tool.right",
+  "flip-horizontal": "tool.flipH",
+  "flip-vertical": "tool.flipV",
+  invert: "tool.invert",
+  clear: "tool.clear",
+};
+
 function applyTransform(action) {
   const transform = TRANSFORM_ACTIONS[action];
   if (!transform) {
-    setMessage(`Unknown transform: ${action}`, "error");
+    setMessage(t("message.unknownTransform", { action }), "error");
     return;
   }
   snapshotMutation(
     () => transform({ wrap: document.querySelector("#wrap-shift").checked }),
-    `${action.replaceAll("-", " ")} applied`,
+    t("message.transformApplied", { action: t(TRANSFORM_LABELS[action]) }),
   );
 }
 
 function copyWorkspace() {
   clipboardMatrix = workspaceToMatrix(project.glyphs, workspace);
   renderUsage();
-  setMessage(`Copied ${clipboardMatrix[0].length}x${clipboardMatrix.length} pixels`);
+  setMessage(t("message.copiedPixels", { width: clipboardMatrix[0].length, height: clipboardMatrix.length }));
 }
 
 function pasteWorkspace() {
@@ -803,7 +847,7 @@ function pasteWorkspace() {
       }
     }
     matrixToWorkspace(project.glyphs, workspace, target);
-  }, "Clipboard pasted");
+  }, t("message.clipboardPasted"));
 }
 
 function moveCanvasCursor(deltaX, deltaY) {
@@ -821,10 +865,10 @@ function paintCanvasCursor() {
   const cell = hoverCell ?? { x: 0, y: 0 };
   const value = tool === "eraser" ? 0 : 1;
   if (getPixel(project.glyphs, workspace, cell.x, cell.y) === value) {
-    setMessage(value ? "Pixel is already on" : "Pixel is already off");
+    setMessage(value ? t("message.pixelOn") : t("message.pixelOff"));
     return;
   }
-  snapshotMutation(() => setPixel(project.glyphs, workspace, cell.x, cell.y, value), value ? "Pixel drawn" : "Pixel erased");
+  snapshotMutation(() => setPixel(project.glyphs, workspace, cell.x, cell.y, value), value ? t("message.pixelDrawn") : t("message.pixelErased"));
   hoverCell = cell;
   updatePointerStatus(cell);
   canvas.focus();
@@ -854,7 +898,7 @@ function cancelGesture() {
   project = gesture.before;
   gesture = null;
   renderAll();
-  setMessage("Stroke cancelled");
+  setMessage(t("message.strokeCancelled"));
   return true;
 }
 
@@ -882,8 +926,8 @@ function setActiveView(view) {
   document.querySelector("#show-pcg-view").setAttribute("aria-selected", screenActive ? "false" : "true");
   document.querySelector("#show-screen-view").setAttribute("aria-selected", screenActive ? "true" : "false");
   document.querySelector("#shortcut-help").textContent = screenActive
-    ? "CRT arrows move cursor · Space places code · Right click places space"
-    : "B/E/L/R/G tools · Canvas arrows move cursor · Space paints · Alt+arrows shift";
+    ? t("status.crtShortcuts")
+    : t("status.pcgShortcuts");
   if (screenActive) {
     screenCanvas.focus();
   } else {
@@ -957,7 +1001,7 @@ function finishScreenGesture(event) {
     return;
   }
   if (screenGesture.changed) {
-    commitHistory(screenGesture.before, "Screen stroke saved");
+    commitHistory(screenGesture.before, t("message.screenStrokeSaved"));
   }
   screenGesture = null;
   renderAll();
@@ -976,7 +1020,7 @@ function stampScreenCursor(code = selectedScreenCode) {
   if (getScreenCell(project.screen, screenCursor.x, screenCursor.y) === code) {
     return;
   }
-  snapshotMutation(() => setScreenCell(project.screen, screenCursor.x, screenCursor.y, code), `Code ${hex(code)} placed`);
+  snapshotMutation(() => setScreenCell(project.screen, screenCursor.x, screenCursor.y, code), t("message.codePlaced", { code: hex(code) }));
   screenCanvas.focus();
 }
 
@@ -987,7 +1031,7 @@ function placeScreenText() {
     [...text].slice(0, SCREEN_WIDTH - screenCursor.x).forEach((character, offset) => {
       setScreenCell(project.screen, screenCursor.x + offset, screenCursor.y, asciiToRomCode(character));
     });
-  }, "Screen text placed");
+  }, t("message.screenTextPlaced"));
   screenCanvas.focus();
 }
 
@@ -1032,7 +1076,7 @@ function moveVramGlyphGesture(event) {
 
 function finishVramGlyphGesture(event) {
   if (!vramGlyphGesture || vramGlyphGesture.pointerId !== event.pointerId) return;
-  if (vramGlyphGesture.changed) commitHistory(vramGlyphGesture.before, "VRAM-backed glyph saved");
+  if (vramGlyphGesture.changed) commitHistory(vramGlyphGesture.before, t("message.vramGlyphSaved"));
   vramGlyphGesture = null;
   renderAll();
 }
@@ -1113,14 +1157,14 @@ function handleKeyboard(event) {
   if (event.key.toLowerCase() === "x") {
     tool = tool === "eraser" ? "pencil" : "eraser";
     updateToolButtons();
-    setMessage(`${tool} tool selected`);
+    setMessage(t("message.toolSelected", { tool: t(`tool.${tool}`) }));
     return;
   }
   const toolKeys = { b: "pencil", e: "eraser", l: "line", r: "rectangle", g: "fill" };
   if (toolKeys[event.key.toLowerCase()]) {
     tool = toolKeys[event.key.toLowerCase()];
     updateToolButtons();
-    setMessage(`${tool} tool selected`);
+    setMessage(t("message.toolSelected", { tool: t(`tool.${tool}`) }));
     return;
   }
   if (event.key === "Delete" || event.key === "Backspace") {
@@ -1166,13 +1210,28 @@ document.querySelector("#undo").addEventListener("click", undo);
 document.querySelector("#redo").addEventListener("click", redo);
 document.querySelector("#show-pcg-view").addEventListener("click", () => setActiveView("pcg"));
 document.querySelector("#show-screen-view").addEventListener("click", () => setActiveView("screen"));
+document.querySelector("#language-select").addEventListener("change", (event) => {
+  setLanguage(event.target.value);
+  translateDocument();
+  document.querySelector("#language-select").value = getLanguage();
+  renderAll();
+  setActiveView(activeView);
+  setMessage(t("message.languageChanged"));
+});
 document.querySelector("#display-mode").addEventListener("change", (event) => {
-  snapshotMutation(() => setScreenMode(project.screen, event.target.value), `CMODE set to ${event.target.value}`);
+  const modeLabel = t(event.target.value === DISPLAY_MODES.PCG ? "crt.modePcg" : "crt.modeInverse");
+  snapshotMutation(() => setScreenMode(project.screen, event.target.value), t("message.cmodeChanged", { mode: modeLabel }));
   screenCanvas.focus();
 });
 document.querySelector("#palette-range").addEventListener("change", renderCharacterPalette);
 document.querySelector("#show-screen-grid").addEventListener("change", (event) => {
   screenGridVisible = event.target.checked;
+  renderCrt();
+  screenCanvas.focus();
+});
+document.querySelector("#show-vram-source").addEventListener("change", (event) => {
+  vramSourceVisible = event.target.checked;
+  renderDisplayState();
   renderCrt();
   screenCanvas.focus();
 });
@@ -1184,15 +1243,15 @@ document.querySelector("#screen-text").addEventListener("keydown", (event) => {
   }
 });
 document.querySelector("#fill-screen").addEventListener("click", () => {
-  snapshotMutation(() => fillScreen(project.screen, selectedScreenCode), `Screen filled with ${hex(selectedScreenCode)}`);
+  snapshotMutation(() => fillScreen(project.screen, selectedScreenCode), t("message.screenFilled", { code: hex(selectedScreenCode) }));
   screenCanvas.focus();
 });
 document.querySelector("#clear-screen").addEventListener("click", () => {
-  snapshotMutation(() => fillScreen(project.screen, 0x00), "Screen cleared");
+  snapshotMutation(() => fillScreen(project.screen, 0x00), t("message.screenCleared"));
   screenCanvas.focus();
 });
 document.querySelector("#show-pcg-gallery").addEventListener("click", () => {
-  snapshotMutation(() => applyPcgGallery(project.screen), "All 32 PCG slots placed");
+  snapshotMutation(() => applyPcgGallery(project.screen), t("message.allPcgPlaced"));
   document.querySelector("#palette-range").value = "all";
   screenCanvas.focus();
 });
@@ -1202,9 +1261,9 @@ document.querySelector("#rom-file").addEventListener("change", async (event) => 
   if (!file) return;
   try {
     const bytes = new Uint8Array(await file.arrayBuffer());
-    snapshotMutation(() => loadCharacterRom(project, bytes), "Character ROM imported");
+    snapshotMutation(() => loadCharacterRom(project, bytes), t("message.romImported"));
   } catch (error) {
-    setMessage(error.message, "error");
+    setMessage(formatError(error), "error");
   } finally {
     event.target.value = "";
   }
@@ -1213,14 +1272,14 @@ document.querySelector("#rom-file").addEventListener("change", async (event) => 
 document.querySelector("#apply-preset").addEventListener("click", () => {
   const start = Number(document.querySelector("#preset-start").value);
   try {
-    snapshotMutation(() => applyArcadeDigits(project, start), "Arcade digits applied");
+    snapshotMutation(() => applyArcadeDigits(project, start), t("message.arcadeApplied"));
   } catch (error) {
-    setMessage(error.message, "error");
+    setMessage(formatError(error), "error");
   }
 });
 
 document.querySelector("#new-project").addEventListener("click", () => {
-  if (!window.confirm("Create a new blank project? Current work can still be recovered with Undo.")) {
+  if (!window.confirm(t("confirm.newProject"))) {
     return;
   }
   undoStack.push(cloneProject(project));
@@ -1228,13 +1287,13 @@ document.querySelector("#new-project").addEventListener("click", () => {
   activeGroupId = null;
   document.querySelector("#group-name").value = "";
   redoStack = [];
-  persistProject("Blank project created");
+  persistProject(t("message.projectCreated"));
   renderAll();
 });
 
 document.querySelector("#save-project").addEventListener("click", () => {
   downloadText("jr100-pcg-project.json", serializeProject(project), "application/json");
-  setMessage("Project JSON downloaded");
+  setMessage(t("message.projectDownloaded"));
 });
 
 document.querySelector("#import-project").addEventListener("click", () => document.querySelector("#import-file").click());
@@ -1250,10 +1309,10 @@ document.querySelector("#import-file").addEventListener("change", async (event) 
     activeGroupId = null;
     document.querySelector("#group-name").value = "";
     redoStack = [];
-    persistProject("Project imported");
+    persistProject(t("message.projectImported"));
     renderAll();
   } catch (error) {
-    setMessage(error.message, "error");
+    setMessage(formatError(error), "error");
   } finally {
     event.target.value = "";
   }
@@ -1273,15 +1332,15 @@ document.querySelector("#export-target").addEventListener("change", updateAssemb
 document.querySelector("#copy-assembly").addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(document.querySelector("#assembly-output").value);
-    setMessage("Assembly copied to clipboard");
+    setMessage(t("message.asmCopied"));
   } catch {
     document.querySelector("#assembly-output").select();
-    setMessage("Select and copy the assembly text manually", "error");
+    setMessage(t("message.asmManual"), "error");
   }
 });
 document.querySelector("#download-assembly").addEventListener("click", () => {
   downloadText("jr100_data.inc", document.querySelector("#assembly-output").value, "text/plain");
-  setMessage("Assembly include downloaded");
+  setMessage(t("message.asmDownloaded"));
 });
 
 canvas.addEventListener("contextmenu", (event) => event.preventDefault());

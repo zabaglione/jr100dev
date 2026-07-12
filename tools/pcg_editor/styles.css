@@ -185,11 +185,28 @@ p {
   font-size: 10px;
 }
 
-.header-status span {
+.header-status > span {
   padding: 4px 7px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: #131a16;
+}
+
+.language-control {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 3px;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 9px;
+}
+
+.language-control select {
+  width: 82px;
+  min-height: 24px;
+  padding: 2px 5px;
+  font-size: 10px;
 }
 
 .header-actions {
@@ -335,10 +352,14 @@ p {
   font-size: 10px;
 }
 
-.legend span {
+.legend > span {
   display: flex;
   align-items: center;
   gap: 5px;
+}
+
+.legend .legend-text {
+  display: inline;
 }
 
 .legend-frame {
@@ -545,6 +566,23 @@ p {
   border: 1px solid #3f4d42;
   border-radius: 7px;
   background: #090e0b;
+}
+
+.source-highlight-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding-top: 5px;
+  color: #ffc5bc;
+  font-size: 9px;
+}
+
+.source-highlight-legend i {
+  width: 15px;
+  height: 10px;
+  border: 2px solid var(--red);
+  border-radius: 2px;
 }
 
 #screen-canvas {

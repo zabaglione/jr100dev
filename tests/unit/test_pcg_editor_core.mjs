@@ -30,9 +30,46 @@ import {
   vramPcgSourceOffset,
 } from "../../tools/pcg_editor/core.js";
 import { extractCharacterRom } from "../../tools/pcg_editor/rom_font.js";
+import en from "../../tools/pcg_editor/locales/en.js";
+import ja from "../../tools/pcg_editor/locales/ja.js";
+import { getLanguage, resolveStoredLanguage, setLanguage, t } from "../../tools/pcg_editor/i18n.js";
 
 const editorHtml = await readFile(new URL("../../tools/pcg_editor/index.html", import.meta.url), "utf8");
 const editorStyles = await readFile(new URL("../../tools/pcg_editor/styles.css", import.meta.url), "utf8");
+const editorApp = await readFile(new URL("../../tools/pcg_editor/app.js", import.meta.url), "utf8");
+
+test("UI defaults to Japanese and exposes an English language switch", () => {
+  assert.match(editorHtml, /<html lang="ja">/);
+  assert.match(editorHtml, /id="language-select"/);
+  assert.match(editorHtml, /<option value="ja" selected[^>]*>/);
+  assert.match(editorHtml, /<option value="en"[^>]*>/);
+});
+
+test("Japanese and English resources expose the same UI keys", () => {
+  assert.deepEqual(Object.keys(ja).sort(), Object.keys(en).sort());
+  const referencedKeys = [...editorHtml.matchAll(/data-i18n(?:-title|-placeholder|-aria)?="([^"]+)"/g)]
+    .map((match) => match[1]);
+  referencedKeys.push(...[...editorApp.matchAll(/\bt\("([^"]+)"/g)].map((match) => match[1]));
+  assert.ok(referencedKeys.every((key) => Object.hasOwn(ja, key)), "Every HTML translation key must exist");
+
+  assert.equal(getLanguage(), "ja");
+  assert.equal(t("actions.new"), "新規");
+  setLanguage("en");
+  assert.equal(t("actions.new"), "New");
+  setLanguage("ja");
+});
+
+test("saved language is restored and invalid values fall back to Japanese", () => {
+  assert.equal(resolveStoredLanguage({ getItem: () => "en" }), "en");
+  assert.equal(resolveStoredLanguage({ getItem: () => "unsupported" }), "ja");
+  assert.equal(resolveStoredLanguage({ getItem: () => { throw new Error("blocked"); } }), "ja");
+});
+
+test("VRAM-backed glyph source highlighting is optional and explained", () => {
+  assert.match(editorHtml, /id="show-vram-source"/);
+  assert.match(editorHtml, /class="source-highlight-legend"/);
+  assert.doesNotMatch(editorHtml, /id="show-vram-source"[^>]*checked/);
+});
 
 test("a project always contains 32 eight-byte glyphs", () => {
   const project = createProject();
