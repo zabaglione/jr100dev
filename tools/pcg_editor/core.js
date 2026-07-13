@@ -1,5 +1,8 @@
 import { createFallbackRomGlyphs, extractCharacterRom } from "./rom_font.js";
 import { validateAnimationClips } from "./animation.js";
+import { ARCADE_DIGITS } from "./preset_library.js";
+
+export { ARCADE_DIGITS };
 
 export const SLOT_COUNT = 32;
 export const GLYPH_SIZE = 8;
@@ -8,39 +11,6 @@ export const SCREEN_WIDTH = 32;
 export const SCREEN_HEIGHT = 24;
 export const SCREEN_CELL_COUNT = SCREEN_WIDTH * SCREEN_HEIGHT;
 export const DISPLAY_MODES = Object.freeze({ INVERSE: "inverse", PCG: "pcg" });
-
-const ARCADE_GLYPHS = [
-  [0x3c, 0x66, 0x6e, 0x76, 0x66, 0x66, 0x3c, 0x00],
-  [0x18, 0x38, 0x18, 0x18, 0x18, 0x18, 0x7e, 0x00],
-  [0x3c, 0x66, 0x06, 0x0c, 0x18, 0x30, 0x7e, 0x00],
-  [0x3c, 0x66, 0x06, 0x1c, 0x06, 0x66, 0x3c, 0x00],
-  [0x0c, 0x1c, 0x3c, 0x6c, 0x7e, 0x0c, 0x0c, 0x00],
-  [0x7e, 0x60, 0x7c, 0x06, 0x06, 0x66, 0x3c, 0x00],
-  [0x1c, 0x30, 0x60, 0x7c, 0x66, 0x66, 0x3c, 0x00],
-  [0x7e, 0x66, 0x06, 0x0c, 0x18, 0x18, 0x18, 0x00],
-  [0x3c, 0x66, 0x66, 0x3c, 0x66, 0x66, 0x3c, 0x00],
-  [0x3c, 0x66, 0x66, 0x3e, 0x06, 0x0c, 0x38, 0x00],
-  [0x00, 0x18, 0x18, 0x00, 0x00, 0x18, 0x18, 0x00],
-];
-
-export const ARCADE_DIGITS = Object.freeze({
-  id: "arcade-digits",
-  name: "Arcade digits",
-  glyphs: ARCADE_GLYPHS.map((glyph) => Object.freeze([...glyph])),
-  names: [
-    "Digit 0",
-    "Digit 1",
-    "Digit 2",
-    "Digit 3",
-    "Digit 4",
-    "Digit 5",
-    "Digit 6",
-    "Digit 7",
-    "Digit 8",
-    "Digit 9",
-    "Colon",
-  ],
-});
 
 export function createProject({ withPreset = false } = {}) {
   const project = {
@@ -402,22 +372,101 @@ export function floodFill(glyphs, workspace, startX, startY, value) {
   }
 }
 
-export function applyArcadeDigits(project, startSlot = 0) {
-  validateProjectShape(project);
-  if (!Number.isInteger(startSlot) || startSlot < 0 || startSlot + ARCADE_DIGITS.glyphs.length > SLOT_COUNT) {
-    throw new RangeError("Arcade digits require 11 consecutive slots");
+function assertPcgPreset(preset) {
+  if (!preset || typeof preset !== "object") {
+    throw new TypeError("PCG preset is required");
   }
-  ARCADE_DIGITS.glyphs.forEach((glyph, index) => {
-    project.glyphs[startSlot + index] = [...glyph];
-    project.names[startSlot + index] = ARCADE_DIGITS.names[index];
+  const { id, kind, name, width, height, glyphs, slotNames } = preset;
+  if (typeof id !== "string" || !id || !["asset", "set"].includes(kind) || typeof name !== "string" || !name) {
+    throw new TypeError("PCG preset metadata is invalid");
+  }
+  if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1) {
+    throw new TypeError("PCG preset dimensions are invalid");
+  }
+  if (!Array.isArray(glyphs) || glyphs.length !== width * height || glyphs.some((glyph) => !Array.isArray(glyph) || glyph.length !== GLYPH_SIZE || !glyph.every(validateByte))) {
+    throw new TypeError("PCG preset glyph data is invalid");
+  }
+  if (!Array.isArray(slotNames) || slotNames.length !== glyphs.length || slotNames.some((entry) => typeof entry !== "string" || !entry)) {
+    throw new TypeError("PCG preset slot names are invalid");
+  }
+  assertWorkspace({ baseSlot: 0, width, height });
+  return preset;
+}
+
+function rangesOverlap(leftStart, leftCount, rightStart, rightCount) {
+  return leftStart < rightStart + rightCount && rightStart < leftStart + leftCount;
+}
+
+function presetWorkspace(preset, startSlot) {
+  assertPcgPreset(preset);
+  const workspace = { baseSlot: startSlot, width: preset.width, height: preset.height };
+  assertWorkspace(workspace);
+  return workspace;
+}
+
+export function inspectPcgPresetConflicts(project, preset, startSlot) {
+  validateProjectShape(project);
+  const workspace = presetWorkspace(preset, startSlot);
+  const slotCount = workspace.width * workspace.height;
+  const occupiedSlots = Array.from({ length: slotCount }, (_, index) => workspace.baseSlot + index)
+    .filter((slot) => project.glyphs[slot].some(Boolean));
+  const groupIds = project.groups
+    .filter((group) => rangesOverlap(workspace.baseSlot, slotCount, group.baseSlot, group.width * group.height))
+    .map(({ id }) => id);
+  const animationIds = project.animations
+    .filter((clip) => rangesOverlap(workspace.baseSlot, slotCount, clip.baseSlot, clip.width * clip.height))
+    .map(({ id }) => id);
+  return {
+    startSlot: workspace.baseSlot,
+    endSlot: workspace.baseSlot + slotCount - 1,
+    occupiedSlots,
+    groupIds,
+    animationIds,
+  };
+}
+
+export function applyPcgPreset(project, preset, startSlot) {
+  validateProjectShape(project);
+  const workspace = presetWorkspace(preset, startSlot);
+  const slotCount = workspace.width * workspace.height;
+  const conflict = inspectPcgPresetConflicts(project, preset, startSlot);
+  const removedGroupIds = [...conflict.groupIds];
+  const removedAnimationIds = [...conflict.animationIds];
+  project.groups = project.groups.filter(({ id }) => !removedGroupIds.includes(id));
+  project.animations = project.animations.filter(({ id }) => !removedAnimationIds.includes(id));
+  preset.glyphs.forEach((glyph, index) => {
+    project.glyphs[workspace.baseSlot + index] = [...glyph];
+    project.names[workspace.baseSlot + index] = preset.slotNames[index];
   });
-  upsertGroup(project, {
-    id: ARCADE_DIGITS.id,
-    name: ARCADE_DIGITS.name,
-    baseSlot: startSlot,
-    width: ARCADE_DIGITS.glyphs.length,
-    height: 1,
-  });
+  if (slotCount > 1) {
+    upsertGroup(project, {
+      id: `preset-${preset.id}-${workspace.baseSlot}`,
+      name: preset.name,
+      ...workspace,
+    });
+  }
+  return {
+    workspace,
+    replacedSlotCount: slotCount,
+    removedGroupIds,
+    removedAnimationIds,
+  };
+}
+
+export function applyArcadeDigits(project, startSlot = 0) {
+  applyPcgPreset(project, ARCADE_DIGITS, startSlot);
+  const generatedId = `preset-${ARCADE_DIGITS.id}-${startSlot}`;
+  const generatedIndex = project.groups.findIndex(({ id }) => id === generatedId);
+  if (generatedIndex >= 0) {
+    const group = { ...project.groups[generatedIndex], id: ARCADE_DIGITS.id };
+    const existingIndex = project.groups.findIndex(({ id }) => id === ARCADE_DIGITS.id);
+    if (existingIndex >= 0) {
+      project.groups[existingIndex] = group;
+      project.groups.splice(generatedIndex, 1);
+    } else {
+      project.groups[generatedIndex] = group;
+    }
+  }
   return project;
 }
 

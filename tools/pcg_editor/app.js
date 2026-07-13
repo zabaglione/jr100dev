@@ -1,6 +1,6 @@
 import {
-  applyArcadeDigits,
   applyPcgGallery,
+  applyPcgPreset,
   asciiToRomCode,
   assertWorkspace,
   bresenhamPoints,
@@ -18,6 +18,7 @@ import {
   getPixel,
   getScreenCell,
   invertWorkspace,
+  inspectPcgPresetConflicts,
   loadCharacterRom,
   matrixToWorkspace,
   parseProject,
@@ -36,6 +37,11 @@ import {
   visiblePcgSlots,
   vramPcgSourceOffset,
 } from "./core.js";
+import {
+  filterPcgPresets,
+  getPcgPreset,
+  PCG_PRESETS,
+} from "./preset_library.js";
 import { getLanguage, setLanguage, t, translateDocument } from "./i18n.js";
 import { createFrameScheduler } from "./frame_scheduler.js";
 import {
@@ -61,6 +67,7 @@ import {
 } from "./image_mosaic.js";
 
 const STORAGE_KEY = "jr100dev.pcg-workbench.v1";
+const PCG_LIBRARY_STORAGE_KEY = "jr100dev.pcg-library.v1";
 const HISTORY_LIMIT = 64;
 const canvas = document.querySelector("#editor-canvas");
 const canvasContext = canvas.getContext("2d");
@@ -77,6 +84,10 @@ const imageMosaicSourceCanvas = document.querySelector("#image-mosaic-source");
 const imageMosaicSourceContext = imageMosaicSourceCanvas.getContext("2d", { willReadFrequently: true });
 const imageMosaicResultCanvas = document.querySelector("#image-mosaic-result");
 const imageMosaicResultContext = imageMosaicResultCanvas.getContext("2d");
+const pcgLibraryDialog = document.querySelector("#pcg-library-dialog");
+const pcgLibraryConflictDialog = document.querySelector("#pcg-library-conflict-dialog");
+const pcgLibraryPreviewCanvas = document.querySelector("#pcg-library-preview");
+const pcgLibraryPreviewContext = pcgLibraryPreviewCanvas.getContext("2d");
 
 translateDocument();
 document.querySelector("#language-select").value = getLanguage();
@@ -106,6 +117,11 @@ let imageMosaicRgba = null;
 let imageMosaicLuminance = null;
 let imageMosaicPreview = null;
 let imageMosaicLoadGeneration = 0;
+let activePcgLibraryPresetId = "side-grass-top";
+let pcgLibraryScope = "all";
+let pcgLibraryPendingApply = null;
+let pcgLibraryStartSlot = null;
+let pcgLibraryPreferences = restorePcgLibraryPreferences();
 const imageMosaicGenerationScheduler = createFrameScheduler({
   requestFrame: (callback) => requestAnimationFrame(callback),
   cancelFrame: (frameId) => cancelAnimationFrame(frameId),
@@ -541,6 +557,243 @@ function renderSavedGroups() {
     : t("pcg.currentSummary", { width: workspace.width, height: workspace.height, slot: workspace.baseSlot.toString().padStart(2, "0") });
 }
 
+function knownPcgPresetIds(values, limit) {
+  const known = new Set(PCG_PRESETS.map(({ id }) => id));
+  return [...new Set(Array.isArray(values) ? values.filter((id) => typeof id === "string" && known.has(id)) : [])].slice(0, limit);
+}
+
+function restorePcgLibraryPreferences() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(PCG_LIBRARY_STORAGE_KEY) || "{}");
+    return {
+      favorites: knownPcgPresetIds(saved.favorites, PCG_PRESETS.length),
+      recent: knownPcgPresetIds(saved.recent, 12),
+    };
+  } catch {
+    return { favorites: [], recent: [] };
+  }
+}
+
+function persistPcgLibraryPreferences() {
+  try {
+    localStorage.setItem(PCG_LIBRARY_STORAGE_KEY, JSON.stringify(pcgLibraryPreferences));
+  } catch {
+    // Preferences remain available for the current page session.
+  }
+}
+
+function activePcgLibraryPreset() {
+  try {
+    return getPcgPreset(activePcgLibraryPresetId);
+  } catch {
+    return null;
+  }
+}
+
+function pcgPresetSlotCount(preset) {
+  return preset.width * preset.height;
+}
+
+function presetDimensions(preset) {
+  return `${preset.width * 8}x${preset.height * 8}`;
+}
+
+function pcgPresetConflictSummary(conflict) {
+  return [
+    conflict.occupiedSlots.length ? `${conflict.occupiedSlots.length} used slot(s)` : "",
+    conflict.groupIds.length ? `${conflict.groupIds.length} saved group(s)` : "",
+    conflict.animationIds.length ? `${conflict.animationIds.length} animation clip(s)` : "",
+  ].filter(Boolean);
+}
+
+function clampPcgLibraryStartSlot(preset) {
+  const input = document.querySelector("#pcg-library-start-slot");
+  const maximum = 32 - pcgPresetSlotCount(preset);
+  const requested = pcgLibraryStartSlot ?? Number(input.value);
+  const baseSlot = Number.isInteger(requested) ? requested : workspace.baseSlot;
+  pcgLibraryStartSlot = Math.max(0, Math.min(maximum, baseSlot));
+  input.min = "0";
+  input.max = String(maximum);
+  input.value = String(pcgLibraryStartSlot);
+  return pcgLibraryStartSlot;
+}
+
+function drawPcgPresetPreview(context, target, preset) {
+  context.imageSmoothingEnabled = false;
+  context.fillStyle = "#020503";
+  context.fillRect(0, 0, target.width, target.height);
+  if (!preset) return;
+  const width = preset.width * 8;
+  const height = preset.height * 8;
+  const scale = Math.max(1, Math.floor(Math.min(target.width / width, target.height / height)));
+  const offsetX = Math.floor((target.width - width * scale) / 2);
+  const offsetY = Math.floor((target.height - height * scale) / 2);
+  context.fillStyle = "#8de3a2";
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const tile = Math.floor(y / 8) * preset.width + Math.floor(x / 8);
+      const glyph = preset.glyphs[tile];
+      if ((glyph[y % 8] >> (7 - (x % 8))) & 1) {
+        context.fillRect(offsetX + x * scale, offsetY + y * scale, scale, scale);
+      }
+    }
+  }
+}
+
+function pcgLibraryScopedIds() {
+  if (pcgLibraryScope === "favorites") return pcgLibraryPreferences.favorites;
+  if (pcgLibraryScope === "recent") return pcgLibraryPreferences.recent;
+  return null;
+}
+
+function pcgLibraryFilters() {
+  return {
+    category: document.querySelector("#pcg-library-category").value,
+    size: document.querySelector("#pcg-library-size").value,
+    kind: document.querySelector("#pcg-library-kind").value,
+    query: document.querySelector("#pcg-library-search").value,
+    ids: pcgLibraryScopedIds(),
+  };
+}
+
+function renderPcgLibraryCard(preset) {
+  const button = document.createElement("button");
+  const preview = document.createElement("canvas");
+  const title = document.createElement("strong");
+  const details = document.createElement("small");
+  const tags = document.createElement("small");
+  button.type = "button";
+  button.className = "pcg-library-card";
+  button.setAttribute("role", "option");
+  button.setAttribute("aria-selected", preset.id === activePcgLibraryPresetId ? "true" : "false");
+  button.title = `${preset.name} / ${presetDimensions(preset)} / ${preset.kind}`;
+  preview.width = 72;
+  preview.height = 72;
+  drawPcgPresetPreview(preview.getContext("2d"), preview, preset);
+  title.textContent = preset.name;
+  details.textContent = `${preset.category} / ${preset.kind.toUpperCase()} / ${presetDimensions(preset)} / ${pcgPresetSlotCount(preset)} slots`;
+  tags.textContent = preset.tags.join(", ");
+  button.append(preview, title, details, tags);
+  button.addEventListener("click", () => {
+    activePcgLibraryPresetId = preset.id;
+    renderPcgLibrary();
+  });
+  return button;
+}
+
+function renderPcgLibraryDetail(preset) {
+  const title = document.querySelector("#pcg-library-detail-title");
+  const category = document.querySelector("#pcg-library-detail-category");
+  const tags = document.querySelector("#pcg-library-detail-tags");
+  const favorite = document.querySelector("#pcg-library-favorite");
+  const destination = document.querySelector("#pcg-library-destination");
+  const conflicts = document.querySelector("#pcg-library-conflicts");
+  const apply = document.querySelector("#pcg-library-apply");
+  drawPcgPresetPreview(pcgLibraryPreviewContext, pcgLibraryPreviewCanvas, preset);
+  if (!preset) {
+    title.textContent = "No matching preset";
+    category.textContent = "Library";
+    tags.textContent = "Adjust the filters to find an asset or a set.";
+    favorite.disabled = true;
+    destination.textContent = "No destination selected.";
+    conflicts.textContent = "";
+    conflicts.dataset.conflict = "false";
+    apply.disabled = true;
+    return;
+  }
+  const startSlot = clampPcgLibraryStartSlot(preset);
+  const conflict = inspectPcgPresetConflicts(project, preset, startSlot);
+  const conflictDetails = pcgPresetConflictSummary(conflict);
+  const endCode = 0x80 + conflict.endSlot;
+  title.textContent = preset.name;
+  category.textContent = `${preset.category} / ${preset.kind.toUpperCase()}`;
+  tags.textContent = `${presetDimensions(preset)} / ${pcgPresetSlotCount(preset)} slots / ${preset.tags.join(", ")}`;
+  favorite.disabled = false;
+  favorite.textContent = pcgLibraryPreferences.favorites.includes(preset.id) ? "Remove favorite" : "Favorite";
+  destination.textContent = `Slots ${String(startSlot).padStart(2, "0")}-${String(conflict.endSlot).padStart(2, "0")} / $${(0x80 + startSlot).toString(16).toUpperCase()}-$${endCode.toString(16).toUpperCase()}`;
+  if (conflictDetails.length === 0) {
+    conflicts.textContent = "Destination is clear.";
+    conflicts.dataset.conflict = "false";
+  } else {
+    conflicts.textContent = `Replacement will remove ${conflictDetails.join(", ")}.`;
+    conflicts.dataset.conflict = "true";
+  }
+  apply.disabled = false;
+}
+
+function renderPcgLibrary() {
+  const presets = filterPcgPresets(pcgLibraryFilters());
+  if (presets.length && !presets.some(({ id }) => id === activePcgLibraryPresetId)) {
+    activePcgLibraryPresetId = presets[0].id;
+  }
+  const gallery = document.querySelector("#pcg-library-gallery");
+  gallery.replaceChildren(...presets.map(renderPcgLibraryCard));
+  document.querySelector("#pcg-library-count").textContent = `${presets.length} result${presets.length === 1 ? "" : "s"}`;
+  document.querySelectorAll("[data-pcg-library-scope]").forEach((button) => {
+    const active = button.dataset.pcgLibraryScope === pcgLibraryScope;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", active ? "true" : "false");
+  });
+  renderPcgLibraryDetail(presets.find(({ id }) => id === activePcgLibraryPresetId) ?? null);
+}
+
+function togglePcgLibraryFavorite() {
+  const preset = activePcgLibraryPreset();
+  if (!preset) return;
+  const isFavorite = pcgLibraryPreferences.favorites.includes(preset.id);
+  pcgLibraryPreferences.favorites = isFavorite
+    ? pcgLibraryPreferences.favorites.filter((id) => id !== preset.id)
+    : [...pcgLibraryPreferences.favorites, preset.id];
+  persistPcgLibraryPreferences();
+  renderPcgLibrary();
+}
+
+function rememberPcgLibraryPreset(presetId) {
+  pcgLibraryPreferences.recent = [presetId, ...pcgLibraryPreferences.recent.filter((id) => id !== presetId)].slice(0, 12);
+  persistPcgLibraryPreferences();
+}
+
+function applyPcgLibraryPreset(preset, startSlot) {
+  let result;
+  snapshotMutation(() => {
+    result = applyPcgPreset(project, preset, startSlot);
+    workspace = result.workspace;
+    activeGroupId = result.replacedSlotCount > 1 ? `preset-${preset.id}-${startSlot}` : null;
+  }, `Applied ${preset.name}`);
+  pcgLibraryStartSlot = result.workspace.baseSlot;
+  rememberPcgLibraryPreset(preset.id);
+  syncWorkspaceInputs();
+  if (pcgLibraryConflictDialog.open) pcgLibraryConflictDialog.close();
+  if (pcgLibraryDialog.open) pcgLibraryDialog.close();
+  renderAll();
+  canvas.focus();
+}
+
+function requestPcgLibraryApply() {
+  const preset = activePcgLibraryPreset();
+  if (!preset) return;
+  const startSlot = clampPcgLibraryStartSlot(preset);
+  const conflict = inspectPcgPresetConflicts(project, preset, startSlot);
+  const conflictDetails = pcgPresetConflictSummary(conflict);
+  if (conflictDetails.length === 0) {
+    applyPcgLibraryPreset(preset, startSlot);
+    return;
+  }
+  pcgLibraryPendingApply = { preset, startSlot };
+  const sections = [
+    `Slots ${String(conflict.startSlot).padStart(2, "0")}-${String(conflict.endSlot).padStart(2, "0")}`,
+    ...conflictDetails,
+  ];
+  document.querySelector("#pcg-library-conflict-details").textContent = `Applying ${preset.name} will replace ${sections.join(", ")}.`;
+  if (!pcgLibraryConflictDialog.open) pcgLibraryConflictDialog.showModal();
+}
+
+function openPcgLibrary() {
+  pcgLibraryStartSlot = workspace.baseSlot;
+  renderPcgLibrary();
+  if (!pcgLibraryDialog.open) pcgLibraryDialog.showModal();
+}
+
 function updateAssemblyOutput() {
   const label = document.querySelector("#assembly-label").value;
   const target = document.querySelector("#export-target").value;
@@ -568,6 +821,9 @@ function renderAll() {
   updateAssemblyOutput();
   updateToolButtons();
   updateSizeButtons();
+  if (pcgLibraryDialog.open) {
+    renderPcgLibrary();
+  }
 }
 
 function activeAnimation() {
@@ -1780,6 +2036,43 @@ document.querySelector("#apply-workspace").addEventListener("click", applyWorksp
 document.querySelector("#save-group").addEventListener("click", saveWorkspaceGroup);
 document.querySelector("#delete-group").addEventListener("click", deleteWorkspaceGroup);
 document.querySelector("#saved-group").addEventListener("change", (event) => loadWorkspaceGroup(event.target.value));
+document.querySelector("#open-pcg-library").addEventListener("click", openPcgLibrary);
+document.querySelector("#close-pcg-library").addEventListener("click", () => pcgLibraryDialog.close());
+document.querySelectorAll("#pcg-library-search, #pcg-library-category, #pcg-library-size, #pcg-library-kind").forEach((input) => {
+  input.addEventListener(input.id === "pcg-library-search" ? "input" : "change", renderPcgLibrary);
+});
+document.querySelectorAll("[data-pcg-library-scope]").forEach((button) => {
+  button.addEventListener("click", () => {
+    pcgLibraryScope = button.dataset.pcgLibraryScope;
+    renderPcgLibrary();
+  });
+});
+document.querySelector("#pcg-library-favorite").addEventListener("click", togglePcgLibraryFavorite);
+document.querySelector("#pcg-library-start-slot").addEventListener("input", (event) => {
+  pcgLibraryStartSlot = Number(event.target.value);
+  renderPcgLibrary();
+});
+document.querySelector("#pcg-library-apply").addEventListener("click", requestPcgLibraryApply);
+document.querySelector("#close-pcg-library-conflict").addEventListener("click", () => {
+  pcgLibraryPendingApply = null;
+  pcgLibraryConflictDialog.close();
+});
+document.querySelector("#cancel-pcg-library-replace").addEventListener("click", () => {
+  pcgLibraryPendingApply = null;
+  pcgLibraryConflictDialog.close();
+});
+document.querySelector("#confirm-pcg-library-replace").addEventListener("click", () => {
+  if (!pcgLibraryPendingApply) {
+    pcgLibraryConflictDialog.close();
+    return;
+  }
+  const { preset, startSlot } = pcgLibraryPendingApply;
+  pcgLibraryPendingApply = null;
+  applyPcgLibraryPreset(preset, startSlot);
+});
+pcgLibraryConflictDialog.addEventListener("cancel", () => {
+  pcgLibraryPendingApply = null;
+});
 document.querySelector("#copy-selection").addEventListener("click", copyWorkspace);
 document.querySelector("#paste-selection").addEventListener("click", pasteWorkspace);
 document.querySelector("#show-grid").addEventListener("change", (event) => {
@@ -1917,15 +2210,6 @@ document.querySelector("#rom-file").addEventListener("change", async (event) => 
     setMessage(formatError(error), "error");
   } finally {
     event.target.value = "";
-  }
-});
-
-document.querySelector("#apply-preset").addEventListener("click", () => {
-  const start = Number(document.querySelector("#preset-start").value);
-  try {
-    snapshotMutation(() => applyArcadeDigits(project, start), t("message.arcadeApplied"));
-  } catch (error) {
-    setMessage(formatError(error), "error");
   }
 });
 

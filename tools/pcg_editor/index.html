@@ -144,16 +144,13 @@
         <canvas id="crt-preview" width="256" height="192" aria-label="JR-100 screen preview" data-i18n-aria="aria.crtPreview"></canvas>
         <p class="preview-caption" data-i18n="inspection.previewCaption">This is the complete 32x24 CRT Editor screen.</p>
 
-        <section class="subpanel" aria-labelledby="preset-title">
+        <section class="subpanel" aria-labelledby="pcg-library-launch-title">
           <div class="subpanel-heading">
-            <h3 id="preset-title" data-i18n="inspection.arcadePreset">Arcade Digit Preset</h3>
-            <span data-i18n="inspection.slots11">11 slots</span>
+            <h3 id="pcg-library-launch-title">PCG Library</h3>
+            <span>160 presets</span>
           </div>
-          <p data-i18n="inspection.arcadeDescription">Atari/Namco-inspired digits 0-9 plus a colon.</p>
-          <div class="preset-action">
-            <label><span data-i18n="inspection.start">Start</span> <input id="preset-start" type="number" min="0" max="21" value="0"></label>
-            <button id="apply-preset" class="primary" type="button" data-i18n="inspection.applyPreset">Apply preset</button>
-          </div>
+          <p>Browse original 8x8 assets, 16x16 sprites, and ready-to-place sets.</p>
+          <button id="open-pcg-library" class="primary" type="button">Open PCG Library</button>
         </section>
 
         <section class="subpanel byte-panel" aria-labelledby="byte-title">
@@ -434,6 +431,79 @@
       <div class="image-mosaic-actions">
         <output id="image-mosaic-status" data-i18n="imageMosaic.chooseImage">Choose an image to begin.</output>
         <button id="apply-image-mosaic" class="primary" type="button" disabled data-i18n="imageMosaic.apply">Apply to CRT Editor</button>
+      </div>
+    </dialog>
+
+    <dialog id="pcg-library-dialog" class="pcg-library-dialog" aria-labelledby="pcg-library-title">
+      <div class="pcg-library-heading">
+        <div>
+          <span class="eyebrow">Library</span>
+          <h2 id="pcg-library-title">PCG Library</h2>
+          <p>160 original assets and sets for JR-100 projects.</p>
+        </div>
+        <button id="close-pcg-library" type="button">Close</button>
+      </div>
+      <div class="pcg-library-search-row">
+        <label><span>Search</span><input id="pcg-library-search" type="search" maxlength="80" placeholder="fighter, river, rune"></label>
+        <label><span>Category</span>
+          <select id="pcg-library-category">
+            <option value="all">All categories</option>
+            <option value="side-view">Side view</option>
+            <option value="top-view">Top view</option>
+            <option value="symbols">Symbols</option>
+            <option value="stationery">Stationery</option>
+            <option value="vehicles">Vehicles</option>
+            <option value="creatures">Creatures</option>
+          </select>
+        </label>
+        <label><span>Size</span>
+          <select id="pcg-library-size">
+            <option value="all">All sizes</option>
+            <option value="8x8">8x8</option>
+            <option value="16x16">16x16</option>
+            <option value="sets">Sets</option>
+          </select>
+        </label>
+        <label><span>Type</span>
+          <select id="pcg-library-kind">
+            <option value="all">Asset and set</option>
+            <option value="asset">Asset</option>
+            <option value="set">Set</option>
+          </select>
+        </label>
+      </div>
+      <div class="pcg-library-layout">
+        <aside class="pcg-library-filter-panel" aria-label="PCG library scope">
+          <h3>Scope</h3>
+          <button type="button" class="active" data-pcg-library-scope="all" aria-pressed="true">All</button>
+          <button type="button" data-pcg-library-scope="favorites" aria-pressed="false">Favorites</button>
+          <button type="button" data-pcg-library-scope="recent" aria-pressed="false">Recent</button>
+          <output id="pcg-library-count">160 results</output>
+        </aside>
+        <section id="pcg-library-gallery" class="pcg-library-gallery" role="listbox" aria-label="PCG presets"></section>
+        <aside class="pcg-library-detail" aria-labelledby="pcg-library-detail-title">
+          <canvas id="pcg-library-preview" width="192" height="192" aria-hidden="true"></canvas>
+          <span id="pcg-library-detail-category" class="pcg-library-category-chip">Side view</span>
+          <h3 id="pcg-library-detail-title">Select a preset</h3>
+          <p id="pcg-library-detail-tags">Choose an asset or a set from the gallery.</p>
+          <button id="pcg-library-favorite" type="button" disabled>Favorite</button>
+          <label><span>Start slot</span><input id="pcg-library-start-slot" type="number" min="0" max="31" step="1" value="0"></label>
+          <output id="pcg-library-destination">Select a preset to inspect its destination.</output>
+          <p id="pcg-library-conflicts" class="pcg-library-conflicts"></p>
+          <button id="pcg-library-apply" class="primary" type="button" disabled>Apply to PCG</button>
+        </aside>
+      </div>
+    </dialog>
+
+    <dialog id="pcg-library-conflict-dialog" class="pcg-library-conflict-dialog" aria-labelledby="pcg-library-conflict-title">
+      <div class="pcg-library-conflict-heading">
+        <h2 id="pcg-library-conflict-title">Replace PCG data?</h2>
+        <button id="close-pcg-library-conflict" type="button">Cancel</button>
+      </div>
+      <p id="pcg-library-conflict-details"></p>
+      <div class="pcg-library-conflict-actions">
+        <button id="cancel-pcg-library-replace" type="button">Cancel</button>
+        <button id="confirm-pcg-library-replace" class="danger" type="button">Replace</button>
       </div>
     </dialog>
 

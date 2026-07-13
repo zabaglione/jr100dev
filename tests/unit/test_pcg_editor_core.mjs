@@ -5,6 +5,7 @@ import test from "node:test";
 import {
   ARCADE_DIGITS,
   applyArcadeDigits,
+  applyPcgPreset,
   asciiToRomCode,
   assertWorkspace,
   bresenhamPoints,
@@ -16,6 +17,7 @@ import {
   exportCombinedAssembly,
   exportScreenAssembly,
   getPixel,
+  inspectPcgPresetConflicts,
   parseProject,
   resolveScreenGlyph,
   removeGroup,
@@ -29,6 +31,11 @@ import {
   visiblePcgSlots,
   vramPcgSourceOffset,
 } from "../../tools/pcg_editor/core.js";
+import {
+  PCG_PRESETS,
+  filterPcgPresets,
+  getPcgPreset,
+} from "../../tools/pcg_editor/preset_library.js";
 import { extractCharacterRom } from "../../tools/pcg_editor/rom_font.js";
 import en from "../../tools/pcg_editor/locales/en.js";
 import ja from "../../tools/pcg_editor/locales/ja.js";
@@ -484,6 +491,27 @@ test("desktop layout keeps the editor in one viewport and compacts all 32 slots"
   assert.match(editorHtml, /id="show-grid"/);
 });
 
+test("PCG library exposes searchable presets and a guarded replacement flow", () => {
+  assert.match(editorHtml, /id="open-pcg-library"/);
+  assert.match(editorHtml, /id="pcg-library-dialog"/);
+  assert.match(editorHtml, /id="pcg-library-search"/);
+  assert.match(editorHtml, /id="pcg-library-category"/);
+  assert.match(editorHtml, /id="pcg-library-size"/);
+  assert.match(editorHtml, /id="pcg-library-kind"/);
+  assert.match(editorHtml, /id="pcg-library-gallery"/);
+  assert.match(editorHtml, /id="pcg-library-start-slot"/);
+  assert.match(editorHtml, /id="pcg-library-apply"/);
+  assert.match(editorHtml, /id="pcg-library-conflict-dialog"/);
+  assert.match(editorHtml, /id="confirm-pcg-library-replace"/);
+  assert.match(editorHtml, /id="pcg-library-start-slot"[^>]*step="1"/);
+  assert.match(editorApp, /function renderPcgLibrary/);
+  assert.match(editorApp, /inspectPcgPresetConflicts/);
+  assert.match(editorApp, /preset\.category.*preset\.kind\.toUpperCase\(\)/);
+  assert.match(editorApp, /tags\.textContent = preset\.tags\.join/);
+  assert.match(editorApp, /function pcgPresetConflictSummary/);
+  assert.match(editorStyles, /\.pcg-library-dialog/);
+});
+
 test("CRT screen model can display every PCG slot", () => {
   const screen = createScreen({ mode: "pcg" });
   for (let slot = 0; slot < 32; slot += 1) {
@@ -616,6 +644,112 @@ test("the arcade preset installs digits and a colon as one undoable block", () =
   assert.deepEqual(project.glyphs[15], ARCADE_DIGITS.glyphs[10]);
   assert.equal(project.names[5], "Digit 0");
   assert.equal(project.names[15], "Colon");
+
+  applyArcadeDigits(project, 16);
+  assert.deepEqual(project.groups.filter(({ id }) => id === "arcade-digits"), [{
+    id: "arcade-digits",
+    name: "Arcade Digits",
+    baseSlot: 16,
+    width: 11,
+    height: 1,
+  }]);
+});
+
+test("the PCG library exposes 160 searchable assets and sets", () => {
+  assert.equal(PCG_PRESETS.length, 160);
+  assert.equal(new Set(PCG_PRESETS.map(({ id }) => id)).size, 160);
+  assert.ok(PCG_PRESETS.every(({ glyphs, width, height }) => glyphs.length === width * height));
+  assert.ok(PCG_PRESETS.every(({ glyphs }) => glyphs.every((glyph) => glyph.length === 8 && glyph.every((value) => value >= 0 && value <= 0xff))));
+  assert.equal(filterPcgPresets({ kind: "asset", size: "8x8" }).length, 96);
+  assert.equal(filterPcgPresets({ kind: "asset", size: "16x16" }).length, 48);
+  assert.equal(filterPcgPresets({ kind: "set" }).length, 16);
+  assert.equal(filterPcgPresets({ category: "side-view", kind: "asset" }).length, 26);
+  assert.equal(filterPcgPresets({ category: "top-view", kind: "asset" }).length, 34);
+  assert.equal(filterPcgPresets({ category: "symbols", kind: "asset" }).length, 24);
+  assert.equal(filterPcgPresets({ category: "stationery", kind: "asset" }).length, 12);
+  assert.equal(filterPcgPresets({ category: "vehicles", kind: "asset" }).length, 16);
+  assert.equal(filterPcgPresets({ category: "creatures", kind: "asset" }).length, 32);
+  assert.deepEqual(filterPcgPresets({ ids: ["vehicle-fighter-jet", "side-grass-top"] }).map(({ id }) => id), [
+    "vehicle-fighter-jet",
+    "side-grass-top",
+  ]);
+
+  const grass = getPcgPreset("side-grass-top");
+  const aircraft = getPcgPreset("set-aircraft");
+
+  assert.deepEqual({ kind: grass.kind, width: grass.width, height: grass.height, name: grass.name }, {
+    kind: "asset", width: 1, height: 1, name: "Grass Top",
+  });
+  assert.deepEqual({ kind: aircraft.kind, width: aircraft.width, height: aircraft.height, glyphs: aircraft.glyphs.length }, {
+    kind: "set", width: 4, height: 4, glyphs: 16,
+  });
+  assert.deepEqual(filterPcgPresets({ query: "fighter", kind: "asset" }).map(({ id }) => id), ["vehicle-fighter-jet"]);
+});
+
+test("applying a library preset reports and replaces only overlapping project data", () => {
+  const project = createProject({ withPreset: false });
+  const fighter = getPcgPreset("vehicle-fighter-jet");
+  project.glyphs[4][0] = 0xff;
+  project.groups = [
+    { id: "replace", name: "Replace", baseSlot: 4, width: 2, height: 2 },
+    { id: "keep", name: "Keep", baseSlot: 16, width: 1, height: 1 },
+  ];
+  project.animations = [
+    createAnimationClip({ id: "replace-animation", name: "Replace", baseSlot: 6, width: 1, height: 1 }),
+    createAnimationClip({ id: "keep-animation", name: "Keep", baseSlot: 20, width: 1, height: 1 }),
+  ];
+
+  assert.deepEqual(inspectPcgPresetConflicts(project, fighter, 4), {
+    startSlot: 4,
+    endSlot: 7,
+    occupiedSlots: [4],
+    groupIds: ["replace"],
+    animationIds: ["replace-animation"],
+  });
+
+  const result = applyPcgPreset(project, fighter, 4);
+
+  assert.deepEqual(project.glyphs.slice(4, 8), fighter.glyphs);
+  assert.deepEqual(project.names.slice(4, 8), fighter.slotNames);
+  assert.equal(project.groups.some(({ id }) => id === "replace"), false);
+  assert.equal(project.groups.some(({ id }) => id === "keep"), true);
+  assert.ok(project.groups.some(({ id, width, height }) => id === "preset-vehicle-fighter-jet-4" && width === 2 && height === 2));
+  assert.deepEqual(project.animations.map(({ id }) => id), ["keep-animation"]);
+  assert.deepEqual(result, {
+    workspace: { baseSlot: 4, width: 2, height: 2 },
+    replacedSlotCount: 4,
+    removedGroupIds: ["replace"],
+    removedAnimationIds: ["replace-animation"],
+  });
+});
+
+test("8x8 assets and multi-asset sets preserve their declared workspace shape", () => {
+  const project = createProject({ withPreset: false });
+  const grass = getPcgPreset("side-grass-top");
+  const structures = getPcgPreset("set-top-structures");
+  const waters = getPcgPreset("set-top-waters");
+
+  assert.deepEqual(inspectPcgPresetConflicts(project, grass, 31), {
+    startSlot: 31,
+    endSlot: 31,
+    occupiedSlots: [],
+    groupIds: [],
+    animationIds: [],
+  });
+  assert.deepEqual(applyPcgPreset(project, grass, 31), {
+    workspace: { baseSlot: 31, width: 1, height: 1 },
+    replacedSlotCount: 1,
+    removedGroupIds: [],
+    removedAnimationIds: [],
+  });
+  assert.deepEqual(project.groups, []);
+  assert.deepEqual(project.glyphs[31], grass.glyphs[0]);
+
+  const setResult = applyPcgPreset(project, structures, 20);
+  assert.deepEqual(setResult.workspace, { baseSlot: 20, width: 4, height: 1 });
+  assert.deepEqual(project.glyphs.slice(20, 24), structures.glyphs);
+  assert.ok(project.groups.some(({ id, width, height }) => id === "preset-set-top-structures-20" && width === 4 && height === 1));
+  assert.throws(() => applyPcgPreset(project, waters, 21), /32 slots/);
 });
 
 test("JSON serialization validates and preserves all glyph data", () => {
