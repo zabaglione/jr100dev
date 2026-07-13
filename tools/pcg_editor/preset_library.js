@@ -355,6 +355,74 @@ function reptilePainter({ shell = false, longBody = false, amphibian = false, te
   };
 }
 
+function shapePainter({ rectangles = [], ellipses = [], lines = [], clearedPixels = [] } = {}) {
+  return (matrix) => {
+    rectangles.forEach(([x, y, width, height]) => fillMatrixRect(matrix, x, y, width, height));
+    ellipses.forEach(([x, y, radiusX, radiusY]) => drawMatrixEllipse(matrix, x, y, radiusX, radiusY));
+    lines.forEach(([x0, y0, x1, y1]) => drawMatrixLine(matrix, x0, y0, x1, y1));
+    clearedPixels.forEach(([x, y]) => setMatrixPixel(matrix, x, y, 0));
+  };
+}
+
+function chibiPainter({ hair = "short", accessory = "none", ears = "none", wings = false, tail = false } = {}) {
+  return (matrix) => {
+    drawMatrixEllipse(matrix, 8, 5, 5, 4);
+    fillMatrixRect(matrix, 5, 9, 7, 4);
+    drawMatrixLine(matrix, 6, 13, 5, 15);
+    drawMatrixLine(matrix, 10, 13, 11, 15);
+    drawMatrixLine(matrix, 5, 10, 2, 12);
+    drawMatrixLine(matrix, 11, 10, 14, 12);
+    if (hair === "long") {
+      drawMatrixLine(matrix, 3, 5, 2, 10);
+      drawMatrixLine(matrix, 13, 5, 14, 10);
+    } else if (hair === "spiky") {
+      drawMatrixLine(matrix, 4, 3, 3, 0);
+      drawMatrixLine(matrix, 7, 2, 7, 0);
+      drawMatrixLine(matrix, 10, 3, 12, 0);
+    } else if (hair === "hood") {
+      drawMatrixEllipse(matrix, 8, 5, 6, 5);
+      drawMatrixEllipse(matrix, 8, 5, 4, 3);
+      setMatrixPixel(matrix, 5, 5, 0);
+      setMatrixPixel(matrix, 11, 5, 0);
+    }
+    if (ears === "point") {
+      drawMatrixLine(matrix, 4, 3, 2, 0);
+      drawMatrixLine(matrix, 12, 3, 14, 0);
+    } else if (ears === "long") {
+      drawMatrixLine(matrix, 4, 3, 3, 0);
+      drawMatrixLine(matrix, 12, 3, 13, 0);
+      drawMatrixLine(matrix, 3, 0, 2, 3);
+      drawMatrixLine(matrix, 13, 0, 14, 3);
+    }
+    if (wings) {
+      drawMatrixLine(matrix, 5, 9, 0, 6);
+      drawMatrixLine(matrix, 0, 6, 1, 11);
+      drawMatrixLine(matrix, 11, 9, 15, 6);
+      drawMatrixLine(matrix, 15, 6, 14, 11);
+    }
+    if (tail) {
+      drawMatrixLine(matrix, 11, 12, 15, 10);
+      drawMatrixLine(matrix, 15, 10, 14, 13);
+    }
+    if (accessory === "sword") {
+      drawMatrixLine(matrix, 13, 11, 15, 4);
+      drawMatrixLine(matrix, 12, 8, 15, 9);
+    } else if (accessory === "staff") {
+      drawMatrixLine(matrix, 14, 4, 14, 15);
+      drawMatrixEllipse(matrix, 14, 3, 2, 2);
+    } else if (accessory === "helmet") {
+      fillMatrixRect(matrix, 4, 1, 9, 2);
+      drawMatrixLine(matrix, 8, 1, 8, 0);
+    } else if (accessory === "visor") {
+      fillMatrixRect(matrix, 4, 5, 9, 2);
+      setMatrixPixel(matrix, 7, 5, 0);
+      setMatrixPixel(matrix, 9, 5, 0);
+    }
+    setMatrixPixel(matrix, 6, 5, 0);
+    setMatrixPixel(matrix, 10, 5, 0);
+  };
+}
+
 const SIDE_VIEW_ASSETS = [
   tile("side-grass-top", "Grass Top", "side-view", ["terrain", "ground", "tileable"], ["........", "........", "########", ".#.#.#.#", "########", "........", "........", "........"]),
   tile("side-grass-fill", "Grass Fill", "side-view", ["terrain", "ground", "tileable"], [".#.#.#.#", "########", "#.#.#.#.", "########", ".#.#.#.#", "########", "#.#.#.#.", "########"]),
@@ -625,6 +693,398 @@ const CREATURE_ASSETS = [
   }),
 ];
 
+const EXTENDED_EXISTING_ASSETS = [
+  sprite("side-wooden-bridge", "Wooden Bridge", "side-view", ["platform", "bridge", "large"], shapePainter({
+    rectangles: [[1, 9, 14, 2]],
+    lines: [[2, 9, 4, 14], [6, 9, 6, 14], [10, 9, 10, 14], [14, 9, 12, 14]],
+  })),
+  sprite("side-stone-arch", "Stone Arch", "side-view", ["terrain", "arch", "large"], shapePainter({
+    rectangles: [[1, 7, 14, 8]],
+    ellipses: [[8, 8, 5, 5]],
+    clearedPixels: [[5, 8], [6, 8], [7, 8], [8, 8], [9, 8], [10, 8], [11, 8], [5, 9], [6, 9], [7, 9], [8, 9], [9, 9], [10, 9], [11, 9], [5, 10], [6, 10], [7, 10], [8, 10], [9, 10], [10, 10], [11, 10], [5, 11], [6, 11], [7, 11], [8, 11], [9, 11], [10, 11], [11, 11], [5, 12], [6, 12], [7, 12], [8, 12], [9, 12], [10, 12], [11, 12], [5, 13], [6, 13], [7, 13], [8, 13], [9, 13], [10, 13], [11, 13], [5, 14], [6, 14], [7, 14], [8, 14], [9, 14], [10, 14], [11, 14]],
+  })),
+  sprite("side-watermill", "Watermill", "side-view", ["structure", "water", "large"], shapePainter({
+    rectangles: [[2, 6, 7, 8]],
+    ellipses: [[11, 10, 4, 4]],
+    lines: [[11, 6, 11, 14], [7, 10, 15, 10], [8, 7, 14, 13], [14, 7, 8, 13]],
+  })),
+  sprite("side-boss-door", "Boss Door", "side-view", ["access", "door", "large"], shapePainter({
+    rectangles: [[2, 3, 12, 12]],
+    ellipses: [[8, 8, 4, 5]],
+    clearedPixels: [[6, 7], [7, 7], [8, 7], [9, 7], [10, 7], [6, 8], [7, 8], [8, 8], [9, 8], [10, 8], [6, 9], [7, 9], [8, 9], [9, 9], [10, 9], [6, 10], [7, 10], [8, 10], [9, 10], [10, 10], [6, 11], [7, 11], [8, 11], [9, 11], [10, 11], [6, 12], [7, 12], [8, 12], [9, 12], [10, 12], [6, 13], [7, 13], [8, 13], [9, 13], [10, 13]],
+  })),
+  sprite("top-house", "Top House", "top-view", ["building", "house", "large"], shapePainter({
+    rectangles: [[3, 6, 10, 8]],
+    lines: [[2, 6, 8, 1], [8, 1, 14, 6]],
+    clearedPixels: [[7, 10], [8, 10], [7, 11], [8, 11], [7, 12], [8, 12], [7, 13], [8, 13]],
+  })),
+  sprite("top-castle", "Top Castle", "top-view", ["building", "castle", "large"], shapePainter({
+    rectangles: [[2, 5, 12, 10], [1, 2, 3, 4], [6, 1, 4, 5], [12, 2, 3, 4]],
+    clearedPixels: [[7, 11], [8, 11], [7, 12], [8, 12], [7, 13], [8, 13], [7, 14], [8, 14]],
+  })),
+  sprite("top-pond", "Top Pond", "top-view", ["water", "pond", "large"], shapePainter({
+    ellipses: [[8, 8, 7, 5]],
+    lines: [[3, 8, 6, 6], [10, 10, 13, 8]],
+  })),
+  sprite("top-dock", "Top Dock", "top-view", ["water", "dock", "large"], shapePainter({
+    rectangles: [[3, 1, 4, 14], [7, 9, 8, 3]],
+    lines: [[3, 4, 6, 4], [3, 7, 6, 7], [9, 9, 9, 11], [12, 9, 12, 11]],
+  })),
+  sprite("symbol-compass-rose", "Compass Rose", "symbols", ["symbol", "navigation", "large"], shapePainter({
+    lines: [[8, 0, 8, 15], [0, 8, 15, 8], [2, 2, 14, 14], [14, 2, 2, 14]],
+    ellipses: [[8, 8, 3, 3]],
+  })),
+  sprite("symbol-magic-circle", "Magic Circle", "symbols", ["symbol", "magic", "large"], shapePainter({
+    ellipses: [[8, 8, 7, 7], [8, 8, 4, 4]],
+    lines: [[8, 1, 13, 12], [13, 12, 2, 12], [2, 12, 8, 1]],
+  })),
+  sprite("symbol-rune-gate", "Rune Gate", "symbols", ["symbol", "rune", "large"], shapePainter({
+    rectangles: [[2, 2, 3, 12], [11, 2, 3, 12], [5, 2, 6, 2]],
+    lines: [[6, 5, 10, 11], [10, 5, 6, 11]],
+  })),
+  sprite("symbol-quest-marker", "Quest Marker", "symbols", ["symbol", "quest", "large"], shapePainter({
+    ellipses: [[8, 6, 5, 5]],
+    lines: [[4, 10, 8, 15], [12, 10, 8, 15]],
+    clearedPixels: [[7, 5], [8, 5], [9, 5], [7, 6], [8, 6], [9, 6]],
+  })),
+  sprite("vehicle-glider", "Glider", "vehicles", ["aircraft", "glider", "large"], shapePainter({
+    lines: [[1, 8, 14, 8], [6, 8, 9, 3], [7, 8, 11, 12], [2, 7, 0, 9]],
+  })),
+  sprite("vehicle-seaplane", "Seaplane", "vehicles", ["aircraft", "sea", "large"], shapePainter({
+    rectangles: [[4, 7, 8, 3], [3, 12, 4, 2], [9, 12, 4, 2]],
+    lines: [[5, 8, 8, 3], [8, 8, 13, 11], [2, 7, 0, 9]],
+  })),
+  sprite("vehicle-fire-engine", "Fire Engine", "vehicles", ["land", "emergency", "large"], shapePainter({
+    rectangles: [[2, 8, 12, 5], [4, 5, 6, 3]],
+    ellipses: [[5, 13, 2, 2], [11, 13, 2, 2]],
+    lines: [[9, 7, 14, 4]],
+  })),
+  sprite("vehicle-hovercraft", "Hovercraft", "vehicles", ["sea", "hovercraft", "large"], shapePainter({
+    ellipses: [[8, 10, 7, 4]],
+    rectangles: [[5, 5, 6, 4]],
+    lines: [[8, 5, 8, 1], [4, 14, 12, 14]],
+  })),
+  sprite("creature-bat", "Bat", "creatures", ["animal", "bat", "large"], shapePainter({
+    ellipses: [[8, 8, 3, 4]],
+    lines: [[6, 7, 0, 3], [0, 3, 2, 11], [10, 7, 15, 3], [15, 3, 13, 11], [7, 11, 8, 14], [9, 11, 8, 14]],
+  })),
+  sprite("creature-butterfly", "Butterfly", "creatures", ["animal", "insect", "large"], shapePainter({
+    ellipses: [[4, 6, 4, 5], [12, 6, 4, 5], [4, 11, 4, 3], [12, 11, 4, 3]],
+    rectangles: [[7, 4, 2, 10]],
+    lines: [[7, 4, 5, 1], [9, 4, 11, 1]],
+  })),
+  sprite("creature-crab", "Crab", "creatures", ["animal", "crab", "large"], shapePainter({
+    ellipses: [[8, 9, 5, 4]],
+    lines: [[4, 9, 0, 5], [0, 5, 1, 2], [12, 9, 15, 5], [15, 5, 14, 2], [5, 12, 3, 15], [7, 12, 6, 15], [9, 12, 10, 15], [11, 12, 13, 15]],
+    clearedPixels: [[6, 8], [10, 8]],
+  })),
+  sprite("creature-unicorn", "Unicorn", "creatures", ["animal", "fantasy", "large"], (matrix) => {
+    mammalPainter({ ears: "point", tail: "long", legs: 4 })(matrix);
+    drawMatrixLine(matrix, 5, 3, 8, 0);
+  }),
+];
+
+const CONSTRUCTION_ASSETS = [
+  tile("construction-caution-stripe", "Caution Stripe", "construction", ["construction", "warning", "tileable"], ["##....##", ".##..##.", "..####..", "...##...", "..####..", ".##..##.", "##....##", "........"]),
+  tile("construction-traffic-cone", "Traffic Cone", "construction", ["construction", "traffic"], ["...##...", "..####..", "...##...", "..####..", ".##..##.", ".######.", "########", "........"]),
+  tile("construction-safety-barrier", "Safety Barrier", "construction", ["construction", "barrier"], ["........", "########", "#..##..#", "########", "..#..#..", ".#....#.", "#......#", "........"]),
+  tile("construction-site-fence", "Site Fence", "construction", ["construction", "fence"], ["#......#", "##....##", "########", "#..##..#", "########", "##....##", "#......#", "........"]),
+  tile("construction-scaffold", "Scaffold", "construction", ["construction", "platform"], ["#..##..#", "########", "#..##..#", "########", "#..##..#", "########", "#..##..#", "........"]),
+  tile("construction-steel-beam", "Steel Beam", "construction", ["construction", "metal"], ["########", "#......#", "##....##", "########", "##....##", "#......#", "########", "........"]),
+  tile("construction-oil-drum", "Oil Drum", "construction", ["construction", "prop"], ["..####..", ".######.", ".#....#.", ".######.", ".#....#.", ".######.", "..####..", "........"]),
+  tile("construction-cargo-crate", "Cargo Crate", "construction", ["construction", "prop"], ["########", "##....##", "#.####.#", "#.#..#.#", "#.####.#", "##....##", "########", "........"]),
+  sprite("construction-excavator", "Excavator", "construction", ["construction", "machine", "large"], shapePainter({
+    rectangles: [[2, 10, 10, 3], [6, 6, 5, 4]],
+    ellipses: [[7, 13, 6, 2]],
+    lines: [[10, 7, 14, 3], [14, 3, 15, 6]],
+  })),
+  sprite("construction-bulldozer", "Bulldozer", "construction", ["construction", "machine", "large"], shapePainter({
+    rectangles: [[3, 8, 9, 5], [6, 5, 4, 3]],
+    ellipses: [[7, 13, 6, 2]],
+    lines: [[2, 10, 0, 12], [0, 12, 2, 14]],
+  })),
+  sprite("construction-crane", "Tower Crane", "construction", ["construction", "machine", "large"], shapePainter({
+    rectangles: [[6, 3, 3, 12]],
+    lines: [[7, 3, 15, 3], [13, 3, 13, 11], [2, 15, 13, 15]],
+  })),
+  sprite("construction-dump-truck", "Dump Truck", "construction", ["construction", "machine", "large"], shapePainter({
+    rectangles: [[2, 9, 12, 4], [4, 5, 7, 4]],
+    ellipses: [[5, 13, 2, 2], [11, 13, 2, 2]],
+    lines: [[4, 5, 11, 3]],
+  })),
+  sprite("construction-cement-mixer", "Cement Mixer", "construction", ["construction", "machine", "large"], shapePainter({
+    rectangles: [[2, 10, 12, 3], [3, 7, 3, 3]],
+    ellipses: [[9, 7, 4, 4], [5, 13, 2, 2], [11, 13, 2, 2]],
+  })),
+  sprite("construction-forklift", "Forklift", "construction", ["construction", "machine", "large"], shapePainter({
+    rectangles: [[3, 9, 7, 4], [5, 5, 4, 4]],
+    ellipses: [[5, 13, 2, 2], [10, 13, 2, 2]],
+    lines: [[11, 5, 11, 15], [12, 5, 12, 15], [11, 5, 15, 5]],
+  })),
+];
+
+const CAVE_ASSETS = [
+  tile("cave-rock-wall", "Rock Wall", "cave", ["cave", "rock", "tileable"], ["##..##..", ".####..#", "#..##.##", "##..##..", ".##..###", "#..##..#", "###..##.", ".##..##."]),
+  tile("cave-crystal-wall", "Crystal Wall", "cave", ["cave", "crystal"], ["..#..#..", ".###.###", "##.#.#.#", ".##.###.", "..#.#...", ".###.##.", "##.#.###", "........"]),
+  tile("cave-floor", "Cave Floor", "cave", ["cave", "ground"], ["........", "........", "........", "........", ".#..#..#", "########", "########", "########"]),
+  tile("cave-stalactite", "Stalactite", "cave", ["cave", "hazard"], ["########", "########", ".#.#.#.#", "..#.#.#.", "...#.#..", "....#...", "........", "........"]),
+  tile("cave-stalagmite", "Stalagmite", "cave", ["cave", "hazard"], ["........", "........", "....#...", "...#.#..", "..#.#.#.", ".#.#.#.#", "########", "########"]),
+  tile("cave-mine-track", "Mine Track", "cave", ["cave", "track"], ["........", "........", "#......#", "########", ".#.#.#.#", "########", "#......#", "........"]),
+  tile("cave-torch", "Torch", "cave", ["cave", "light"], ["...#....", "..###...", ".##.##..", "...#....", "...#....", "..###...", "..###...", "........"]),
+  sprite("cave-entrance", "Cave Entrance", "cave", ["cave", "entrance", "large"], shapePainter({
+    ellipses: [[8, 9, 7, 7]],
+    rectangles: [[1, 9, 14, 7]],
+    clearedPixels: [[5, 7], [6, 7], [7, 7], [8, 7], [9, 7], [10, 7], [11, 7], [4, 8], [5, 8], [6, 8], [7, 8], [8, 8], [9, 8], [10, 8], [11, 8], [12, 8], [4, 9], [5, 9], [6, 9], [7, 9], [8, 9], [9, 9], [10, 9], [11, 9], [12, 9], [4, 10], [5, 10], [6, 10], [7, 10], [8, 10], [9, 10], [10, 10], [11, 10], [12, 10], [4, 11], [5, 11], [6, 11], [7, 11], [8, 11], [9, 11], [10, 11], [11, 11], [12, 11], [4, 12], [5, 12], [6, 12], [7, 12], [8, 12], [9, 12], [10, 12], [11, 12], [12, 12], [4, 13], [5, 13], [6, 13], [7, 13], [8, 13], [9, 13], [10, 13], [11, 13], [12, 13], [4, 14], [5, 14], [6, 14], [7, 14], [8, 14], [9, 14], [10, 14], [11, 14], [12, 14], [4, 15], [5, 15], [6, 15], [7, 15], [8, 15], [9, 15], [10, 15], [11, 15], [12, 15]],
+  })),
+  sprite("cave-crystal-cluster", "Crystal Cluster", "cave", ["cave", "crystal", "large"], shapePainter({
+    lines: [[3, 15, 5, 3], [5, 3, 7, 15], [7, 15, 10, 1], [10, 1, 13, 15], [1, 15, 3, 7], [13, 15, 15, 6]],
+  })),
+  sprite("cave-mine-cart", "Cave Mine Cart", "cave", ["cave", "cart", "large"], shapePainter({
+    rectangles: [[3, 8, 10, 4]],
+    ellipses: [[5, 13, 2, 2], [11, 13, 2, 2]],
+    lines: [[3, 8, 5, 4], [5, 4, 11, 4], [11, 4, 13, 8]],
+  })),
+  sprite("cave-underground-lake", "Underground Lake", "cave", ["cave", "water", "large"], shapePainter({
+    ellipses: [[8, 11, 7, 3]],
+    lines: [[2, 8, 5, 2], [5, 2, 7, 8], [12, 8, 10, 1], [10, 1, 8, 8]],
+  })),
+  sprite("cave-treasure-chest", "Cave Treasure Chest", "cave", ["cave", "treasure", "large"], shapePainter({
+    rectangles: [[3, 8, 10, 6]],
+    ellipses: [[8, 8, 5, 3]],
+    lines: [[8, 7, 8, 14]],
+  })),
+];
+
+const FOREST_ASSETS = [
+  tile("forest-leaf-canopy", "Leaf Canopy", "forest", ["forest", "leaves", "tileable"], [".##..##.", "########", "##.##.##", ".######.", "########", "##.##.##", ".######.", "........"]),
+  tile("forest-tree-trunk", "Tree Trunk", "forest", ["forest", "tree"], ["...##...", "...##...", "..####..", "...##...", "...##...", "..####..", "...##...", "...##..."]),
+  tile("forest-tree-stump", "Tree Stump", "forest", ["forest", "tree"], ["........", "........", ".######.", "##....##", "##.##.##", "##....##", ".######.", "........"]),
+  tile("forest-fern", "Fern", "forest", ["forest", "plant"], ["...#....", "..###...", ".##.##..", "...#....", ".##.##..", "##...##.", "........", "........"]),
+  tile("forest-mossy-rock", "Mossy Rock", "forest", ["forest", "rock"], ["........", ".##.##..", "########", "##.####.", ".######.", "..####..", "........", "........"]),
+  tile("forest-vine", "Vine", "forest", ["forest", "plant"], ["..##....", "...##...", "....##..", "...##...", "..##....", ".##.....", "##......", "........"]),
+  tile("forest-mushroom", "Forest Mushroom", "forest", ["forest", "mushroom"], ["........", ".######.", "########", ".#.#..#.", "...##...", "...##...", "..####..", "........"]),
+  tile("forest-fallen-leaf", "Fallen Leaf", "forest", ["forest", "leaf"], ["........", "...#....", ".#####..", "##.####.", ".#####..", "...#....", "........", "........"]),
+  sprite("forest-oak-tree", "Oak Tree", "forest", ["forest", "tree", "large"], shapePainter({
+    ellipses: [[8, 5, 7, 5], [4, 7, 4, 4], [12, 7, 4, 4]],
+    rectangles: [[6, 9, 5, 7]],
+  })),
+  sprite("forest-pine-tree", "Pine Tree", "forest", ["forest", "tree", "large"], shapePainter({
+    lines: [[8, 0, 1, 11], [8, 0, 15, 11], [8, 4, 2, 13], [8, 4, 14, 13]],
+    rectangles: [[7, 10, 3, 6]],
+  })),
+  sprite("forest-fallen-log", "Fallen Log", "forest", ["forest", "log", "large"], shapePainter({
+    ellipses: [[4, 10, 3, 3]],
+    rectangles: [[4, 7, 11, 6]],
+    lines: [[7, 7, 10, 13], [10, 7, 13, 13]],
+  })),
+  sprite("forest-waterfall", "Forest Waterfall", "forest", ["forest", "water", "large"], shapePainter({
+    rectangles: [[5, 1, 6, 14]],
+    lines: [[2, 3, 5, 1], [11, 1, 14, 4], [5, 14, 2, 15], [11, 14, 14, 15]],
+  })),
+];
+
+const UNDERWATER_ASSETS = [
+  tile("underwater-sand", "Underwater Sand", "underwater", ["underwater", "sand", "tileable"], ["...#....", ".#....#.", "....#...", "..#.....", "#....#..", "...#....", ".#....#.", "....#..."]),
+  tile("underwater-coral", "Coral", "underwater", ["underwater", "coral"], ["...#....", ".#.#.#..", "..###...", ".#.###..", "...#.#..", "..#.#...", ".#####..", "........"]),
+  tile("underwater-seaweed", "Seaweed", "underwater", ["underwater", "plant"], ["..#.....", "...#....", "..#.....", ".#......", "..#.....", "...#....", "..#.....", ".#......"]),
+  tile("underwater-kelp", "Kelp", "underwater", ["underwater", "plant"], [".#......", "..#.....", "...#....", "..#.....", ".#......", "..#.....", "...#....", "..#....."]),
+  tile("underwater-shell", "Shell", "underwater", ["underwater", "shell"], ["........", "...##...", ".######.", "##.##.##", "########", ".######.", "........", "........"]),
+  tile("underwater-bubble", "Bubble", "underwater", ["underwater", "bubble"], ["...##...", "..#..#..", "...##...", "........", ".....#..", "......#.", ".....#..", "........"]),
+  tile("underwater-reef-wall", "Reef Wall", "underwater", ["underwater", "reef", "tileable"], ["##..##..", "########", ".##.####", "##.##.##", "########", "##.####.", ".##.##..", "########"]),
+  sprite("underwater-coral-reef", "Coral Reef", "underwater", ["underwater", "coral", "large"], shapePainter({
+    ellipses: [[4, 11, 4, 4], [8, 8, 3, 6], [12, 11, 4, 4]],
+    lines: [[2, 13, 1, 5], [6, 11, 5, 2], [10, 11, 11, 3], [14, 13, 15, 6]],
+  })),
+  sprite("underwater-shipwreck", "Shipwreck", "underwater", ["underwater", "wreck", "large"], shapePainter({
+    rectangles: [[2, 10, 12, 3]],
+    lines: [[3, 10, 6, 14], [13, 10, 10, 14], [8, 10, 8, 1], [8, 2, 13, 7]],
+  })),
+  sprite("underwater-treasure-chest", "Underwater Treasure", "underwater", ["underwater", "treasure", "large"], shapePainter({
+    rectangles: [[3, 9, 10, 5]],
+    ellipses: [[8, 9, 5, 3]],
+    lines: [[8, 8, 8, 14]],
+  })),
+  sprite("underwater-diver", "Diver", "underwater", ["underwater", "character", "large"], shapePainter({
+    ellipses: [[8, 4, 4, 3]],
+    rectangles: [[5, 8, 6, 5]],
+    lines: [[5, 10, 1, 12], [11, 10, 15, 8], [6, 13, 4, 15], [10, 13, 12, 15], [12, 4, 15, 4]],
+  })),
+  sprite("underwater-jellyfish", "Jellyfish", "underwater", ["underwater", "jellyfish", "large"], shapePainter({
+    ellipses: [[8, 6, 6, 5]],
+    lines: [[4, 10, 3, 15], [6, 11, 6, 15], [8, 11, 9, 15], [10, 11, 11, 15], [12, 10, 13, 14]],
+  })),
+];
+
+const VILLAGE_ASSETS = [
+  tile("village-cobblestone", "Village Cobblestone", "village", ["village", "road", "tileable"], [".##..##.", "##..##..", "..##..##", ".##..##.", "##..##..", "..##..##", ".##..##.", "##..##.."]),
+  tile("village-fence", "Village Fence", "village", ["village", "fence"], ["#......#", "########", "#..##..#", "########", "#......#", "........", "........", "........"]),
+  tile("village-signpost", "Village Signpost", "village", ["village", "sign"], [".######.", "########", "...##...", "...##...", "...##...", "..####..", "........", "........"]),
+  tile("village-hay-bale", "Hay Bale", "village", ["village", "prop"], [".######.", "########", "##....##", "########", "##....##", "########", ".######.", "........"]),
+  tile("village-barrel", "Village Barrel", "village", ["village", "prop"], ["..####..", ".######.", ".#....#.", ".######.", ".#....#.", ".######.", "..####..", "........"]),
+  tile("village-lamp-post", "Village Lamp Post", "village", ["village", "light"], ["...##...", ".######.", ".######.", "...##...", "...##...", "...##...", "..####..", "........"]),
+  tile("village-well", "Village Well", "village", ["village", "well"], ["..####..", ".#....#.", "########", "##....##", "########", ".######.", "........", "........"]),
+  tile("village-crop-field", "Crop Field", "village", ["village", "farm", "tileable"], ["#.#.#.#.", ".#.#.#.#", "#.#.#.#.", ".#.#.#.#", "#.#.#.#.", ".#.#.#.#", "#.#.#.#.", ".#.#.#.#"]),
+  sprite("village-cottage", "Village Cottage", "village", ["village", "house", "large"], shapePainter({
+    rectangles: [[3, 7, 10, 8]],
+    lines: [[2, 7, 8, 2], [8, 2, 14, 7]],
+    clearedPixels: [[7, 11], [8, 11], [7, 12], [8, 12], [7, 13], [8, 13], [7, 14], [8, 14]],
+  })),
+  sprite("village-shop", "Village Shop", "village", ["village", "shop", "large"], shapePainter({
+    rectangles: [[2, 7, 12, 8], [1, 5, 14, 2]],
+    lines: [[3, 5, 5, 7], [7, 5, 9, 7], [11, 5, 13, 7]],
+    clearedPixels: [[4, 10], [5, 10], [10, 10], [11, 10], [4, 11], [5, 11], [10, 11], [11, 11]],
+  })),
+  sprite("village-inn", "Village Inn", "village", ["village", "inn", "large"], shapePainter({
+    rectangles: [[2, 6, 12, 9]],
+    lines: [[1, 6, 8, 1], [8, 1, 15, 6]],
+    clearedPixels: [[7, 10], [8, 10], [7, 11], [8, 11], [7, 12], [8, 12], [7, 13], [8, 13], [7, 14], [8, 14]],
+  })),
+  sprite("village-windmill", "Village Windmill", "village", ["village", "windmill", "large"], shapePainter({
+    rectangles: [[6, 8, 5, 7]],
+    ellipses: [[8, 6, 3, 3]],
+    lines: [[8, 3, 8, 10], [5, 6, 11, 6], [6, 4, 10, 8], [10, 4, 6, 8]],
+  })),
+];
+
+const CITY_ASSETS = [
+  tile("city-asphalt", "City Asphalt", "city", ["city", "road", "tileable"], ["#...#...", "...#...#", ".#...#..", "....#...", "..#....#", "#...#...", "...#...#", ".#...#.."]),
+  tile("city-sidewalk", "City Sidewalk", "city", ["city", "sidewalk", "tileable"], ["########", "#..##..#", "########", "##....##", "########", "#..##..#", "########", "##....##"]),
+  tile("city-crosswalk", "Crosswalk", "city", ["city", "road"], ["........", "########", "........", "########", "........", "########", "........", "########"]),
+  tile("city-road-marking", "Road Marking", "city", ["city", "road"], ["...##...", "...##...", "........", "........", "...##...", "...##...", "........", "........"]),
+  tile("city-traffic-light", "Traffic Light", "city", ["city", "traffic"], ["...##...", "..####..", "..#..#..", "..####..", "..#..#..", "..####..", "...##...", "..####.."]),
+  tile("city-hydrant", "Hydrant", "city", ["city", "prop"], ["...##...", ".######.", ".##..##.", ".######.", "...##...", ".##..##.", ".######.", "........"]),
+  tile("city-mailbox", "Mailbox", "city", ["city", "prop"], [".######.", "##....##", "########", "##....##", ".######.", "...##...", "...##...", "........"]),
+  tile("city-bench", "City Bench", "city", ["city", "prop"], ["........", ".######.", "########", "........", ".#....#.", ".#....#.", "#......#", "........"]),
+  sprite("city-apartment", "City Apartment", "city", ["city", "building", "large"], shapePainter({
+    rectangles: [[3, 1, 10, 15]],
+    clearedPixels: [[5, 3], [6, 3], [9, 3], [10, 3], [5, 6], [6, 6], [9, 6], [10, 6], [5, 9], [6, 9], [9, 9], [10, 9], [5, 12], [6, 12], [9, 12], [10, 12]],
+  })),
+  sprite("city-office-tower", "Office Tower", "city", ["city", "building", "large"], shapePainter({
+    rectangles: [[4, 0, 8, 16]],
+    clearedPixels: [[6, 2], [7, 2], [9, 2], [6, 5], [7, 5], [9, 5], [6, 8], [7, 8], [9, 8], [6, 11], [7, 11], [9, 11], [6, 14], [7, 14], [9, 14]],
+  })),
+  sprite("city-storefront", "City Storefront", "city", ["city", "shop", "large"], shapePainter({
+    rectangles: [[2, 6, 12, 9], [1, 4, 14, 2]],
+    lines: [[3, 4, 5, 6], [7, 4, 9, 6], [11, 4, 13, 6]],
+    clearedPixels: [[4, 10], [5, 10], [10, 10], [11, 10], [4, 11], [5, 11], [10, 11], [11, 11]],
+  })),
+  sprite("city-cafe", "City Cafe", "city", ["city", "cafe", "large"], shapePainter({
+    rectangles: [[3, 7, 10, 7]],
+    ellipses: [[8, 5, 5, 2]],
+    lines: [[8, 7, 8, 14], [5, 14, 5, 15], [11, 14, 11, 15]],
+  })),
+];
+
+const STATIONERY_EXPANSION_ASSETS = [
+  tile("stationery-marker", "Marker", "stationery", ["stationery", "writing"], [".....##.", "....##..", "...##...", "..##....", ".##.....", "##......", "#.......", "........"]),
+  tile("stationery-ink-bottle", "Ink Bottle", "stationery", ["stationery", "ink"], ["...##...", ".######.", ".#....#.", ".######.", ".######.", ".#....#.", ".######.", "........"]),
+  tile("stationery-envelope", "Envelope", "stationery", ["stationery", "paper"], [".######.", "##....##", "#.####.#", "#.#..#.#", "#..##..#", "##....##", ".######.", "........"]),
+  tile("stationery-sticky-note", "Sticky Note", "stationery", ["stationery", "paper"], [".######.", ".#....#.", ".#....#.", ".#....#.", ".#....#.", ".#####..", "........", "........"]),
+  tile("stationery-folder", "Folder", "stationery", ["stationery", "paper"], [".###....", ".######.", "########", "########", "########", ".######.", "........", "........"]),
+  tile("stationery-protractor", "Protractor", "stationery", ["stationery", "measure"], ["...##...", ".##..##.", "##....##", "########", "#.#..#.#", "########", "........", "........"]),
+  sprite("stationery-pencil-cup", "Pencil Cup", "stationery", ["stationery", "desk", "large"], shapePainter({
+    rectangles: [[5, 9, 6, 6]],
+    lines: [[5, 9, 3, 1], [7, 9, 7, 0], [9, 9, 12, 2], [5, 15, 11, 15]],
+  })),
+  sprite("stationery-open-notebook", "Open Notebook", "stationery", ["stationery", "paper", "large"], shapePainter({
+    rectangles: [[1, 3, 6, 11], [9, 3, 6, 11]],
+    lines: [[8, 2, 8, 15], [3, 6, 5, 6], [11, 6, 13, 6], [3, 9, 5, 9], [11, 9, 13, 9]],
+  })),
+  sprite("stationery-desk-lamp", "Desk Lamp", "stationery", ["stationery", "desk", "large"], shapePainter({
+    ellipses: [[8, 4, 5, 3]],
+    lines: [[8, 7, 6, 12], [6, 12, 10, 14], [3, 14, 13, 14]],
+  })),
+  sprite("stationery-calculator", "Calculator", "stationery", ["stationery", "calculator", "large"], shapePainter({
+    rectangles: [[3, 1, 10, 14]],
+    clearedPixels: [[5, 3], [6, 3], [7, 3], [8, 3], [9, 3], [10, 3], [5, 7], [7, 7], [9, 7], [11, 7], [5, 10], [7, 10], [9, 10], [11, 10], [5, 13], [7, 13], [9, 13], [11, 13]],
+  })),
+];
+
+const ELECTRONICS_ASSETS = [
+  tile("electronics-chip", "Chip", "electronics", ["electronics", "chip"], ["..####..", ".######.", "##....##", "##.##.##", "##.##.##", "##....##", ".######.", "..####.."]),
+  tile("electronics-circuit-board", "Circuit Board", "electronics", ["electronics", "circuit", "tileable"], ["#..#..#.", ".##.##..", "..#.#.##", "##.#.#..", ".##.##.#", "#..#..##", "##.##...", "..#..#.#"]),
+  tile("electronics-resistor", "Resistor", "electronics", ["electronics", "component"], ["........", "........", "#..####.", ".##....#", "#..####.", "........", "........", "........"]),
+  tile("electronics-capacitor", "Capacitor", "electronics", ["electronics", "component"], ["........", "...##...", "...##...", "########", "...##...", "...##...", "........", "........"]),
+  tile("electronics-diode", "Diode", "electronics", ["electronics", "component"], ["........", "........", "##..##..", ".#####..", "##..##..", "........", "........", "........"]),
+  tile("electronics-led", "LED", "electronics", ["electronics", "component"], ["...##...", ".######.", "##....##", ".######.", "...##...", "...##...", "..####..", "........"]),
+  tile("electronics-switch", "Switch", "electronics", ["electronics", "component"], ["........", ".######.", "########", "...##...", "....##..", ".....##.", "........", "........"]),
+  tile("electronics-battery", "Battery", "electronics", ["electronics", "power"], ["...##...", ".######.", "##....##", "##.##.##", "##.##.##", "##....##", ".######.", "........"]),
+  tile("electronics-plug", "Plug", "electronics", ["electronics", "power"], ["..#..#..", "..#..#..", ".######.", ".######.", "...##...", "...##...", "..####..", "........"]),
+  sprite("electronics-desktop-pc", "Desktop PC", "electronics", ["electronics", "computer", "large"], shapePainter({
+    rectangles: [[2, 2, 10, 8], [5, 11, 4, 2], [3, 14, 8, 1]],
+    lines: [[12, 5, 15, 5], [12, 8, 15, 8]],
+  })),
+  sprite("electronics-laptop", "Laptop", "electronics", ["electronics", "computer", "large"], shapePainter({
+    rectangles: [[3, 3, 10, 7], [1, 11, 14, 3]],
+    lines: [[4, 12, 12, 12]],
+  })),
+  sprite("electronics-crt-monitor", "CRT Monitor", "electronics", ["electronics", "monitor", "large"], shapePainter({
+    ellipses: [[8, 6, 6, 5]],
+    rectangles: [[5, 10, 6, 3], [3, 14, 10, 1]],
+  })),
+  sprite("electronics-keyboard", "Keyboard", "electronics", ["electronics", "keyboard", "large"], shapePainter({
+    rectangles: [[1, 6, 14, 7]],
+    clearedPixels: [[3, 8], [5, 8], [7, 8], [9, 8], [11, 8], [13, 8], [3, 10], [5, 10], [7, 10], [9, 10], [11, 10], [13, 10]],
+  })),
+  sprite("electronics-gamepad", "Gamepad", "electronics", ["electronics", "game", "large"], shapePainter({
+    ellipses: [[8, 9, 7, 4]],
+    lines: [[4, 9, 8, 9], [6, 7, 6, 11]],
+    clearedPixels: [[11, 8], [13, 10]],
+  })),
+];
+
+const CHIBI_ASSETS = [
+  sprite("chibi-hero", "Chibi Hero", "chibi", ["chibi", "character", "hero"], chibiPainter({ accessory: "sword" })),
+  sprite("chibi-heroine", "Chibi Heroine", "chibi", ["chibi", "character", "hero"], chibiPainter({ hair: "long" })),
+  sprite("chibi-knight", "Chibi Knight", "chibi", ["chibi", "character", "knight"], chibiPainter({ accessory: "helmet" })),
+  sprite("chibi-wizard", "Chibi Wizard", "chibi", ["chibi", "character", "wizard"], chibiPainter({ accessory: "staff", hair: "spiky" })),
+  sprite("chibi-ninja", "Chibi Ninja", "chibi", ["chibi", "character", "ninja"], chibiPainter({ hair: "hood" })),
+  sprite("chibi-astronaut", "Chibi Astronaut", "chibi", ["chibi", "character", "space"], chibiPainter({ accessory: "visor" })),
+  sprite("chibi-cat", "Chibi Cat", "chibi", ["chibi", "animal", "cat"], chibiPainter({ ears: "point", tail: true })),
+  sprite("chibi-dog", "Chibi Dog", "chibi", ["chibi", "animal", "dog"], chibiPainter({ tail: true })),
+  sprite("chibi-rabbit", "Chibi Rabbit", "chibi", ["chibi", "animal", "rabbit"], chibiPainter({ ears: "long" })),
+  sprite("chibi-fox", "Chibi Fox", "chibi", ["chibi", "animal", "fox"], chibiPainter({ ears: "point", tail: true })),
+  sprite("chibi-slime", "Chibi Slime", "chibi", ["chibi", "fantasy", "slime"], (matrix) => {
+    drawMatrixEllipse(matrix, 8, 9, 6, 5);
+    drawMatrixLine(matrix, 3, 9, 5, 3);
+    drawMatrixLine(matrix, 13, 9, 11, 3);
+    setMatrixPixel(matrix, 6, 9, 0);
+    setMatrixPixel(matrix, 10, 9, 0);
+  }),
+  sprite("chibi-dragon", "Chibi Dragon", "chibi", ["chibi", "fantasy", "dragon"], chibiPainter({ ears: "point", wings: true, tail: true })),
+];
+
+const FLORA_ASSETS = [
+  tile("flora-grass-clump", "Grass Clump", "flora", ["flora", "grass"], ["........", ".#..#...", "..##....", ".#..#...", "#....#..", ".#..#...", "........", "........"]),
+  tile("flora-tall-grass", "Tall Grass", "flora", ["flora", "grass"], [".#.#.#.#", ".#.#.#.#", "..#.#.#.", ".#.#.#.#", "#.#.#.#.", ".#.#.#.#", "........", "........"]),
+  tile("flora-tulip", "Tulip", "flora", ["flora", "flower"], ["...##...", ".######.", ".######.", "...##...", "...##...", "...##...", "..####..", "........"]),
+  tile("flora-sunflower", "Sunflower", "flora", ["flora", "flower"], ["...##...", ".######.", "##.##.##", ".######.", "...##...", "...##...", "..####..", "........"]),
+  tile("flora-rose", "Rose", "flora", ["flora", "flower"], ["...##...", ".######.", ".##.##..", "..###...", "...##...", "...##...", "..####..", "........"]),
+  tile("flora-lily-pad", "Lily Pad", "flora", ["flora", "water"], ["........", ".######.", "########", "###..###", "########", ".######.", "........", "........"]),
+  tile("flora-mushroom", "Flora Mushroom", "flora", ["flora", "mushroom"], ["........", ".######.", "########", ".#.#..#.", "...##...", "...##...", "..####..", "........"]),
+  tile("flora-cactus", "Cactus", "flora", ["flora", "cactus"], ["...##...", "...##...", ".#.##.#.", ".#.##.#.", "...##...", "...##...", "..####..", "........"]),
+  tile("flora-bamboo", "Bamboo", "flora", ["flora", "bamboo"], ["..##....", "..##....", "..##....", "..##....", "..##....", "..##....", "..##....", "..##...."]),
+  sprite("flora-palm-tree", "Palm Tree", "flora", ["flora", "tree", "large"], shapePainter({
+    lines: [[8, 14, 8, 5], [8, 5, 1, 2], [8, 5, 15, 2], [8, 5, 3, 7], [8, 5, 13, 7]],
+    rectangles: [[7, 12, 3, 4]],
+  })),
+  sprite("flora-cherry-tree", "Cherry Tree", "flora", ["flora", "tree", "large"], shapePainter({
+    ellipses: [[8, 5, 7, 5], [4, 8, 4, 4], [12, 8, 4, 4]],
+    rectangles: [[6, 9, 5, 7]],
+  })),
+  sprite("flora-cactus-tall", "Tall Cactus", "flora", ["flora", "cactus", "large"], shapePainter({
+    rectangles: [[6, 2, 4, 13]],
+    lines: [[6, 7, 2, 7], [2, 7, 2, 11], [10, 9, 14, 9], [14, 9, 14, 5]],
+  })),
+  sprite("flora-rose-bush", "Rose Bush", "flora", ["flora", "flower", "large"], shapePainter({
+    ellipses: [[8, 10, 7, 4], [4, 6, 3, 3], [8, 4, 3, 3], [12, 6, 3, 3]],
+  })),
+  sprite("flora-giant-flower", "Giant Flower", "flora", ["flora", "flower", "large"], shapePainter({
+    ellipses: [[8, 5, 3, 3], [4, 5, 3, 3], [12, 5, 3, 3], [8, 1, 2, 3], [8, 9, 2, 3]],
+    lines: [[8, 9, 8, 15], [8, 12, 3, 14], [8, 12, 13, 14]],
+  })),
+];
+
 const ASSET_PRESETS = [
   ...SIDE_VIEW_ASSETS,
   ...TOP_VIEW_ASSETS,
@@ -632,6 +1092,17 @@ const ASSET_PRESETS = [
   ...STATIONERY_ASSETS,
   ...VEHICLE_ASSETS,
   ...CREATURE_ASSETS,
+  ...EXTENDED_EXISTING_ASSETS,
+  ...CONSTRUCTION_ASSETS,
+  ...CAVE_ASSETS,
+  ...FOREST_ASSETS,
+  ...UNDERWATER_ASSETS,
+  ...VILLAGE_ASSETS,
+  ...CITY_ASSETS,
+  ...STATIONERY_EXPANSION_ASSETS,
+  ...ELECTRONICS_ASSETS,
+  ...CHIBI_ASSETS,
+  ...FLORA_ASSETS,
 ];
 
 const ASSET_BY_ID = new Map(ASSET_PRESETS.map((preset) => [preset.id, preset]));
@@ -722,30 +1193,59 @@ const SET_PRESETS = [
   rowSet("set-top-structures", "Top Structures", "top-view", ["set", "structure"], ["top-bridge-horizontal", "top-bridge-vertical", "top-fence-horizontal", "top-fence-vertical"]),
   rowSet("set-symbol-navigation", "Symbol Navigation", "symbols", ["set", "navigation"], ["symbol-arrow-up", "symbol-arrow-down", "symbol-arrow-left", "symbol-arrow-right", "symbol-passage", "symbol-no-passage", "symbol-check", "symbol-cross", "symbol-warning", "symbol-question", "symbol-compass", "symbol-target"]),
   rowSet("set-symbol-celestial", "Symbol Celestial", "symbols", ["set", "celestial", "rune"], ["symbol-heart", "symbol-star", "symbol-moon", "symbol-sun", "symbol-key", "symbol-lock", "symbol-aries", "symbol-scorpius", "symbol-ursa", "symbol-rune-one", "symbol-rune-two", "symbol-rune-three"]),
-  rowSet("set-stationery-desk", "Stationery Desk", "stationery", ["set", "stationery"], STATIONERY_ASSETS.map(({ id }) => id)),
+  rowSet("set-stationery-desk", "Stationery Desk", "stationery", ["set", "stationery"], [...STATIONERY_ASSETS, ...STATIONERY_EXPANSION_ASSETS]
+    .filter(({ width, height }) => width === 1 && height === 1)
+    .map(({ id }) => id)),
   spriteSet("set-aircraft", "Aircraft", "vehicles", ["set", "aircraft"], ["vehicle-propeller-plane", "vehicle-fighter-jet", "vehicle-bomber", "vehicle-biplane"]),
   spriteSet("set-sky-space", "Sky Space", "vehicles", ["set", "aircraft", "space"], ["vehicle-helicopter", "vehicle-rocket", "vehicle-ufo", "vehicle-airship"]),
   spriteSet("set-ground-transport", "Ground Transport", "vehicles", ["set", "land"], ["vehicle-drone", "vehicle-tank", "vehicle-train", "vehicle-car"]),
   spriteSet("set-mammals", "Mammals", "creatures", ["set", "mammal"], ["creature-cat", "creature-dog", "creature-rabbit", "creature-fox"]),
   ARCADE_DIGITS,
+  rowSet("set-construction-site", "Construction Site", "construction", ["set", "construction"], ["construction-caution-stripe", "construction-traffic-cone", "construction-safety-barrier", "construction-site-fence", "construction-scaffold", "construction-steel-beam", "construction-oil-drum", "construction-cargo-crate"]),
+  spriteSet("set-construction-machines", "Construction Machines", "construction", ["set", "construction"], ["construction-excavator", "construction-bulldozer", "construction-crane", "construction-dump-truck"]),
+  rowSet("set-cave-tiles", "Cave Tiles", "cave", ["set", "cave"], ["cave-rock-wall", "cave-crystal-wall", "cave-floor", "cave-stalactite", "cave-stalagmite", "cave-mine-track", "cave-torch"]),
+  spriteSet("set-cave-landmarks", "Cave Landmarks", "cave", ["set", "cave"], ["cave-entrance", "cave-crystal-cluster", "cave-mine-cart", "cave-treasure-chest"]),
+  rowSet("set-forest-ground", "Forest Ground", "forest", ["set", "forest"], ["forest-leaf-canopy", "forest-tree-trunk", "forest-tree-stump", "forest-fern", "forest-mossy-rock", "forest-vine", "forest-mushroom", "forest-fallen-leaf"]),
+  spriteSet("set-forest-landmarks", "Forest Landmarks", "forest", ["set", "forest"], ["forest-oak-tree", "forest-pine-tree", "forest-fallen-log", "forest-waterfall"]),
+  rowSet("set-underwater-floor", "Underwater Floor", "underwater", ["set", "underwater"], ["underwater-sand", "underwater-coral", "underwater-seaweed", "underwater-kelp", "underwater-shell", "underwater-bubble", "underwater-reef-wall"]),
+  spriteSet("set-underwater-scenes", "Underwater Scenes", "underwater", ["set", "underwater"], ["underwater-coral-reef", "underwater-shipwreck", "underwater-diver", "underwater-jellyfish"]),
+  rowSet("set-village-props", "Village Props", "village", ["set", "village"], ["village-cobblestone", "village-fence", "village-signpost", "village-hay-bale", "village-barrel", "village-lamp-post", "village-well", "village-crop-field"]),
+  spriteSet("set-village-buildings", "Village Buildings", "village", ["set", "village"], ["village-cottage", "village-shop", "village-inn", "village-windmill"]),
+  rowSet("set-city-streets", "City Streets", "city", ["set", "city"], ["city-asphalt", "city-sidewalk", "city-crosswalk", "city-road-marking", "city-traffic-light", "city-hydrant", "city-mailbox", "city-bench"]),
+  spriteSet("set-city-buildings", "City Buildings", "city", ["set", "city"], ["city-apartment", "city-office-tower", "city-storefront", "city-cafe"]),
+  rowSet("set-electronics-parts", "Electronics Parts", "electronics", ["set", "electronics"], ["electronics-chip", "electronics-circuit-board", "electronics-resistor", "electronics-capacitor", "electronics-diode", "electronics-led", "electronics-switch", "electronics-battery", "electronics-plug"]),
+  spriteSet("set-electronics-devices", "Electronics Devices", "electronics", ["set", "electronics"], ["electronics-desktop-pc", "electronics-laptop", "electronics-crt-monitor", "electronics-keyboard"]),
+  spriteSet("set-chibi-party", "Chibi Party", "chibi", ["set", "chibi"], ["chibi-hero", "chibi-heroine", "chibi-knight", "chibi-wizard"]),
+  spriteSet("set-flora-garden", "Flora Garden", "flora", ["set", "flora"], ["flora-palm-tree", "flora-cherry-tree", "flora-cactus-tall", "flora-rose-bush"]),
 ];
 
 export const PCG_PRESETS = Object.freeze([...ASSET_PRESETS, ...SET_PRESETS]);
 
-if (ASSET_PRESETS.length !== 144 || SET_PRESETS.length !== 16 || PCG_PRESETS.length !== 160 || new Set(PCG_PRESETS.map(({ id }) => id)).size !== PCG_PRESETS.length) {
+if (ASSET_PRESETS.length !== 288 || SET_PRESETS.length !== 32 || PCG_PRESETS.length !== 320 || new Set(PCG_PRESETS.map(({ id }) => id)).size !== PCG_PRESETS.length) {
   throw new Error("PCG preset catalog is incomplete");
 }
 
 const PRESET_BY_ID = new Map(PCG_PRESETS.map((preset) => [preset.id, preset]));
 
-export const PCG_PRESET_CATEGORIES = Object.freeze([
-  "side-view",
-  "top-view",
-  "symbols",
-  "stationery",
-  "vehicles",
-  "creatures",
-]);
+export const PCG_PRESET_CATEGORY_OPTIONS = Object.freeze([
+  { id: "side-view", label: "Side view" },
+  { id: "top-view", label: "Top view" },
+  { id: "symbols", label: "Symbols" },
+  { id: "stationery", label: "Stationery" },
+  { id: "vehicles", label: "Vehicles" },
+  { id: "creatures", label: "Creatures" },
+  { id: "construction", label: "Construction" },
+  { id: "cave", label: "Cave" },
+  { id: "forest", label: "Forest" },
+  { id: "underwater", label: "Underwater" },
+  { id: "village", label: "Village" },
+  { id: "city", label: "City" },
+  { id: "electronics", label: "Electronics" },
+  { id: "chibi", label: "Chibi" },
+  { id: "flora", label: "Flora" },
+].map((option) => Object.freeze(option)));
+
+export const PCG_PRESET_CATEGORIES = Object.freeze(PCG_PRESET_CATEGORY_OPTIONS.map(({ id }) => id));
 
 export function getPcgPreset(id) {
   const preset = PRESET_BY_ID.get(id);

@@ -32,6 +32,8 @@ import {
   vramPcgSourceOffset,
 } from "../../tools/pcg_editor/core.js";
 import {
+  PCG_PRESET_CATEGORY_OPTIONS,
+  PCG_PRESET_CATEGORIES,
   PCG_PRESETS,
   filterPcgPresets,
   getPcgPreset,
@@ -504,6 +506,8 @@ test("PCG library exposes searchable presets and a guarded replacement flow", ()
   assert.match(editorHtml, /id="pcg-library-conflict-dialog"/);
   assert.match(editorHtml, /id="confirm-pcg-library-replace"/);
   assert.match(editorHtml, /id="pcg-library-start-slot"[^>]*step="1"/);
+  assert.match(editorApp, /PCG_PRESET_CATEGORY_OPTIONS/);
+  assert.match(editorApp, /function populatePcgLibraryCategoryOptions/);
   assert.match(editorApp, /function renderPcgLibrary/);
   assert.match(editorApp, /inspectPcgPresetConflicts/);
   assert.match(editorApp, /preset\.category.*preset\.kind\.toUpperCase\(\)/);
@@ -655,20 +659,50 @@ test("the arcade preset installs digits and a colon as one undoable block", () =
   }]);
 });
 
-test("the PCG library exposes 160 searchable assets and sets", () => {
-  assert.equal(PCG_PRESETS.length, 160);
-  assert.equal(new Set(PCG_PRESETS.map(({ id }) => id)).size, 160);
+test("the PCG library exposes 320 searchable assets and sets", () => {
+  assert.equal(PCG_PRESETS.length, 320);
+  assert.equal(new Set(PCG_PRESETS.map(({ id }) => id)).size, 320);
   assert.ok(PCG_PRESETS.every(({ glyphs, width, height }) => glyphs.length === width * height));
   assert.ok(PCG_PRESETS.every(({ glyphs }) => glyphs.every((glyph) => glyph.length === 8 && glyph.every((value) => value >= 0 && value <= 0xff))));
-  assert.equal(filterPcgPresets({ kind: "asset", size: "8x8" }).length, 96);
-  assert.equal(filterPcgPresets({ kind: "asset", size: "16x16" }).length, 48);
-  assert.equal(filterPcgPresets({ kind: "set" }).length, 16);
-  assert.equal(filterPcgPresets({ category: "side-view", kind: "asset" }).length, 26);
-  assert.equal(filterPcgPresets({ category: "top-view", kind: "asset" }).length, 34);
-  assert.equal(filterPcgPresets({ category: "symbols", kind: "asset" }).length, 24);
-  assert.equal(filterPcgPresets({ category: "stationery", kind: "asset" }).length, 12);
-  assert.equal(filterPcgPresets({ category: "vehicles", kind: "asset" }).length, 16);
-  assert.equal(filterPcgPresets({ category: "creatures", kind: "asset" }).length, 32);
+  assert.equal(filterPcgPresets({ kind: "asset", size: "8x8" }).length, 166);
+  assert.equal(filterPcgPresets({ kind: "asset", size: "16x16" }).length, 122);
+  assert.equal(filterPcgPresets({ kind: "set" }).length, 32);
+  assert.deepEqual(PCG_PRESET_CATEGORY_OPTIONS, [
+    { id: "side-view", label: "Side view" },
+    { id: "top-view", label: "Top view" },
+    { id: "symbols", label: "Symbols" },
+    { id: "stationery", label: "Stationery" },
+    { id: "vehicles", label: "Vehicles" },
+    { id: "creatures", label: "Creatures" },
+    { id: "construction", label: "Construction" },
+    { id: "cave", label: "Cave" },
+    { id: "forest", label: "Forest" },
+    { id: "underwater", label: "Underwater" },
+    { id: "village", label: "Village" },
+    { id: "city", label: "City" },
+    { id: "electronics", label: "Electronics" },
+    { id: "chibi", label: "Chibi" },
+    { id: "flora", label: "Flora" },
+  ]);
+  assert.deepEqual(PCG_PRESET_CATEGORIES, [
+    "side-view", "top-view", "symbols", "stationery", "vehicles", "creatures",
+    "construction", "cave", "forest", "underwater", "village", "city", "electronics", "chibi", "flora",
+  ]);
+  assert.equal(filterPcgPresets({ category: "side-view", kind: "asset" }).length, 30);
+  assert.equal(filterPcgPresets({ category: "top-view", kind: "asset" }).length, 38);
+  assert.equal(filterPcgPresets({ category: "symbols", kind: "asset" }).length, 28);
+  assert.equal(filterPcgPresets({ category: "stationery", kind: "asset" }).length, 22);
+  assert.equal(filterPcgPresets({ category: "vehicles", kind: "asset" }).length, 20);
+  assert.equal(filterPcgPresets({ category: "creatures", kind: "asset" }).length, 36);
+  assert.equal(filterPcgPresets({ category: "construction", kind: "asset" }).length, 14);
+  assert.equal(filterPcgPresets({ category: "cave", kind: "asset" }).length, 12);
+  assert.equal(filterPcgPresets({ category: "forest", kind: "asset" }).length, 12);
+  assert.equal(filterPcgPresets({ category: "underwater", kind: "asset" }).length, 12);
+  assert.equal(filterPcgPresets({ category: "village", kind: "asset" }).length, 12);
+  assert.equal(filterPcgPresets({ category: "city", kind: "asset" }).length, 12);
+  assert.equal(filterPcgPresets({ category: "electronics", kind: "asset" }).length, 14);
+  assert.equal(filterPcgPresets({ category: "chibi", kind: "asset" }).length, 12);
+  assert.equal(filterPcgPresets({ category: "flora", kind: "asset" }).length, 14);
   assert.deepEqual(filterPcgPresets({ ids: ["vehicle-fighter-jet", "side-grass-top"] }).map(({ id }) => id), [
     "vehicle-fighter-jet",
     "side-grass-top",
@@ -676,12 +710,24 @@ test("the PCG library exposes 160 searchable assets and sets", () => {
 
   const grass = getPcgPreset("side-grass-top");
   const aircraft = getPcgPreset("set-aircraft");
+  const chibiHero = getPcgPreset("chibi-hero");
+  const stationeryDesk = getPcgPreset("set-stationery-desk");
+  const constructionMachines = getPcgPreset("set-construction-machines");
 
   assert.deepEqual({ kind: grass.kind, width: grass.width, height: grass.height, name: grass.name }, {
     kind: "asset", width: 1, height: 1, name: "Grass Top",
   });
   assert.deepEqual({ kind: aircraft.kind, width: aircraft.width, height: aircraft.height, glyphs: aircraft.glyphs.length }, {
     kind: "set", width: 4, height: 4, glyphs: 16,
+  });
+  assert.deepEqual({ category: chibiHero.category, width: chibiHero.width, height: chibiHero.height, tag: chibiHero.tags.includes("chibi") }, {
+    category: "chibi", width: 2, height: 2, tag: true,
+  });
+  assert.deepEqual({ width: stationeryDesk.width, height: stationeryDesk.height, glyphs: stationeryDesk.glyphs.length }, {
+    width: 18, height: 1, glyphs: 18,
+  });
+  assert.deepEqual({ category: constructionMachines.category, width: constructionMachines.width, height: constructionMachines.height, glyphs: constructionMachines.glyphs.length }, {
+    category: "construction", width: 4, height: 4, glyphs: 16,
   });
   assert.deepEqual(filterPcgPresets({ query: "fighter", kind: "asset" }).map(({ id }) => id), ["vehicle-fighter-jet"]);
 });
@@ -750,6 +796,29 @@ test("8x8 assets and multi-asset sets preserve their declared workspace shape", 
   assert.deepEqual(project.glyphs.slice(20, 24), structures.glyphs);
   assert.ok(project.groups.some(({ id, width, height }) => id === "preset-set-top-structures-20" && width === 4 && height === 1));
   assert.throws(() => applyPcgPreset(project, waters, 21), /32 slots/);
+});
+
+test("expanded 16x16 assets and sets register editable composite groups", () => {
+  const project = createProject({ withPreset: false });
+  const chibiHero = getPcgPreset("chibi-hero");
+  const constructionMachines = getPcgPreset("set-construction-machines");
+
+  assert.deepEqual(applyPcgPreset(project, chibiHero, 4), {
+    workspace: { baseSlot: 4, width: 2, height: 2 },
+    replacedSlotCount: 4,
+    removedGroupIds: [],
+    removedAnimationIds: [],
+  });
+  assert.ok(project.groups.some(({ id, width, height }) => id === "preset-chibi-hero-4" && width === 2 && height === 2));
+
+  assert.deepEqual(applyPcgPreset(project, constructionMachines, 16), {
+    workspace: { baseSlot: 16, width: 4, height: 4 },
+    replacedSlotCount: 16,
+    removedGroupIds: [],
+    removedAnimationIds: [],
+  });
+  assert.ok(project.groups.some(({ id, width, height }) => id === "preset-set-construction-machines-16" && width === 4 && height === 4));
+  assert.throws(() => applyPcgPreset(project, constructionMachines, 17), /32 slots/);
 });
 
 test("JSON serialization validates and preserves all glyph data", () => {

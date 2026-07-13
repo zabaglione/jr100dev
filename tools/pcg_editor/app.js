@@ -40,6 +40,8 @@ import {
 import {
   filterPcgPresets,
   getPcgPreset,
+  PCG_PRESET_CATEGORY_OPTIONS,
+  PCG_PRESET_CATEGORIES,
   PCG_PRESETS,
 } from "./preset_library.js";
 import { getLanguage, setLanguage, t, translateDocument } from "./i18n.js";
@@ -69,6 +71,9 @@ import {
 const STORAGE_KEY = "jr100dev.pcg-workbench.v1";
 const PCG_LIBRARY_STORAGE_KEY = "jr100dev.pcg-library.v1";
 const HISTORY_LIMIT = 64;
+const PCG_CATEGORY_LABELS = Object.freeze(Object.fromEntries(
+  PCG_PRESET_CATEGORY_OPTIONS.map(({ id, label }) => [id, label]),
+));
 const canvas = document.querySelector("#editor-canvas");
 const canvasContext = canvas.getContext("2d");
 const crtCanvas = document.querySelector("#crt-preview");
@@ -656,6 +661,26 @@ function pcgLibraryFilters() {
   };
 }
 
+function populatePcgLibraryCategoryOptions() {
+  const select = document.querySelector("#pcg-library-category");
+  const selected = select.value;
+  select.replaceChildren(
+    new Option("All categories", "all"),
+    ...PCG_PRESET_CATEGORY_OPTIONS.map(({ id, label }) => new Option(label, id)),
+  );
+  select.value = PCG_PRESET_CATEGORIES.includes(selected) ? selected : "all";
+}
+
+function pcgCategoryLabel(category) {
+  return PCG_CATEGORY_LABELS[category] ?? category;
+}
+
+function renderPcgLibraryTotals() {
+  const total = PCG_PRESETS.length;
+  document.querySelector("#pcg-library-launch-count").textContent = `${total} presets`;
+  document.querySelector("#pcg-library-intro").textContent = `${total} original assets and sets for JR-100 projects.`;
+}
+
 function renderPcgLibraryCard(preset) {
   const button = document.createElement("button");
   const preview = document.createElement("canvas");
@@ -671,7 +696,7 @@ function renderPcgLibraryCard(preset) {
   preview.height = 72;
   drawPcgPresetPreview(preview.getContext("2d"), preview, preset);
   title.textContent = preset.name;
-  details.textContent = `${preset.category} / ${preset.kind.toUpperCase()} / ${presetDimensions(preset)} / ${pcgPresetSlotCount(preset)} slots`;
+  details.textContent = `${pcgCategoryLabel(preset.category)} / ${preset.kind.toUpperCase()} / ${presetDimensions(preset)} / ${pcgPresetSlotCount(preset)} slots`;
   tags.textContent = preset.tags.join(", ");
   button.append(preview, title, details, tags);
   button.addEventListener("click", () => {
@@ -706,7 +731,7 @@ function renderPcgLibraryDetail(preset) {
   const conflictDetails = pcgPresetConflictSummary(conflict);
   const endCode = 0x80 + conflict.endSlot;
   title.textContent = preset.name;
-  category.textContent = `${preset.category} / ${preset.kind.toUpperCase()}`;
+  category.textContent = `${pcgCategoryLabel(preset.category)} / ${preset.kind.toUpperCase()}`;
   tags.textContent = `${presetDimensions(preset)} / ${pcgPresetSlotCount(preset)} slots / ${preset.tags.join(", ")}`;
   favorite.disabled = false;
   favorite.textContent = pcgLibraryPreferences.favorites.includes(preset.id) ? "Remove favorite" : "Favorite";
@@ -808,6 +833,7 @@ function updateAssemblyOutput() {
 
 function renderAll() {
   clampHoverCellToWorkspace();
+  renderPcgLibraryTotals();
   renderEditor();
   renderSlotRack();
   renderCrt();
@@ -2315,6 +2341,7 @@ vramGlyphCanvas.addEventListener("pointerup", finishVramGlyphGesture);
 vramGlyphCanvas.addEventListener("pointercancel", finishVramGlyphGesture);
 window.addEventListener("keydown", handleKeyboard);
 
+populatePcgLibraryCategoryOptions();
 syncWorkspaceInputs();
 renderAll();
 setActiveView(activeView);
