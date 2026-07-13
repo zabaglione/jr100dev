@@ -372,12 +372,12 @@ export function floodFill(glyphs, workspace, startX, startY, value) {
   }
 }
 
-function assertPcgPreset(preset) {
+function assertPcgPresetShape(preset, allowedKinds) {
   if (!preset || typeof preset !== "object") {
     throw new TypeError("PCG preset is required");
   }
   const { id, kind, name, width, height, glyphs, slotNames } = preset;
-  if (typeof id !== "string" || !id || !["asset", "set"].includes(kind) || typeof name !== "string" || !name) {
+  if (typeof id !== "string" || !id || !allowedKinds.includes(kind) || typeof name !== "string" || !name) {
     throw new TypeError("PCG preset metadata is invalid");
   }
   if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1) {
@@ -393,20 +393,47 @@ function assertPcgPreset(preset) {
   return preset;
 }
 
+function assertPcgPreset(preset) {
+  return assertPcgPresetShape(preset, ["asset", "set"]);
+}
+
+function assertPcgAnimationPreset(preset) {
+  assertPcgPresetShape(preset, ["animation"]);
+  if (!Number.isInteger(preset.frameDurationMs)) {
+    throw new TypeError("Animation preset frame duration must be an integer");
+  }
+  if (!Array.isArray(preset.frames) || preset.frames.length < 2) {
+    throw new TypeError("Animation presets require at least two frames");
+  }
+  validateAnimationClips([{
+    id: preset.id,
+    name: preset.name,
+    baseSlot: 0,
+    width: preset.width,
+    height: preset.height,
+    frameDurationMs: preset.frameDurationMs,
+    frames: preset.frames,
+  }]);
+  const firstFrame = preset.frames[0].glyphs;
+  if (!firstFrame.every((glyph, glyphIndex) => glyph.every((value, row) => value === preset.glyphs[glyphIndex][row]))) {
+    throw new TypeError("Animation preset preview glyphs must match its first frame");
+  }
+  return preset;
+}
+
 function rangesOverlap(leftStart, leftCount, rightStart, rightCount) {
   return leftStart < rightStart + rightCount && rightStart < leftStart + leftCount;
 }
 
-function presetWorkspace(preset, startSlot) {
-  assertPcgPreset(preset);
+function presetWorkspace(preset, startSlot, assertPreset = assertPcgPreset) {
+  assertPreset(preset);
   const workspace = { baseSlot: startSlot, width: preset.width, height: preset.height };
   assertWorkspace(workspace);
   return workspace;
 }
 
-export function inspectPcgPresetConflicts(project, preset, startSlot) {
+function inspectPresetWorkspaceConflicts(project, workspace) {
   validateProjectShape(project);
-  const workspace = presetWorkspace(preset, startSlot);
   const slotCount = workspace.width * workspace.height;
   const occupiedSlots = Array.from({ length: slotCount }, (_, index) => workspace.baseSlot + index)
     .filter((slot) => project.glyphs[slot].some(Boolean));
@@ -425,15 +452,40 @@ export function inspectPcgPresetConflicts(project, preset, startSlot) {
   };
 }
 
+export function inspectPcgPresetConflicts(project, preset, startSlot) {
+  return inspectPresetWorkspaceConflicts(project, presetWorkspace(preset, startSlot));
+}
+
+export function inspectPcgAnimationPresetConflicts(project, preset, startSlot) {
+  return inspectPresetWorkspaceConflicts(project, presetWorkspace(preset, startSlot, assertPcgAnimationPreset));
+}
+
+function removePcgPresetConflicts(project, conflict) {
+  const removedGroupIds = [...conflict.groupIds];
+  const removedAnimationIds = [...conflict.animationIds];
+  project.groups = project.groups.filter(({ id }) => !removedGroupIds.includes(id));
+  project.animations = project.animations.filter(({ id }) => !removedAnimationIds.includes(id));
+  return { removedGroupIds, removedAnimationIds };
+}
+
+function uniqueAnimationPresetId(project, preset, baseSlot) {
+  const rootId = `preset-animation-${preset.id}-${baseSlot}`;
+  const existingIds = new Set(project.animations.map(({ id }) => id));
+  let candidate = rootId;
+  let suffix = 2;
+  while (existingIds.has(candidate)) {
+    candidate = `${rootId}-${suffix}`;
+    suffix += 1;
+  }
+  return candidate;
+}
+
 export function applyPcgPreset(project, preset, startSlot) {
   validateProjectShape(project);
   const workspace = presetWorkspace(preset, startSlot);
   const slotCount = workspace.width * workspace.height;
   const conflict = inspectPcgPresetConflicts(project, preset, startSlot);
-  const removedGroupIds = [...conflict.groupIds];
-  const removedAnimationIds = [...conflict.animationIds];
-  project.groups = project.groups.filter(({ id }) => !removedGroupIds.includes(id));
-  project.animations = project.animations.filter(({ id }) => !removedAnimationIds.includes(id));
+  const { removedGroupIds, removedAnimationIds } = removePcgPresetConflicts(project, conflict);
   preset.glyphs.forEach((glyph, index) => {
     project.glyphs[workspace.baseSlot + index] = [...glyph];
     project.names[workspace.baseSlot + index] = preset.slotNames[index];
@@ -450,6 +502,40 @@ export function applyPcgPreset(project, preset, startSlot) {
     replacedSlotCount: slotCount,
     removedGroupIds,
     removedAnimationIds,
+  };
+}
+
+export function applyPcgAnimationPreset(project, preset, startSlot) {
+  validateProjectShape(project);
+  const workspace = presetWorkspace(preset, startSlot, assertPcgAnimationPreset);
+  const slotCount = workspace.width * workspace.height;
+  const conflict = inspectPcgAnimationPresetConflicts(project, preset, startSlot);
+  const { removedGroupIds, removedAnimationIds } = removePcgPresetConflicts(project, conflict);
+  const animationId = uniqueAnimationPresetId(project, preset, workspace.baseSlot);
+  preset.glyphs.forEach((glyph, index) => {
+    project.glyphs[workspace.baseSlot + index] = [...glyph];
+    project.names[workspace.baseSlot + index] = preset.slotNames[index];
+  });
+  project.animations.push({
+    id: animationId,
+    name: preset.name,
+    baseSlot: workspace.baseSlot,
+    width: workspace.width,
+    height: workspace.height,
+    frameDurationMs: preset.frameDurationMs,
+    frames: preset.frames.map((frame) => ({
+      id: frame.id,
+      name: frame.name,
+      glyphs: frame.glyphs.map((glyph) => [...glyph]),
+    })),
+  });
+  validateProjectShape(project);
+  return {
+    workspace,
+    replacedSlotCount: slotCount,
+    removedGroupIds,
+    removedAnimationIds,
+    animationId,
   };
 }
 

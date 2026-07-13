@@ -1,5 +1,6 @@
 import {
   applyPcgGallery,
+  applyPcgAnimationPreset,
   applyPcgPreset,
   asciiToRomCode,
   assertWorkspace,
@@ -18,6 +19,7 @@ import {
   getPixel,
   getScreenCell,
   invertWorkspace,
+  inspectPcgAnimationPresetConflicts,
   inspectPcgPresetConflicts,
   loadCharacterRom,
   matrixToWorkspace,
@@ -127,6 +129,7 @@ let pcgLibraryScope = "all";
 let pcgLibraryPendingApply = null;
 let pcgLibraryStartSlot = null;
 let pcgLibraryPreferences = restorePcgLibraryPreferences();
+let pcgLibraryPreviewTimer = null;
 const imageMosaicGenerationScheduler = createFrameScheduler({
   requestFrame: (callback) => requestAnimationFrame(callback),
   cancelFrame: (frameId) => cancelAnimationFrame(frameId),
@@ -623,11 +626,14 @@ function clampPcgLibraryStartSlot(preset) {
   return pcgLibraryStartSlot;
 }
 
-function drawPcgPresetPreview(context, target, preset) {
+function drawPcgPresetPreview(context, target, preset, frameIndex = 0) {
   context.imageSmoothingEnabled = false;
   context.fillStyle = "#020503";
   context.fillRect(0, 0, target.width, target.height);
   if (!preset) return;
+  const glyphs = preset.kind === "animation"
+    ? preset.frames[frameIndex % preset.frames.length].glyphs
+    : preset.glyphs;
   const width = preset.width * 8;
   const height = preset.height * 8;
   const scale = Math.max(1, Math.floor(Math.min(target.width / width, target.height / height)));
@@ -637,12 +643,34 @@ function drawPcgPresetPreview(context, target, preset) {
   for (let y = 0; y < height; y += 1) {
     for (let x = 0; x < width; x += 1) {
       const tile = Math.floor(y / 8) * preset.width + Math.floor(x / 8);
-      const glyph = preset.glyphs[tile];
+      const glyph = glyphs[tile];
       if ((glyph[y % 8] >> (7 - (x % 8))) & 1) {
         context.fillRect(offsetX + x * scale, offsetY + y * scale, scale, scale);
       }
     }
   }
+}
+
+function stopPcgLibraryPreview() {
+  if (pcgLibraryPreviewTimer !== null) {
+    clearInterval(pcgLibraryPreviewTimer);
+    pcgLibraryPreviewTimer = null;
+  }
+}
+
+function startPcgLibraryPreview(preset) {
+  stopPcgLibraryPreview();
+  drawPcgPresetPreview(pcgLibraryPreviewContext, pcgLibraryPreviewCanvas, preset);
+  if (!preset || preset.kind !== "animation") return;
+  let frameIndex = 0;
+  pcgLibraryPreviewTimer = setInterval(() => {
+    if (!pcgLibraryDialog.open || activePcgLibraryPresetId !== preset.id) {
+      stopPcgLibraryPreview();
+      return;
+    }
+    frameIndex = (frameIndex + 1) % preset.frames.length;
+    drawPcgPresetPreview(pcgLibraryPreviewContext, pcgLibraryPreviewCanvas, preset, frameIndex);
+  }, preset.frameDurationMs);
 }
 
 function pcgLibraryScopedIds() {
@@ -678,7 +706,7 @@ function pcgCategoryLabel(category) {
 function renderPcgLibraryTotals() {
   const total = PCG_PRESETS.length;
   document.querySelector("#pcg-library-launch-count").textContent = `${total} presets`;
-  document.querySelector("#pcg-library-intro").textContent = `${total} original assets and sets for JR-100 projects.`;
+  document.querySelector("#pcg-library-intro").textContent = `${total} original assets, sets, and animations for JR-100 projects.`;
 }
 
 function renderPcgLibraryCard(preset) {
@@ -706,6 +734,12 @@ function renderPcgLibraryCard(preset) {
   return button;
 }
 
+function inspectPcgLibraryPresetConflicts(preset, startSlot) {
+  return preset.kind === "animation"
+    ? inspectPcgAnimationPresetConflicts(project, preset, startSlot)
+    : inspectPcgPresetConflicts(project, preset, startSlot);
+}
+
 function renderPcgLibraryDetail(preset) {
   const title = document.querySelector("#pcg-library-detail-title");
   const category = document.querySelector("#pcg-library-detail-category");
@@ -714,11 +748,11 @@ function renderPcgLibraryDetail(preset) {
   const destination = document.querySelector("#pcg-library-destination");
   const conflicts = document.querySelector("#pcg-library-conflicts");
   const apply = document.querySelector("#pcg-library-apply");
-  drawPcgPresetPreview(pcgLibraryPreviewContext, pcgLibraryPreviewCanvas, preset);
+  startPcgLibraryPreview(preset);
   if (!preset) {
     title.textContent = "No matching preset";
     category.textContent = "Library";
-    tags.textContent = "Adjust the filters to find an asset or a set.";
+    tags.textContent = "Adjust the filters to find an asset, set, or animation.";
     favorite.disabled = true;
     destination.textContent = "No destination selected.";
     conflicts.textContent = "";
@@ -727,12 +761,15 @@ function renderPcgLibraryDetail(preset) {
     return;
   }
   const startSlot = clampPcgLibraryStartSlot(preset);
-  const conflict = inspectPcgPresetConflicts(project, preset, startSlot);
+  const conflict = inspectPcgLibraryPresetConflicts(preset, startSlot);
   const conflictDetails = pcgPresetConflictSummary(conflict);
   const endCode = 0x80 + conflict.endSlot;
   title.textContent = preset.name;
   category.textContent = `${pcgCategoryLabel(preset.category)} / ${preset.kind.toUpperCase()}`;
-  tags.textContent = `${presetDimensions(preset)} / ${pcgPresetSlotCount(preset)} slots / ${preset.tags.join(", ")}`;
+  const animationMetadata = preset.kind === "animation"
+    ? ` / ${preset.frames.length} frames / ${preset.frameDurationMs} ms / ${preset.frames.length * pcgPresetSlotCount(preset) * 8} bytes`
+    : "";
+  tags.textContent = `${presetDimensions(preset)} / ${pcgPresetSlotCount(preset)} slots${animationMetadata} / ${preset.tags.join(", ")}`;
   favorite.disabled = false;
   favorite.textContent = pcgLibraryPreferences.favorites.includes(preset.id) ? "Remove favorite" : "Favorite";
   destination.textContent = `Slots ${String(startSlot).padStart(2, "0")}-${String(conflict.endSlot).padStart(2, "0")} / $${(0x80 + startSlot).toString(16).toUpperCase()}-$${endCode.toString(16).toUpperCase()}`;
@@ -781,9 +818,17 @@ function rememberPcgLibraryPreset(presetId) {
 function applyPcgLibraryPreset(preset, startSlot) {
   let result;
   snapshotMutation(() => {
-    result = applyPcgPreset(project, preset, startSlot);
+    result = preset.kind === "animation"
+      ? applyPcgAnimationPreset(project, preset, startSlot)
+      : applyPcgPreset(project, preset, startSlot);
     workspace = result.workspace;
-    activeGroupId = result.replacedSlotCount > 1 ? `preset-${preset.id}-${startSlot}` : null;
+    activeGroupId = preset.kind === "animation" || result.replacedSlotCount === 1
+      ? null
+      : `preset-${preset.id}-${startSlot}`;
+    if (result.animationId) {
+      activeAnimationId = result.animationId;
+      activeAnimationFrame = 0;
+    }
   }, `Applied ${preset.name}`);
   pcgLibraryStartSlot = result.workspace.baseSlot;
   rememberPcgLibraryPreset(preset.id);
@@ -791,14 +836,18 @@ function applyPcgLibraryPreset(preset, startSlot) {
   if (pcgLibraryConflictDialog.open) pcgLibraryConflictDialog.close();
   if (pcgLibraryDialog.open) pcgLibraryDialog.close();
   renderAll();
-  canvas.focus();
+  if (preset.kind === "animation") {
+    setActiveView("animation");
+  } else {
+    canvas.focus();
+  }
 }
 
 function requestPcgLibraryApply() {
   const preset = activePcgLibraryPreset();
   if (!preset) return;
   const startSlot = clampPcgLibraryStartSlot(preset);
-  const conflict = inspectPcgPresetConflicts(project, preset, startSlot);
+  const conflict = inspectPcgLibraryPresetConflicts(preset, startSlot);
   const conflictDetails = pcgPresetConflictSummary(conflict);
   if (conflictDetails.length === 0) {
     applyPcgLibraryPreset(preset, startSlot);
@@ -2064,6 +2113,7 @@ document.querySelector("#delete-group").addEventListener("click", deleteWorkspac
 document.querySelector("#saved-group").addEventListener("change", (event) => loadWorkspaceGroup(event.target.value));
 document.querySelector("#open-pcg-library").addEventListener("click", openPcgLibrary);
 document.querySelector("#close-pcg-library").addEventListener("click", () => pcgLibraryDialog.close());
+pcgLibraryDialog.addEventListener("close", stopPcgLibraryPreview);
 document.querySelectorAll("#pcg-library-search, #pcg-library-category, #pcg-library-size, #pcg-library-kind").forEach((input) => {
   input.addEventListener(input.id === "pcg-library-search" ? "input" : "change", renderPcgLibrary);
 });

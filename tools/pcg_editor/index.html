@@ -147,9 +147,9 @@
         <section class="subpanel" aria-labelledby="pcg-library-launch-title">
           <div class="subpanel-heading">
             <h3 id="pcg-library-launch-title">PCG Library</h3>
-            <span id="pcg-library-launch-count">320 presets</span>
+            <span id="pcg-library-launch-count">340 presets</span>
           </div>
-          <p>Browse original 8x8 assets, 16x16 sprites, and ready-to-place sets.</p>
+          <p>Browse original 8x8 assets, 16x16 sprites, ready-to-place sets, and animation loops.</p>
           <button id="open-pcg-library" class="primary" type="button">Open PCG Library</button>
         </section>
 
@@ -439,7 +439,7 @@
         <div>
           <span class="eyebrow">Library</span>
           <h2 id="pcg-library-title">PCG Library</h2>
-          <p id="pcg-library-intro">320 original assets and sets for JR-100 projects.</p>
+          <p id="pcg-library-intro">340 original assets, sets, and animations for JR-100 projects.</p>
         </div>
         <button id="close-pcg-library" type="button">Close</button>
       </div>
@@ -460,9 +460,10 @@
         </label>
         <label><span>Type</span>
           <select id="pcg-library-kind">
-            <option value="all">Asset and set</option>
+            <option value="all">Asset, set, and animation</option>
             <option value="asset">Asset</option>
             <option value="set">Set</option>
+            <option value="animation">Animation</option>
           </select>
         </label>
       </div>
@@ -472,7 +473,7 @@
           <button type="button" class="active" data-pcg-library-scope="all" aria-pressed="true">All</button>
           <button type="button" data-pcg-library-scope="favorites" aria-pressed="false">Favorites</button>
           <button type="button" data-pcg-library-scope="recent" aria-pressed="false">Recent</button>
-          <output id="pcg-library-count">320 results</output>
+          <output id="pcg-library-count">340 results</output>
         </aside>
         <section id="pcg-library-gallery" class="pcg-library-gallery" role="listbox" aria-label="PCG presets"></section>
         <aside class="pcg-library-detail" aria-labelledby="pcg-library-detail-title">

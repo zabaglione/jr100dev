@@ -5,6 +5,7 @@ import test from "node:test";
 import {
   ARCADE_DIGITS,
   applyArcadeDigits,
+  applyPcgAnimationPreset,
   applyPcgPreset,
   asciiToRomCode,
   assertWorkspace,
@@ -17,6 +18,7 @@ import {
   exportCombinedAssembly,
   exportScreenAssembly,
   getPixel,
+  inspectPcgAnimationPresetConflicts,
   inspectPcgPresetConflicts,
   parseProject,
   resolveScreenGlyph,
@@ -495,11 +497,13 @@ test("desktop layout keeps the editor in one viewport and compacts all 32 slots"
 
 test("PCG library exposes searchable presets and a guarded replacement flow", () => {
   assert.match(editorHtml, /id="open-pcg-library"/);
+  assert.match(editorHtml, /ready-to-place sets, and animation loops/);
   assert.match(editorHtml, /id="pcg-library-dialog"/);
   assert.match(editorHtml, /id="pcg-library-search"/);
   assert.match(editorHtml, /id="pcg-library-category"/);
   assert.match(editorHtml, /id="pcg-library-size"/);
   assert.match(editorHtml, /id="pcg-library-kind"/);
+  assert.match(editorHtml, /<option value="animation">Animation<\/option>/);
   assert.match(editorHtml, /id="pcg-library-gallery"/);
   assert.match(editorHtml, /id="pcg-library-start-slot"/);
   assert.match(editorHtml, /id="pcg-library-apply"/);
@@ -510,6 +514,9 @@ test("PCG library exposes searchable presets and a guarded replacement flow", ()
   assert.match(editorApp, /function populatePcgLibraryCategoryOptions/);
   assert.match(editorApp, /function renderPcgLibrary/);
   assert.match(editorApp, /inspectPcgPresetConflicts/);
+  assert.match(editorApp, /inspectPcgAnimationPresetConflicts/);
+  assert.match(editorApp, /applyPcgAnimationPreset/);
+  assert.match(editorApp, /setActiveView\("animation"\)/);
   assert.match(editorApp, /preset\.category.*preset\.kind\.toUpperCase\(\)/);
   assert.match(editorApp, /tags\.textContent = preset\.tags\.join/);
   assert.match(editorApp, /function pcgPresetConflictSummary/);
@@ -659,14 +666,22 @@ test("the arcade preset installs digits and a colon as one undoable block", () =
   }]);
 });
 
-test("the PCG library exposes 320 searchable assets and sets", () => {
-  assert.equal(PCG_PRESETS.length, 320);
-  assert.equal(new Set(PCG_PRESETS.map(({ id }) => id)).size, 320);
+test("the PCG library exposes 340 searchable assets, sets, and animations", () => {
+  assert.equal(PCG_PRESETS.length, 340);
+  assert.equal(new Set(PCG_PRESETS.map(({ id }) => id)).size, 340);
   assert.ok(PCG_PRESETS.every(({ glyphs, width, height }) => glyphs.length === width * height));
   assert.ok(PCG_PRESETS.every(({ glyphs }) => glyphs.every((glyph) => glyph.length === 8 && glyph.every((value) => value >= 0 && value <= 0xff))));
   assert.equal(filterPcgPresets({ kind: "asset", size: "8x8" }).length, 166);
   assert.equal(filterPcgPresets({ kind: "asset", size: "16x16" }).length, 122);
   assert.equal(filterPcgPresets({ kind: "set" }).length, 32);
+  assert.equal(filterPcgPresets({ kind: "animation" }).length, 20);
+  assert.equal(filterPcgPresets({ kind: "animation", size: "8x8" }).length, 12);
+  assert.equal(filterPcgPresets({ kind: "animation", size: "16x16" }).length, 8);
+  assert.ok(filterPcgPresets({ kind: "animation" }).every((preset) => (
+    preset.frames.length >= 2
+    && preset.frames.every((frame) => frame.glyphs.length === preset.width * preset.height)
+    && preset.frames.every((frame) => frame.glyphs.every((glyph) => glyph.length === 8 && glyph.every((value) => value >= 0 && value <= 0xff)))
+  )));
   assert.deepEqual(PCG_PRESET_CATEGORY_OPTIONS, [
     { id: "side-view", label: "Side view" },
     { id: "top-view", label: "Top view" },
@@ -713,6 +728,8 @@ test("the PCG library exposes 320 searchable assets and sets", () => {
   const chibiHero = getPcgPreset("chibi-hero");
   const stationeryDesk = getPcgPreset("set-stationery-desk");
   const constructionMachines = getPcgPreset("set-construction-machines");
+  const torchFlame = getPcgPreset("anim-torch-flame");
+  const chibiWalk = getPcgPreset("anim-chibi-hero-walk");
 
   assert.deepEqual({ kind: grass.kind, width: grass.width, height: grass.height, name: grass.name }, {
     kind: "asset", width: 1, height: 1, name: "Grass Top",
@@ -729,7 +746,14 @@ test("the PCG library exposes 320 searchable assets and sets", () => {
   assert.deepEqual({ category: constructionMachines.category, width: constructionMachines.width, height: constructionMachines.height, glyphs: constructionMachines.glyphs.length }, {
     category: "construction", width: 4, height: 4, glyphs: 16,
   });
+  assert.deepEqual({ kind: torchFlame.kind, width: torchFlame.width, height: torchFlame.height, frames: torchFlame.frames.length, duration: torchFlame.frameDurationMs }, {
+    kind: "animation", width: 1, height: 1, frames: 4, duration: 120,
+  });
+  assert.deepEqual({ kind: chibiWalk.kind, width: chibiWalk.width, height: chibiWalk.height, frames: chibiWalk.frames.length, duration: chibiWalk.frameDurationMs }, {
+    kind: "animation", width: 2, height: 2, frames: 4, duration: 120,
+  });
   assert.deepEqual(filterPcgPresets({ query: "fighter", kind: "asset" }).map(({ id }) => id), ["vehicle-fighter-jet"]);
+  assert.deepEqual(filterPcgPresets({ query: "torch", kind: "animation" }).map(({ id }) => id), ["anim-torch-flame"]);
 });
 
 test("applying a library preset reports and replaces only overlapping project data", () => {
@@ -819,6 +843,55 @@ test("expanded 16x16 assets and sets register editable composite groups", () => 
   });
   assert.ok(project.groups.some(({ id, width, height }) => id === "preset-set-construction-machines-16" && width === 4 && height === 4));
   assert.throws(() => applyPcgPreset(project, constructionMachines, 17), /32 slots/);
+});
+
+test("animation presets register editable clips and replace only overlapping data", () => {
+  const project = createProject({ withPreset: false });
+  const chibiWalk = getPcgPreset("anim-chibi-hero-walk");
+  project.glyphs[4][0] = 0xff;
+  project.groups = [
+    { id: "replace", name: "Replace", baseSlot: 4, width: 2, height: 2 },
+    { id: "keep", name: "Keep", baseSlot: 20, width: 1, height: 1 },
+  ];
+  project.animations = [
+    createAnimationClip({ id: "replace-animation", name: "Replace", baseSlot: 6, width: 1, height: 1 }),
+    createAnimationClip({ id: "keep-animation", name: "Keep", baseSlot: 24, width: 1, height: 1 }),
+    createAnimationClip({ id: "preset-animation-anim-chibi-hero-walk-4", name: "Keep generated id", baseSlot: 28, width: 1, height: 1 }),
+  ];
+
+  assert.deepEqual(inspectPcgAnimationPresetConflicts(project, chibiWalk, 4), {
+    startSlot: 4,
+    endSlot: 7,
+    occupiedSlots: [4],
+    groupIds: ["replace"],
+    animationIds: ["replace-animation"],
+  });
+
+  const result = applyPcgAnimationPreset(project, chibiWalk, 4);
+
+  assert.deepEqual(project.glyphs.slice(4, 8), chibiWalk.glyphs);
+  assert.deepEqual(project.names.slice(4, 8), chibiWalk.slotNames);
+  assert.deepEqual(project.groups.map(({ id }) => id), ["keep"]);
+  assert.deepEqual(project.animations.map(({ id }) => id), ["keep-animation", "preset-animation-anim-chibi-hero-walk-4", "preset-animation-anim-chibi-hero-walk-4-2"]);
+  assert.deepEqual(project.animations[2], {
+    id: "preset-animation-anim-chibi-hero-walk-4-2",
+    name: "Chibi Hero Walk",
+    baseSlot: 4,
+    width: 2,
+    height: 2,
+    frameDurationMs: 120,
+    frames: chibiWalk.frames,
+  });
+  assert.deepEqual(result, {
+    workspace: { baseSlot: 4, width: 2, height: 2 },
+    replacedSlotCount: 4,
+    removedGroupIds: ["replace"],
+    removedAnimationIds: ["replace-animation"],
+    animationId: "preset-animation-anim-chibi-hero-walk-4-2",
+  });
+  assert.match(exportAnimationAssembly(project.animations, { label: "LIBRARY_ANIMATIONS" }), /CHIBI_HERO_WALK_FRAME_COUNT: \.equ 4/);
+  assert.deepEqual(parseProject(serializeProject(project)).animations, project.animations);
+  assert.throws(() => applyPcgAnimationPreset(project, chibiWalk, 29), /32 slots/);
 });
 
 test("JSON serialization validates and preserves all glyph data", () => {

@@ -63,6 +63,14 @@ function fillMatrixRect(matrix, x, y, width, height) {
   }
 }
 
+function clearMatrixRect(matrix, x, y, width, height) {
+  for (let row = y; row < y + height; row += 1) {
+    for (let column = x; column < x + width; column += 1) {
+      setMatrixPixel(matrix, column, row, 0);
+    }
+  }
+}
+
 function drawMatrixLine(matrix, x0, y0, x1, y1) {
   let x = x0;
   let y = y0;
@@ -117,6 +125,86 @@ function sprite(id, name, category, tags, painter) {
     height: 2,
     glyphs: matrixGlyphs(matrix),
     slotNames: ["TL", "TR", "BL", "BR"].map((corner) => `${name} ${corner}`),
+  });
+}
+
+function animationPreset({ id, name, category, tags, width, height, slotNames, frameDurationMs, frames }) {
+  if (!Number.isInteger(frameDurationMs) || frameDurationMs < 16 || frameDurationMs > 60000) {
+    throw new RangeError("Animation frame duration must be between 16 and 60000 ms");
+  }
+  if (!Array.isArray(frames) || frames.length < 2) {
+    throw new TypeError("Animation presets require at least two frames");
+  }
+  const frameIds = new Set();
+  const normalizedFrames = frames.map((frame) => {
+    if (!frame || typeof frame.id !== "string" || !frame.id || frameIds.has(frame.id) || typeof frame.name !== "string" || !frame.name.trim()) {
+      throw new TypeError("Animation frame metadata is invalid");
+    }
+    frameIds.add(frame.id);
+    if (!Array.isArray(frame.glyphs) || frame.glyphs.length !== width * height || frame.glyphs.some((glyphData) => !Array.isArray(glyphData) || glyphData.length !== 8 || glyphData.some((value) => !Number.isInteger(value) || value < 0 || value > 0xff))) {
+      throw new TypeError("Animation frame glyph data is invalid");
+    }
+    return Object.freeze({
+      id: frame.id,
+      name: frame.name,
+      glyphs: freezeGlyphs(frame.glyphs),
+    });
+  });
+  const preview = createPreset({
+    id,
+    kind: "animation",
+    name,
+    category,
+    tags,
+    width,
+    height,
+    glyphs: normalizedFrames[0].glyphs,
+    slotNames,
+  });
+  return Object.freeze({
+    ...preview,
+    frameDurationMs,
+    frames: Object.freeze(normalizedFrames),
+  });
+}
+
+function animationTile(id, name, category, tags, frameDurationMs, frameRows) {
+  return animationPreset({
+    id,
+    name,
+    category,
+    tags,
+    width: 1,
+    height: 1,
+    slotNames: [name],
+    frameDurationMs,
+    frames: frameRows.map((rows, index) => ({
+      id: `frame-${index}`,
+      name: `Frame ${index + 1}`,
+      glyphs: [glyph(...rows)],
+    })),
+  });
+}
+
+function animationSprite(id, name, category, tags, frameDurationMs, painters) {
+  return animationPreset({
+    id,
+    name,
+    category,
+    tags,
+    width: 2,
+    height: 2,
+    slotNames: ["TL", "TR", "BL", "BR"].map((corner) => `${name} ${corner}`),
+    frameDurationMs,
+    frames: painters.map((painter, index) => {
+      const matrix = createMatrix();
+      painter(matrix);
+      return {
+        id: `frame-${index}`,
+        name: `Frame ${index + 1}`,
+        glyphs: matrixGlyphs(matrix),
+      };
+    }),
   });
 }
 
@@ -420,6 +508,118 @@ function chibiPainter({ hair = "short", accessory = "none", ears = "none", wings
     }
     setMatrixPixel(matrix, 6, 5, 0);
     setMatrixPixel(matrix, 10, 5, 0);
+  };
+}
+
+function chibiWalkPainter(phase) {
+  const legFrames = [
+    [[6, 13, 4, 15], [10, 13, 11, 15]],
+    [[6, 13, 6, 15], [10, 13, 13, 15]],
+    [[6, 13, 8, 15], [10, 13, 10, 15]],
+    [[6, 13, 3, 15], [10, 13, 10, 15]],
+  ];
+  return (matrix) => {
+    chibiPainter({ accessory: "sword" })(matrix);
+    clearMatrixRect(matrix, 3, 13, 11, 3);
+    legFrames[phase % legFrames.length].forEach(([x0, y0, x1, y1]) => drawMatrixLine(matrix, x0, y0, x1, y1));
+  };
+}
+
+function chibiKnightSlashPainter(phase) {
+  const bladeFrames = [
+    [[12, 10, 15, 8], [13, 9, 15, 10]],
+    [[12, 9, 15, 4], [11, 8, 14, 7]],
+    [[11, 10, 15, 12], [13, 11, 14, 14]],
+    [[12, 11, 14, 15], [11, 12, 15, 13]],
+  ];
+  return (matrix) => {
+    chibiPainter({ accessory: "helmet" })(matrix);
+    bladeFrames[phase % bladeFrames.length].forEach(([x0, y0, x1, y1]) => drawMatrixLine(matrix, x0, y0, x1, y1));
+  };
+}
+
+function chibiWizardCastPainter(phase) {
+  const orbFrames = [[11, 3, 1], [12, 2, 2], [13, 1, 3], [12, 2, 2]];
+  return (matrix) => {
+    chibiPainter({ accessory: "staff", hair: "spiky" })(matrix);
+    const [x, y, radius] = orbFrames[phase % orbFrames.length];
+    drawMatrixEllipse(matrix, x, y, radius, radius);
+  };
+}
+
+function fishSwimPainter(phase) {
+  const tailFrames = [
+    [[12, 8, 15, 4], [12, 8, 15, 12]],
+    [[12, 8, 15, 6], [12, 8, 15, 10]],
+    [[12, 8, 15, 2], [12, 8, 15, 14]],
+    [[12, 8, 15, 6], [12, 8, 15, 10]],
+  ];
+  return (matrix) => {
+    aquaticPainter({ fins: "side" })(matrix);
+    clearMatrixRect(matrix, 12, 2, 4, 13);
+    tailFrames[phase % tailFrames.length].forEach(([x0, y0, x1, y1]) => drawMatrixLine(matrix, x0, y0, x1, y1));
+  };
+}
+
+function propellerPlanePainter(phase) {
+  const propellerFrames = [
+    [[2, 4, 2, 12]],
+    [[0, 6, 4, 10]],
+    [[0, 8, 4, 8]],
+    [[0, 10, 4, 6]],
+  ];
+  return (matrix) => {
+    drawMatrixLine(matrix, 2, 8, 14, 8);
+    drawMatrixLine(matrix, 6, 8, 9, 3);
+    drawMatrixLine(matrix, 7, 8, 11, 12);
+    fillMatrixRect(matrix, 7, 7, 3, 3);
+    drawMatrixLine(matrix, 12, 8, 15, 5);
+    drawMatrixLine(matrix, 12, 8, 15, 11);
+    propellerFrames[phase % propellerFrames.length].forEach(([x0, y0, x1, y1]) => drawMatrixLine(matrix, x0, y0, x1, y1));
+  };
+}
+
+function excavatorDigPainter(phase) {
+  const armFrames = [
+    [[10, 7, 14, 3], [14, 3, 15, 6]],
+    [[10, 7, 14, 5], [14, 5, 15, 9]],
+    [[10, 7, 13, 9], [13, 9, 14, 13]],
+    [[10, 7, 12, 6], [12, 6, 15, 4]],
+  ];
+  return (matrix) => {
+    fillMatrixRect(matrix, 2, 10, 10, 3);
+    fillMatrixRect(matrix, 6, 6, 5, 4);
+    drawMatrixEllipse(matrix, 7, 13, 6, 2);
+    armFrames[phase % armFrames.length].forEach(([x0, y0, x1, y1]) => drawMatrixLine(matrix, x0, y0, x1, y1));
+  };
+}
+
+function mineCartRollPainter(phase) {
+  const wheelOffsets = [0, 1, 0, -1];
+  return (matrix) => {
+    const offset = wheelOffsets[phase % wheelOffsets.length];
+    fillMatrixRect(matrix, 3, 8, 10, 4);
+    drawMatrixLine(matrix, 3, 8, 5, 4);
+    drawMatrixLine(matrix, 5, 4, 11, 4);
+    drawMatrixLine(matrix, 11, 4, 13, 8);
+    drawMatrixEllipse(matrix, 5 + offset, 13, 2, 2);
+    drawMatrixEllipse(matrix, 11 + offset, 13, 2, 2);
+    drawMatrixLine(matrix, 1, 15, 15, 15);
+  };
+}
+
+function windmillTurnPainter(phase) {
+  const bladeFrames = [
+    [[8, 4, 8, 0], [8, 4, 12, 4], [8, 4, 8, 8], [8, 4, 4, 4]],
+    [[8, 4, 11, 1], [8, 4, 11, 7], [8, 4, 5, 7], [8, 4, 5, 1]],
+    [[8, 4, 12, 4], [8, 4, 8, 8], [8, 4, 4, 4], [8, 4, 8, 0]],
+    [[8, 4, 11, 7], [8, 4, 5, 7], [8, 4, 5, 1], [8, 4, 11, 1]],
+  ];
+  return (matrix) => {
+    fillMatrixRect(matrix, 5, 7, 7, 8);
+    drawMatrixLine(matrix, 4, 15, 13, 15);
+    bladeFrames[phase % bladeFrames.length].forEach(([x0, y0, x1, y1]) => drawMatrixLine(matrix, x0, y0, x1, y1));
+    drawMatrixEllipse(matrix, 8, 4, 1, 1);
   };
 }
 
@@ -1085,6 +1285,101 @@ const FLORA_ASSETS = [
   })),
 ];
 
+const ANIMATION_PRESETS = [
+  animationTile("anim-water-ripple", "Water Ripple", "top-view", ["animation", "water", "ripple"], 160, [
+    ["........", "..##....", "........", "....##..", "........", ".##.....", "........", "........"],
+    ["...##...", "........", ".##.....", "........", ".....##.", "........", "..##....", "........"],
+    ["........", ".##.....", "........", ".....##.", "........", "...##...", "........", ".##....."],
+    [".....##.", "........", "...##...", "........", ".##.....", "........", ".....##.", "........"],
+  ]),
+  animationTile("anim-waterfall-flow", "Waterfall Flow", "side-view", ["animation", "water", "fall"], 100, [
+    [".##..##.", "#..##..#", ".##..##.", "#..##..#", ".##..##.", "#..##..#", ".##..##.", "#..##..#"],
+    ["#..##..#", ".##..##.", "#..##..#", ".##..##.", "#..##..#", ".##..##.", "#..##..#", ".##..##."],
+    ["..##..##", ".#..##..", "##..##..", "..##..##", ".#..##..", "##..##..", "..##..##", ".#..##.."],
+    ["##..##..", ".##..##.", "..##..##", "##..##..", ".##..##.", "..##..##", "##..##..", ".##..##."],
+  ]),
+  animationTile("anim-lava-bubble", "Lava Bubble", "side-view", ["animation", "lava", "hazard"], 140, [
+    ["........", "........", "...##...", "........", "########", "#.##.##.", "########", "########"],
+    ["........", "...##...", "..####..", "...##...", "########", "##.##.##", "########", "########"],
+    ["...##...", "..####..", ".######.", "..####..", "########", "#.##.##.", "########", "########"],
+    ["........", "..####..", "...##...", "........", "########", "##.##.##", "########", "########"],
+  ]),
+  animationTile("anim-torch-flame", "Torch Flame", "cave", ["animation", "fire", "torch"], 120, [
+    ["...#....", "..###...", ".##.##..", "...#....", "...#....", "..###...", "..###...", "........"],
+    ["....#...", "...###..", "..##.##.", "...###..", "....#...", "...###..", "...###..", "........"],
+    ["...#....", ".#####..", "..###...", "...#....", "...#....", "..###...", "..###...", "........"],
+    ["..#.....", ".###....", ".##.##..", "...##...", "...#....", "..###...", "..###...", "........"],
+  ]),
+  animationTile("anim-construction-beacon", "Construction Beacon", "construction", ["animation", "construction", "warning"], 320, [
+    ["........", "...##...", "..####..", "...##...", "...##...", "..####..", ".######.", "########"],
+    ["........", "........", "...##...", "...##...", "...##...", "...##...", ".######.", "########"],
+  ]),
+  animationTile("anim-traffic-light", "Traffic Light", "city", ["animation", "city", "traffic"], 600, [
+    ["..####..", ".##..##.", ".##..##.", ".##..##.", ".##..##.", ".##..##.", "..####..", "...##..."],
+    ["..####..", ".##..##.", ".##..##.", ".######.", ".##..##.", ".##..##.", "..####..", "...##..."],
+    ["..####..", ".##..##.", ".##..##.", ".##..##.", ".##..##.", ".######.", "..####..", "...##..."],
+  ]),
+  animationTile("anim-led-pulse", "LED Pulse", "electronics", ["animation", "electronics", "led"], 120, [
+    ["........", "........", "........", "...##...", "...##...", "........", "........", "........"],
+    ["........", "........", "..####..", ".######.", ".######.", "..####..", "........", "........"],
+    ["........", ".######.", "########", "########", "########", "########", ".######.", "........"],
+    ["........", "........", "..####..", ".######.", ".######.", "..####..", "........", "........"],
+  ]),
+  animationTile("anim-bubble-rise", "Bubble Rise", "underwater", ["animation", "underwater", "bubble"], 140, [
+    ["........", "........", "........", "........", "........", ".....##.", ".....##.", "........"],
+    ["........", "........", "........", "....##..", "....##..", "........", "........", "........"],
+    ["........", "...##...", "...##...", "........", "........", "........", "........", "........"],
+    ["..##....", "..##....", "........", "........", "........", "........", "........", "........"],
+  ]),
+  animationTile("anim-leaf-rustle", "Leaf Rustle", "forest", ["animation", "forest", "leaf"], 180, [
+    ["........", "...#....", ".#####..", "##.####.", ".#####..", "...#....", "........", "........"],
+    ["........", "....#...", "..#####.", ".####.##", "..#####.", "....#...", "........", "........"],
+    ["........", ".....#..", "...#####", "##.####.", "...#####", ".....#..", "........", "........"],
+    ["........", "....#...", ".####.##", "..#####.", ".####.##", "....#...", "........", "........"],
+  ]),
+  animationTile("anim-flower-bloom", "Flower Bloom", "flora", ["animation", "flora", "flower"], 180, [
+    ["........", "........", "...##...", "...##...", "...##...", "..####..", "...##...", "........"],
+    ["........", "...##...", ".######.", "...##...", ".######.", "..####..", "...##...", "........"],
+    ["...##...", ".######.", "##.##.##", ".######.", "##.##.##", "..####..", "...##...", "........"],
+    ["........", ".######.", "##.##.##", ".######.", ".######.", "..####..", "...##...", "........"],
+  ]),
+  animationTile("anim-pencil-write", "Pencil Write", "stationery", ["animation", "stationery", "writing"], 130, [
+    ["......##", ".....##.", "....##..", "...##...", "..##....", ".##.....", "........", "........"],
+    ["......##", ".....##.", "....##..", "...##...", "..##....", ".######.", "........", "........"],
+    ["......##", ".....##.", "....##..", "...##...", "..##....", ".######.", "########", "........"],
+  ]),
+  animationTile("anim-village-lamp", "Village Lamp", "village", ["animation", "village", "light"], 280, [
+    ["...##...", "..####..", "...##...", "...##...", "...##...", "...##...", "...##...", "..####.."],
+    ["..####..", ".######.", "..####..", "...##...", "...##...", "...##...", "...##...", "..####.."],
+    [".######.", "########", ".######.", "...##...", "...##...", "...##...", "...##...", "..####.."],
+    ["..####..", ".######.", "..####..", "...##...", "...##...", "...##...", "...##...", "..####.."],
+  ]),
+  animationSprite("anim-chibi-hero-walk", "Chibi Hero Walk", "chibi", ["animation", "chibi", "walk"], 120, [
+    chibiWalkPainter(0), chibiWalkPainter(1), chibiWalkPainter(2), chibiWalkPainter(3),
+  ]),
+  animationSprite("anim-chibi-knight-slash", "Chibi Knight Slash", "chibi", ["animation", "chibi", "action"], 100, [
+    chibiKnightSlashPainter(0), chibiKnightSlashPainter(1), chibiKnightSlashPainter(2), chibiKnightSlashPainter(3),
+  ]),
+  animationSprite("anim-chibi-wizard-cast", "Chibi Wizard Cast", "chibi", ["animation", "chibi", "magic"], 110, [
+    chibiWizardCastPainter(0), chibiWizardCastPainter(1), chibiWizardCastPainter(2), chibiWizardCastPainter(3),
+  ]),
+  animationSprite("anim-fish-swim", "Fish Swim", "creatures", ["animation", "fish", "underwater"], 130, [
+    fishSwimPainter(0), fishSwimPainter(1), fishSwimPainter(2), fishSwimPainter(3),
+  ]),
+  animationSprite("anim-propeller-plane", "Propeller Plane", "vehicles", ["animation", "aircraft", "propeller"], 80, [
+    propellerPlanePainter(0), propellerPlanePainter(1), propellerPlanePainter(2), propellerPlanePainter(3),
+  ]),
+  animationSprite("anim-excavator-dig", "Excavator Dig", "construction", ["animation", "construction", "machine"], 140, [
+    excavatorDigPainter(0), excavatorDigPainter(1), excavatorDigPainter(2), excavatorDigPainter(3),
+  ]),
+  animationSprite("anim-mine-cart-roll", "Mine Cart Roll", "cave", ["animation", "cave", "cart"], 120, [
+    mineCartRollPainter(0), mineCartRollPainter(1), mineCartRollPainter(2), mineCartRollPainter(3),
+  ]),
+  animationSprite("anim-windmill-turn", "Windmill Turn", "village", ["animation", "village", "windmill"], 150, [
+    windmillTurnPainter(0), windmillTurnPainter(1), windmillTurnPainter(2), windmillTurnPainter(3),
+  ]),
+];
+
 const ASSET_PRESETS = [
   ...SIDE_VIEW_ASSETS,
   ...TOP_VIEW_ASSETS,
@@ -1219,9 +1514,9 @@ const SET_PRESETS = [
   spriteSet("set-flora-garden", "Flora Garden", "flora", ["set", "flora"], ["flora-palm-tree", "flora-cherry-tree", "flora-cactus-tall", "flora-rose-bush"]),
 ];
 
-export const PCG_PRESETS = Object.freeze([...ASSET_PRESETS, ...SET_PRESETS]);
+export const PCG_PRESETS = Object.freeze([...ASSET_PRESETS, ...SET_PRESETS, ...ANIMATION_PRESETS]);
 
-if (ASSET_PRESETS.length !== 288 || SET_PRESETS.length !== 32 || PCG_PRESETS.length !== 320 || new Set(PCG_PRESETS.map(({ id }) => id)).size !== PCG_PRESETS.length) {
+if (ASSET_PRESETS.length !== 288 || SET_PRESETS.length !== 32 || ANIMATION_PRESETS.length !== 20 || PCG_PRESETS.length !== 340 || new Set(PCG_PRESETS.map(({ id }) => id)).size !== PCG_PRESETS.length) {
   throw new Error("PCG preset catalog is incomplete");
 }
 
@@ -1260,8 +1555,8 @@ export function filterPcgPresets({ category = "all", kind = "all", size = "all",
   const matches = PCG_PRESETS.filter((preset) => {
     if (category !== "all" && preset.category !== category) return false;
     if (kind !== "all" && preset.kind !== kind) return false;
-    if (size === "8x8" && !(preset.kind === "asset" && preset.width === 1 && preset.height === 1)) return false;
-    if (size === "16x16" && !(preset.kind === "asset" && preset.width === 2 && preset.height === 2)) return false;
+    if (size === "8x8" && !(["asset", "animation"].includes(preset.kind) && preset.width === 1 && preset.height === 1)) return false;
+    if (size === "16x16" && !(["asset", "animation"].includes(preset.kind) && preset.width === 2 && preset.height === 2)) return false;
     if (size === "sets" && preset.kind !== "set") return false;
     if (allowedIds && !allowedIds.has(preset.id)) return false;
     if (!normalizedQuery) return true;
