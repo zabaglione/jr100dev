@@ -17,13 +17,15 @@ npm run serve
 
 ## 操作と出力
 
-- BGMとSFXを左側の一覧から選び、ピアノロールを左クリックして音を置く。右クリックは休符。
+- BGMとSFXは「サンプル（読み取り専用）」と「ユーザー資産」に分かれる。サンプルは`ユーザーへコピー`で複製してから編集する。
+- 各資産の`PRG`チェックで出力対象を選ぶ。`sound_assets.inc`と確認用PRGには選択済みの資産だけが入る。確認用PRGの作成にはBGMを1曲以上選ぶ。
+- ユーザー資産を左側の一覧から選び、ピアノロールを左クリックして音を置く。右クリックは休符。
 - BGMのセルはプロジェクトの`Game tick Hz`と`BGM grid ticks`で決まる。ゲーム側は同じ周期で`SOUND_TICK`を1回呼ぶ。
 - SFXのセルは10msで、最大50セルである。SFXを再生している間はゲームを停止する。
 - `Download sound_assets.inc`はゲームに取り込むアセンブリデータを出力する。
-- `Build demo PRG`は選択プロジェクトの資産を含む確認用PRG、BIN、MAP、INCをZIPで出力する。既存ゲームのファイルは変更しない。
+- `Build demo PRG`は選択済み資産を含む確認用PRG、BIN、MAP、INCをZIPで出力する。既存ゲームのファイルは変更しない。
 
-初期プロジェクトの2曲はパブリックドメインの原曲を基にした独自の単音縮約です。来歴と利用方針は[`docs/sound_samples.md`](../../docs/sound_samples.md)を参照してください。
+初期プロジェクトには、パブリックドメインの原曲を基にした独自単音縮約のBGM 12曲と、オリジナル効果音11種類を収録します。来歴と利用方針は[`docs/sound_samples.md`](../../docs/sound_samples.md)を参照してください。
 
 UIの確認観点と自動回帰の範囲は[`UX_VERIFICATION.md`](UX_VERIFICATION.md)に記録しています。
 

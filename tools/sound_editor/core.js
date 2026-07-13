@@ -20,37 +20,104 @@ export const PITCHES = Object.freeze(Array.from({ length: MAX_PITCH }, (_, index
 const ODE_TO_JOY = [17, 17, 18, 20, 20, 18, 17, 15, 13, 13, 15, 17, 17, 15, 15, 0];
 const AH_VOUS_DIRAIJE = [13, 13, 20, 20, 22, 22, 20, 0, 18, 18, 17, 17, 15, 15, 13, 0];
 
+const SAMPLE_TRACKS = Object.freeze([
+  ["ode-to-joy-opening", "Ode To Joy Opening", ODE_TO_JOY],
+  ["ah-vous-diraije-opening", "Ah Vous Dirai-je Opening", AH_VOUS_DIRAIJE],
+  ["fur-elise-opening", "Fur Elise Opening", [29, 28, 29, 28]],
+  ["bach-prelude-c-opening", "Bach Prelude In C Opening", [13, 17, 20, 25]],
+  ["eine-kleine-nachtmusik-opening", "Eine Kleine Nachtmusik Opening", [20, 15, 20, 15]],
+  ["vivaldi-spring-opening", "Vivaldi Spring Opening", [20, 25, 24, 22]],
+  ["handel-water-music-opening", "Handel Water Music Opening", [15, 20, 22, 24]],
+  ["pachelbel-canon-opening", "Pachelbel Canon Opening", [15, 22, 24, 20]],
+  ["rameau-gavotte-opening", "Rameau Gavotte Opening", [13, 15, 17, 18]],
+  ["haydn-surprise-opening", "Haydn Surprise Opening", [20, 20, 22, 24]],
+  ["swan-lake-opening", "Swan Lake Opening", [22, 17, 15, 13]],
+  ["carmen-habanera-opening", "Carmen Habanera Opening", [20, 22, 23, 24]],
+]);
+
+const SAMPLE_EFFECTS = Object.freeze([
+  ["blip", "Blip", [37, 41, 45, 0]],
+  ["click", "Click", [40, 0]],
+  ["laser", "Laser", [45, 41, 37, 0]],
+  ["jump", "Jump", [25, 29, 34, 0]],
+  ["hit", "Hit", [25, 17, 0]],
+  ["explode", "Explode", [17, 24, 15, 0]],
+  ["pickup", "Pickup", [29, 34, 0]],
+  ["alert", "Alert", [37, 37, 0]],
+  ["start", "Start", [25, 29, 32, 37, 0]],
+  ["game-over", "Game Over", [25, 20, 13, 0]],
+  ["coin", "Coin", [37, 44, 0]],
+]);
+
 export function createProject() {
   return {
     version: PROJECT_VERSION,
     name: "JR-100 Sound Project",
     tickHz: DEFAULT_TICK_HZ,
     gridTicks: DEFAULT_GRID_TICKS,
-    tracks: [
-      {
-        id: "ode-to-joy-opening",
-        name: "Ode To Joy Opening",
-        notes: [...ODE_TO_JOY],
-        loopCell: 0,
-      },
-      {
-        id: "ah-vous-diraije-opening",
-        name: "Ah Vous Dirai-je Opening",
-        notes: [...AH_VOUS_DIRAIJE],
-        loopCell: 0,
-      },
-    ],
-    effects: [
-      {
-        id: "blip",
-        name: "Blip",
-        notes: [37, 41, 45, 0],
-      },
-    ],
+    tracks: SAMPLE_TRACKS.map(([id, name, notes], index) => ({
+      id,
+      name,
+      notes: [...notes],
+      loopCell: 0,
+      origin: "sample",
+      included: index === 0,
+    })),
+    effects: SAMPLE_EFFECTS.map(([id, name, notes], index) => ({
+      id,
+      name,
+      notes: [...notes],
+      origin: "sample",
+      included: index === 0,
+    })),
   };
 }
 
-export function validateProject(project) {
+export function upgradeStarterSamples(project) {
+  validateProject(project, { allowLegacyBuiltInIds: true });
+  const starter = createProject();
+  const upgraded = {
+    ...project,
+    tracks: upgradeAssets(project.tracks, starter.tracks, "BGM"),
+    effects: upgradeAssets(project.effects, starter.effects, "SFX"),
+  };
+  validateProject(upgraded);
+  return upgraded;
+}
+
+function upgradeAssets(assets, starterAssets, type) {
+  const originalIds = new Set(assets.map(({ id }) => id));
+  const usedIds = new Set();
+  const existingAssets = assets.map((asset) => {
+    const sample = starterAssets.find(({ id }) => id === asset.id);
+    if (asset.origin === undefined && sample && matchesBuiltInSample(asset, type)) {
+      usedIds.add(asset.id);
+      return { ...asset, origin: "sample", included: asset.included ?? true };
+    }
+    const id = sample && asset.origin === undefined
+      ? nextMigratedId(asset.id, new Set([...originalIds, ...usedIds]))
+      : asset.id;
+    usedIds.add(id);
+    return id === asset.id ? asset : { ...asset, id };
+  });
+  return [
+    ...existingAssets,
+    ...starterAssets.filter(({ id }) => !usedIds.has(id)),
+  ];
+}
+
+function nextMigratedId(id, usedIds) {
+  const base = `user-${id}`;
+  let candidate = base;
+  let index = 2;
+  while (usedIds.has(candidate)) {
+    candidate = `${base}-${index}`;
+    index += 1;
+  }
+  return candidate;
+}
+
+export function validateProject(project, { allowLegacyBuiltInIds = false } = {}) {
   if (!project || typeof project !== "object") {
     throw new TypeError("Sound project is required");
   }
@@ -76,35 +143,51 @@ export function validateProject(project) {
   const trackLabels = new Set();
   const effectLabels = new Set();
   for (const track of project.tracks) {
-    validateTrack(track, ids, trackLabels);
+    validateTrack(track, ids, trackLabels, allowLegacyBuiltInIds);
     compileBgmDescriptor(track, project.gridTicks);
   }
   for (const effect of project.effects) {
-    validateEffect(effect, ids, effectLabels);
+    validateEffect(effect, ids, effectLabels, allowLegacyBuiltInIds);
     compileSfx(effect);
   }
   return project;
 }
 
-function validateTrack(track, ids, labels) {
-  validateAssetIdentity(track, ids, labels, "BGM");
+function validateTrack(track, ids, labels, allowLegacyBuiltInIds) {
+  validateAssetIdentity(track, ids, labels, "BGM", allowLegacyBuiltInIds);
   validateNotes(track.notes, "BGM notes");
   if (!Number.isInteger(track.loopCell) || track.loopCell < -1 || track.loopCell >= track.notes.length) {
     throw new RangeError("loopCell must be -1 or a BGM cell index");
   }
 }
 
-function validateEffect(effect, ids, labels) {
-  validateAssetIdentity(effect, ids, labels, "SFX");
+function validateEffect(effect, ids, labels, allowLegacyBuiltInIds) {
+  validateAssetIdentity(effect, ids, labels, "SFX", allowLegacyBuiltInIds);
   validateNotes(effect.notes, "SFX notes");
 }
 
-function validateAssetIdentity(asset, ids, labels, type) {
+function validateAssetIdentity(asset, ids, labels, type, allowLegacyBuiltInIds) {
   if (!asset || typeof asset !== "object" || typeof asset.id !== "string" || !asset.id.trim()) {
     throw new TypeError("Sound asset id is required");
   }
   if (typeof asset.name !== "string" || !asset.name.trim()) {
     throw new TypeError("Sound asset name is required");
+  }
+  if (asset.origin !== undefined && asset.origin !== "sample" && asset.origin !== "user") {
+    throw new TypeError("Sound asset origin must be sample or user");
+  }
+  if (asset.included !== undefined && typeof asset.included !== "boolean") {
+    throw new TypeError("Sound asset included must be boolean");
+  }
+  const builtInSample = findBuiltInSample(asset.id, type);
+  if (asset.origin === "sample" && !matchesBuiltInSample(asset, type)) {
+    throw new TypeError("Sample assets must match the built-in library");
+  }
+  if (asset.origin === "user" && builtInSample) {
+    throw new TypeError("Built-in sample ids are reserved");
+  }
+  if (asset.origin === undefined && builtInSample && !allowLegacyBuiltInIds) {
+    throw new TypeError("Built-in sample assets require a sample origin");
   }
   if (ids.has(asset.id)) {
     throw new TypeError("Sound asset ids must be unique");
@@ -115,6 +198,25 @@ function validateAssetIdentity(asset, ids, labels, type) {
     throw new TypeError(`${type} labels must be unique after normalization`);
   }
   labels.add(label);
+}
+
+function matchesBuiltInSample(asset, type) {
+  const sample = findBuiltInSample(asset.id, type);
+  if (!sample) return false;
+  const [, name, notes] = sample;
+  if (asset.name !== name || !sameNotes(asset.notes, notes)) return false;
+  return type !== "BGM" || asset.loopCell === 0;
+}
+
+function findBuiltInSample(id, type) {
+  const samples = type === "BGM" ? SAMPLE_TRACKS : SAMPLE_EFFECTS;
+  return samples.find(([sampleId]) => sampleId === id);
+}
+
+function sameNotes(notes, expected) {
+  return Array.isArray(notes)
+    && notes.length === expected.length
+    && notes.every((pitch, index) => pitch === expected[index]);
 }
 
 function validateNotes(notes, field) {
@@ -181,7 +283,7 @@ export function exportAssembly(project) {
     "",
     ".data",
   ];
-  for (const track of project.tracks) {
+  for (const track of project.tracks.filter(isIncluded)) {
     const label = `SOUND_BGM_${normalizeAssemblyLabel(track.id)}`;
     const { events, loopEvent } = compileBgmDescriptor(track, project.gridTicks);
     lines.push(`${label}:`);
@@ -190,7 +292,7 @@ export function exportAssembly(project) {
     lines.push(`${label}_EVENTS:`);
     appendEvents(lines, events);
   }
-  for (const effect of project.effects) {
+  for (const effect of project.effects.filter(isIncluded)) {
     const label = `SOUND_SFX_${normalizeAssemblyLabel(effect.id)}`;
     const events = compileSfx(effect);
     lines.push(`${label}:`);
@@ -198,6 +300,10 @@ export function exportAssembly(project) {
     appendEvents(lines, events);
   }
   return `${lines.join("\n")}\n`;
+}
+
+function isIncluded(asset) {
+  return asset.included !== false;
 }
 
 function appendEvents(lines, events) {
@@ -222,6 +328,6 @@ export function parseProject(text) {
   } catch (error) {
     throw new TypeError(`Invalid sound project JSON: ${error.message}`);
   }
-  validateProject(project);
+  validateProject(project, { allowLegacyBuiltInIds: true });
   return project;
 }

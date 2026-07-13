@@ -9,6 +9,7 @@ import {
   exportAssembly,
   parseProject,
   serializeProject,
+  upgradeStarterSamples,
   validateProject,
 } from "./core.js";
 import { getLanguage, setLanguage, t, translateDocument } from "./i18n.js";
@@ -33,6 +34,8 @@ const elements = {
   loopCell: document.querySelector("#loop-cell"),
   loopControl: document.querySelector("#loop-control"),
   rollHelp: document.querySelector("#roll-help"),
+  copySample: document.querySelector("#copy-sample"),
+  deleteAsset: document.querySelector("#delete-asset"),
   status: document.querySelector("#status"),
   language: document.querySelector("#language-select"),
   importFile: document.querySelector("#import-file"),
@@ -50,7 +53,7 @@ elements.language.value = getLanguage();
 function restoreProject() {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? parseProject(stored) : createProject();
+    return stored ? upgradeStarterSamples(parseProject(stored)) : createProject();
   } catch {
     return createProject();
   }
@@ -58,6 +61,14 @@ function restoreProject() {
 
 function currentAsset() {
   return active.kind === "track" ? project.tracks[active.index] : project.effects[active.index];
+}
+
+function isSampleAsset(asset) {
+  return asset.origin === "sample";
+}
+
+function isIncluded(asset) {
+  return asset.included !== false;
 }
 
 function persist(message = t("status.saved")) {
@@ -85,6 +96,7 @@ function render() {
   renderAssetList(elements.effectList, project.effects, "effect");
   const asset = currentAsset();
   const isTrack = active.kind === "track";
+  const locked = isSampleAsset(asset);
   cursor.column = Math.min(cursor.column, (isTrack ? 255 : MAX_SFX_UNITS) - 1);
   elements.assetKind.textContent = isTrack ? t("editor.bgm") : t("editor.sfx");
   elements.assetTitle.textContent = asset.name;
@@ -94,14 +106,54 @@ function render() {
   elements.assetLength.max = isTrack ? "255" : String(MAX_SFX_UNITS);
   elements.loopControl.hidden = !isTrack;
   elements.loopCell.value = isTrack ? asset.loopCell : -1;
-  elements.rollHelp.textContent = isTrack
+  elements.rollHelp.textContent = locked
+    ? t("editor.sampleHelp")
+    : isTrack
     ? t("editor.bgmHelp", { ticks: project.gridTicks })
     : t("editor.sfxHelp");
+  for (const control of [elements.assetName, elements.assetId, elements.assetLength, elements.loopCell]) {
+    control.disabled = locked;
+  }
+  elements.copySample.hidden = !locked;
+  elements.deleteAsset.hidden = locked;
+  canvas.setAttribute("aria-disabled", String(locked));
+  canvas.tabIndex = locked ? -1 : 0;
+  canvas.classList.toggle("locked", locked);
   drawRoll();
 }
 
 function renderAssetList(container, assets, kind) {
-  container.replaceChildren(...assets.map((asset, index) => {
+  const groups = [
+    ["sample", t("assets.samples")],
+    ["user", t("assets.userAssets")],
+  ];
+  const content = [];
+  for (const [origin, title] of groups) {
+    const groupAssets = assets
+      .map((asset, index) => ({ asset, index }))
+      .filter(({ asset }) => (origin === "sample" ? isSampleAsset(asset) : !isSampleAsset(asset)));
+    if (!groupAssets.length) continue;
+    const heading = document.createElement("h3");
+    heading.className = "asset-group-heading";
+    heading.textContent = title;
+    content.push(heading);
+    for (const { asset, index } of groupAssets) {
+      const row = document.createElement("div");
+      row.className = "asset-row";
+      const inclusion = document.createElement("label");
+      inclusion.className = "include-control";
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.checked = isIncluded(asset);
+      input.setAttribute("aria-label", t("assets.includeAsset", { name: asset.name }));
+      input.addEventListener("change", () => {
+        asset.included = input.checked;
+        persist();
+        render();
+      });
+      const marker = document.createElement("span");
+      marker.textContent = t("assets.include");
+      inclusion.append(input, marker);
     const button = document.createElement("button");
     button.type = "button";
     button.className = `asset-item${active.kind === kind && active.index === index ? " active" : ""}`;
@@ -115,8 +167,11 @@ function renderAssetList(container, assets, kind) {
       stopPreview();
       render();
     });
-    return button;
-  }));
+      row.append(inclusion, button);
+      content.push(row);
+    }
+  }
+  container.replaceChildren(...content);
 }
 
 function drawRoll() {
@@ -175,6 +230,7 @@ function updateProjectSettings() {
 
 function updateAssetFields() {
   const asset = currentAsset();
+  if (isSampleAsset(asset)) return;
   asset.name = elements.assetName.value.trim() || asset.name;
   asset.id = elements.assetId.value.trim() || asset.id;
   const maximum = active.kind === "track" ? 255 : MAX_SFX_UNITS;
@@ -243,6 +299,10 @@ function download(name, content, type) {
 async function buildDemo() {
   try {
     validateProject(project);
+    if (!project.tracks.some(isIncluded)) {
+      setStatus(t("error.selectedBgmRequired"), true);
+      return;
+    }
     const response = await fetch("/api/build", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -257,14 +317,27 @@ async function buildDemo() {
 }
 
 function addTrack() {
-  project.tracks.push({ id: nextAssetId("track"), name: t("asset.newTrack"), notes: Array(16).fill(0), loopCell: 0 });
+  project.tracks.push({
+    id: nextAssetId("track"),
+    name: t("asset.newTrack"),
+    notes: Array(16).fill(0),
+    loopCell: 0,
+    origin: "user",
+    included: true,
+  });
   active = { kind: "track", index: project.tracks.length - 1 };
   persist();
   render();
 }
 
 function addEffect() {
-  project.effects.push({ id: nextAssetId("effect"), name: t("asset.newEffect"), notes: Array(8).fill(0) });
+  project.effects.push({
+    id: nextAssetId("effect"),
+    name: t("asset.newEffect"),
+    notes: Array(8).fill(0),
+    origin: "user",
+    included: true,
+  });
   active = { kind: "effect", index: project.effects.length - 1 };
   persist();
   render();
@@ -272,6 +345,10 @@ function addEffect() {
 
 function deleteAsset() {
   const assets = active.kind === "track" ? project.tracks : project.effects;
+  if (isSampleAsset(currentAsset())) {
+    setStatus(t("error.sampleLocked"), true);
+    return;
+  }
   if (active.kind === "track" && assets.length === 1) {
     setStatus(t("error.bgmRequired"), true);
     return;
@@ -286,6 +363,23 @@ function deleteAsset() {
   render();
 }
 
+function copySampleToUserAssets() {
+  const sample = currentAsset();
+  if (!isSampleAsset(sample)) return;
+  const assets = active.kind === "track" ? project.tracks : project.effects;
+  const copied = {
+    ...sample,
+    id: nextAssetId(`${active.kind}-copy`),
+    name: `${sample.name} Copy`,
+    notes: [...sample.notes],
+    origin: "user",
+  };
+  assets.push(copied);
+  active = { kind: active.kind, index: assets.length - 1 };
+  persist(t("status.sampleCopied"));
+  render();
+}
+
 function nextAssetId(prefix) {
   const existing = new Set([...project.tracks, ...project.effects].map(({ id }) => id));
   let number = 1;
@@ -295,6 +389,7 @@ function nextAssetId(prefix) {
 
 function editRollCell(column, pitch) {
   const asset = currentAsset();
+  if (isSampleAsset(asset)) return;
   const maximum = active.kind === "track" ? 255 : MAX_SFX_UNITS;
   if (column < 0 || column >= maximum || pitch < 0 || pitch > MAX_PITCH) return;
   while (asset.notes.length <= column) asset.notes.push(0);
@@ -349,7 +444,7 @@ elements.importFile.addEventListener("change", async () => {
   const [file] = elements.importFile.files;
   if (!file) return;
   try {
-    project = parseProject(await file.text());
+    project = upgradeStarterSamples(parseProject(await file.text()));
     active = { kind: "track", index: 0 };
     persist(t("status.projectLoaded"));
     render();
@@ -363,6 +458,7 @@ document.querySelector("#build-prg").addEventListener("click", buildDemo);
 document.querySelector("#add-track").addEventListener("click", addTrack);
 document.querySelector("#add-effect").addEventListener("click", addEffect);
 document.querySelector("#delete-asset").addEventListener("click", deleteAsset);
+elements.copySample.addEventListener("click", copySampleToUserAssets);
 document.querySelector("#play-asset").addEventListener("click", playAsset);
 document.querySelector("#stop-preview").addEventListener("click", stopPreview);
 for (const element of [elements.projectName, elements.tickHz, elements.gridTicks]) element.addEventListener("change", updateProjectSettings);
@@ -372,11 +468,6 @@ elements.language.addEventListener("change", () => {
   translateDocument();
   render();
   setStatus(t("status.languageChanged"));
-});
-elements.language.addEventListener("change", () => {
-  setLanguage(elements.language.value);
-  translateDocument();
-  render();
 });
 
 render();

@@ -29,6 +29,47 @@ MAX_PITCH = 48
 MAX_SFX_UNITS = 50
 MAX_REQUEST_BYTES = 1_000_000
 
+SAMPLE_TRACKS = {
+    "ode-to-joy-opening": (
+        "Ode To Joy Opening",
+        (17, 17, 18, 20, 20, 18, 17, 15, 13, 13, 15, 17, 17, 15, 15, 0),
+        0,
+    ),
+    "ah-vous-diraije-opening": (
+        "Ah Vous Dirai-je Opening",
+        (13, 13, 20, 20, 22, 22, 20, 0, 18, 18, 17, 17, 15, 15, 13, 0),
+        0,
+    ),
+    "fur-elise-opening": ("Fur Elise Opening", (29, 28, 29, 28), 0),
+    "bach-prelude-c-opening": ("Bach Prelude In C Opening", (13, 17, 20, 25), 0),
+    "eine-kleine-nachtmusik-opening": (
+        "Eine Kleine Nachtmusik Opening",
+        (20, 15, 20, 15),
+        0,
+    ),
+    "vivaldi-spring-opening": ("Vivaldi Spring Opening", (20, 25, 24, 22), 0),
+    "handel-water-music-opening": ("Handel Water Music Opening", (15, 20, 22, 24), 0),
+    "pachelbel-canon-opening": ("Pachelbel Canon Opening", (15, 22, 24, 20), 0),
+    "rameau-gavotte-opening": ("Rameau Gavotte Opening", (13, 15, 17, 18), 0),
+    "haydn-surprise-opening": ("Haydn Surprise Opening", (20, 20, 22, 24), 0),
+    "swan-lake-opening": ("Swan Lake Opening", (22, 17, 15, 13), 0),
+    "carmen-habanera-opening": ("Carmen Habanera Opening", (20, 22, 23, 24), 0),
+}
+
+SAMPLE_EFFECTS = {
+    "blip": ("Blip", (37, 41, 45, 0)),
+    "click": ("Click", (40, 0)),
+    "laser": ("Laser", (45, 41, 37, 0)),
+    "jump": ("Jump", (25, 29, 34, 0)),
+    "hit": ("Hit", (25, 17, 0)),
+    "explode": ("Explode", (17, 24, 15, 0)),
+    "pickup": ("Pickup", (29, 34, 0)),
+    "alert": ("Alert", (37, 37, 0)),
+    "start": ("Start", (25, 29, 32, 37, 0)),
+    "game-over": ("Game Over", (25, 20, 13, 0)),
+    "coin": ("Coin", (37, 44, 0)),
+}
+
 
 class ProjectValidationError(ValueError):
     """Raised when a browser project cannot become a safe sound asset."""
@@ -46,6 +87,7 @@ class BgmTrack:
     name: str
     events: tuple[SoundEvent, ...]
     loop_event: int
+    included: bool
 
 
 @dataclass(frozen=True)
@@ -53,6 +95,7 @@ class SoundEffect:
     asset_id: str
     name: str
     events: tuple[SoundEvent, ...]
+    included: bool
 
 
 @dataclass(frozen=True)
@@ -113,8 +156,12 @@ def validate_project(project: Mapping[str, object]) -> SoundProject:
     tick_hz = positive_int(project.get("tickHz"), "tickHz", maximum=240)
     grid_ticks = positive_int(project.get("gridTicks"), "gridTicks", maximum=255)
     name = required_text(project.get("name"), "Project name")
-    tracks = validate_tracks(project.get("tracks"), grid_ticks)
-    effects = validate_effects(project.get("effects"), {track.asset_id for track in tracks})
+    all_tracks = validate_tracks(project.get("tracks"), grid_ticks)
+    all_effects = validate_effects(project.get("effects"), {track.asset_id for track in all_tracks})
+    tracks = tuple(track for track in all_tracks if track.included)
+    effects = tuple(effect for effect in all_effects if effect.included)
+    if not tracks:
+        raise ProjectValidationError("At least one selected BGM track is required to build demo PRG")
     return SoundProject(
         name=name,
         tick_hz=tick_hz,
@@ -146,12 +193,15 @@ def validate_tracks(raw_tracks: object, grid_ticks: int) -> tuple[BgmTrack, ...]
             or loop_cell >= len(notes)
         ):
             raise ProjectValidationError("loopCell must be -1 or a BGM cell index")
+        name = required_text(raw_track.get("name"), "BGM name")
+        validate_sample_track(raw_track, asset_id, name, notes, loop_cell)
         events, loop_event = encode_cells(notes, grid_ticks, loop_cell)
         tracks.append(BgmTrack(
             asset_id=asset_id,
-            name=required_text(raw_track.get("name"), "BGM name"),
+            name=name,
             events=events,
             loop_event=loop_event,
+            included=asset_included(raw_track),
         ))
     return tuple(tracks)
 
@@ -171,11 +221,14 @@ def validate_effects(raw_effects: object, known_ids: set[str]) -> tuple[SoundEff
         notes = validate_notes(raw_effect.get("notes"), "SFX notes")
         if len(notes) > MAX_SFX_UNITS:
             raise ProjectValidationError(f"SFX may not exceed {MAX_SFX_UNITS} units")
+        name = required_text(raw_effect.get("name"), "SFX name")
+        validate_sample_effect(raw_effect, asset_id, name, notes)
         events, _ = encode_cells(notes, 1, -1)
         effects.append(SoundEffect(
             asset_id=asset_id,
-            name=required_text(raw_effect.get("name"), "SFX name"),
+            name=name,
             events=events,
+            included=asset_included(raw_effect),
         ))
     return tuple(effects)
 
@@ -190,6 +243,50 @@ def required_text(value: object, name: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise ProjectValidationError(f"{name} is required")
     return value.strip()
+
+
+def validate_asset_origin(asset: Mapping[str, object]) -> str:
+    origin = asset.get("origin", "user")
+    if origin not in {"sample", "user"}:
+        raise ProjectValidationError("Sound asset origin must be sample or user")
+    return origin
+
+
+def validate_sample_track(
+    asset: Mapping[str, object], asset_id: str, name: str, notes: Sequence[int], loop_cell: int
+) -> None:
+    origin = validate_asset_origin(asset)
+    expected = SAMPLE_TRACKS.get(asset_id)
+    if origin == "user" and expected:
+        if "origin" not in asset and expected == (name, tuple(notes), loop_cell):
+            return
+        raise ProjectValidationError("Built-in sample ids are reserved")
+    if origin != "sample":
+        return
+    if expected != (name, tuple(notes), loop_cell):
+        raise ProjectValidationError("Sample assets must match the built-in library")
+
+
+def validate_sample_effect(
+    asset: Mapping[str, object], asset_id: str, name: str, notes: Sequence[int]
+) -> None:
+    origin = validate_asset_origin(asset)
+    expected = SAMPLE_EFFECTS.get(asset_id)
+    if origin == "user" and expected:
+        if "origin" not in asset and expected == (name, tuple(notes)):
+            return
+        raise ProjectValidationError("Built-in sample ids are reserved")
+    if origin != "sample":
+        return
+    if expected != (name, tuple(notes)):
+        raise ProjectValidationError("Sample assets must match the built-in library")
+
+
+def asset_included(asset: Mapping[str, object]) -> bool:
+    included = asset.get("included", True)
+    if not isinstance(included, bool):
+        raise ProjectValidationError("Sound asset included must be boolean")
+    return included
 
 
 def ensure_unique(value: str, known: set[str], name: str) -> None:
