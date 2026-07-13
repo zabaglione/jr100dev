@@ -167,5 +167,65 @@ def test_builder_upgrades_a_previous_four_cell_sample() -> None:
 
     with ZipFile(BytesIO(payload)) as archive:
         assets = archive.read("sound_assets.inc")
-    assert b".byte 16, $00" in assets
+    assert b".byte 100, $00" in assets
     assert b".byte $1D, $06\n        .byte $1C, $06" in assets
+
+
+def test_builder_upgrades_a_previous_sixteen_cell_sample() -> None:
+    project = {
+        "version": 1,
+        "name": "Legacy Sixteen Cell Sample",
+        "tickHz": 60,
+        "gridTicks": 6,
+        "tracks": [
+            {
+                "id": "fur-elise-opening",
+                "name": "Fur Elise Opening",
+                "notes": [
+                    29, 28, 29, 28, 29, 24, 27, 25,
+                    22, 25, 29, 22, 24, 29, 32, 33,
+                ],
+                "loopCell": 0,
+                "origin": "sample",
+                "included": True,
+            }
+        ],
+        "effects": [],
+    }
+
+    payload = build_package(project)
+
+    with ZipFile(BytesIO(payload)) as archive:
+        assets = archive.read("sound_assets.inc")
+    assert b".byte 100, $00" in assets
+
+
+def test_builder_allows_two_second_sfx_and_rejects_a_longer_effect() -> None:
+    project = {
+        "version": 1,
+        "name": "SFX Boundary",
+        "tickHz": 60,
+        "gridTicks": 6,
+        "tracks": [
+            {
+                "id": "music",
+                "name": "Music",
+                "notes": [25],
+                "loopCell": 0,
+                "included": True,
+            }
+        ],
+        "effects": [
+            {
+                "id": "maximum-effect",
+                "name": "Maximum Effect",
+                "notes": [25] * 200,
+                "included": True,
+            }
+        ],
+    }
+
+    assert build_package(project)
+    project["effects"][0]["notes"].append(25)
+    with pytest.raises(ProjectValidationError, match="200"):
+        build_package(project)

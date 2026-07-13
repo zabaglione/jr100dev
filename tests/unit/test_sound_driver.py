@@ -27,13 +27,13 @@ def _assemble(source: str, tmp_path: Path):
     return Assembler(source, filename=str(source_path)).assemble()
 
 
-def _run(result) -> JR100Computer:
+def _run(result, ticks: int = 100_000) -> JR100Computer:
     computer = JR100Computer(enable_audio=False)
     for offset, value in enumerate(result.machine_code):
         computer.memory.store8(result.origin + offset, value)
     computer.cpu_core.registers.program_counter = result.origin
     computer.cpu_core.registers.stack_pointer = 0x02FF
-    computer.tick(100_000)
+    computer.tick(ticks)
     return computer
 
 
@@ -80,6 +80,7 @@ MAIN:
     assert result.symbols["SOUND_VIA_T1CL"] == 0xC804
     assert result.symbols["SOUND_VIA_T1CH"] == 0xC805
     assert result.symbols["SOUND_VIA_ACR"] == 0xC80B
+    assert result.symbols["SOUND_MAX_SFX_UNITS"] == 200
     assert "SOUND_VIA_IER" not in result.symbols
     assert result.machine_code
 
@@ -249,3 +250,49 @@ HALT:
     assert computer.memory.load8(result.symbols["RESULT_PITCH"]) == 25
     assert computer.memory.load8(result.symbols["RESULT_EVENTS_LEFT"]) == 1
     assert computer.memory.load8(result.symbols["RESULT_REMAINING"]) == 1
+
+
+def test_sound_driver_hard_limits_a_malformed_sfx_to_two_hundred_units(
+    tmp_path: Path,
+) -> None:
+    result = _assemble(
+        """
+        .org $0300
+        JMP MAIN
+        .include "sound.inc"
+
+        .data
+BGM_RESUME:
+        .word BGM_RESUME_EVENTS
+        .byte 1, 0
+BGM_RESUME_EVENTS:
+        .byte 37, 5
+SFX_TOO_LONG:
+        .byte 1
+        .byte 45, $FF
+
+        .bss
+RESULT_BUDGET: .res 1
+RESULT_REMAINING: .res 1
+
+        .code
+MAIN:
+        LDS #$02FF
+        JSR SOUND_INIT
+        LDX #BGM_RESUME
+        JSR SOUND_PLAY_BGM
+        LDX #SFX_TOO_LONG
+        JSR SOUND_PLAY_SFX_BLOCKING
+        LDAA SOUND_SFX_BUDGET
+        STAA RESULT_BUDGET
+        LDAA SOUND_BGM_REMAINING
+        STAA RESULT_REMAINING
+HALT:
+        BRA HALT
+        """,
+        tmp_path,
+    )
+    computer = _run(result, ticks=1_810_000)
+
+    assert computer.memory.load8(result.symbols["RESULT_BUDGET"]) == 0
+    assert computer.memory.load8(result.symbols["RESULT_REMAINING"]) == 5

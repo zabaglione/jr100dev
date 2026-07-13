@@ -26,70 +26,131 @@ from jr100dev.link.pack_prg import pack_prg
 
 PROJECT_VERSION = 1
 MAX_PITCH = 48
-MAX_SFX_UNITS = 50
+MAX_SFX_UNITS = 200
 MAX_REQUEST_BYTES = 1_000_000
+LONG_SFX_CELLS = 180
 
-SAMPLE_TRACKS = {
+SAMPLE_TRACK_PHRASES = {
     "ode-to-joy-opening": (
         "Ode To Joy Opening",
         (17, 17, 18, 20, 20, 18, 17, 15, 13, 13, 15, 17, 17, 15, 15, 0),
-        0,
     ),
     "ah-vous-diraije-opening": (
         "Ah Vous Dirai-je Opening",
         (13, 13, 20, 20, 22, 22, 20, 0, 18, 18, 17, 17, 15, 15, 13, 0),
-        0,
     ),
     "fur-elise-opening": (
         "Fur Elise Opening",
         (29, 28, 29, 28, 29, 24, 27, 25, 22, 25, 29, 22, 24, 29, 32, 33),
-        0,
     ),
     "bach-prelude-c-opening": (
         "Bach Prelude In C Opening",
         (13, 17, 20, 25, 17, 20, 25, 29, 15, 18, 22, 27, 18, 22, 27, 30),
-        0,
     ),
     "eine-kleine-nachtmusik-opening": (
         "Eine Kleine Nachtmusik Opening",
         (20, 15, 20, 15, 20, 15, 20, 15, 20, 15, 20, 22, 24, 20, 19, 17),
-        0,
     ),
     "vivaldi-spring-opening": (
         "Vivaldi Spring Opening",
         (20, 25, 24, 22, 20, 25, 24, 22, 20, 25, 29, 27, 25, 24, 22, 20),
-        0,
     ),
     "handel-water-music-opening": (
         "Handel Water Music Opening",
         (15, 20, 22, 24, 25, 24, 22, 20, 19, 20, 22, 24, 20, 22, 24, 25),
-        0,
     ),
     "pachelbel-canon-opening": (
         "Pachelbel Canon Opening",
         (15, 22, 24, 19, 20, 15, 20, 22, 29, 27, 25, 24, 22, 20, 19, 17),
-        0,
     ),
     "rameau-gavotte-opening": (
         "Rameau Gavotte Opening",
         (13, 15, 17, 18, 20, 17, 18, 20, 22, 20, 18, 17, 15, 13, 15, 17),
-        0,
     ),
     "haydn-surprise-opening": (
         "Haydn Surprise Opening",
         (20, 20, 22, 22, 20, 20, 18, 0, 20, 20, 18, 18, 17, 17, 15, 0),
-        0,
     ),
     "swan-lake-opening": (
         "Swan Lake Opening",
         (22, 17, 15, 13, 15, 17, 18, 20, 22, 20, 18, 17, 15, 13, 15, 17),
-        0,
     ),
     "carmen-habanera-opening": (
         "Carmen Habanera Opening",
         (20, 22, 23, 24, 25, 24, 23, 22, 20, 19, 20, 22, 17, 20, 19, 17),
-        0,
     ),
+}
+
+SAMPLE_TRACK_ANSWERS = {
+    "ode-to-joy-opening": (
+        15, 15, 17, 13, 15, 17, 18, 17,
+        13, 15, 17, 18, 17, 15, 13, 0,
+    ),
+    "ah-vous-diraije-opening": (
+        20, 20, 18, 18, 17, 17, 15, 0,
+        20, 20, 18, 18, 17, 17, 15, 0,
+    ),
+    "fur-elise-opening": (
+        34, 33, 32, 29, 31, 32, 29, 33,
+        32, 31, 29, 28, 27, 26, 27, 28,
+    ),
+    "bach-prelude-c-opening": (
+        16, 20, 23, 28, 20, 23, 28, 32,
+        17, 21, 24, 29, 21, 24, 29, 33,
+    ),
+    "eine-kleine-nachtmusik-opening": (
+        20, 15, 20, 15, 20, 15, 20, 15,
+        22, 20, 19, 17, 15, 13, 15, 17,
+    ),
+    "vivaldi-spring-opening": (
+        25, 29, 27, 25, 24, 27, 25, 24,
+        22, 25, 24, 22, 20, 22, 24, 20,
+    ),
+    "handel-water-music-opening": (
+        25, 27, 29, 30, 29, 27, 25, 24,
+        22, 24, 25, 27, 29, 27, 25, 24,
+    ),
+    "pachelbel-canon-opening": (
+        17, 20, 22, 24, 25, 24, 22, 20,
+        17, 19, 20, 22, 24, 22, 20, 19,
+    ),
+    "rameau-gavotte-opening": (
+        17, 20, 22, 20, 18, 17, 15, 17,
+        18, 20, 22, 24, 22, 20, 18, 17,
+    ),
+    "haydn-surprise-opening": (
+        18, 18, 20, 20, 18, 18, 17, 0,
+        18, 18, 17, 17, 15, 15, 13, 0,
+    ),
+    "swan-lake-opening": (
+        20, 22, 24, 25, 24, 22, 20, 18,
+        17, 15, 13, 15, 17, 18, 20, 0,
+    ),
+    "carmen-habanera-opening": (
+        17, 19, 20, 22, 24, 22, 20, 19,
+        17, 15, 17, 19, 20, 22, 20, 17,
+    ),
+}
+
+
+def repeat_notes(notes: Sequence[int], length: int) -> tuple[int, ...]:
+    return tuple(notes[index % len(notes)] for index in range(length))
+
+
+def make_ten_second_loop(
+    intro: Sequence[int], answer: Sequence[int]
+) -> tuple[int, ...]:
+    return tuple([*intro, *answer, *intro, *answer, *intro, *answer, *intro[:4]])
+
+
+SAMPLE_TRACKS = {
+    asset_id: (name, make_ten_second_loop(notes, SAMPLE_TRACK_ANSWERS[asset_id]), 0)
+    for asset_id, (name, notes) in SAMPLE_TRACK_PHRASES.items()
+}
+
+PREVIOUS_SAMPLE_TRACKS = {
+    asset_id: (name, notes, 0)
+    for asset_id, (name, notes) in SAMPLE_TRACK_PHRASES.items()
 }
 
 SAMPLE_EFFECTS = {
@@ -104,6 +165,46 @@ SAMPLE_EFFECTS = {
     "start": ("Start", (25, 29, 32, 37, 0)),
     "game-over": ("Game Over", (25, 20, 13, 0)),
     "coin": ("Coin", (37, 44, 0)),
+    "power-up": (
+        "Power Up",
+        repeat_notes((25, 29, 32, 37, 32, 29, 25, 29, 32, 37), LONG_SFX_CELLS),
+    ),
+    "warp": (
+        "Warp",
+        repeat_notes((37, 41, 45, 48, 45, 41, 37, 33, 29, 25), LONG_SFX_CELLS),
+    ),
+    "engine": (
+        "Engine",
+        repeat_notes((13, 15, 17, 15, 13, 15, 17, 18, 17, 15), LONG_SFX_CELLS),
+    ),
+    "siren": (
+        "Siren",
+        repeat_notes((29, 34, 29, 34, 29, 34, 29, 34, 27, 32), LONG_SFX_CELLS),
+    ),
+    "charge": (
+        "Charge",
+        repeat_notes((20, 22, 24, 25, 27, 29, 31, 32, 34, 36), LONG_SFX_CELLS),
+    ),
+    "countdown": (
+        "Countdown",
+        repeat_notes((37, 0, 37, 0, 37, 0, 32, 0, 29, 0), LONG_SFX_CELLS),
+    ),
+    "radar": (
+        "Radar",
+        repeat_notes((41, 0, 0, 0, 0, 0, 0, 0, 0, 0), LONG_SFX_CELLS),
+    ),
+    "victory": (
+        "Victory",
+        repeat_notes((25, 29, 32, 37, 41, 44, 48, 44, 41, 37), LONG_SFX_CELLS),
+    ),
+    "defeat": (
+        "Defeat",
+        repeat_notes((37, 34, 32, 29, 25, 22, 20, 17, 15, 13), LONG_SFX_CELLS),
+    ),
+    "warning": (
+        "Warning",
+        repeat_notes((29, 29, 0, 29, 29, 0, 34, 34, 0, 34), LONG_SFX_CELLS),
+    ),
 }
 
 LEGACY_SAMPLE_TRACKS = {
@@ -311,9 +412,16 @@ def validate_asset_origin(asset: Mapping[str, object]) -> str:
 def upgrade_legacy_sample_track(
     asset: Mapping[str, object], asset_id: str, name: str, notes: Sequence[int], loop_cell: int
 ) -> tuple[str, list[int], int]:
-    legacy = LEGACY_SAMPLE_TRACKS.get(asset_id)
+    legacy = next(
+        (
+            candidate
+            for samples in (LEGACY_SAMPLE_TRACKS, PREVIOUS_SAMPLE_TRACKS)
+            if (candidate := samples.get(asset_id)) == (name, tuple(notes), loop_cell)
+        ),
+        None,
+    )
     origin = validate_asset_origin(asset)
-    if legacy != (name, tuple(notes), loop_cell) or (origin != "sample" and "origin" in asset):
+    if legacy is None or (origin != "sample" and "origin" in asset):
         return name, list(notes), loop_cell
     upgraded_name, upgraded_notes, upgraded_loop_cell = SAMPLE_TRACKS[asset_id]
     return upgraded_name, list(upgraded_notes), upgraded_loop_cell

@@ -1,9 +1,11 @@
 export const PROJECT_VERSION = 1;
 export const MIN_PITCH = 1;
 export const MAX_PITCH = 48;
-export const MAX_SFX_UNITS = 50;
+export const MAX_SFX_UNITS = 200;
 export const DEFAULT_TICK_HZ = 60;
 export const DEFAULT_GRID_TICKS = 6;
+
+const LONG_SFX_CELLS = 180;
 
 const NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
@@ -17,43 +19,82 @@ export const PITCHES = Object.freeze(Array.from({ length: MAX_PITCH }, (_, index
   };
 }));
 
-const ODE_TO_JOY = [17, 17, 18, 20, 20, 18, 17, 15, 13, 13, 15, 17, 17, 15, 15, 0];
-const AH_VOUS_DIRAIJE = [13, 13, 20, 20, 22, 22, 20, 0, 18, 18, 17, 17, 15, 15, 13, 0];
+function repeatNotes(notes, length) {
+  return Array.from({ length }, (_, index) => notes[index % notes.length]);
+}
 
-const SAMPLE_TRACKS = Object.freeze([
-  ["ode-to-joy-opening", "Ode To Joy Opening", ODE_TO_JOY],
-  ["ah-vous-diraije-opening", "Ah Vous Dirai-je Opening", AH_VOUS_DIRAIJE],
+function makeTenSecondLoop(intro, answer) {
+  return [...intro, ...answer, ...intro, ...answer, ...intro, ...answer, ...intro.slice(0, 4)];
+}
+
+const SAMPLE_TRACK_SECTIONS = Object.freeze([
+  ["ode-to-joy-opening", "Ode To Joy Opening", [
+    17, 17, 18, 20, 20, 18, 17, 15, 13, 13, 15, 17, 17, 15, 15, 0,
+  ], [
+    15, 15, 17, 13, 15, 17, 18, 17, 13, 15, 17, 18, 17, 15, 13, 0,
+  ]],
+  ["ah-vous-diraije-opening", "Ah Vous Dirai-je Opening", [
+    13, 13, 20, 20, 22, 22, 20, 0, 18, 18, 17, 17, 15, 15, 13, 0,
+  ], [
+    20, 20, 18, 18, 17, 17, 15, 0, 20, 20, 18, 18, 17, 17, 15, 0,
+  ]],
   ["fur-elise-opening", "Fur Elise Opening", [
     29, 28, 29, 28, 29, 24, 27, 25, 22, 25, 29, 22, 24, 29, 32, 33,
+  ], [
+    34, 33, 32, 29, 31, 32, 29, 33, 32, 31, 29, 28, 27, 26, 27, 28,
   ]],
   ["bach-prelude-c-opening", "Bach Prelude In C Opening", [
     13, 17, 20, 25, 17, 20, 25, 29, 15, 18, 22, 27, 18, 22, 27, 30,
+  ], [
+    16, 20, 23, 28, 20, 23, 28, 32, 17, 21, 24, 29, 21, 24, 29, 33,
   ]],
   ["eine-kleine-nachtmusik-opening", "Eine Kleine Nachtmusik Opening", [
     20, 15, 20, 15, 20, 15, 20, 15, 20, 15, 20, 22, 24, 20, 19, 17,
+  ], [
+    20, 15, 20, 15, 20, 15, 20, 15, 22, 20, 19, 17, 15, 13, 15, 17,
   ]],
   ["vivaldi-spring-opening", "Vivaldi Spring Opening", [
     20, 25, 24, 22, 20, 25, 24, 22, 20, 25, 29, 27, 25, 24, 22, 20,
+  ], [
+    25, 29, 27, 25, 24, 27, 25, 24, 22, 25, 24, 22, 20, 22, 24, 20,
   ]],
   ["handel-water-music-opening", "Handel Water Music Opening", [
     15, 20, 22, 24, 25, 24, 22, 20, 19, 20, 22, 24, 20, 22, 24, 25,
+  ], [
+    25, 27, 29, 30, 29, 27, 25, 24, 22, 24, 25, 27, 29, 27, 25, 24,
   ]],
   ["pachelbel-canon-opening", "Pachelbel Canon Opening", [
     15, 22, 24, 19, 20, 15, 20, 22, 29, 27, 25, 24, 22, 20, 19, 17,
+  ], [
+    17, 20, 22, 24, 25, 24, 22, 20, 17, 19, 20, 22, 24, 22, 20, 19,
   ]],
   ["rameau-gavotte-opening", "Rameau Gavotte Opening", [
     13, 15, 17, 18, 20, 17, 18, 20, 22, 20, 18, 17, 15, 13, 15, 17,
+  ], [
+    17, 20, 22, 20, 18, 17, 15, 17, 18, 20, 22, 24, 22, 20, 18, 17,
   ]],
   ["haydn-surprise-opening", "Haydn Surprise Opening", [
     20, 20, 22, 22, 20, 20, 18, 0, 20, 20, 18, 18, 17, 17, 15, 0,
+  ], [
+    18, 18, 20, 20, 18, 18, 17, 0, 18, 18, 17, 17, 15, 15, 13, 0,
   ]],
   ["swan-lake-opening", "Swan Lake Opening", [
     22, 17, 15, 13, 15, 17, 18, 20, 22, 20, 18, 17, 15, 13, 15, 17,
+  ], [
+    20, 22, 24, 25, 24, 22, 20, 18, 17, 15, 13, 15, 17, 18, 20, 0,
   ]],
   ["carmen-habanera-opening", "Carmen Habanera Opening", [
     20, 22, 23, 24, 25, 24, 23, 22, 20, 19, 20, 22, 17, 20, 19, 17,
+  ], [
+    17, 19, 20, 22, 24, 22, 20, 19, 17, 15, 17, 19, 20, 22, 20, 17,
   ]],
 ]);
+
+const SAMPLE_TRACKS = Object.freeze(SAMPLE_TRACK_SECTIONS.map(([id, name, intro, answer]) => [
+  id,
+  name,
+  makeTenSecondLoop(intro, answer),
+]));
 
 const SAMPLE_EFFECTS = Object.freeze([
   ["blip", "Blip", [37, 41, 45, 0]],
@@ -67,7 +108,23 @@ const SAMPLE_EFFECTS = Object.freeze([
   ["start", "Start", [25, 29, 32, 37, 0]],
   ["game-over", "Game Over", [25, 20, 13, 0]],
   ["coin", "Coin", [37, 44, 0]],
+  ["power-up", "Power Up", repeatNotes([25, 29, 32, 37, 32, 29, 25, 29, 32, 37], LONG_SFX_CELLS)],
+  ["warp", "Warp", repeatNotes([37, 41, 45, 48, 45, 41, 37, 33, 29, 25], LONG_SFX_CELLS)],
+  ["engine", "Engine", repeatNotes([13, 15, 17, 15, 13, 15, 17, 18, 17, 15], LONG_SFX_CELLS)],
+  ["siren", "Siren", repeatNotes([29, 34, 29, 34, 29, 34, 29, 34, 27, 32], LONG_SFX_CELLS)],
+  ["charge", "Charge", repeatNotes([20, 22, 24, 25, 27, 29, 31, 32, 34, 36], LONG_SFX_CELLS)],
+  ["countdown", "Countdown", repeatNotes([37, 0, 37, 0, 37, 0, 32, 0, 29, 0], LONG_SFX_CELLS)],
+  ["radar", "Radar", repeatNotes([41, 0, 0, 0, 0, 0, 0, 0, 0, 0], LONG_SFX_CELLS)],
+  ["victory", "Victory", repeatNotes([25, 29, 32, 37, 41, 44, 48, 44, 41, 37], LONG_SFX_CELLS)],
+  ["defeat", "Defeat", repeatNotes([37, 34, 32, 29, 25, 22, 20, 17, 15, 13], LONG_SFX_CELLS)],
+  ["warning", "Warning", repeatNotes([29, 29, 0, 29, 29, 0, 34, 34, 0, 34], LONG_SFX_CELLS)],
 ]);
+
+const PREVIOUS_SAMPLE_TRACKS = Object.freeze(SAMPLE_TRACK_SECTIONS.map(([id, name, intro]) => [
+  id,
+  name,
+  intro,
+]));
 
 const LEGACY_SAMPLE_TRACKS = Object.freeze([
   ["fur-elise-opening", "Fur Elise Opening", [29, 28, 29, 28]],
@@ -266,10 +323,12 @@ function findBuiltInSample(id, type) {
 
 function matchesLegacyBuiltInSample(asset, type) {
   if (type !== "BGM") return false;
-  const sample = LEGACY_SAMPLE_TRACKS.find(([sampleId]) => sampleId === asset.id);
-  if (!sample) return false;
-  const [, name, notes] = sample;
-  return asset.name === name && asset.loopCell === 0 && sameNotes(asset.notes, notes);
+  return [LEGACY_SAMPLE_TRACKS, PREVIOUS_SAMPLE_TRACKS].some((samples) => {
+    const sample = samples.find(([sampleId]) => sampleId === asset.id);
+    if (!sample) return false;
+    const [, name, notes] = sample;
+    return asset.name === name && asset.loopCell === 0 && sameNotes(asset.notes, notes);
+  });
 }
 
 function sameNotes(notes, expected) {

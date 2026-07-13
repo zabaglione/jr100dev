@@ -12,7 +12,7 @@ SOUND_PB7_MASK:      .equ $80
 SOUND_T1_IFR_MASK:   .equ $40
 SOUND_T1_MODE_MASK:  .equ $C0
 SOUND_MAX_PITCH:     .equ 48
-SOUND_MAX_SFX_UNITS: .equ 50
+SOUND_MAX_SFX_UNITS: .equ 200
 
 .code
 
@@ -86,7 +86,7 @@ SOUND_TICK_DONE:
 ; X points to an SFX descriptor:
 ;   .byte event_count
 ;   .byte pitch, duration_in_10ms_units ...
-; Playback is synchronous and hard-limited to 50 units.
+; Playback is synchronous and hard-limited to 200 units.
 SOUND_PLAY_SFX_BLOCKING:
         JSR SOUND_MUTE
         LDAB ,X

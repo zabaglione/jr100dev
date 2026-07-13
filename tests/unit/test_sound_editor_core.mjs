@@ -35,10 +35,14 @@ test("default sound project separates locked sample assets from editable user as
   ]);
   assert.deepEqual(project.effects.map(({ id }) => id), [
     "blip", "click", "laser", "jump", "hit", "explode", "pickup", "alert", "start", "game-over", "coin",
+    "power-up", "warp", "engine", "siren", "charge", "countdown", "radar", "victory", "defeat", "warning",
   ]);
   assert.equal(project.tracks.every(({ origin }) => origin === "sample"), true);
   assert.equal(project.effects.every(({ origin }) => origin === "sample"), true);
-  assert.equal(project.tracks.every(({ notes }) => notes.length >= 16), true);
+  assert.equal(project.tracks.every(({ notes }) => notes.length >= 100), true);
+  assert.equal(project.tracks.every(({ notes }) => notes.length * project.gridTicks / project.tickHz === 10), true);
+  assert.equal(project.tracks.every(({ notes }) => notes.slice(0, 16).some((pitch, index) => pitch !== notes[index + 16])), true);
+  assert.equal(project.effects.filter(({ notes }) => notes.length === 180).length, 10);
   assert.deepEqual(project.tracks.filter(({ included }) => included).map(({ id }) => id), ["ode-to-joy-opening"]);
   assert.deepEqual(project.effects.filter(({ included }) => included).map(({ id }) => id), ["blip"]);
   for (const { id } of [...project.tracks, ...project.effects]) {
@@ -53,8 +57,9 @@ test("consecutive equal BGM cells remain separate note attacks", () => {
   );
 });
 
-test("SFX cells reject a duration longer than 500ms", () => {
-  assert.throws(() => compileSfx({ notes: Array(51).fill(25) }), /50/);
+test("SFX cells reject a duration longer than 2 seconds", () => {
+  assert.doesNotThrow(() => compileSfx({ notes: Array(200).fill(25) }));
+  assert.throws(() => compileSfx({ notes: Array(201).fill(25) }), /200/);
 });
 
 test("sound projects round-trip and emit ASCII-only assembly assets", () => {
@@ -103,7 +108,7 @@ test("legacy starter assets are restored as locked samples without discarding us
   legacy.tracks.push({ id: "user-track", name: "User Track", notes: [25], loopCell: 0 });
   const upgraded = upgradeStarterSamples(legacy);
   assert.equal(upgraded.tracks.length, 13);
-  assert.equal(upgraded.effects.length, 11);
+  assert.equal(upgraded.effects.length, 21);
   assert.equal(upgraded.tracks[0].origin, "sample");
   assert.equal(upgraded.tracks[0].included, true);
   assert.equal(upgraded.tracks.some(({ id }) => id === "user-track"), true);
@@ -119,6 +124,19 @@ test("four-cell sample tracks from the previous catalog upgrade to the longer lo
   assert.deepEqual(furElise.notes, createProject().tracks[2].notes);
   assert.equal(furElise.included, true);
   assert.equal(upgraded.tracks.some(({ id }) => id === "user-track"), true);
+});
+
+test("sixteen-cell sample tracks from the previous catalog upgrade to ten-second locked samples", () => {
+  const legacy = createProject();
+  legacy.tracks[2].notes = [
+    29, 28, 29, 28, 29, 24, 27, 25, 22, 25, 29, 22, 24, 29, 32, 33,
+  ];
+  legacy.tracks[2].included = true;
+  const upgraded = upgradeStarterSamples(parseProject(JSON.stringify(legacy)));
+  const furElise = upgraded.tracks.find(({ id }) => id === "fur-elise-opening");
+  assert.deepEqual(furElise.notes, createProject().tracks[2].notes);
+  assert.equal(furElise.notes.length, 100);
+  assert.equal(furElise.included, true);
 });
 
 test("asset ids that normalize to the same assembly label are rejected", () => {
