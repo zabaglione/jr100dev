@@ -1,6 +1,6 @@
 PYTHON ?= python3
 PYTHONPATH := $(CURDIR)/src
-SAMPLES := hello counter io_demo key_display multi pcg_clock pcg_animation maze
+SAMPLES := hello counter io_demo key_display multi pcg_clock pcg_animation sound_demo maze
 
 .PHONY: samples test clean
 

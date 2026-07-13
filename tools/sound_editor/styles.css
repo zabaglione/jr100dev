@@ -1,0 +1,65 @@
+:root {
+  color-scheme: dark;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  background: #101319;
+  color: #eff4f7;
+  --panel: #1a2029;
+  --line: #364151;
+  --accent: #7ad7ff;
+  --muted: #9ba8b7;
+  --danger: #ff8d8d;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; min-width: 960px; background: radial-gradient(circle at 20% 0%, #1b2c3a 0, #101319 45%); }
+button, input, select { min-width: 0; font: inherit; }
+button { border: 1px solid var(--line); border-radius: 4px; background: #263140; color: inherit; cursor: pointer; padding: 0.45rem 0.65rem; }
+button:hover { border-color: var(--accent); }
+button.primary { background: #185c79; border-color: var(--accent); }
+button.danger { color: var(--danger); }
+input { width: 100%; border: 1px solid var(--line); border-radius: 4px; background: #101319; color: inherit; padding: 0.4rem; }
+label { display: grid; gap: 0.28rem; color: var(--muted); font-size: 0.82rem; }
+h1, h2, p { margin: 0; }
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1rem; }
+.app-header { display: flex; justify-content: space-between; align-items: start; padding: 1.4rem max(2rem, calc((100% - 1440px) / 2)); border-bottom: 1px solid var(--line); }
+.header-actions { display: flex; align-items: end; gap: 1rem; }
+.language-control { min-width: 9rem; }
+.language-control select { border: 1px solid var(--line); border-radius: 4px; background: #101319; color: inherit; padding: 0.4rem; }
+.eyebrow { color: var(--accent); font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.subtitle, .help, .constraint { color: var(--muted); font-size: 0.8rem; margin-top: 0.4rem; line-height: 1.45; }
+.status { color: var(--accent); padding-top: 0.5rem; }
+main { width: min(1440px, calc(100% - 4rem)); margin: 1.2rem auto 3rem; display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; overflow-x: hidden; }
+.panel { background: color-mix(in srgb, var(--panel) 92%, transparent); border: 1px solid var(--line); border-radius: 8px; padding: 1rem; }
+.project-panel { display: grid; grid-template-columns: 2fr repeat(2, 1fr) repeat(5, auto); align-items: end; gap: 0.6rem; }
+.project-panel > *, .asset-controls > * { min-width: 0; }
+.workspace { display: grid; grid-template-columns: 250px 1fr; gap: 1rem; min-height: 680px; }
+.asset-panel { display: flex; flex-direction: column; gap: 0.7rem; }
+.asset-heading, .editor-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.asset-list { display: grid; gap: 0.35rem; }
+.asset-item { display: flex; justify-content: space-between; gap: 0.3rem; width: 100%; text-align: left; }
+.asset-item.active { border-color: var(--accent); background: #1e455a; }
+.asset-item small { color: var(--muted); }
+.editor-panel { display: grid; grid-template-rows: auto auto 1fr auto; gap: 0.8rem; min-width: 0; overflow: hidden; }
+.transport { display: flex; gap: 0.4rem; }
+.asset-controls { display: grid; grid-template-columns: 1.4fr 1.4fr 0.6fr 0.7fr auto; align-items: end; gap: 0.6rem; }
+.roll-wrap { min-width: 0; max-width: 100%; overflow: auto; border: 1px solid var(--line); background: #090c11; }
+#piano-roll { display: block; image-rendering: pixelated; cursor: crosshair; }
+.provenance { overflow-x: auto; }
+.provenance table { width: 100%; min-width: 640px; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.8rem; }
+.provenance th, .provenance td { border: 1px solid var(--line); padding: 0.55rem; text-align: left; vertical-align: top; }
+.provenance th { color: var(--accent); }
+@media (max-width: 1100px) {
+  body { min-width: 0; }
+  .app-header, main { width: auto; margin-left: 1rem; margin-right: 1rem; padding-left: 0; padding-right: 0; }
+  .project-panel, .asset-controls { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .workspace { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .app-header, .header-actions { align-items: stretch; flex-direction: column; }
+  .header-actions { gap: 0.55rem; margin-top: 1rem; }
+  .language-control { min-width: 0; }
+  .project-panel, .asset-controls { grid-template-columns: minmax(0, 1fr); }
+}

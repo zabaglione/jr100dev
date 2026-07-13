@@ -1,0 +1,9 @@
+{
+  "name": "jr100-sound-editor",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test ../../tests/unit/test_sound_editor_core.mjs",
+    "serve": "python3 server.py"
+  }
+}

@@ -7,6 +7,8 @@
 - [`project_structure.md`](project_structure.md): リポジトリと生成プロジェクトの構成
 - [`project_quickstart.md`](project_quickstart.md): `jr100dev new`で始める手順
 - [`std_macros.md`](std_macros.md): VRAM、キー、簡易ビープなどの標準マクロ
+- [`sound_driver.md`](sound_driver.md): Timer 1の協調型単音BGMとブロッキング効果音
+- [`sound_samples.md`](sound_samples.md): 初期サンプル曲の来歴と利用方針
 - [`high_level_macros.md`](high_level_macros.md): 制御構造と算術マクロ
 - [`object_format.md`](object_format.md): JSON中間オブジェクト形式
 - [`prg_packaging_notes.md`](prg_packaging_notes.md): `.prg`梱包形式

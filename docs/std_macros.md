@@ -4,6 +4,7 @@
 - ソース先頭で `.include "macro.inc"` を記述すると `src/jr100dev/std/macro.inc` を展開できる。`jr100dev new` で生成される `src/main.asm` も `.org $0300` から開始する。
 - 制御構造マクロを使用する場合は `.include "ctl.inc"` も併記する。
 - `.include` はソースファイルのディレクトリとパッケージ内の `src/jr100dev/std/` を探索するため、追加設定は不要。
+- Timer 1の単音サウンドを使う場合は `.include "sound.inc"` を追加する。API、データ形式、Timer 1専有時の制約は[`sound_driver.md`](sound_driver.md)を参照する。
 
 ## 提供マクロ
 - `PUT_CHAR` : A レジスタの値を `(X)` に書き込み、X をインクリメント。

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JR-100 サウンドワークベンチ</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">VIA Timer 1 / PB7</p>
+        <h1 data-i18n="app.title">JR-100 サウンドワークベンチ</h1>
+        <p class="subtitle" data-i18n="app.subtitle">単音BGMとブロッキング効果音のアセットエディター</p>
+      </div>
+      <div class="header-actions">
+        <label class="language-control"><span data-i18n="language.label">表示言語</span>
+          <select id="language-select" aria-label="表示言語" data-i18n-aria="language.label">
+            <option value="ja" selected data-i18n="language.ja">日本語</option>
+            <option value="en" data-i18n="language.en">English</option>
+          </select>
+        </label>
+        <div id="status" class="status" aria-live="polite" data-i18n="status.ready">準備完了</div>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel project-panel" aria-label="プロジェクト設定" data-i18n-aria="project.settings">
+        <label><span data-i18n="project.label">プロジェクト名</span><input id="project-name" maxlength="64"></label>
+        <label><span data-i18n="project.tickHz">ゲーム更新Hz</span><input id="tick-hz" type="number" min="1" max="240"></label>
+        <label><span data-i18n="project.gridTicks">BGMグリッドtick</span><input id="grid-ticks" type="number" min="1" max="255"></label>
+        <button id="new-project" type="button" data-i18n="actions.new">新規作成</button>
+        <button id="save-json" type="button" data-i18n="actions.saveJson">JSONを保存</button>
+        <button id="load-json" type="button" data-i18n="actions.loadJson">JSONを読込</button>
+        <button id="export-assembly" type="button" data-i18n="actions.downloadAssembly">sound_assets.incを保存</button>
+        <button id="build-prg" class="primary" type="button" data-i18n="actions.buildPrg">確認用PRGを作成</button>
+        <input id="import-file" type="file" accept="application/json,.json" hidden>
+      </section>
+
+      <section class="workspace">
+        <aside class="panel asset-panel">
+          <div class="asset-heading">
+            <h2 data-i18n="assets.tracks">BGMトラック</h2>
+            <button id="add-track" type="button" data-i18n="actions.add">追加</button>
+          </div>
+          <div id="track-list" class="asset-list" role="list"></div>
+          <div class="asset-heading">
+            <h2 data-i18n="assets.effects">ブロッキング効果音</h2>
+            <button id="add-effect" type="button" data-i18n="actions.add">追加</button>
+          </div>
+          <div id="effect-list" class="asset-list" role="list"></div>
+          <p class="constraint" data-i18n="assets.sfxConstraint">効果音は10ms単位で、最大50セルです。</p>
+        </aside>
+
+        <section class="panel editor-panel">
+          <div class="editor-heading">
+            <div>
+              <p id="asset-kind" class="eyebrow">BGMピアノロール</p>
+              <h2 id="asset-title">Ode To Joy Opening</h2>
+            </div>
+            <div class="transport">
+              <button id="play-asset" type="button" data-i18n="actions.play">試聴</button>
+              <button id="stop-preview" type="button" data-i18n="actions.stop">停止</button>
+            </div>
+          </div>
+          <div class="asset-controls">
+            <label><span data-i18n="editor.name">名前</span><input id="asset-name" maxlength="64"></label>
+            <label><span data-i18n="editor.identifier">識別子</span><input id="asset-id" maxlength="64"></label>
+            <label><span data-i18n="editor.cells">セル数</span><input id="asset-length" type="number" min="1" max="255"></label>
+            <label id="loop-control"><span data-i18n="editor.loopCell">ループ開始セル</span><input id="loop-cell" type="number" min="-1" max="254"></label>
+            <button id="delete-asset" class="danger" type="button" data-i18n="actions.delete">削除</button>
+          </div>
+          <div class="roll-wrap">
+            <canvas id="piano-roll" width="1152" height="576" tabindex="0" aria-describedby="roll-help" aria-label="ピアノロールエディター" data-i18n-aria="editor.canvas"></canvas>
+          </div>
+          <p id="roll-help" class="help"></p>
+        </section>
+      </section>
+
+      <section class="panel provenance">
+        <h2 data-i18n="provenance.title">収録サンプルの来歴</h2>
+        <table>
+          <thead><tr><th data-i18n="provenance.asset">資産</th><th data-i18n="provenance.source">原曲</th><th data-i18n="provenance.composer">作曲者</th><th data-i18n="provenance.rule">収録方針</th></tr></thead>
+          <tbody>
+            <tr><td>ODE_TO_JOY_OPENING</td><td data-i18n="provenance.odeSource">交響曲第9番・冒頭フレーズ</td><td data-i18n="provenance.odeComposer">Ludwig van Beethoven（1827年没）</td><td data-i18n="provenance.ruleText">独自の単音縮約。楽譜画像、歌詞、録音、近現代編曲は含みません。</td></tr>
+            <tr><td>AH_VOUS_DIRAIJE_OPENING</td><td data-i18n="provenance.mozartSource">K.265主題・冒頭フレーズ</td><td data-i18n="provenance.mozartComposer">Wolfgang Amadeus Mozart（1791年没）</td><td data-i18n="provenance.ruleText">独自の単音縮約。楽譜画像、歌詞、録音、近現代編曲は含みません。</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

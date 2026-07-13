@@ -39,6 +39,7 @@ make -C samples/hello
 | [`multi`](samples/multi/) | 複数オブジェクトのアセンブルとリンク |
 | [`pcg_clock`](samples/pcg_clock/) | PCG数字を使った24時間時計 |
 | [`pcg_animation`](samples/pcg_animation/) | 4つの常駐PCGを書き換える2×2キャラクターアニメーション |
+| [`sound_demo`](samples/sound_demo/) | Timer 1単音BGM、効果音、PCG共存を確認するサンプル |
 | [`maze`](samples/maze/) | 迷路生成、入力、スクロールを含む実践例 |
 
 個別のサンプルは共通の操作でビルドできます。
@@ -78,6 +79,7 @@ PYTHONPATH=/path/to/jr100dev/src python3 -m jr100dev.cli.main --help
 python3 -m pip install -e ".[test]"
 make test
 npm test --prefix tools/pcg_editor
+npm test --prefix tools/sound_editor
 ```
 
 `make test`は`tests/unit`、`tests/opcodes`、`tests/integ`を実行します。サンプル単体の確認方法は各ディレクトリのREADMEを参照してください。
@@ -92,6 +94,17 @@ npm run serve
 ```
 
 ブラウザーで`http://localhost:8000`を開いて使用します。外部ライブラリのインストールは不要です。
+
+## Webサウンドエディタ
+
+`tools/sound_editor`は、Timer 1の単音BGMと最大500msのブロッキング効果音を編集するWebアプリです。ピアノロールで作った資産を`sound_assets.inc`として出力でき、ローカルビルダーから確認用PRGも生成できます。
+
+```sh
+cd tools/sound_editor
+npm run serve
+```
+
+ブラウザーで`http://127.0.0.1:8001`を開いて使用します。初期表示は日本語で、画面右上から英語へ切り替えられます。外部ライブラリのインストールは不要です。
 
 ## リポジトリ構成
 
