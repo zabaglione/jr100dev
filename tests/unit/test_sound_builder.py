@@ -34,6 +34,9 @@ def test_builder_returns_demo_prg_and_include_without_writing_project_files() ->
             "sound_demo.bin",
             "sound_demo.map",
         }
-        assert b"SOUND_BGM_BUILD_TRACK" in archive.read("sound_assets.inc")
+        assets = archive.read("sound_assets.inc")
+        assert b"SOUND_BGM_BUILD_TRACK" in assets
+        assert b"        .byte 4, $00" in assets
+        assert b"        .byte $19, $06\n        .byte $19, $06" in assets
         assert archive.read("sound_demo.prg")
         assert b"SOUND_PLAY_BGM" in archive.read("sound_demo.map")

@@ -220,16 +220,7 @@ def encode_cells(
     for index, pitch in enumerate(notes):
         if index == loop_cell:
             loop_event = len(events)
-        if (
-            events
-            and events[-1].pitch == pitch
-            and index != loop_cell
-            and events[-1].duration + duration_per_cell <= 255
-        ):
-            previous = events[-1]
-            events[-1] = SoundEvent(previous.pitch, previous.duration + duration_per_cell)
-        else:
-            events.append(SoundEvent(pitch, duration_per_cell))
+        events.append(SoundEvent(pitch, duration_per_cell))
     if len(events) > 255:
         raise ProjectValidationError("Sound asset has more than 255 events")
     return tuple(events), loop_event

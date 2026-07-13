@@ -203,3 +203,49 @@ HALT:
     assert memory.load8(symbol["RESULT_RESUME_PITCH"]) == 37
     assert memory.load8(symbol["RESULT_ACR"]) & 0xC0 == 0xC0
     assert computer.via._state.IER == 0
+
+
+def test_consecutive_same_pitch_events_reload_the_bgm_event_state(tmp_path: Path) -> None:
+    result = _assemble(
+        """
+        .org $0300
+        JMP MAIN
+        .include "sound.inc"
+
+        .data
+BGM_REPEAT:
+        .word BGM_REPEAT_EVENTS
+        .byte 3, $FF
+BGM_REPEAT_EVENTS:
+        .byte 25, 1
+        .byte 25, 1
+        .byte 0, 1
+
+        .bss
+RESULT_PITCH: .res 1
+RESULT_EVENTS_LEFT: .res 1
+RESULT_REMAINING: .res 1
+
+        .code
+MAIN:
+        LDS #$02FF
+        JSR SOUND_INIT
+        LDX #BGM_REPEAT
+        JSR SOUND_PLAY_BGM
+        JSR SOUND_TICK
+        LDAA SOUND_BGM_PITCH
+        STAA RESULT_PITCH
+        LDAA SOUND_BGM_EVENTS_LEFT
+        STAA RESULT_EVENTS_LEFT
+        LDAA SOUND_BGM_REMAINING
+        STAA RESULT_REMAINING
+HALT:
+        BRA HALT
+        """,
+        tmp_path,
+    )
+    computer = _run(result)
+
+    assert computer.memory.load8(result.symbols["RESULT_PITCH"]) == 25
+    assert computer.memory.load8(result.symbols["RESULT_EVENTS_LEFT"]) == 1
+    assert computer.memory.load8(result.symbols["RESULT_REMAINING"]) == 1

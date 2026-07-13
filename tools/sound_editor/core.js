@@ -157,14 +157,7 @@ function encodeCells(notes, durationPerCell, loopCell) {
     if (cell === loopCell) {
       loopEvent = events.length;
     }
-    const pitch = notes[cell];
-    const previous = events.at(-1);
-    const mayMerge = previous && previous[0] === pitch && cell !== loopCell && previous[1] + durationPerCell <= 255;
-    if (mayMerge) {
-      previous[1] += durationPerCell;
-    } else {
-      events.push([pitch, durationPerCell]);
-    }
+    events.push([notes[cell], durationPerCell]);
   }
   if (events.length > 255) {
     throw new RangeError("Sound asset has more than 255 events");

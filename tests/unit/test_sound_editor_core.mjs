@@ -21,10 +21,10 @@ test("default sound project contains the two public-domain melody samples", () =
   assert.equal(project.effects.length, 1);
 });
 
-test("BGM cells are run-length encoded into tick events", () => {
+test("consecutive equal BGM cells remain separate note attacks", () => {
   assert.deepEqual(
     compileBgmTrack({ notes: [25, 25, 0, 0, 29] }, 3),
-    [[25, 6], [0, 6], [29, 3]],
+    [[25, 3], [25, 3], [0, 3], [0, 3], [29, 3]],
   );
 });
 
