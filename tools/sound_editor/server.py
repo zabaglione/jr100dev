@@ -40,20 +40,56 @@ SAMPLE_TRACKS = {
         (13, 13, 20, 20, 22, 22, 20, 0, 18, 18, 17, 17, 15, 15, 13, 0),
         0,
     ),
-    "fur-elise-opening": ("Fur Elise Opening", (29, 28, 29, 28), 0),
-    "bach-prelude-c-opening": ("Bach Prelude In C Opening", (13, 17, 20, 25), 0),
-    "eine-kleine-nachtmusik-opening": (
-        "Eine Kleine Nachtmusik Opening",
-        (20, 15, 20, 15),
+    "fur-elise-opening": (
+        "Fur Elise Opening",
+        (29, 28, 29, 28, 29, 24, 27, 25, 22, 25, 29, 22, 24, 29, 32, 33),
         0,
     ),
-    "vivaldi-spring-opening": ("Vivaldi Spring Opening", (20, 25, 24, 22), 0),
-    "handel-water-music-opening": ("Handel Water Music Opening", (15, 20, 22, 24), 0),
-    "pachelbel-canon-opening": ("Pachelbel Canon Opening", (15, 22, 24, 20), 0),
-    "rameau-gavotte-opening": ("Rameau Gavotte Opening", (13, 15, 17, 18), 0),
-    "haydn-surprise-opening": ("Haydn Surprise Opening", (20, 20, 22, 24), 0),
-    "swan-lake-opening": ("Swan Lake Opening", (22, 17, 15, 13), 0),
-    "carmen-habanera-opening": ("Carmen Habanera Opening", (20, 22, 23, 24), 0),
+    "bach-prelude-c-opening": (
+        "Bach Prelude In C Opening",
+        (13, 17, 20, 25, 17, 20, 25, 29, 15, 18, 22, 27, 18, 22, 27, 30),
+        0,
+    ),
+    "eine-kleine-nachtmusik-opening": (
+        "Eine Kleine Nachtmusik Opening",
+        (20, 15, 20, 15, 20, 15, 20, 15, 20, 15, 20, 22, 24, 20, 19, 17),
+        0,
+    ),
+    "vivaldi-spring-opening": (
+        "Vivaldi Spring Opening",
+        (20, 25, 24, 22, 20, 25, 24, 22, 20, 25, 29, 27, 25, 24, 22, 20),
+        0,
+    ),
+    "handel-water-music-opening": (
+        "Handel Water Music Opening",
+        (15, 20, 22, 24, 25, 24, 22, 20, 19, 20, 22, 24, 20, 22, 24, 25),
+        0,
+    ),
+    "pachelbel-canon-opening": (
+        "Pachelbel Canon Opening",
+        (15, 22, 24, 19, 20, 15, 20, 22, 29, 27, 25, 24, 22, 20, 19, 17),
+        0,
+    ),
+    "rameau-gavotte-opening": (
+        "Rameau Gavotte Opening",
+        (13, 15, 17, 18, 20, 17, 18, 20, 22, 20, 18, 17, 15, 13, 15, 17),
+        0,
+    ),
+    "haydn-surprise-opening": (
+        "Haydn Surprise Opening",
+        (20, 20, 22, 22, 20, 20, 18, 0, 20, 20, 18, 18, 17, 17, 15, 0),
+        0,
+    ),
+    "swan-lake-opening": (
+        "Swan Lake Opening",
+        (22, 17, 15, 13, 15, 17, 18, 20, 22, 20, 18, 17, 15, 13, 15, 17),
+        0,
+    ),
+    "carmen-habanera-opening": (
+        "Carmen Habanera Opening",
+        (20, 22, 23, 24, 25, 24, 23, 22, 20, 19, 20, 22, 17, 20, 19, 17),
+        0,
+    ),
 }
 
 SAMPLE_EFFECTS = {
@@ -68,6 +104,23 @@ SAMPLE_EFFECTS = {
     "start": ("Start", (25, 29, 32, 37, 0)),
     "game-over": ("Game Over", (25, 20, 13, 0)),
     "coin": ("Coin", (37, 44, 0)),
+}
+
+LEGACY_SAMPLE_TRACKS = {
+    "fur-elise-opening": ("Fur Elise Opening", (29, 28, 29, 28), 0),
+    "bach-prelude-c-opening": ("Bach Prelude In C Opening", (13, 17, 20, 25), 0),
+    "eine-kleine-nachtmusik-opening": (
+        "Eine Kleine Nachtmusik Opening",
+        (20, 15, 20, 15),
+        0,
+    ),
+    "vivaldi-spring-opening": ("Vivaldi Spring Opening", (20, 25, 24, 22), 0),
+    "handel-water-music-opening": ("Handel Water Music Opening", (15, 20, 22, 24), 0),
+    "pachelbel-canon-opening": ("Pachelbel Canon Opening", (15, 22, 24, 20), 0),
+    "rameau-gavotte-opening": ("Rameau Gavotte Opening", (13, 15, 17, 18), 0),
+    "haydn-surprise-opening": ("Haydn Surprise Opening", (20, 20, 22, 24), 0),
+    "swan-lake-opening": ("Swan Lake Opening", (22, 17, 15, 13), 0),
+    "carmen-habanera-opening": ("Carmen Habanera Opening", (20, 22, 23, 24), 0),
 }
 
 
@@ -194,6 +247,9 @@ def validate_tracks(raw_tracks: object, grid_ticks: int) -> tuple[BgmTrack, ...]
         ):
             raise ProjectValidationError("loopCell must be -1 or a BGM cell index")
         name = required_text(raw_track.get("name"), "BGM name")
+        name, notes, loop_cell = upgrade_legacy_sample_track(
+            raw_track, asset_id, name, notes, loop_cell
+        )
         validate_sample_track(raw_track, asset_id, name, notes, loop_cell)
         events, loop_event = encode_cells(notes, grid_ticks, loop_cell)
         tracks.append(BgmTrack(
@@ -250,6 +306,17 @@ def validate_asset_origin(asset: Mapping[str, object]) -> str:
     if origin not in {"sample", "user"}:
         raise ProjectValidationError("Sound asset origin must be sample or user")
     return origin
+
+
+def upgrade_legacy_sample_track(
+    asset: Mapping[str, object], asset_id: str, name: str, notes: Sequence[int], loop_cell: int
+) -> tuple[str, list[int], int]:
+    legacy = LEGACY_SAMPLE_TRACKS.get(asset_id)
+    origin = validate_asset_origin(asset)
+    if legacy != (name, tuple(notes), loop_cell) or (origin != "sample" and "origin" in asset):
+        return name, list(notes), loop_cell
+    upgraded_name, upgraded_notes, upgraded_loop_cell = SAMPLE_TRACKS[asset_id]
+    return upgraded_name, list(upgraded_notes), upgraded_loop_cell
 
 
 def validate_sample_track(

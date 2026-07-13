@@ -23,16 +23,36 @@ const AH_VOUS_DIRAIJE = [13, 13, 20, 20, 22, 22, 20, 0, 18, 18, 17, 17, 15, 15, 
 const SAMPLE_TRACKS = Object.freeze([
   ["ode-to-joy-opening", "Ode To Joy Opening", ODE_TO_JOY],
   ["ah-vous-diraije-opening", "Ah Vous Dirai-je Opening", AH_VOUS_DIRAIJE],
-  ["fur-elise-opening", "Fur Elise Opening", [29, 28, 29, 28]],
-  ["bach-prelude-c-opening", "Bach Prelude In C Opening", [13, 17, 20, 25]],
-  ["eine-kleine-nachtmusik-opening", "Eine Kleine Nachtmusik Opening", [20, 15, 20, 15]],
-  ["vivaldi-spring-opening", "Vivaldi Spring Opening", [20, 25, 24, 22]],
-  ["handel-water-music-opening", "Handel Water Music Opening", [15, 20, 22, 24]],
-  ["pachelbel-canon-opening", "Pachelbel Canon Opening", [15, 22, 24, 20]],
-  ["rameau-gavotte-opening", "Rameau Gavotte Opening", [13, 15, 17, 18]],
-  ["haydn-surprise-opening", "Haydn Surprise Opening", [20, 20, 22, 24]],
-  ["swan-lake-opening", "Swan Lake Opening", [22, 17, 15, 13]],
-  ["carmen-habanera-opening", "Carmen Habanera Opening", [20, 22, 23, 24]],
+  ["fur-elise-opening", "Fur Elise Opening", [
+    29, 28, 29, 28, 29, 24, 27, 25, 22, 25, 29, 22, 24, 29, 32, 33,
+  ]],
+  ["bach-prelude-c-opening", "Bach Prelude In C Opening", [
+    13, 17, 20, 25, 17, 20, 25, 29, 15, 18, 22, 27, 18, 22, 27, 30,
+  ]],
+  ["eine-kleine-nachtmusik-opening", "Eine Kleine Nachtmusik Opening", [
+    20, 15, 20, 15, 20, 15, 20, 15, 20, 15, 20, 22, 24, 20, 19, 17,
+  ]],
+  ["vivaldi-spring-opening", "Vivaldi Spring Opening", [
+    20, 25, 24, 22, 20, 25, 24, 22, 20, 25, 29, 27, 25, 24, 22, 20,
+  ]],
+  ["handel-water-music-opening", "Handel Water Music Opening", [
+    15, 20, 22, 24, 25, 24, 22, 20, 19, 20, 22, 24, 20, 22, 24, 25,
+  ]],
+  ["pachelbel-canon-opening", "Pachelbel Canon Opening", [
+    15, 22, 24, 19, 20, 15, 20, 22, 29, 27, 25, 24, 22, 20, 19, 17,
+  ]],
+  ["rameau-gavotte-opening", "Rameau Gavotte Opening", [
+    13, 15, 17, 18, 20, 17, 18, 20, 22, 20, 18, 17, 15, 13, 15, 17,
+  ]],
+  ["haydn-surprise-opening", "Haydn Surprise Opening", [
+    20, 20, 22, 22, 20, 20, 18, 0, 20, 20, 18, 18, 17, 17, 15, 0,
+  ]],
+  ["swan-lake-opening", "Swan Lake Opening", [
+    22, 17, 15, 13, 15, 17, 18, 20, 22, 20, 18, 17, 15, 13, 15, 17,
+  ]],
+  ["carmen-habanera-opening", "Carmen Habanera Opening", [
+    20, 22, 23, 24, 25, 24, 23, 22, 20, 19, 20, 22, 17, 20, 19, 17,
+  ]],
 ]);
 
 const SAMPLE_EFFECTS = Object.freeze([
@@ -47,6 +67,19 @@ const SAMPLE_EFFECTS = Object.freeze([
   ["start", "Start", [25, 29, 32, 37, 0]],
   ["game-over", "Game Over", [25, 20, 13, 0]],
   ["coin", "Coin", [37, 44, 0]],
+]);
+
+const LEGACY_SAMPLE_TRACKS = Object.freeze([
+  ["fur-elise-opening", "Fur Elise Opening", [29, 28, 29, 28]],
+  ["bach-prelude-c-opening", "Bach Prelude In C Opening", [13, 17, 20, 25]],
+  ["eine-kleine-nachtmusik-opening", "Eine Kleine Nachtmusik Opening", [20, 15, 20, 15]],
+  ["vivaldi-spring-opening", "Vivaldi Spring Opening", [20, 25, 24, 22]],
+  ["handel-water-music-opening", "Handel Water Music Opening", [15, 20, 22, 24]],
+  ["pachelbel-canon-opening", "Pachelbel Canon Opening", [15, 22, 24, 20]],
+  ["rameau-gavotte-opening", "Rameau Gavotte Opening", [13, 15, 17, 18]],
+  ["haydn-surprise-opening", "Haydn Surprise Opening", [20, 20, 22, 24]],
+  ["swan-lake-opening", "Swan Lake Opening", [22, 17, 15, 13]],
+  ["carmen-habanera-opening", "Carmen Habanera Opening", [20, 22, 23, 24]],
 ]);
 
 export function createProject() {
@@ -74,7 +107,7 @@ export function createProject() {
 }
 
 export function upgradeStarterSamples(project) {
-  validateProject(project, { allowLegacyBuiltInIds: true });
+  validateProject(project, { allowLegacyBuiltInIds: true, allowLegacySampleContents: true });
   const starter = createProject();
   const upgraded = {
     ...project,
@@ -90,6 +123,10 @@ function upgradeAssets(assets, starterAssets, type) {
   const usedIds = new Set();
   const existingAssets = assets.map((asset) => {
     const sample = starterAssets.find(({ id }) => id === asset.id);
+    if (sample && matchesLegacyBuiltInSample(asset, type)) {
+      usedIds.add(asset.id);
+      return { ...sample, included: asset.included ?? true };
+    }
     if (asset.origin === undefined && sample && matchesBuiltInSample(asset, type)) {
       usedIds.add(asset.id);
       return { ...asset, origin: "sample", included: asset.included ?? true };
@@ -117,7 +154,10 @@ function nextMigratedId(id, usedIds) {
   return candidate;
 }
 
-export function validateProject(project, { allowLegacyBuiltInIds = false } = {}) {
+export function validateProject(
+  project,
+  { allowLegacyBuiltInIds = false, allowLegacySampleContents = false } = {},
+) {
   if (!project || typeof project !== "object") {
     throw new TypeError("Sound project is required");
   }
@@ -143,30 +183,37 @@ export function validateProject(project, { allowLegacyBuiltInIds = false } = {})
   const trackLabels = new Set();
   const effectLabels = new Set();
   for (const track of project.tracks) {
-    validateTrack(track, ids, trackLabels, allowLegacyBuiltInIds);
+    validateTrack(track, ids, trackLabels, allowLegacyBuiltInIds, allowLegacySampleContents);
     compileBgmDescriptor(track, project.gridTicks);
   }
   for (const effect of project.effects) {
-    validateEffect(effect, ids, effectLabels, allowLegacyBuiltInIds);
+    validateEffect(effect, ids, effectLabels, allowLegacyBuiltInIds, allowLegacySampleContents);
     compileSfx(effect);
   }
   return project;
 }
 
-function validateTrack(track, ids, labels, allowLegacyBuiltInIds) {
-  validateAssetIdentity(track, ids, labels, "BGM", allowLegacyBuiltInIds);
+function validateTrack(track, ids, labels, allowLegacyBuiltInIds, allowLegacySampleContents) {
+  validateAssetIdentity(track, ids, labels, "BGM", allowLegacyBuiltInIds, allowLegacySampleContents);
   validateNotes(track.notes, "BGM notes");
   if (!Number.isInteger(track.loopCell) || track.loopCell < -1 || track.loopCell >= track.notes.length) {
     throw new RangeError("loopCell must be -1 or a BGM cell index");
   }
 }
 
-function validateEffect(effect, ids, labels, allowLegacyBuiltInIds) {
-  validateAssetIdentity(effect, ids, labels, "SFX", allowLegacyBuiltInIds);
+function validateEffect(effect, ids, labels, allowLegacyBuiltInIds, allowLegacySampleContents) {
+  validateAssetIdentity(effect, ids, labels, "SFX", allowLegacyBuiltInIds, allowLegacySampleContents);
   validateNotes(effect.notes, "SFX notes");
 }
 
-function validateAssetIdentity(asset, ids, labels, type, allowLegacyBuiltInIds) {
+function validateAssetIdentity(
+  asset,
+  ids,
+  labels,
+  type,
+  allowLegacyBuiltInIds,
+  allowLegacySampleContents,
+) {
   if (!asset || typeof asset !== "object" || typeof asset.id !== "string" || !asset.id.trim()) {
     throw new TypeError("Sound asset id is required");
   }
@@ -180,7 +227,11 @@ function validateAssetIdentity(asset, ids, labels, type, allowLegacyBuiltInIds) 
     throw new TypeError("Sound asset included must be boolean");
   }
   const builtInSample = findBuiltInSample(asset.id, type);
-  if (asset.origin === "sample" && !matchesBuiltInSample(asset, type)) {
+  if (
+    asset.origin === "sample"
+    && !matchesBuiltInSample(asset, type)
+    && !(allowLegacySampleContents && matchesLegacyBuiltInSample(asset, type))
+  ) {
     throw new TypeError("Sample assets must match the built-in library");
   }
   if (asset.origin === "user" && builtInSample) {
@@ -211,6 +262,14 @@ function matchesBuiltInSample(asset, type) {
 function findBuiltInSample(id, type) {
   const samples = type === "BGM" ? SAMPLE_TRACKS : SAMPLE_EFFECTS;
   return samples.find(([sampleId]) => sampleId === id);
+}
+
+function matchesLegacyBuiltInSample(asset, type) {
+  if (type !== "BGM") return false;
+  const sample = LEGACY_SAMPLE_TRACKS.find(([sampleId]) => sampleId === asset.id);
+  if (!sample) return false;
+  const [, name, notes] = sample;
+  return asset.name === name && asset.loopCell === 0 && sameNotes(asset.notes, notes);
 }
 
 function sameNotes(notes, expected) {
@@ -328,6 +387,6 @@ export function parseProject(text) {
   } catch (error) {
     throw new TypeError(`Invalid sound project JSON: ${error.message}`);
   }
-  validateProject(project, { allowLegacyBuiltInIds: true });
+  validateProject(project, { allowLegacyBuiltInIds: true, allowLegacySampleContents: true });
   return project;
 }

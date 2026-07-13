@@ -38,6 +38,7 @@ test("default sound project separates locked sample assets from editable user as
   ]);
   assert.equal(project.tracks.every(({ origin }) => origin === "sample"), true);
   assert.equal(project.effects.every(({ origin }) => origin === "sample"), true);
+  assert.equal(project.tracks.every(({ notes }) => notes.length >= 16), true);
   assert.deepEqual(project.tracks.filter(({ included }) => included).map(({ id }) => id), ["ode-to-joy-opening"]);
   assert.deepEqual(project.effects.filter(({ included }) => included).map(({ id }) => id), ["blip"]);
   for (const { id } of [...project.tracks, ...project.effects]) {
@@ -105,6 +106,18 @@ test("legacy starter assets are restored as locked samples without discarding us
   assert.equal(upgraded.effects.length, 11);
   assert.equal(upgraded.tracks[0].origin, "sample");
   assert.equal(upgraded.tracks[0].included, true);
+  assert.equal(upgraded.tracks.some(({ id }) => id === "user-track"), true);
+});
+
+test("four-cell sample tracks from the previous catalog upgrade to the longer locked samples", () => {
+  const legacy = createProject();
+  legacy.tracks[2].notes = [29, 28, 29, 28];
+  legacy.tracks[2].included = true;
+  legacy.tracks.push({ id: "user-track", name: "User Track", notes: [25], loopCell: 0, origin: "user" });
+  const upgraded = upgradeStarterSamples(parseProject(JSON.stringify(legacy)));
+  const furElise = upgraded.tracks.find(({ id }) => id === "fur-elise-opening");
+  assert.deepEqual(furElise.notes, createProject().tracks[2].notes);
+  assert.equal(furElise.included, true);
   assert.equal(upgraded.tracks.some(({ id }) => id === "user-track"), true);
 });
 

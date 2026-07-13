@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import subprocess
 
-from tools.sound_editor.server import SAMPLE_EFFECTS, SAMPLE_TRACKS
+from tools.sound_editor.server import SAMPLE_EFFECTS, SAMPLE_TRACKS, validate_project
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -37,3 +37,11 @@ def test_browser_and_builder_sample_catalogs_match() -> None:
 
     assert browser_tracks == SAMPLE_TRACKS
     assert browser_effects == SAMPLE_EFFECTS
+    assert validate_project({
+        "version": 1,
+        "name": "Sample Catalog",
+        "tickHz": 60,
+        "gridTicks": 6,
+        "tracks": catalog["tracks"],
+        "effects": catalog["effects"],
+    })

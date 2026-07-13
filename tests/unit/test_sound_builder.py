@@ -142,3 +142,30 @@ def test_builder_accepts_an_unmodified_legacy_sample_without_origin() -> None:
     }
 
     assert build_package(project)
+
+
+def test_builder_upgrades_a_previous_four_cell_sample() -> None:
+    project = {
+        "version": 1,
+        "name": "Legacy Four Cell Sample",
+        "tickHz": 60,
+        "gridTicks": 6,
+        "tracks": [
+            {
+                "id": "fur-elise-opening",
+                "name": "Fur Elise Opening",
+                "notes": [29, 28, 29, 28],
+                "loopCell": 0,
+                "origin": "sample",
+                "included": True,
+            }
+        ],
+        "effects": [],
+    }
+
+    payload = build_package(project)
+
+    with ZipFile(BytesIO(payload)) as archive:
+        assets = archive.read("sound_assets.inc")
+    assert b".byte 16, $00" in assets
+    assert b".byte $1D, $06\n        .byte $1C, $06" in assets
