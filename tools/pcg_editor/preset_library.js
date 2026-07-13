@@ -623,6 +623,234 @@ function windmillTurnPainter(phase) {
   };
 }
 
+function phasePainters(painter) {
+  return Array.from({ length: 4 }, (_, phase) => (matrix) => painter(matrix, phase));
+}
+
+function sideDoorSlidePainter(matrix, phase) {
+  const x = [3, 4, 5, 4][phase % 4];
+  fillMatrixRect(matrix, 1, 1, 14, 14);
+  clearMatrixRect(matrix, 2, 2, 12, 12);
+  fillMatrixRect(matrix, x, 2, 5, 12);
+  clearMatrixRect(matrix, x + 1, 3, 3, 10);
+  setMatrixPixel(matrix, x + 3, 8);
+}
+
+function topBridgeLiftPainter(matrix, phase) {
+  const deckY = [8, 7, 6, 7][phase % 4];
+  drawMatrixLine(matrix, 0, 13, 15, 13);
+  drawMatrixLine(matrix, 0, 15, 15, 15);
+  fillMatrixRect(matrix, 1, deckY, 14, 3);
+  clearMatrixRect(matrix, 3, deckY + 1, 2, 1);
+  clearMatrixRect(matrix, 8, deckY + 1, 2, 1);
+  drawMatrixLine(matrix, 2, deckY + 3, 2, 15);
+  drawMatrixLine(matrix, 13, deckY + 3, 13, 15);
+}
+
+function runeCyclePainter(matrix, phase) {
+  const lineFrames = [
+    [[8, 1, 8, 14], [3, 4, 13, 4], [3, 11, 13, 11]],
+    [[3, 2, 13, 2], [3, 2, 8, 14], [13, 2, 8, 14]],
+    [[2, 4, 14, 4], [2, 12, 14, 12], [5, 1, 11, 15]],
+    [[4, 1, 12, 1], [4, 1, 4, 14], [12, 1, 12, 14], [4, 14, 12, 14]],
+  ];
+  drawMatrixEllipse(matrix, 8, 8, 7, 7);
+  lineFrames[phase % lineFrames.length].forEach(([x0, y0, x1, y1]) => drawMatrixLine(matrix, x0, y0, x1, y1));
+}
+
+function calculatorTapPainter(matrix, phase) {
+  const keyPositions = [[5, 7], [8, 7], [5, 10], [8, 10]];
+  fillMatrixRect(matrix, 3, 1, 10, 14);
+  clearMatrixRect(matrix, 5, 3, 6, 2);
+  keyPositions.forEach(([x, y]) => clearMatrixRect(matrix, x, y, 2, 2));
+  const [activeX, activeY] = keyPositions[phase % keyPositions.length];
+  fillMatrixRect(matrix, activeX, activeY, 2, 2);
+}
+
+function helicopterRotorPainter(matrix, phase) {
+  const blades = [
+    [[1, 1, 11, 1]],
+    [[3, 4, 9, 0]],
+    [[6, 0, 6, 3]],
+    [[3, 0, 9, 4]],
+  ];
+  vehiclePainter("helicopter")(matrix);
+  clearMatrixRect(matrix, 1, 0, 11, 3);
+  drawMatrixLine(matrix, 6, 5, 6, 1);
+  blades[phase % blades.length].forEach(([x0, y0, x1, y1]) => drawMatrixLine(matrix, x0, y0, x1, y1));
+}
+
+function rocketLaunchPainter(matrix, phase) {
+  const y = [2, 1, 0, 1][phase % 4];
+  drawMatrixLine(matrix, 8, y, 4, y + 10);
+  drawMatrixLine(matrix, 8, y, 12, y + 10);
+  fillMatrixRect(matrix, 6, y + 6, 5, 5);
+  drawMatrixLine(matrix, 5, y + 10, 2, y + 13);
+  drawMatrixLine(matrix, 11, y + 10, 14, y + 13);
+  drawMatrixLine(matrix, 7, y + 12, 8, y + 15);
+  drawMatrixLine(matrix, 9, y + 12, 8, y + 15);
+}
+
+function carDrivePainter(matrix, phase) {
+  const x = [1, 2, 3, 2][phase % 4];
+  fillMatrixRect(matrix, x, 9, 11, 4);
+  drawMatrixLine(matrix, x + 3, 9, x + 5, 5);
+  drawMatrixLine(matrix, x + 5, 5, x + 8, 5);
+  drawMatrixLine(matrix, x + 8, 5, x + 10, 9);
+  drawMatrixEllipse(matrix, x + 3, 13, 2, 2);
+  drawMatrixEllipse(matrix, x + 8, 13, 2, 2);
+  drawMatrixLine(matrix, 0, 15, 15, 15);
+}
+
+function birdFlapPainter(matrix, phase) {
+  const wingFrames = [
+    [[7, 8, 2, 3], [9, 8, 14, 3]],
+    [[7, 8, 1, 7], [9, 8, 15, 7]],
+    [[7, 8, 3, 12], [9, 8, 13, 12]],
+    [[7, 8, 1, 7], [9, 8, 15, 7]],
+  ];
+  drawMatrixEllipse(matrix, 8, 9, 4, 4);
+  drawMatrixEllipse(matrix, 9, 5, 3, 3);
+  drawMatrixLine(matrix, 11, 5, 14, 6);
+  wingFrames[phase % wingFrames.length].forEach(([x0, y0, x1, y1]) => drawMatrixLine(matrix, x0, y0, x1, y1));
+  drawMatrixLine(matrix, 7, 12, 6, 15);
+  drawMatrixLine(matrix, 10, 12, 11, 15);
+}
+
+function slimeHopPainter(matrix, phase) {
+  const y = [10, 7, 8, 10][phase % 4];
+  drawMatrixEllipse(matrix, 8, y, 6, 4);
+  drawMatrixLine(matrix, 3, y, 5, y - 5);
+  drawMatrixLine(matrix, 13, y, 11, y - 5);
+  setMatrixPixel(matrix, 6, y, 0);
+  setMatrixPixel(matrix, 10, y, 0);
+  drawMatrixLine(matrix, 2, 15, 14, 15);
+}
+
+function catTailPainter(matrix, phase) {
+  const tailFrames = [
+    [[12, 9, 15, 5], [15, 5, 15, 3]],
+    [[12, 9, 15, 8], [15, 8, 15, 5]],
+    [[12, 9, 15, 12], [15, 12, 14, 14]],
+    [[12, 9, 15, 8], [15, 8, 15, 5]],
+  ];
+  mammalPainter({ ears: "point", tail: "short" })(matrix);
+  clearMatrixRect(matrix, 12, 3, 4, 12);
+  tailFrames[phase % tailFrames.length].forEach(([x0, y0, x1, y1]) => drawMatrixLine(matrix, x0, y0, x1, y1));
+}
+
+function craneSwingPainter(matrix, phase) {
+  const hookX = [12, 13, 14, 13][phase % 4];
+  fillMatrixRect(matrix, 2, 11, 5, 4);
+  drawMatrixLine(matrix, 4, 11, 4, 1);
+  drawMatrixLine(matrix, 4, 1, 14, 1);
+  drawMatrixLine(matrix, 4, 3, 10, 11);
+  drawMatrixLine(matrix, hookX, 1, hookX, 10);
+  drawMatrixLine(matrix, hookX, 10, hookX - 1, 12);
+  drawMatrixLine(matrix, hookX - 1, 12, hookX + 1, 12);
+}
+
+function batFlapPainter(matrix, phase) {
+  const wingFrames = [
+    [[7, 8, 1, 3], [9, 8, 15, 3]],
+    [[7, 8, 0, 7], [9, 8, 15, 7]],
+    [[7, 8, 2, 13], [9, 8, 14, 13]],
+    [[7, 8, 0, 7], [9, 8, 15, 7]],
+  ];
+  drawMatrixEllipse(matrix, 8, 8, 2, 4);
+  drawMatrixLine(matrix, 7, 5, 6, 2);
+  drawMatrixLine(matrix, 9, 5, 10, 2);
+  wingFrames[phase % wingFrames.length].forEach(([x0, y0, x1, y1]) => drawMatrixLine(matrix, x0, y0, x1, y1));
+}
+
+function owlBlinkPainter(matrix, phase) {
+  birdPainter({ wing: "folded", crest: true, beak: false })(matrix);
+  clearMatrixRect(matrix, 5, 5, 2, 2);
+  clearMatrixRect(matrix, 9, 5, 2, 2);
+  if (phase !== 1 && phase !== 2) {
+    setMatrixPixel(matrix, 6, 5);
+    setMatrixPixel(matrix, 10, 5);
+  } else {
+    drawMatrixLine(matrix, 5, 6, 7, 6);
+    drawMatrixLine(matrix, 9, 6, 11, 6);
+  }
+}
+
+function jellyfishPulsePainter(matrix, phase) {
+  const radius = [3, 4, 5, 4][phase % 4];
+  const tentacleY = [14, 15, 15, 15][phase % 4];
+  drawMatrixEllipse(matrix, 8, 6, radius, 3);
+  drawMatrixLine(matrix, 4, 8, 4, tentacleY);
+  drawMatrixLine(matrix, 7, 9, 7, tentacleY - 1);
+  drawMatrixLine(matrix, 10, 9, 10, tentacleY - 1);
+  drawMatrixLine(matrix, 12, 8, 12, tentacleY);
+}
+
+function shopSignSwayPainter(matrix, phase) {
+  const signX = [2, 3, 4, 3][phase % 4];
+  fillMatrixRect(matrix, 4, 8, 8, 7);
+  drawMatrixLine(matrix, 3, 8, 13, 8);
+  drawMatrixLine(matrix, 8, 8, 8, 1);
+  fillMatrixRect(matrix, signX, 2, 6, 3);
+  clearMatrixRect(matrix, signX + 2, 3, 2, 1);
+  drawMatrixLine(matrix, signX + 3, 1, signX + 3, 2);
+  clearMatrixRect(matrix, 7, 11, 2, 4);
+}
+
+function fountainSprayPainter(matrix, phase) {
+  const topY = [5, 2, 0, 3][phase % 4];
+  drawMatrixEllipse(matrix, 8, 13, 7, 2);
+  drawMatrixLine(matrix, 8, 12, 8, topY);
+  drawMatrixLine(matrix, 8, topY + 3, 4, 10);
+  drawMatrixLine(matrix, 8, topY + 3, 12, 10);
+  drawMatrixLine(matrix, 2, 15, 14, 15);
+}
+
+function trainPassPainter(matrix, phase) {
+  const x = [0, 1, 2, 1][phase % 4];
+  fillMatrixRect(matrix, x + 1, 6, 10, 7);
+  fillMatrixRect(matrix, x + 11, 9, 3, 4);
+  drawMatrixLine(matrix, x + 3, 6, x + 3, 2);
+  clearMatrixRect(matrix, x + 4, 8, 2, 2);
+  drawMatrixEllipse(matrix, x + 4, 14, 2, 1);
+  drawMatrixEllipse(matrix, x + 11, 14, 2, 1);
+  drawMatrixLine(matrix, 0, 15, 15, 15);
+}
+
+function robotBlinkPainter(matrix, phase) {
+  fillMatrixRect(matrix, 4, 2, 8, 6);
+  fillMatrixRect(matrix, 5, 8, 6, 5);
+  drawMatrixLine(matrix, 6, 13, 5, 15);
+  drawMatrixLine(matrix, 10, 13, 11, 15);
+  drawMatrixLine(matrix, 5, 9, 2, 11);
+  drawMatrixLine(matrix, 11, 9, 14, 11);
+  clearMatrixRect(matrix, 5, 4, 6, 2);
+  if (phase !== 1 && phase !== 2) {
+    fillMatrixRect(matrix, 6, 4, 1, 2);
+    fillMatrixRect(matrix, 9, 4, 1, 2);
+  } else {
+    drawMatrixLine(matrix, 5, 5, 7, 5);
+    drawMatrixLine(matrix, 9, 5, 11, 5);
+  }
+  drawMatrixLine(matrix, 8, 2, 8, 0);
+}
+
+function dragonBreathePainter(matrix, phase) {
+  const breath = [[14, 7, 1], [15, 6, 2], [15, 5, 3], [15, 6, 2]][phase % 4];
+  chibiPainter({ ears: "point", wings: true, tail: true })(matrix);
+  drawMatrixEllipse(matrix, breath[0], breath[1], breath[2], breath[2]);
+}
+
+function palmSwayPainter(matrix, phase) {
+  const topX = [7, 8, 9, 8][phase % 4];
+  drawMatrixLine(matrix, 8, 15, topX, 5);
+  drawMatrixLine(matrix, topX, 5, 1, 2);
+  drawMatrixLine(matrix, topX, 5, 15, 2);
+  drawMatrixLine(matrix, topX, 5, 3, 8);
+  drawMatrixLine(matrix, topX, 5, 13, 8);
+  fillMatrixRect(matrix, 7, 12, 3, 4);
+}
+
 const SIDE_VIEW_ASSETS = [
   tile("side-grass-top", "Grass Top", "side-view", ["terrain", "ground", "tileable"], ["........", "........", "########", ".#.#.#.#", "########", "........", "........", "........"]),
   tile("side-grass-fill", "Grass Fill", "side-view", ["terrain", "ground", "tileable"], [".#.#.#.#", "########", "#.#.#.#.", "########", ".#.#.#.#", "########", "#.#.#.#.", "########"]),
@@ -1285,7 +1513,7 @@ const FLORA_ASSETS = [
   })),
 ];
 
-const ANIMATION_PRESETS = [
+const BASE_ANIMATION_PRESETS = [
   animationTile("anim-water-ripple", "Water Ripple", "top-view", ["animation", "water", "ripple"], 160, [
     ["........", "..##....", "........", "....##..", "........", ".##.....", "........", "........"],
     ["...##...", "........", ".##.....", "........", ".....##.", "........", "..##....", "........"],
@@ -1379,6 +1607,151 @@ const ANIMATION_PRESETS = [
     windmillTurnPainter(0), windmillTurnPainter(1), windmillTurnPainter(2), windmillTurnPainter(3),
   ]),
 ];
+
+const EXPANDED_ANIMATION_PRESETS = [
+  animationTile("anim-side-platform-crumble", "Side Platform Crumble", "side-view", ["animation", "side-view", "platform", "crumble"], 110, [
+    ["........", "........", "########", "#.####.#", "########", "........", "........", "........"],
+    ["........", "........", "########", "#.##.###", "##.###.#", "...#....", "........", "........"],
+    ["........", "........", "##.##.##", "#..##..#", ".#....#.", "...#....", "..#..#..", "........"],
+    ["........", "........", "#..##..#", "........", "..#..#..", ".#....#.", "....#...", "........"],
+  ]),
+  animationTile("anim-top-road-sparkle", "Top Road Sparkle", "top-view", ["animation", "top-view", "road", "sparkle"], 160, [
+    ["........", "........", "...#....", "########", "########", "....#...", "........", "........"],
+    ["........", "....#...", "........", "########", "########", "..#.....", "........", "........"],
+    ["........", "........", "..#.....", "########", "########", ".....#..", "........", "........"],
+    ["........", ".....#..", "........", "########", "########", "...#....", "........", "........"],
+  ]),
+  animationTile("anim-top-river-current", "Top River Current", "top-view", ["animation", "top-view", "river", "water"], 120, [
+    [".##..##.", "..##..##", "##..##..", ".##..##.", "..##..##", "##..##..", ".##..##.", "..##..##"],
+    ["..##..##", "##..##..", ".##..##.", "..##..##", "##..##..", ".##..##.", "..##..##", "##..##.."],
+    ["##..##..", ".##..##.", "..##..##", "##..##..", ".##..##.", "..##..##", "##..##..", ".##..##."],
+    [".##..##.", "##..##..", "..##..##", ".##..##.", "##..##..", "..##..##", ".##..##.", "##..##.."],
+  ]),
+  animationTile("anim-symbol-arrow-pulse", "Symbol Arrow Pulse", "symbols", ["animation", "symbols", "arrow", "pulse"], 140, [
+    ["...#....", "..###...", ".##.##..", "...#....", "...#....", "...#....", "...#....", "........"],
+    ["..###...", ".#####..", "##.#.##.", "...#....", "...#....", "...#....", "...#....", "........"],
+    [".#####..", "#######.", "##.#.##.", "...#....", "...#....", "...#....", "...#....", "........"],
+    ["..###...", ".#####..", "##.#.##.", "...#....", "...#....", "...#....", "...#....", "........"],
+  ]),
+  animationTile("anim-symbol-target-lock", "Symbol Target Lock", "symbols", ["animation", "symbols", "target", "lock"], 100, [
+    [".######.", "##....##", "#.####.#", "#.#..#.#", "#.#..#.#", "#.####.#", "##....##", ".######."],
+    ["##....##", "#.####.#", ".##..##.", "..####..", "..####..", ".##..##.", "#.####.#", "##....##"],
+    ["..####..", ".##..##.", "##.##.##", "#..##..#", "#..##..#", "##.##.##", ".##..##.", "..####.."],
+    ["##....##", "#.####.#", ".##..##.", "..####..", "..####..", ".##..##.", "#.####.#", "##....##"],
+  ]),
+  animationTile("anim-symbol-star-twinkle", "Symbol Star Twinkle", "symbols", ["animation", "symbols", "star", "twinkle"], 170, [
+    ["........", "...#....", "#.###.#.", ".#####..", "#######.", ".#####..", "#.###.#.", "...#...."],
+    ["........", "........", "...#....", "..###...", ".#####..", "..###...", "...#....", "........"],
+    ["...#....", "##.#.##.", ".#####..", "########", "########", ".#####..", "##.#.##.", "...#...."],
+    ["........", "........", "...#....", "..###...", ".#####..", "..###...", "...#....", "........"],
+  ]),
+  animationTile("anim-stationery-pen-draw", "Stationery Pen Draw", "stationery", ["animation", "stationery", "pen", "writing"], 120, [
+    [".....##.", "....##..", "...##...", "..##....", ".##.....", "##......", "........", "........"],
+    [".....##.", "....##..", "...##...", "..##....", ".##.....", "########", "........", "........"],
+    [".....##.", "....##..", "...##...", "..##....", ".##.....", "########", "########", "........"],
+    [".....##.", "....##..", "...##...", "..##....", ".##.....", "########", "########", "####...."],
+  ]),
+  animationTile("anim-stationery-paper-flip", "Stationery Paper Flip", "stationery", ["animation", "stationery", "paper", "flip"], 140, [
+    [".######.", ".#....#.", ".#....#.", ".#....#.", ".#....#.", ".#....#.", ".######.", "........"],
+    ["..#####.", "..#...#.", "..#...#.", "..#...#.", "..#..##.", "..###...", "........", "........"],
+    ["...####.", "...#..#.", "...#..#.", "...#..#.", "...###..", "........", "........", "........"],
+    ["..#####.", "..#...#.", "..#...#.", "..#...#.", "..#..##.", "..###...", "........", "........"],
+  ]),
+  animationTile("anim-construction-conveyor-roll", "Construction Conveyor Roll", "construction", ["animation", "construction", "conveyor", "roll"], 100, [
+    ["........", "########", "##..##..", ".##..##.", "..##..##", ".##..##.", "########", "........"],
+    ["........", "########", ".##..##.", "..##..##", ".##..##.", "##..##..", "########", "........"],
+    ["........", "########", "..##..##", ".##..##.", "##..##..", ".##..##.", "########", "........"],
+    ["........", "########", ".##..##.", "##..##..", ".##..##.", "..##..##", "########", "........"],
+  ]),
+  animationTile("anim-cave-crystal-glow", "Cave Crystal Glow", "cave", ["animation", "cave", "crystal", "glow"], 200, [
+    ["...#....", "..###...", ".##.##..", "...##...", "...##...", "..####..", ".##..##.", "........"],
+    ["...#....", ".#####..", "##.#.##.", "..###...", "..###...", ".######.", "##.##.##", "........"],
+    ["..###...", ".#####..", "#######.", "..###...", "..###...", ".######.", "########", ".##..##."],
+    ["...#....", ".#####..", "##.#.##.", "..###...", "..###...", ".######.", "##.##.##", "........"],
+  ]),
+  animationTile("anim-forest-firefly-glow", "Forest Firefly Glow", "forest", ["animation", "forest", "firefly", "glow"], 180, [
+    ["........", "........", "..#.....", "........", ".....#..", "........", "........", "........"],
+    ["........", "...#....", "........", "......#.", "........", ".#......", "........", "........"],
+    ["....#...", "........", ".......#", "........", ".#......", "........", "...#....", "........"],
+    ["........", "...#....", "........", "......#.", "........", ".#......", "........", "........"],
+  ]),
+  animationTile("anim-forest-mushroom-spore", "Forest Mushroom Spore", "forest", ["animation", "forest", "mushroom", "spore"], 160, [
+    ["........", "........", ".######.", "########", ".#.#..#.", "...##...", "...##...", "..####.."],
+    ["........", "...#....", ".######.", "########", ".#.#..#.", "...##...", "...##...", "..####.."],
+    ["..#.....", ".....#..", ".######.", "########", ".#.#..#.", "...##...", "...##...", "..####.."],
+    ["........", "...#....", ".######.", "########", ".#.#..#.", "...##...", "...##...", "..####.."],
+  ]),
+  animationTile("anim-underwater-kelp-sway", "Underwater Kelp Sway", "underwater", ["animation", "underwater", "kelp", "sway"], 180, [
+    ["...#....", "...#....", "..##....", "...#....", "...#....", "..##....", "..##....", "########"],
+    ["....#...", "....#...", "...##...", "....#...", "....#...", "...##...", "...##...", "########"],
+    [".....#..", "....##..", "....#...", "...##...", "....#...", "....##..", "...##...", "########"],
+    ["....#...", "....#...", "...##...", "....#...", "....#...", "...##...", "...##...", "########"],
+  ]),
+  animationTile("anim-underwater-coral-wave", "Underwater Coral Wave", "underwater", ["animation", "underwater", "coral", "wave"], 160, [
+    [".#...#..", ".##.##..", "##.#.##.", "..###...", "...#....", "..###...", "########", "########"],
+    ["..#...#.", ".##.##..", ".##.##..", "...###..", "....#...", "...###..", "########", "########"],
+    ["...#...#", "..##.##.", "..##.##.", "....###.", ".....#..", "....###.", "########", "########"],
+    ["..#...#.", ".##.##..", ".##.##..", "...###..", "....#...", "...###..", "########", "########"],
+  ]),
+  animationTile("anim-village-smoke-puff", "Village Smoke Puff", "village", ["animation", "village", "smoke", "puff"], 180, [
+    ["........", "........", "...##...", "..####..", "...##...", "....#...", "...##...", "..####.."],
+    ["........", "..##....", ".####...", "..##....", "...#....", "....#...", "...##...", "..####.."],
+    [".##.....", "####....", ".##.....", "..#.....", "...#....", "....#...", "...##...", "..####.."],
+    ["........", "..##....", ".####...", "..##....", "...#....", "....#...", "...##...", "..####.."],
+  ]),
+  animationTile("anim-city-neon-sign", "City Neon Sign", "city", ["animation", "city", "neon", "sign"], 180, [
+    [".######.", "##....##", "#.####.#", "#.#..#.#", "#.####.#", "##....##", ".######.", "........"],
+    ["........", ".##..##.", ".#....#.", "........", ".#....#.", ".##..##.", "........", "........"],
+    ["########", "########", "##.##.##", "########", "##.##.##", "########", "########", "........"],
+    ["........", ".##..##.", ".#....#.", "........", ".#....#.", ".##..##.", "........", "........"],
+  ]),
+  animationTile("anim-electronics-screen-scan", "Electronics Screen Scan", "electronics", ["animation", "electronics", "screen", "scan"], 100, [
+    [".######.", "##....##", "#......#", "########", "#......#", "#......#", "##....##", ".######."],
+    [".######.", "##....##", "#......#", "#......#", "########", "#......#", "##....##", ".######."],
+    [".######.", "##....##", "#......#", "#......#", "#......#", "########", "##....##", ".######."],
+    [".######.", "##....##", "########", "#......#", "#......#", "#......#", "##....##", ".######."],
+  ]),
+  animationTile("anim-electronics-circuit-pulse", "Electronics Circuit Pulse", "electronics", ["animation", "electronics", "circuit", "pulse"], 120, [
+    ["#..#..#.", ".##.##..", "..#.#.##", "##.#.#..", ".##.##.#", "#..#..##", "##.##...", "..#..#.#"],
+    ["##.#..#.", ".##.##..", "..#.#.##", "##.#.#..", ".##.##.#", "#..#..##", "##.##...", "..#..#.#"],
+    ["#..##.#.", ".##.##..", "..#.#.##", "##.#.#..", ".##.##.#", "#..#..##", "##.##...", "..#..#.#"],
+    ["#..#..##", ".##.##..", "..#.#.##", "##.#.#..", ".##.##.#", "#..#..##", "##.##...", "..#..#.#"],
+  ]),
+  animationTile("anim-flora-grass-sway", "Flora Grass Sway", "flora", ["animation", "flora", "grass", "sway"], 180, [
+    [".#..#...", ".#..#...", "..##....", ".#..#...", "#....#..", ".#..#...", "........", "........"],
+    ["..#..#..", "..#..#..", "...##...", "..#..#..", ".#....#.", "..#..#..", "........", "........"],
+    ["...#..#.", "...#..#.", "....##..", "...#..#.", "..#....#", "...#..#.", "........", "........"],
+    ["..#..#..", "..#..#..", "...##...", "..#..#..", ".#....#.", "..#..#..", "........", "........"],
+  ]),
+  animationTile("anim-flora-petal-fall", "Flora Petal Fall", "flora", ["animation", "flora", "flower", "petal"], 160, [
+    ["...##...", ".######.", "##.##.##", ".######.", "...##...", "...##...", "..####..", "........"],
+    ["........", ".######.", "##.##.##", ".######.", "...##...", "...##...", "..####..", ".....#.."],
+    ["........", ".######.", "##.##.##", ".######.", "...##...", "...##...", "..####..", "..#....."],
+    ["........", ".######.", "##.##.##", ".######.", "...##...", "...##...", "..####..", "....#..."],
+  ]),
+  animationSprite("anim-side-door-slide", "Side Door Slide", "side-view", ["animation", "side-view", "door", "slide"], 130, phasePainters(sideDoorSlidePainter)),
+  animationSprite("anim-top-bridge-lift", "Top Bridge Lift", "top-view", ["animation", "top-view", "bridge", "lift"], 150, phasePainters(topBridgeLiftPainter)),
+  animationSprite("anim-symbol-rune-cycle", "Symbol Rune Cycle", "symbols", ["animation", "symbols", "rune", "cycle"], 150, phasePainters(runeCyclePainter)),
+  animationSprite("anim-stationery-calculator-tap", "Stationery Calculator Tap", "stationery", ["animation", "stationery", "calculator", "tap"], 100, phasePainters(calculatorTapPainter)),
+  animationSprite("anim-vehicle-helicopter-rotor", "Vehicle Helicopter Rotor", "vehicles", ["animation", "vehicles", "helicopter", "rotor"], 80, phasePainters(helicopterRotorPainter)),
+  animationSprite("anim-vehicle-rocket-launch", "Vehicle Rocket Launch", "vehicles", ["animation", "vehicles", "rocket", "launch"], 100, phasePainters(rocketLaunchPainter)),
+  animationSprite("anim-vehicle-car-drive", "Vehicle Car Drive", "vehicles", ["animation", "vehicles", "car", "drive"], 90, phasePainters(carDrivePainter)),
+  animationSprite("anim-creature-bird-flap", "Creature Bird Flap", "creatures", ["animation", "creatures", "bird", "flap"], 110, phasePainters(birdFlapPainter)),
+  animationSprite("anim-creature-slime-hop", "Creature Slime Hop", "creatures", ["animation", "creatures", "slime", "hop"], 130, phasePainters(slimeHopPainter)),
+  animationSprite("anim-creature-cat-tail", "Creature Cat Tail", "creatures", ["animation", "creatures", "cat", "tail"], 160, phasePainters(catTailPainter)),
+  animationSprite("anim-construction-crane-swing", "Construction Crane Swing", "construction", ["animation", "construction", "crane", "swing"], 160, phasePainters(craneSwingPainter)),
+  animationSprite("anim-cave-bat-flap", "Cave Bat Flap", "cave", ["animation", "cave", "bat", "flap"], 100, phasePainters(batFlapPainter)),
+  animationSprite("anim-forest-owl-blink", "Forest Owl Blink", "forest", ["animation", "forest", "owl", "blink"], 150, phasePainters(owlBlinkPainter)),
+  animationSprite("anim-underwater-jellyfish-pulse", "Underwater Jellyfish Pulse", "underwater", ["animation", "underwater", "jellyfish", "pulse"], 140, phasePainters(jellyfishPulsePainter)),
+  animationSprite("anim-village-shop-sign-sway", "Village Shop Sign Sway", "village", ["animation", "village", "shop", "sign"], 180, phasePainters(shopSignSwayPainter)),
+  animationSprite("anim-city-fountain-spray", "City Fountain Spray", "city", ["animation", "city", "fountain", "spray"], 130, phasePainters(fountainSprayPainter)),
+  animationSprite("anim-city-train-pass", "City Train Pass", "city", ["animation", "city", "train", "pass"], 100, phasePainters(trainPassPainter)),
+  animationSprite("anim-electronics-robot-blink", "Electronics Robot Blink", "electronics", ["animation", "electronics", "robot", "blink"], 140, phasePainters(robotBlinkPainter)),
+  animationSprite("anim-chibi-dragon-breathe", "Chibi Dragon Breathe", "chibi", ["animation", "chibi", "dragon", "breathe"], 110, phasePainters(dragonBreathePainter)),
+  animationSprite("anim-flora-palm-sway", "Flora Palm Sway", "flora", ["animation", "flora", "palm", "sway"], 180, phasePainters(palmSwayPainter)),
+];
+
+const ANIMATION_PRESETS = [...BASE_ANIMATION_PRESETS, ...EXPANDED_ANIMATION_PRESETS];
 
 const ASSET_PRESETS = [
   ...SIDE_VIEW_ASSETS,
@@ -1516,7 +1889,7 @@ const SET_PRESETS = [
 
 export const PCG_PRESETS = Object.freeze([...ASSET_PRESETS, ...SET_PRESETS, ...ANIMATION_PRESETS]);
 
-if (ASSET_PRESETS.length !== 288 || SET_PRESETS.length !== 32 || ANIMATION_PRESETS.length !== 20 || PCG_PRESETS.length !== 340 || new Set(PCG_PRESETS.map(({ id }) => id)).size !== PCG_PRESETS.length) {
+if (ASSET_PRESETS.length !== 288 || SET_PRESETS.length !== 32 || ANIMATION_PRESETS.length !== 60 || PCG_PRESETS.length !== 380 || new Set(PCG_PRESETS.map(({ id }) => id)).size !== PCG_PRESETS.length) {
   throw new Error("PCG preset catalog is incomplete");
 }
 
@@ -1560,7 +1933,7 @@ export function filterPcgPresets({ category = "all", kind = "all", size = "all",
     if (size === "sets" && preset.kind !== "set") return false;
     if (allowedIds && !allowedIds.has(preset.id)) return false;
     if (!normalizedQuery) return true;
-    return [preset.name, preset.category, preset.kind, ...preset.tags].join(" ").toLowerCase().includes(normalizedQuery);
+    return [preset.id, preset.name, preset.category, preset.kind, ...preset.tags].join(" ").toLowerCase().includes(normalizedQuery);
   });
   if (!allowedIds) return matches;
   const matchesById = new Map(matches.map((preset) => [preset.id, preset]));

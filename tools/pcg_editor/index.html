@@ -147,7 +147,7 @@
         <section class="subpanel" aria-labelledby="pcg-library-launch-title">
           <div class="subpanel-heading">
             <h3 id="pcg-library-launch-title">PCG Library</h3>
-            <span id="pcg-library-launch-count">340 presets</span>
+            <span id="pcg-library-launch-count">380 presets</span>
           </div>
           <p>Browse original 8x8 assets, 16x16 sprites, ready-to-place sets, and animation loops.</p>
           <button id="open-pcg-library" class="primary" type="button">Open PCG Library</button>
@@ -439,7 +439,7 @@
         <div>
           <span class="eyebrow">Library</span>
           <h2 id="pcg-library-title">PCG Library</h2>
-          <p id="pcg-library-intro">340 original assets, sets, and animations for JR-100 projects.</p>
+          <p id="pcg-library-intro">380 original assets, sets, and animations for JR-100 projects.</p>
         </div>
         <button id="close-pcg-library" type="button">Close</button>
       </div>
@@ -473,7 +473,7 @@
           <button type="button" class="active" data-pcg-library-scope="all" aria-pressed="true">All</button>
           <button type="button" data-pcg-library-scope="favorites" aria-pressed="false">Favorites</button>
           <button type="button" data-pcg-library-scope="recent" aria-pressed="false">Recent</button>
-          <output id="pcg-library-count">340 results</output>
+          <output id="pcg-library-count">380 results</output>
         </aside>
         <section id="pcg-library-gallery" class="pcg-library-gallery" role="listbox" aria-label="PCG presets"></section>
         <aside class="pcg-library-detail" aria-labelledby="pcg-library-detail-title">
@@ -482,11 +482,35 @@
           <h3 id="pcg-library-detail-title">Select a preset</h3>
           <p id="pcg-library-detail-tags">Choose an asset or a set from the gallery.</p>
           <button id="pcg-library-favorite" type="button" disabled>Favorite</button>
+          <button id="pcg-library-generate-animation" type="button" disabled>Create animation</button>
           <label><span>Start slot</span><input id="pcg-library-start-slot" type="number" min="0" max="31" step="1" value="0"></label>
           <output id="pcg-library-destination">Select a preset to inspect its destination.</output>
           <p id="pcg-library-conflicts" class="pcg-library-conflicts"></p>
           <button id="pcg-library-apply" class="primary" type="button" disabled>Apply to PCG</button>
         </aside>
+      </div>
+    </dialog>
+
+    <dialog id="pcg-animation-builder-dialog" class="pcg-library-conflict-dialog" aria-labelledby="pcg-animation-builder-title" aria-describedby="pcg-animation-builder-source pcg-animation-builder-summary">
+      <div class="pcg-library-conflict-heading">
+        <h2 id="pcg-animation-builder-title">Create Animation</h2>
+        <button id="close-pcg-animation-builder" type="button" aria-label="Cancel animation creation">Cancel</button>
+      </div>
+      <output id="pcg-animation-builder-source" aria-live="polite">Choose an asset or set from the PCG Library.</output>
+      <canvas id="pcg-animation-builder-preview" width="192" height="192" aria-label="Generated animation preview"></canvas>
+      <label><span>Template</span>
+        <select id="pcg-animation-template" aria-label="Animation template"></select>
+      </label>
+      <label><span>Frame duration</span>
+        <input id="pcg-animation-duration" type="number" min="16" max="60000" step="1" value="140" aria-label="Frame duration in milliseconds">
+      </label>
+      <label><span>Start slot</span>
+        <input id="pcg-animation-start-slot" type="number" min="0" max="31" step="1" value="0" aria-label="Animation start slot">
+      </label>
+      <output id="pcg-animation-builder-summary" aria-live="polite">No animation source is selected.</output>
+      <div class="pcg-library-conflict-actions">
+        <button id="cancel-pcg-animation-builder" type="button">Cancel</button>
+        <button id="generate-pcg-library-animation" class="primary" type="button" disabled>Generate</button>
       </div>
     </dialog>
 

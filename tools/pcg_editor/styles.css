@@ -423,6 +423,10 @@ p {
   width: min(460px, calc(100vw - 40px));
 }
 
+#pcg-animation-builder-dialog {
+  width: min(520px, calc(100vw - 40px));
+}
+
 .pcg-library-dialog::backdrop,
 .pcg-library-conflict-dialog::backdrop {
   background: rgb(2 5 3 / 0.82);
@@ -629,6 +633,45 @@ p {
   justify-content: flex-end;
   gap: 7px;
   margin-top: 14px;
+}
+
+#pcg-animation-builder-source,
+#pcg-animation-builder-summary {
+  display: block;
+  margin-top: 10px;
+  color: var(--muted);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+#pcg-animation-builder-preview {
+  display: block;
+  width: min(100%, 192px);
+  height: auto;
+  margin: 10px auto;
+  border: 5px solid #050705;
+  border-radius: 5px;
+  background: #020503;
+  image-rendering: pixelated;
+}
+
+#pcg-animation-builder-dialog label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+#pcg-animation-builder-dialog select {
+  flex: 1;
+  min-width: 0;
+}
+
+#pcg-animation-builder-dialog input {
+  width: 96px;
 }
 
 @media (max-width: 900px) {
