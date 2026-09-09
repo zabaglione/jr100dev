@@ -5,6 +5,8 @@
 #include <cstring>
 using jr100::detail::Emulator;
 static uint16_t low_sp = 0xffff;
+static int stream_begin = -1, stream_end = -1, stream_base = 0;
+static int stream_low_sp = 0xffff, stream_errors = 0;
 static int skip_render_pc = -1;
 static int game_mode_address = 0;
 static uint64_t mutation_count = 0;
@@ -29,6 +31,10 @@ static void trace_video(Emulator* e) {
     video_repeated += video_touches[address - 0xc100]++ != 0;
 }
 extern "C" {
+void stack_stream_range(int begin, int end, int base) {
+    stream_begin = begin; stream_end = end; stream_base = base;
+}
+int stack_stream_stat(int id) { return id == 0 ? stream_low_sp : stream_errors; }
 void video_watch(int a, int b) {
     watch_video = true; video_store_a = a; video_store_b = b;
     video_writes = video_redundant = video_outside = video_repeated = 0;
@@ -76,7 +82,11 @@ int run_until(Emulator* e, int pc, int max_cycles) {
             e->set_clock_count(e->clock_count()+5);
         } else { trace_video(e); e->cpu().step_instruction(); }
         e->via().execute(e->clock_count());
-        low_sp=std::min(low_sp,e->cpu().registers().sp);
+        const auto& r = e->cpu().registers();
+        if (r.pc >= stream_begin && r.pc <= stream_end) {
+            stream_low_sp = std::min(stream_low_sp, int(r.sp));
+            stream_errors += r.sp < stream_base - 1 || r.sp >= stream_base + 768 || !e->cpu().flags().i;
+        } else low_sp = std::min(low_sp, r.sp);
         if(e->cpu().registers().pc==pc)return 1;
     } while(e->clock_count()<end);
     return 0;
@@ -86,7 +96,7 @@ void pad(Emulator* e,int bits) {e->set_joystick_mask(bits);}
 void pixels(Emulator* e,uint8_t* out) { auto f=e->frame_buffer();std::copy(f.begin(),f.end(),out); }
 void headless_search(int render_pc,int mode_address){skip_render_pc=render_pc;game_mode_address=mode_address;}
 int min_sp(){return low_sp;}
-void reset_min_sp(){low_sp=0xffff;}
+void reset_min_sp(){low_sp=0xffff;stream_low_sp=0xffff;stream_errors=0;}
 }
 // Planning checkpoints are used only in disposable search machines.
 // The acceptance replay uses create/key/pad/run_until and never restore.

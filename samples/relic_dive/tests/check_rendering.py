@@ -93,6 +93,7 @@ def check():
         moves.append(
             {"scroll": x == 32, "changed_cells": changed, "write_span_cycles": span}
         )
+    assert lib.stack_stream_stat(1) == 0
     lib.video_watch_stop()
     m.close()
     assert worst < 35000

@@ -1,5 +1,5 @@
 include ../toolchain.mk
-MODULES := constants.inc platform.asm main.asm map.asm terrain.asm dungeon.asm turns.asm items.asm extras.asm ui.asm assets.asm
+MODULES := constants.inc platform.asm main.asm map.asm terrain.asm dungeon.asm sight_rays.inc turns.asm items.asm extras.asm ui.asm assets.asm
 SOURCES := $(addprefix src/,$(MODULES))
 
 all: build/relic_dive.prg images

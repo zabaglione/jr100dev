@@ -7,8 +7,24 @@ import multiprocessing
 import time
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
+from statistics import median
 
 from machine import ROOT, Machine, lib
+
+
+def latency(cycles):
+    values = sorted(cycles)
+    if not values:
+        return {"samples": 0}
+    return {
+        "samples": len(values),
+        "median_ms": round(median(values) / 894, 3),
+        "p95_ms": round(values[(len(values) * 95 + 99) // 100 - 1] / 894, 3),
+        "max_ms": round(values[-1] / 894, 3),
+        "under_100ms_percent": round(
+            100 * sum(v < 89400 for v in values) / len(values), 1
+        ),
+    }
 
 
 def replay(path):
@@ -26,13 +42,26 @@ def replay(path):
     initial_seed = m.word("G_SEED")
     mutation_baseline = lib.mutations()
     max_turn = 0
+    turns, moves, scrolls = [], [], []
     for action in plan["inputs"]:
         before = m.get("G_FLOOR")
+        turn = m.word("G_TURNS")
+        position = (m.get("G_X"), m.get("G_Y"))
+        camera = (m.get("VIEW_X"), m.get("VIEW_Y"))
         cycles = m.action(action, pad=action not in (6, 11))
         if m.get("G_FLOOR") != before:
             max_floor = max(max_floor, cycles)
         elif m.get("G_MODE") in (1, 9):
             max_turn = max(max_turn, cycles)
+            if m.word("G_TURNS") != turn:
+                turns.append(cycles)
+                if action in (1, 2, 3, 4, 7, 8, 9, 10) and position != (
+                    m.get("G_X"),
+                    m.get("G_Y"),
+                ):
+                    moves.append(cycles)
+                    if camera != (m.get("VIEW_X"), m.get("VIEW_Y")):
+                        scrolls.append(cycles)
     assert (
         lib.mutations() == mutation_baseline
     ), "Host modified state during acceptance replay"
@@ -49,6 +78,8 @@ def replay(path):
     assert m.read(0x300, len(m.code)) == m.code, "Game wrote into code"
     stack_used = 0x3FFF - lib.min_sp()
     assert stack_used <= 512, stack_used
+    assert lib.stack_stream_stat(0) == 0x2FFF
+    assert lib.stack_stream_stat(1) == 0
     result = {
         **actual,
         "difficulty": plan["difficulty"],
@@ -57,6 +88,11 @@ def replay(path):
         "host_state_writes": lib.mutations() - mutation_baseline,
         "full_rendering": True,
         "stack_used_bytes": stack_used,
+        "frame_source_sp_min": lib.stack_stream_stat(0),
+        "frame_source_errors": lib.stack_stream_stat(1),
+        "turn_latency": latency(turns),
+        "movement_latency": latency(moves),
+        "scroll_latency": latency(scrolls),
         "max_turn_cycles": max_turn,
         "max_floor_cycles": max_floor,
         "max_turn_ms": round(max_turn / 894, 3),

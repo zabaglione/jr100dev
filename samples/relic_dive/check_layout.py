@@ -26,6 +26,7 @@ assert (
 )
 assert symbols["ITEM_START"] == symbols["ENEMY_START"] + symbols["MAX_ENEMIES"] * 8
 assert symbols["FLOOR_DATA_END"] == symbols["ITEM_START"] + symbols["MAX_ITEMS"] * 3
+assert 0x80 <= symbols["FAST_BEGIN"] < symbols["FAST_END"] <= 0x100
 assert symbols["SAVE_ZP"] + 128 <= symbols["SAVE_PCG"]
 assert symbols["SAVE_PCG"] + 256 <= symbols["SCRATCH_BEGIN"]
 assert symbols["SCRATCH_END"] <= symbols["SAVE_SP"]

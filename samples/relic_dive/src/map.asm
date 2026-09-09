@@ -1,6 +1,7 @@
 ; Packed terrain (even X in low nibble), independent explored and visible masks.
 ; A=x B=y. CELL returns logical terrain|explored in A; X=packed address.
-CELL:
+; Terrain-only lookup for line of sight; no explored-mask lookup.
+TERRAIN_CELL:
     STAA CELL_X
     STAB CELL_Y
     TBA
@@ -31,6 +32,9 @@ CELL:
     LSRA
 CELL_LOW:
     ANDA #15
+    RTS
+CELL:
+    JSR TERRAIN_CELL
     STAA CELL_VALUE
     LDAA CELL_X
     LDAB CELL_Y
@@ -48,6 +52,8 @@ CELL_RETURN:
     TSTA
     RTS
 WRITE_CELL:
+    LDAB #1
+    STAB VIS_DIRTY
     ANDA #15
     STAA CELL_VALUE
     LDX CELL_PACKED

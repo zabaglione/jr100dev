@@ -10,6 +10,7 @@ MODULES = (
     "map.asm",
     "terrain.asm",
     "dungeon.asm",
+    "sight_rays.inc",
     "turns.asm",
     "items.asm",
     "extras.asm",

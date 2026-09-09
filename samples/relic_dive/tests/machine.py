@@ -31,6 +31,8 @@ if not LIB.exists() or any(p.stat().st_mtime > LIB.stat().st_mtime for p in SOUR
     LIB.with_suffix(".tmp").replace(LIB)
 lib = C.CDLL(str(LIB))
 for name, args, ret in [
+    ("stack_stream_range", [C.c_int, C.c_int, C.c_int], None),
+    ("stack_stream_stat", [C.c_int], C.c_int),
     ("video_watch", [C.c_int, C.c_int], None),
     ("video_stat", [C.c_int], C.c_longlong),
     ("video_watch_stop", [], None),
@@ -66,6 +68,9 @@ SYMS = {
         re.MULTILINE,
     )
 }
+lib.stack_stream_range(
+    SYMS["PRESENT_STREAM_BEGIN"], SYMS["PRESENT_RESTORE"], SYMS["FRAMEBUFFER"]
+)
 KEYS = {
     1: (2, 1),
     2: (0, 3),

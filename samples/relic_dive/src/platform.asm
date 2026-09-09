@@ -31,6 +31,12 @@ ENTRY_SCRATCH_ZERO:
     INX
     CPX #SCRATCH_END
     BNE ENTRY_SCRATCH_ZERO
+    LDX #FAST_BEGIN
+ENTRY_FAST_ZERO:
+    STAA 0,X
+    INX
+    CPX #FAST_END
+    BNE ENTRY_FAST_ZERO
     LDAA $C800
     STAA SAVE_VIA
     LDAA $C801
@@ -287,9 +293,14 @@ KEY_ACTIONS:
     .byte 1,1,3, 1,2,11, 1,4,4
     .byte 0,4,9, 0,8,2, 0,16,10
     .byte 8,8,5, 8,2,6
-; Clear the JR-100 video RAM.
+; Clear only text rows when the map renderer will overwrite all terrain cells.
 
 CLEAR:
+    LDAA G_MODE
+    CMPA #1
+    BEQ CLEAR_WORLD
+    CMPA #5
+    BEQ CLEAR_WORLD
     LDX #FRAMEBUFFER
     LDAA #$40
 CLEAR_NEXT:
@@ -297,6 +308,19 @@ CLEAR_NEXT:
     INX
     CPX #FRAMEBUFFER + 768
     BNE CLEAR_NEXT
+    RTS
+CLEAR_WORLD:
+    LDX #FRAMEBUFFER
+    LDAA #$40
+    LDAB #64
+    JSR CLEAR_TEXT_ROWS
+    LDX #FRAMEBUFFER + 704
+    LDAB #64
+CLEAR_TEXT_ROWS:
+    STAA 0,X
+    INX
+    DECB
+    BNE CLEAR_TEXT_ROWS
     RTS
 ; A ASCII -> display code. Preserve B and X.
 GLYPH:
@@ -332,18 +356,15 @@ TEXT_DONE:
 
 ; Compose offscreen, then touch VRAM only where the completed frame differs.
 PRESENT:
-    LDX #FRAMEBUFFER
-    STX TEXT_SRC
+    ; Interrupts remain masked throughout the game. SP is a read-only source
+    ; cursor here; there are no calls or pushes until the caller SP is restored.
+    STS TEXT_SRC
+    LDS #FRAMEBUFFER - 1
+PRESENT_STREAM_BEGIN:
     LDX #$C100
-    STX TEXT_DEST
 PRESENT_NEXT:
-    LDX TEXT_SRC
-    LDAA 0,X
-    LDAB 1,X
-    INX
-    INX
-    STX TEXT_SRC
-    LDX TEXT_DEST
+    PULA
+    PULB
     CMPA 0,X
     BEQ PRESENT_SECOND
 PRESENT_STORE:
@@ -356,7 +377,8 @@ PRESENT_STORE_SECOND:
 PRESENT_UNCHANGED:
     INX
     INX
-    STX TEXT_DEST
     CPX #$C400
     BNE PRESENT_NEXT
+PRESENT_RESTORE:
+    LDS TEXT_SRC
     RTS

@@ -26,6 +26,8 @@ def reset_room(m):
         m.set(a, 0)
     for a in range(SYMS["SCRATCH_BEGIN"], SYMS["SCRATCH_END"]):
         m.set(a, 0)
+    for a in range(SYMS["FAST_BEGIN"], SYMS["FAST_END"]):
+        m.set(a, 0)
     m.call("SELECT_FLOOR")
     for y in range(1, 31):
         for x in range(1, WIDTH - 1):
@@ -261,9 +263,8 @@ def mechanics():
     # Bounds and line of sight at both camera extremes, including secret walls.
     reset_room(m)
     tile(m, 13, 12, 5)
-    m.set("LOS_TX", 14)
-    m.set("LOS_TY", 12)
-    a, _, _, _ = m.call("LINE_VISIBLE")
+    m.call("UPDATE_VISIBILITY")
+    a, _, _, _ = m.call("VISIBLE_CELL", 14, 12)
     require(a == 0, "secret wall blocks sight")
     for x, y, vx, vy in [
         (1, 1, 0, 0),
@@ -494,6 +495,15 @@ def main():
     from check_menu_wrap import check as check_menu_wrap
 
     result["menu_wrap"] = check_menu_wrap()
+    from check_map_stream import check as check_map_stream
+
+    result["map_stream"] = check_map_stream()
+    from check_visibility_cache import check as check_visibility_cache
+
+    result["visibility_cache"] = check_visibility_cache()
+    from check_generation_panel import check as check_generation_panel
+
+    result["generation_panel"] = check_generation_panel()
     print("mechanics, input, and opcode checks passed", flush=True)
     workers = max(1, min(args.workers, args.seeds))
     jobs = []
