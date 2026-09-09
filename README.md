@@ -41,6 +41,7 @@ make -C samples/hello
 | [`pcg_animation`](samples/pcg_animation/) | 4つの常駐PCGを書き換える2×2キャラクターアニメーション |
 | [`sound_demo`](samples/sound_demo/) | Timer 1単音BGM、効果音、PCG共存を確認するサンプル |
 | [`maze`](samples/maze/) | 迷路生成、入力、スクロールを含む実践例 |
+| [`relic_dive`](samples/relic_dive/) | 標準16KB、64×32マス、8方向・1ボタンパッド対応のローグライク |
 
 個別のサンプルは共通の操作でビルドできます。
 

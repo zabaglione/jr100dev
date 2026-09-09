@@ -1,0 +1,362 @@
+; SPDX-License-Identifier: MIT
+; Native JR-100 I/O. CC02 bit 0..4 is active-high; no polarity probing.
+ENTRY:
+    TPA
+    STAA SAVE_CC
+    SEI
+    STS SAVE_SP
+    LDS #$3FFF
+    LDX #$0080
+    STX TEXT_SRC
+    LDX #SAVE_ZP
+    STX TEXT_DEST
+    LDAB #128
+    JSR COPY_BYTES
+    LDX #$C000
+    STX TEXT_SRC
+    LDX #SAVE_PCG
+    STX TEXT_DEST
+    CLRB
+    JSR COPY_BYTES
+    LDX #STATE_BEGIN
+    CLRA
+ENTRY_ZERO:
+    STAA 0,X
+    INX
+    CPX #STATE_END
+    BNE ENTRY_ZERO
+    LDX #SCRATCH_BEGIN
+ENTRY_SCRATCH_ZERO:
+    STAA 0,X
+    INX
+    CPX #SCRATCH_END
+    BNE ENTRY_SCRATCH_ZERO
+    LDAA $C800
+    STAA SAVE_VIA
+    LDAA $C801
+    STAA SAVE_VIA + 1
+    LDAA $C802
+    STAA SAVE_VIA + 2
+    LDAA $C803
+    STAA SAVE_VIA + 3
+    LDAA $C803
+    ORAA #15
+    STAA $C803
+    LDAA $C802
+    ANDA #$E0
+    ORAA #$20
+    STAA $C802
+    LDAA $C800
+    ORAA #$20
+    STAA $C800
+    LDX #TILES
+    STX TEXT_SRC
+    LDX #$C000
+    STX TEXT_DEST
+    LDAB #TILES_END - TILES
+    JSR COPY_BYTES
+    LDAA #1
+    STAA G_SEED + 1
+    STAA G_DIFFICULTY
+    LDAA #5
+    STAA G_PREVIOUS
+    JMP REDRAW
+
+COPY_BYTES:
+    LDX TEXT_SRC
+    LDAA 0,X
+    INX
+    STX TEXT_SRC
+    LDX TEXT_DEST
+    STAA 0,X
+    INX
+    STX TEXT_DEST
+    DECB
+    BNE COPY_BYTES
+    RTS
+
+EXIT_GAME:
+    SEI
+    LDX #SAVE_PCG
+    STX TEXT_SRC
+    LDX #$C000
+    STX TEXT_DEST
+    CLRB
+    JSR COPY_BYTES
+    LDX #SAVE_ZP
+    STX TEXT_SRC
+    LDX #$0080
+    STX TEXT_DEST
+    LDAB #128
+    JSR COPY_BYTES
+    LDAA SAVE_VIA
+    STAA $C800
+    LDAA SAVE_VIA + 1
+    STAA $C801
+    LDAA SAVE_VIA + 2
+    STAA $C802
+    LDAA SAVE_VIA + 3
+    STAA $C803
+    LDS SAVE_SP
+    LDAA SAVE_CC
+    TAP
+    RTS
+
+; Set the 16-bit Z flag from A:B, keeping N,V,C,H from the high operation.
+WORD_Z:
+    PSHA
+    TPA
+    STAA WORD_CC
+    PULA
+    TSTA
+    BNE WORD_NOT_ZERO
+    TSTB
+    BNE WORD_NOT_ZERO
+    PSHA
+    LDAA WORD_CC
+    ORAA #4
+    TAP
+    PULA
+    RTS
+WORD_NOT_ZERO:
+    PSHA
+    LDAA WORD_CC
+    ANDA #$FB
+    TAP
+    PULA
+    RTS
+
+; Unsigned 8x8 -> A:B. X is preserved. No HD6301 instructions.
+MULTIPLY:
+    STAA MUL_LEFT + 1
+    CLR MUL_LEFT
+    STAB MUL_RIGHT
+    CLR MUL_RESULT
+    CLR MUL_RESULT + 1
+    LDAA #8
+    STAA MUL_COUNT
+MULTIPLY_BIT:
+    LSR MUL_RIGHT
+    BCC MULTIPLY_SHIFT
+    LDAB MUL_RESULT + 1
+    LDAA MUL_RESULT
+    ADDB MUL_LEFT + 1
+    ADCA MUL_LEFT
+    STAB MUL_RESULT + 1
+    STAA MUL_RESULT
+MULTIPLY_SHIFT:
+    ASL MUL_LEFT + 1
+    ROL MUL_LEFT
+    DEC MUL_COUNT
+    BNE MULTIPLY_BIT
+    LDAB MUL_RESULT + 1
+    LDAA MUL_RESULT
+    RTS
+
+POLL_KEY:
+    ; Polling is also called during long turns: preserve X and all game scratch.
+    STX POLL_SAVE_X
+    CLR KEY_ROW
+    LDX #KEY_MATRIX
+POLL_ROW:
+    LDAA KEY_ROW
+    STAA $C801
+    NOP
+    LDAA $C800
+    COMA
+    ANDA #31
+    STAA KEY_VALUE
+    NOP
+    LDAA $C800
+    COMA
+    ANDA #31
+    CMPA KEY_VALUE
+    BEQ POLL_ROW_STABLE
+    CLRA
+POLL_ROW_STABLE:
+    STAA 0,X
+    INX
+    INC KEY_ROW
+    LDAA KEY_ROW
+    CMPA #9
+    BNE POLL_ROW
+    ; BREAK is CTRL+C. Plain C remains southeast movement.
+    LDAA KEY_MATRIX
+    ANDA #17
+    CMPA #17
+    BNE POLL_RETURN
+    JMP EXIT_GAME
+POLL_RETURN:
+    LDAA KEY_MATRIX + 8
+    CLRB
+    BITA #8
+    BEQ POLL_SPACE
+    LDAB #5
+    JMP POLL_SAMPLE
+POLL_SPACE:
+    BITA #2
+    BEQ POLL_PAD
+    LDAB #6
+    JMP POLL_SAMPLE
+POLL_PAD:
+    LDAA $CC02
+    CMPA #$FF
+    BEQ POLL_KEYBOARD
+    ANDA #31
+    STAA KEY_RAW
+    BITA #16
+    BEQ POLL_PAD_DIRECTION
+    LDAB #5
+    JMP POLL_SAMPLE
+POLL_PAD_DIRECTION:
+    ANDA #15
+    BEQ POLL_KEYBOARD
+    ; Opposite directions cancel on their axis.
+    TAB
+    ANDB #3
+    CMPB #3
+    BNE POLL_PAD_VERTICAL
+    ANDA #12
+POLL_PAD_VERTICAL:
+    TAB
+    ANDB #12
+    CMPB #12
+    BNE POLL_PAD_DECODE
+    ANDA #3
+POLL_PAD_DECODE:
+    STAA KEY_RAW
+    LDX #PAD_ACTIONS
+    CLRB
+POLL_PAD_INDEX:
+    TSTA
+    BEQ POLL_PAD_READ
+    INX
+    DECA
+    BRA POLL_PAD_INDEX
+POLL_PAD_READ:
+    LDAB 0,X
+    BRA POLL_SAMPLE
+POLL_KEYBOARD:
+    LDX #KEY_ACTIONS
+    LDAB #11
+POLL_BINDING:
+    LDAA 0,X
+    STAA KEY_VALUE
+    ; Read row using a pointer without touching INDEX_OFFSET.
+    STX POLL_TABLE_X
+    LDX #KEY_MATRIX
+POLL_BINDING_ROW:
+    TSTA
+    BEQ POLL_BINDING_READ
+    INX
+    DECA
+    BRA POLL_BINDING_ROW
+POLL_BINDING_READ:
+    LDAA 0,X
+    LDX POLL_TABLE_X
+    BITA 1,X
+    BNE POLL_BINDING_FOUND
+    INX
+    INX
+    INX
+    DECB
+    BNE POLL_BINDING
+    BRA POLL_SAMPLE
+POLL_BINDING_FOUND:
+    LDAB 2,X
+POLL_SAMPLE:
+    TSTB
+    BNE POLL_EDGE
+    CLR G_AUTOWALK
+POLL_EDGE:
+    CMPB G_PREVIOUS
+    BEQ POLL_DONE
+    STAB G_PREVIOUS
+    TSTB
+    BEQ POLL_DONE
+    ; First pending edge wins until dispatch consumes it.
+    TST G_PENDING
+    BNE POLL_DONE
+    STAB G_PENDING
+POLL_DONE:
+    LDX POLL_SAVE_X
+    RTS
+PAD_ACTIONS: .byte 0,4,3,0,1,8,7,1,2,10,9,2,0,4,3,0
+KEY_ACTIONS:
+    .byte 2,1,7, 2,2,1, 2,4,8
+    .byte 1,1,3, 1,2,11, 1,4,4
+    .byte 0,4,9, 0,8,2, 0,16,10
+    .byte 8,8,5, 8,2,6
+; Clear the JR-100 video RAM.
+
+CLEAR:
+    LDX #FRAMEBUFFER
+    LDAA #$40
+CLEAR_NEXT:
+    STAA 0,X
+    INX
+    CPX #FRAMEBUFFER + 768
+    BNE CLEAR_NEXT
+    RTS
+; A ASCII -> display code. Preserve B and X.
+GLYPH:
+    CMPA #$20
+    BNE GLYPH_NOT_SPACE
+    LDAA #$40
+    BRA GLYPH_STORE
+GLYPH_NOT_SPACE:
+    SUBA #$20
+GLYPH_STORE:
+    STAA 0,X
+    RTS
+; X string, A:B VRAM address.
+TEXT:
+    STX TEXT_SRC
+    STAA TEXT_DEST
+    STAB TEXT_DEST + 1
+TEXT_NEXT:
+    LDX TEXT_SRC
+    LDAA 0,X
+    BEQ TEXT_DONE
+    INX
+    STX TEXT_SRC
+    LDX TEXT_DEST
+    CPX #FRAMEBUFFER + 768
+    BGE TEXT_DONE
+    JSR GLYPH
+    INX
+    STX TEXT_DEST
+    BRA TEXT_NEXT
+TEXT_DONE:
+    RTS
+
+; Compose offscreen, then touch VRAM only where the completed frame differs.
+PRESENT:
+    LDX #FRAMEBUFFER
+    STX TEXT_SRC
+    LDX #$C100
+    STX TEXT_DEST
+PRESENT_NEXT:
+    LDX TEXT_SRC
+    LDAA 0,X
+    LDAB 1,X
+    INX
+    INX
+    STX TEXT_SRC
+    LDX TEXT_DEST
+    CMPA 0,X
+    BEQ PRESENT_SECOND
+PRESENT_STORE:
+    STAA 0,X
+PRESENT_SECOND:
+    CMPB 1,X
+    BEQ PRESENT_UNCHANGED
+PRESENT_STORE_SECOND:
+    STAB 1,X
+PRESENT_UNCHANGED:
+    INX
+    INX
+    STX TEXT_DEST
+    CPX #$C400
+    BNE PRESENT_NEXT
+    RTS

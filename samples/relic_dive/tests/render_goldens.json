@@ -1,0 +1,182 @@
+[
+  {
+    "mode": 0,
+    "x": 12,
+    "y": 12,
+    "sha256": "e85f597ff7c37739b8568211f4126a645b0c8d6cf67fc3e8575a414fceef40a4"
+  },
+  {
+    "mode": 0,
+    "x": 32,
+    "y": 16,
+    "sha256": "e85f597ff7c37739b8568211f4126a645b0c8d6cf67fc3e8575a414fceef40a4"
+  },
+  {
+    "mode": 0,
+    "x": 60,
+    "y": 28,
+    "sha256": "e85f597ff7c37739b8568211f4126a645b0c8d6cf67fc3e8575a414fceef40a4"
+  },
+  {
+    "mode": 1,
+    "x": 12,
+    "y": 12,
+    "sha256": "1191c63a5b337080c879c20bbbccf0a2bea79bc9aa24b2b1f24602969e22dc23"
+  },
+  {
+    "mode": 1,
+    "x": 32,
+    "y": 16,
+    "sha256": "4dab28ec208d17ebee9f5cee0ed95f8a5a94c90520e0223d2b748754ae36cd41"
+  },
+  {
+    "mode": 1,
+    "x": 60,
+    "y": 28,
+    "sha256": "5a351c93022e360d4cd99f4492b3e22a1befa1c391ef71eceefc2f6378027678"
+  },
+  {
+    "mode": 2,
+    "x": 12,
+    "y": 12,
+    "sha256": "f8f138ebcbb9afde33276f80b5801487e44d68e968191d0ea8440ab37dd509fa"
+  },
+  {
+    "mode": 2,
+    "x": 32,
+    "y": 16,
+    "sha256": "f8f138ebcbb9afde33276f80b5801487e44d68e968191d0ea8440ab37dd509fa"
+  },
+  {
+    "mode": 2,
+    "x": 60,
+    "y": 28,
+    "sha256": "f8f138ebcbb9afde33276f80b5801487e44d68e968191d0ea8440ab37dd509fa"
+  },
+  {
+    "mode": 3,
+    "x": 12,
+    "y": 12,
+    "sha256": "9e0dd1b78006760aee99f1a8cbb276ff4a7ae37b8ceffc00676f3dfe3bad2474"
+  },
+  {
+    "mode": 3,
+    "x": 32,
+    "y": 16,
+    "sha256": "9e0dd1b78006760aee99f1a8cbb276ff4a7ae37b8ceffc00676f3dfe3bad2474"
+  },
+  {
+    "mode": 3,
+    "x": 60,
+    "y": 28,
+    "sha256": "9e0dd1b78006760aee99f1a8cbb276ff4a7ae37b8ceffc00676f3dfe3bad2474"
+  },
+  {
+    "mode": 4,
+    "x": 12,
+    "y": 12,
+    "sha256": "59b5f59cbbf2bbc9453f8765f11a0b80ef923bcdf556bd7377e75989d98c6c56"
+  },
+  {
+    "mode": 4,
+    "x": 32,
+    "y": 16,
+    "sha256": "59b5f59cbbf2bbc9453f8765f11a0b80ef923bcdf556bd7377e75989d98c6c56"
+  },
+  {
+    "mode": 4,
+    "x": 60,
+    "y": 28,
+    "sha256": "59b5f59cbbf2bbc9453f8765f11a0b80ef923bcdf556bd7377e75989d98c6c56"
+  },
+  {
+    "mode": 5,
+    "x": 12,
+    "y": 12,
+    "sha256": "c0ed4de7af4eba8ca56a6d2e62702ffa73bba21c7dd8f197341cb4614e8a8ef6"
+  },
+  {
+    "mode": 5,
+    "x": 32,
+    "y": 16,
+    "sha256": "e940dc1a78ceac7a9280f62601fe7f1f2cd6bd6963c622e034d288a720cb2165"
+  },
+  {
+    "mode": 5,
+    "x": 60,
+    "y": 28,
+    "sha256": "382236a52ace53ac31990709b0ad3e1749c04d8fd1a7ea6f536beae198e0ce2a"
+  },
+  {
+    "mode": 6,
+    "x": 12,
+    "y": 12,
+    "sha256": "98167495fa7cea3b4da91d772b87760142673f0284cb21b7ffc0bb0ff124597b"
+  },
+  {
+    "mode": 6,
+    "x": 32,
+    "y": 16,
+    "sha256": "98167495fa7cea3b4da91d772b87760142673f0284cb21b7ffc0bb0ff124597b"
+  },
+  {
+    "mode": 6,
+    "x": 60,
+    "y": 28,
+    "sha256": "98167495fa7cea3b4da91d772b87760142673f0284cb21b7ffc0bb0ff124597b"
+  },
+  {
+    "mode": 7,
+    "x": 12,
+    "y": 12,
+    "sha256": "ea40f58e7cbbff6d33514d1e3c7647256461542c0814fe8212c1b8360d0e56bd"
+  },
+  {
+    "mode": 7,
+    "x": 32,
+    "y": 16,
+    "sha256": "ea40f58e7cbbff6d33514d1e3c7647256461542c0814fe8212c1b8360d0e56bd"
+  },
+  {
+    "mode": 7,
+    "x": 60,
+    "y": 28,
+    "sha256": "ea40f58e7cbbff6d33514d1e3c7647256461542c0814fe8212c1b8360d0e56bd"
+  },
+  {
+    "mode": 8,
+    "x": 12,
+    "y": 12,
+    "sha256": "02429a9f306e94af2b5c2996a51ceae42c13bed9c52449bf3ce88ec75db289ad"
+  },
+  {
+    "mode": 8,
+    "x": 32,
+    "y": 16,
+    "sha256": "02429a9f306e94af2b5c2996a51ceae42c13bed9c52449bf3ce88ec75db289ad"
+  },
+  {
+    "mode": 8,
+    "x": 60,
+    "y": 28,
+    "sha256": "02429a9f306e94af2b5c2996a51ceae42c13bed9c52449bf3ce88ec75db289ad"
+  },
+  {
+    "mode": 9,
+    "x": 12,
+    "y": 12,
+    "sha256": "0e9bc4613f7e85577a03f4196c96469c7ac066fdffa4716ef70ac6c83c84866b"
+  },
+  {
+    "mode": 9,
+    "x": 32,
+    "y": 16,
+    "sha256": "0e9bc4613f7e85577a03f4196c96469c7ac066fdffa4716ef70ac6c83c84866b"
+  },
+  {
+    "mode": 9,
+    "x": 60,
+    "y": 28,
+    "sha256": "0e9bc4613f7e85577a03f4196c96469c7ac066fdffa4716ef70ac6c83c84866b"
+  }
+]
