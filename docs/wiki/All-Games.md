@@ -41,6 +41,7 @@
 | [POTION PATH](POTION-PATH) | [経営・サバイバル](Genre-Management) | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=potion-path) |
 | [PRISM TRACE](PRISM-TRACE) | [パズル](Genre-Puzzle) | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=prism-trace) |
 | [QUIET ROUTE](QUIET-ROUTE) | [探索・アドベンチャー](Genre-Exploration) | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=quiet-route) |
+| [RELIC DIVE](RELIC-DIVE) | [探索・アドベンチャー](Genre-Exploration) | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=relic-dive) |
 | [RIBBON SNAKE](RIBBON-SNAKE) | [アクション](Genre-Action) | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=ribbon-snake) |
 | [RUIN LEXICON](RUIN-LEXICON) | [探索・アドベンチャー](Genre-Exploration) | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=ruin-lexicon) |
 | [SAND RESCUE](SAND-RESCUE) | [戦術・自動化](Genre-Tactics) | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=sand-rescue) |

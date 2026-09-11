@@ -64,7 +64,7 @@ SYMS = {
     k: int(v, 16)
     for k, v in re.findall(
         r"^(\w+)\s*=\s*\$([0-9A-Fa-f]+)",
-        (ROOT / "build/relic_dive.map").read_text(),
+        (ROOT / "build/relic-dive.map").read_text(),
         re.MULTILINE,
     )
 }
@@ -92,7 +92,7 @@ class Machine:
     def __init__(self, rom=None):
         data = rom or bytes(8192)
         self.p = lib.create(data, len(data))
-        self.code = (ROOT / "build/relic_dive.bin").read_bytes()
+        self.code = (ROOT / "build/relic-dive.bin").read_bytes()
         for i, b in enumerate(self.code):
             lib.poke(self.p, 0x300 + i, b)
         lib.registers_set(self.p, 0x300, 0x244, 0, 0, 0)

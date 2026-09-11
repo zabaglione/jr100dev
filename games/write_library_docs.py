@@ -1,6 +1,7 @@
 """Generate genre navigation and native-game manuals from the authored catalogue."""
 
 import json
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -22,7 +23,7 @@ def launch_note():
     return "同じブラウザーで自分のBASIC ROMを事前に設定してください。登録済みなら「プレイ」からタイトルまで自動起動します。音は最初のキー入力または画面クリックで有効になります。"
 
 
-home = "# JR-100 Games\n\n標準RAM 16KB向けのオリジナルゲーム50作品です。ジャンルから選ぶと、各作品の画面・遊び方・起動リンクを探せます。\n\n"
+home = f"# JR-100 Games\n\n標準RAM 16KB向けのオリジナルゲーム{len(games)}作品です。ジャンルから選ぶと、各作品の画面・遊び方・起動リンクを探せます。\n\n"
 home += "| ジャンル | 作品数 | 内容 |\n| --- | ---: | --- |\n"
 for gid, genre in genres.items():
     subset = [g for g in games if g["genre"] == gid]
@@ -65,7 +66,7 @@ W＝上、A＝左、S＝下、D＝右です。決定・主操作はRETURN。作�
 
 ## 8方向
 
-NIGHT SWARMでは次の配置を使います。
+NIGHT SWARMとRELIC DIVEでは次の配置を使います。
 
 ```text
 Q W E
@@ -73,11 +74,11 @@ A   D
 Z X C
 ```
 
-Q/E/Z/Cが斜め、Xが下です。Sは移動に使いません。1ボタンパッドでも斜め入力を受け付けます。
+Q/E/Z/Cが斜め、Xが下です。Sは移動に使いません。RELIC DIVEではSで1ターン待機、W/Xでメニューを選択します。1ボタンパッドでも斜め入力を受け付けます。
 
 ## 開始・やり直し・終了
 
-タイトルでRETURNまたはパッドのボタンを押すと開始します。SPACEで説明を開けます。新作44本のプレイ中はSPACEで現在の面をやり直せます。最初の6作品は各ページに記載の操作パネルを使います。CTRL+Cでゲームを終了してBASICへ戻ります。
+タイトルでRETURNまたはパッドのボタンを押すと開始します。最初の50作品はSPACEで説明を開けます。新作44本のプレイ中はSPACEで現在の面をやり直せます。最初の6作品は各ページに記載の操作パネルを使います。RELIC DIVEはタイトルでW/Xにより難易度を選び、プレイ中のRETURNメニューからHELPを開きます。SPACEは戻る操作です。CTRL+Cでゲームを終了してBASICへ戻ります。
 
 ゲームは主な操作に1ボタンパッドも使えます。説明の表示、任意のタイミングでのやり直し、BASICへ戻る操作にはキーボードを使用します。
 
@@ -100,10 +101,11 @@ for g in games:
         if not lines[2].startswith("[ホーム]"):
             lines[2:2] = [breadcrumb, ""]
         layout = json.loads((directory / "build/layout.json").read_text())
-        import re
-
-        text = ("\n".join(lines) + "\n").replace("バージョン：1.0.0", "バージョン：1.1.0")
-        text = re.sub(r"[\d,]+ bytes(?!のスタック)", f"{layout['code_bytes']:,} bytes", text)
+        text = "\n".join(lines) + "\n"
+        text = re.sub(r"バージョン：[\d.]+", f"バージョン：{meta['version']}", text)
+        text = re.sub(
+            r"[\d,]+ bytes(?!のスタック)", f"{layout['code_bytes']:,} bytes", text
+        )
         path.write_text(text)
         continue
     objective, controls, hud = manuals[g["directory"]]
@@ -123,7 +125,7 @@ for g in games:
     readme = f"# {g['title']}\n\n[Wiki]({BASE}/wiki/{g['id'].upper()}) · [プレイ]({PLAY}{g['id']})\n\n"
     readme += body.replace(f'{IMAGES}/{g["id"]}/', "images/")
     (directory / "README.md").write_text(readme)
-readme = "# JR-100 Games\n\n標準RAM 16KB向けの独立したオリジナルゲーム50作品です。教材用の `samples/` とは分けて管理します。\n\n"
+readme = f"# JR-100 Games\n\n標準RAM 16KB向けの独立したオリジナルゲーム{len(games)}作品です。教材用の `samples/` とは分けて管理します。\n\n"
 readme += f"[Wikiのジャンル別一覧]({BASE}/wiki) · [共通操作]({BASE}/wiki/Controls)\n\n"
 for gid, genre in genres.items():
     readme += f"## {genre['title']}\n\n| ゲーム | 内容 |\n| --- | --- |\n"
@@ -132,11 +134,12 @@ for gid, genre in genres.items():
             readme += f"| [{g['title']}]({g['directory']}/) | {g['summary']} |\n"
     readme += "\n"
 old = (ROOT / "README.md").read_text()
-readme += old[old.index("## ビルド") :]
+build_notes = old[old.index("## ビルド") :]
+readme += re.sub(r"\n`native/` は新作44本[^\n]*\n", "\n", build_notes).rstrip() + "\n"
 readme = readme.replace(
     "ターン制の5作品はTimer 2を約60Hzでポーリングします。",
     "共通処理はTimer 2を約60Hzでポーリングします。",
 )
 readme += "\n`native/` は新作44本のコンパイラー、画面構成、共通実行処理、ルール検査と全編リプレイを収めます。作品固有のルールと地形は各作品のディレクトリにあります。4方向はWASD、8方向はQWE／AD／ZXCです。\n"
 (ROOT / "README.md").write_text(readme)
-print("Generated 50 game manuals and 6 genre navigation pages")
+print(f"Generated {len(games)} game manuals and {len(genres)} genre navigation pages")

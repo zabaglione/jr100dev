@@ -26,7 +26,7 @@ def check():
         key = (emitted.line.op, emitted.data[0], len(emitted.data))
         assert key in reference, (emitted.line.line_no, key)
         count += 1
-    assert result.machine_code == (ROOT / "build/relic_dive.bin").read_bytes()
+    assert result.machine_code == (ROOT / "build/relic-dive.bin").read_bytes()
     return {"instructions": count, "status": "passed"}
 
 

@@ -1,5 +1,5 @@
 {
-  "target": 50,
+  "target": 51,
   "genres": [
     {
       "id": "puzzle",
@@ -432,6 +432,14 @@
       "genre": "puzzle",
       "summary": "一文字ずつ置き換えて指定の単語へ至る",
       "motif": "typewriter"
+    },
+    {
+      "directory": "relic_dive",
+      "id": "relic-dive",
+      "title": "RELIC DIVE",
+      "genre": "exploration",
+      "summary": "64×32マスの迷宮で食料・装備・魔法を使い、最深部の遺物を探す",
+      "motif": "dungeon"
     }
   ]
 }

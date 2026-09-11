@@ -22,6 +22,7 @@ make -C samples/hello
 | 目的 | 場所 |
 | --- | --- |
 | JR-100固有の制約を知る | [`rules/`](rules/) |
+| 公開ゲームを遊ぶ・ビルドする | [`games/`](games/)・[Wiki](https://github.com/zabaglione/jr100dev/wiki) |
 | 動くコードから学ぶ | [`samples/`](samples/) |
 | 標準マクロやPRG形式の詳細を調べる | [`docs/`](docs/) |
 | アセンブラとリンカの実装を調べる | [`src/jr100dev/`](src/jr100dev/) |
@@ -41,7 +42,6 @@ make -C samples/hello
 | [`pcg_animation`](samples/pcg_animation/) | 4つの常駐PCGを書き換える2×2キャラクターアニメーション |
 | [`sound_demo`](samples/sound_demo/) | Timer 1単音BGM、効果音、PCG共存を確認するサンプル |
 | [`maze`](samples/maze/) | 迷路生成、入力、スクロールを含む実践例 |
-| [`relic_dive`](samples/relic_dive/) | 標準16KB、64×32マス、8方向・1ボタンパッド対応のローグライク |
 
 個別のサンプルは共通の操作でビルドできます。
 
@@ -54,6 +54,14 @@ make -C samples/maze
 
 ```sh
 make samples
+```
+
+## 公開ゲーム
+
+[ジャンル別のゲーム集](games/README.md)に標準RAM 16KB向けの51作品を収録しています。RELIC DIVEは[`games/relic_dive/`](games/relic_dive/)で管理します。[Wiki](https://github.com/zabaglione/jr100dev/wiki)から、BASIC ROMを登録済みのWebエミュレーターで直接起動できます。
+
+```sh
+make -C games/relic_dive
 ```
 
 ## 開発ツール

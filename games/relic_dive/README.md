@@ -1,14 +1,20 @@
 # RELIC DIVE for JR-100
 
+[Wiki](https://github.com/zabaglione/jr100dev/wiki/RELIC-DIVE) · [プレイ](https://zabaglione.github.io/pyjr100emu/?game=relic-dive)
+
+同じブラウザーで自分のBASIC ROMを登録済みなら、プレイリンクからタイトル画面まで自動起動します。
+
+![タイトル](images/title.png)
+
 JR-800版RELIC DIVEを、JR-100の標準16KB RAM向けに移植したターン制の迷宮探索ゲームです。階段を降り、最下層の遺物を拾うとクリアです。考えている間やメニュー操作中には時間が進みません。
 
 ## 起動
 
 ```sh
-make -C samples/relic_dive
+make -C games/relic_dive
 ```
 
-`build/relic_dive.prg`を読み込み、BASICから次を実行します。
+`build/relic-dive.prg`を読み込み、BASICから次を実行します。
 
 ```basic
 A=USR($0300)
@@ -162,3 +168,18 @@ SPACEで取り消せます。パッドだけなら、自分のマスへカーソ
 ## 出典
 
 [JR-800版RELIC DIVE](https://github.com/zabaglione/jr800-web-emulator/tree/main/sdk/examples/lcd/07-relic-dive)のMITライセンスのゲーム処理・独自画像を移植しました。ゲーム画像の列形式をJR-100 PCGの行形式へ変換しています。
+
+## 公開版の画面と検証
+
+![迷宮探索](images/play-01.png)
+
+![持ち物](images/inventory.png)
+
+バージョン：1.0.0。ゲーム本体と定数は11,515 bytes、PCGは31文字です。RAM画面・作業領域・復帰用保存領域・512 bytesのスタックを含め、標準RAM 16KB内に収めています。移行前と機械語は同一です。現在の版に効果音・BGMはありません。
+
+```sh
+make -C games/relic_dive test
+.venv/bin/python games/relic_dive/capture.py --rom /path/to/owned-rom.prg
+```
+
+地形1,000種と3難易度のクリア入力をC++エミュレーターで検査します。掲載スクリーンショットは所有するBASIC ROMからPRGを自動起動し、キー入力で取得した実フレームです。実機でのロード・表示・操作は未確認です。

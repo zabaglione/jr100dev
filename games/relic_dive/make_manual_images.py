@@ -63,11 +63,11 @@ def main():
         name: int(value, 16)
         for name, value in re.findall(
             r"^(\w+)\s*=\s*\$([0-9A-Fa-f]+)",
-            (ROOT / "build/relic_dive.map").read_text(),
+            (ROOT / "build/relic-dive.map").read_text(),
             re.MULTILINE,
         )
     }
-    binary = (ROOT / "build/relic_dive.bin").read_bytes()
+    binary = (ROOT / "build/relic-dive.bin").read_bytes()
     tiles = binary[symbols["TILES"] - 0x300 : symbols["TILES_END"] - 0x300]
     destination = ROOT / "images"
     destination.mkdir(exist_ok=True)

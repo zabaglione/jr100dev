@@ -10,7 +10,7 @@ symbols = {
     k: int(v, 16)
     for k, v in re.findall(
         r"^(\w+)\s*=\s*\$([0-9A-Fa-f]+)",
-        (ROOT / "build/relic_dive.map").read_text(),
+        (ROOT / "build/relic-dive.map").read_text(),
         re.MULTILINE,
     )
 }
@@ -46,7 +46,7 @@ report = {
 print(json.dumps(report))
 
 # Verify the distributed container against the BIN used by runtime tests.
-prg = (ROOT / "build/relic_dive.prg").read_bytes()
+prg = (ROOT / "build/relic-dive.prg").read_bytes()
 assert prg[:8] == b"PROG\x02\x00\x00\x00"
 position = 8
 segments = []
@@ -61,4 +61,4 @@ while position < len(prg):
         assert b"entry=$0300" in payload[8 + size :]
     position += 8 + length
 assert position == len(prg)
-assert segments == [(0x300, (ROOT / "build/relic_dive.bin").read_bytes())]
+assert segments == [(0x300, (ROOT / "build/relic-dive.bin").read_bytes())]

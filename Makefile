@@ -1,7 +1,7 @@
 PYTHON ?= python3
 PYTHONPATH := $(CURDIR)/src
 GAMES := $(shell $(PYTHON) -c 'import json; print(" ".join(json.load(open("games/collection.json"))["games"]))')
-SAMPLES := hello counter io_demo key_display multi pcg_clock pcg_animation sound_demo maze relic_dive
+SAMPLES := hello counter io_demo key_display multi pcg_clock pcg_animation sound_demo maze
 
 .PHONY: samples games test games-test clean
 

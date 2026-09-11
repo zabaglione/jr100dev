@@ -120,11 +120,11 @@ NetBSD版Rogueの[敵一覧と能力](https://github.com/NetBSD/src/blob/trunk/g
 
 ```sh
 # 通常の再検証：命令・入力・ゲーム処理・1000地形と3難易度リプレイ
-JR100EMU_ROOT=/path/to/jr100emu make -C samples/relic_dive test
+JR100EMU_ROOT=/path/to/jr100emu make -C games/relic_dive test
 # HARD攻略の再探索：固定待機回数を4プロセスで探索（数分）
-.venv/bin/python samples/relic_dive/tests/search_game.py
+.venv/bin/python games/relic_dive/tests/search_game.py
 # 所有するROMを使った、保存入力による画面出力
-.venv/bin/python samples/relic_dive/tests/capture_screen.py --rom /path/to/jr100rom.prg
+.venv/bin/python games/relic_dive/tests/capture_screen.py --rom /path/to/jr100rom.prg
 ```
 
 再生入力は`tests/replays/`、実行結果は`build/replay-verification.json`にあります。既存のリポジトリテストも47件通過しています。実機は未検証です。

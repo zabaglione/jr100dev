@@ -544,7 +544,7 @@ def main():
         ):
             require(0 < t[key] < args.seeds, key)
     result["binary_sha256"] = hashlib.sha256(
-        (ROOT / "build/relic_dive.bin").read_bytes()
+        (ROOT / "build/relic-dive.bin").read_bytes()
     ).hexdigest()
     result["elapsed_seconds"] = round(time.monotonic() - started, 3)
     result["clock_hz"] = 894000

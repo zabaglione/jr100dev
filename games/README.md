@@ -1,6 +1,6 @@
 # JR-100 Games
 
-標準RAM 16KB向けの独立したオリジナルゲーム50作品です。教材用の `samples/` とは分けて管理します。
+標準RAM 16KB向けの独立したオリジナルゲーム51作品です。教材用の `samples/` とは分けて管理します。
 
 [Wikiのジャンル別一覧](https://github.com/zabaglione/jr100dev/wiki) · [共通操作](https://github.com/zabaglione/jr100dev/wiki/Controls)
 
@@ -72,6 +72,7 @@
 | [SHADOW ARCHIVE](shadow_archive/) | 証言と記録を照合して容疑者を特定する |
 | [COMPASS ROSE](compass_rose/) | 方位の手掛かりを頼りに隠れた宝を探す |
 | [MIRROR RELIC](mirror_relic/) | 四つの視点を回して遺物の通路を開く |
+| [RELIC DIVE](relic_dive/) | 64×32マスの迷宮で食料・装備・魔法を使い、最深部の遺物を探す |
 
 ## 経営・サバイバル
 
@@ -118,11 +119,5 @@ JR100EMU_ROOT="$PWD/external/jr100emu" make games-test
 このディレクトリのオリジナルコード・画像・曲・文章は[MIT License](LICENSE)です。BASIC ROMは含みません。
 
 WASM配布物での起動確認は `node games/tests/wasm_launch.mjs <emulator-checkout> <owned-rom>` で実行できます。ブラウザーUIを操作せず、配布用WASMへ実ROM・PRGを読み込み、タイトル、標準16KB、開始入力、PCM出力を確認します。
-
-`native/` は新作44本のコンパイラー、画面構成、共通実行処理、ルール検査と全編リプレイを収めます。作品固有のルールと地形は各作品のディレクトリにあります。4方向はWASD、8方向はQWE／AD／ZXCです。
-
-`native/` は新作44本のコンパイラー、画面構成、共通実行処理、ルール検査と全編リプレイを収めます。作品固有のルールと地形は各作品のディレクトリにあります。4方向はWASD、8方向はQWE／AD／ZXCです。
-
-`native/` は新作44本のコンパイラー、画面構成、共通実行処理、ルール検査と全編リプレイを収めます。作品固有のルールと地形は各作品のディレクトリにあります。4方向はWASD、8方向はQWE／AD／ZXCです。
 
 `native/` は新作44本のコンパイラー、画面構成、共通実行処理、ルール検査と全編リプレイを収めます。作品固有のルールと地形は各作品のディレクトリにあります。4方向はWASD、8方向はQWE／AD／ZXCです。
