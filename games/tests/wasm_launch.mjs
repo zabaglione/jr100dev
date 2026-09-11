@@ -62,7 +62,9 @@ for(const game of selected) {
     const slots = JSON.parse(fs.readFileSync(path.join(directory, 'build/state_slots.json'), 'utf8'));
     const symbols = JSON.parse(fs.readFileSync(path.join(directory, 'build/symbols.json'), 'utf8'));
     const proof = JSON.parse(fs.readFileSync(path.join(directory, 'challenges.json'), 'utf8'))[0];
-    const keys = {1:[2,1],2:[1,1],3:[1,0],4:[1,2],5:[8,3],6:[8,1],8:[1,3]};
+    const keys = {1:[2,1],2:[1,1],3:[1,0],4:[1,2],5:[8,3],6:[8,1],7:[0,3],8:[1,3]};
+    const letterKeys = [[1,0],[0,4],[1,2],[2,2],[1,3],[1,4],[6,0],[6,1],
+      [6,2],[7,3],[7,2],[5,4],[2,0],[2,3],[2,4],[2,1]];
     const value = field => peek(symbols[slots[`s.${field}`]]);
     const press = action => {
       const [row, bit] = keys[action];
@@ -89,6 +91,30 @@ for(const game of selected) {
     assert.equal(peek(modeAddress), 1);
     assert.equal(peek(symbols.LEVEL), 1);
     console.log(`PASS: ${game.id}, shipping WASM three-star clear, retry and stage selection`);
+    press(8);
+    const password = Array.from({length:peek(symbols.P_LEN)}, (_,i)=>peek(symbols.P_BUFFER+i));
+    const ratings = Array.from({length:40}, (_,i)=>peek(symbols.BEST+i));
+    check(wasm._jr_create_core(transfer(fs.readFileSync(romFile)),0));
+    frame(100);
+    check(wasm.ccall('jr_load_program','number',['number','string'],[transfer(data),`${game.id}.prg`]));
+    frame(450);
+    assert.equal(peek(modeAddress), 0);
+    assert.equal(peek(symbols.BEST), 0);
+    press(7);
+    assert.equal(peek(modeAddress), 7);
+    for (const letter of password) {
+      const [row,bit] = letterKeys[letter];
+      check(wasm._jr_set_key(row,bit,1)); frame(6);
+      check(wasm._jr_set_key(row,bit,0)); frame(60);
+    }
+    press(5);
+    assert.equal(peek(modeAddress), 6);
+    assert.equal(peek(symbols.LEVEL), 1);
+    assert.deepEqual(Array.from({length:40},(_,i)=>peek(symbols.BEST+i)), ratings);
+    press(5);
+    assert.equal(peek(modeAddress), 1);
+    assert.equal(value('moves'), 0);
+    console.log(`PASS: ${game.id}, shipping WASM fresh-boot password restores stage and all ratings`);
   }
   console.log(`PASS: ${game.id}, shipped WASM, BASIC autostart, 16KB, title, input and PCM`);
 }

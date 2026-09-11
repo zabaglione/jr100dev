@@ -84,7 +84,9 @@ class Model:
         if mode == 5:
             self.s.mode = 0
         elif mode == 6:
-            if a == 5:
+            if a == 7:
+                self.s.mode = 7
+            elif a == 5:
                 self.init(level)
             elif a == 6:
                 self.s.mode = 0
@@ -93,7 +95,9 @@ class Model:
         elif a == 8:
             self.s.mode = 6
         elif mode == 0:
-            if a == 5:
+            if a == 7:
+                self.s.mode = 7
+            elif a == 5:
                 self.init(level)
             else:
                 self.s.mode = 5

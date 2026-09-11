@@ -29,4 +29,8 @@ if metadata.get("rankedCampaign"):
         [sys.executable, str(game.parent / "native/campaign_checks.py"), game.name],
         check=True,
     )
+    subprocess.run(
+        [sys.executable, str(game.parent / "native/password_checks.py"), game.name],
+        check=True,
+    )
 print("PASS: standard 16KB layout and 32 PCG slots")

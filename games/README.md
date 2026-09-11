@@ -10,12 +10,12 @@
 | --- | --- |
 | [TRACE BLADE](trace_blade/) | 一筆の経路を計画して連続撃破する |
 | [LUMEN CROSS](lumen_cross/) | 十字の反転で光の格子を消す |
-| [MAGNET VAULT](magnet_vault/) | 押せない金属塊を磁力で引いて収納する。40面・規定手数と任意ルーンによる3段階評価。 |
-| [FROST STEPS](frost_steps/) | 氷上を止まれず滑り、全結晶を拾う。40面・規定手数と任意ルーンによる3段階評価。 |
+| [MAGNET VAULT](magnet_vault/) | 押せない金属塊を磁力で引いて収納する。40面・規定手数と任意ルーンによる3段階評価・パスワード対応。 |
+| [FROST STEPS](frost_steps/) | 氷上を止まれず滑り、全結晶を拾う。40面・規定手数と任意ルーンによる3段階評価・パスワード対応。 |
 | [PRISM TRACE](prism_trace/) | 鏡の向きを変えて光を受光器へ導く |
 | [TIDE BRIDGE](tide_bridge/) | 潮位の連動する橋を切り替えて渡る |
-| [GLYPH SHIFT](glyph_shift/) | 物体の通行ルールを書き換えて脱出する。40面・規定手数と任意ルーンによる3段階評価。 |
-| [GRAVITY WELL](gravity_well/) | 盤面を傾けて複数の球を同時に収める。40面・規定手数と任意ルーンによる3段階評価。 |
+| [GLYPH SHIFT](glyph_shift/) | 物体の通行ルールを書き換えて脱出する。40面・規定手数と任意ルーンによる3段階評価・パスワード対応。 |
+| [GRAVITY WELL](gravity_well/) | 盤面を傾けて複数の球を同時に収める。40面・規定手数と任意ルーンによる3段階評価・パスワード対応。 |
 | [SEED MERGE](seed_merge/) | 同じ芽を合成して大樹を育てる |
 | [PEG GARDEN](peg_garden/) | 飛び越しで石を取り除く庭園パズル |
 | [NUMBER VAULT](number_vault/) | 一致数の手掛かりから暗証番号を解く |

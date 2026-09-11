@@ -37,7 +37,7 @@ def generate(output, metadata, directory):
     ranked = metadata.get("rankedCampaign", False)
     if ranked:
         put(screen, 0, 21, " " * 32)
-        put(screen, 1, 21, "RETURN PLAY  F STAGES  SPACE ?")
+        put(screen, 1, 21, "RET PLAY F MAP X LOAD SPACE ?")
         put(screen, 0, 23, " " * 32)
         put(screen, 4, 23, "40 ROOMS / CTRL+C EXIT")
     hud = [64] * 768
@@ -111,9 +111,45 @@ def generate(output, metadata, directory):
             "SELECT_FOOTER": "TOTAL STARS 000 / 120",
             "SELECT_PAR": "STAGE 000 / PAR 000",
             "SELECT_CONTROLS": "WASD SELECT / RETURN PLAY",
-            "SELECT_EXIT": "SPACE TITLE / RECORDS IN RAM",
+            "SELECT_EXIT": "SPACE TITLE / X PASSWORD LOAD",
         }.items():
             text += emit(label, [*value.encode(), 0])
+        from password import ALPHABET, TAGS
+
+        text += f"PASSWORD_TAG: .equ {TAGS[metadata['id']]}\n"
+        for label, value in {
+            "PASSWORD_ALPHABET": ALPHABET,
+            "PASSWORD_LABEL": "PW ",
+            "PASSWORD_TITLE": "PASSWORD RESTORE",
+            "PASSWORD_GAME": info["title"],
+            "PASSWORD_HINT": "TYPE LETTERS / RETURN TO LOAD",
+            "PASSWORD_FIELD": "____ ____ ____ ____ ____ ____",
+            "PASSWORD_LENGTH": "LENGTH 000 / 24",
+            "PASSWORD_DELETE": "- / BACKSPACE : ERASE",
+            "PASSWORD_CANCEL": "X : CANCEL / SPACES IGNORED",
+            "PASSWORD_PAD": "PAD SELECT / BUTTON CHOOSE",
+            "PASSWORD_ERROR": "CHECK CODE AND GAME TITLE",
+            "PASSWORD_LOAD": "LOAD",
+            "PASSWORD_DEL": "DEL",
+            "PASSWORD_BACK": "BACK",
+        }.items():
+            text += emit(label, [*value.encode(), 0])
+        text += (
+            "PASSWORD_COMMANDS:\n    .word PASSWORD_LOAD,PASSWORD_DEL,PASSWORD_BACK\n"
+        )
+        text += "PASSWORD_SCREEN:\n"
+        for y, x, label in [
+            (0, 8, "TITLE"),
+            (2, 1, "HINT"),
+            (3, 1, "GAME"),
+            (6, 3, "FIELD"),
+            (7, 10, "LENGTH"),
+            (19, 3, "DELETE"),
+            (21, 2, "PAD"),
+            (23, 2, "CANCEL"),
+        ]:
+            text += f"    .word FRAMEBUFFER + {y * 32 + x},PASSWORD_{label}\n"
+        text += "    .word 0\n"
     level_file = directory / "levels.json"
     if level_file.exists():
         levels = json.loads(level_file.read_text())

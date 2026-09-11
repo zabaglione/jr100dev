@@ -107,7 +107,12 @@ def build(directory):
             # Use the ranked menu/loader, with the existing arithmetic and drawing ABI.
             helpers = module_source.split("N_INDEX:\n", 1)[1].split("N_WIN:\n", 1)[0]
             module_source = (ROOT / "native/campaign_runtime.asm").read_text()
+            module_source += "\n" + (ROOT / "native/password.asm").read_text()
             module_source += "\nN_INDEX:\n" + helpers
+        if path.name == "platform.asm" and metadata.get("rankedCampaign"):
+            from password import input_hook
+
+            module_source = input_hook(module_source)
         if path.name == "platform.asm" and metadata.get("clockModule"):
             before, remainder = module_source.split("CLOCK_RELOAD:\n", 1)
             _, after = remainder.split("POLL_INPUT:\n", 1)
