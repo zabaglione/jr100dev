@@ -1,0 +1,110 @@
+; Nonblocking, single-channel music and priority effects. Durations are ticks.
+; Effect descriptor: priority, event count, then pitch/duration pairs.
+; Music is a pitch/duration stream terminated by $FF and loops at its start.
+PLAY_SFX:
+    LDAA 0,X
+    CMPA SFX_PRIORITY
+    BCS PLAY_SFX_DONE
+    STAA SFX_PRIORITY
+    LDAB 1,X
+    STAB SFX_LEFT
+    INX
+    INX
+    STX SFX_PTR
+    CLR SFX_TIME
+PLAY_SFX_DONE:
+    RTS
+
+PLAY_MUSIC:
+    STX BGM_PTR
+    STX BGM_START
+    CLR BGM_TIME
+    RTS
+
+SOUND_STOP:
+    CLR BGM_PTR
+    CLR BGM_PTR + 1
+    CLR BGM_TIME
+    CLR BGM_PITCH
+    CLR SFX_LEFT
+    CLR SFX_TIME
+    CLR SFX_PRIORITY
+    CLRA
+    JMP SET_PITCH
+
+SOUND_TICK:
+    LDX BGM_PTR
+    BEQ SOUND_EFFECT
+    TST BGM_TIME
+    BEQ MUSIC_NEXT
+    DEC BGM_TIME
+    BNE SOUND_EFFECT
+MUSIC_NEXT:
+    LDAA 0,X
+    CMPA #$FF
+    BNE MUSIC_EVENT
+    LDX BGM_START
+    LDAA 0,X
+MUSIC_EVENT:
+    STAA BGM_PITCH
+    LDAB 1,X
+    STAB BGM_TIME
+    INX
+    INX
+    STX BGM_PTR
+SOUND_EFFECT:
+    TST SFX_TIME
+    BEQ EFFECT_NEXT
+    DEC SFX_TIME
+    BNE EFFECT_PLAY
+EFFECT_NEXT:
+    TST SFX_LEFT
+    BEQ EFFECT_FINISHED
+    LDX SFX_PTR
+    LDAA 0,X
+    STAA SFX_PITCH
+    LDAA 1,X
+    STAA SFX_TIME
+    INX
+    INX
+    STX SFX_PTR
+    DEC SFX_LEFT
+EFFECT_PLAY:
+    LDAA SFX_PITCH
+    JMP SET_PITCH
+EFFECT_FINISHED:
+    CLR SFX_PRIORITY
+    LDAA BGM_PITCH
+    JMP SET_PITCH
+
+SET_PITCH:
+    CMPA SOUND_LAST
+    BEQ SET_PITCH_DONE
+    STAA SOUND_LAST
+    LDAA $C80B
+    ANDA #$3F
+    STAA $C80B
+    LDAA $C800
+    ANDA #$7F
+    STAA $C800
+    LDAA SOUND_LAST
+    BEQ SET_PITCH_DONE
+    DECA
+    ASLA
+    LDX #SOUND_NOTES
+SET_PITCH_INDEX:
+    TSTA
+    BEQ SET_PITCH_WRITE
+    INX
+    DECA
+    BRA SET_PITCH_INDEX
+SET_PITCH_WRITE:
+    LDAA 1,X
+    STAA $C804
+    LDAA 0,X
+    STAA $C805
+    LDAA $C80B
+    ORAA #$C0
+    STAA $C80B
+SET_PITCH_DONE:
+    RTS

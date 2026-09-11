@@ -1,0 +1,13 @@
+{
+  "id": "loop-ten",
+  "title": "LOOP TEN",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "clockModule": "clock.asm",
+  "modules": [
+    "state.inc",
+    "main.asm",
+    "draw.asm"
+  ]
+}

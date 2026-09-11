@@ -1,0 +1,47 @@
+[
+  {
+    "name": "DUST IMP",
+    "hp": 14,
+    "attack": 3
+  },
+  {
+    "name": "STONE EYE",
+    "hp": 18,
+    "attack": 4
+  },
+  {
+    "name": "BRASS IDOL",
+    "hp": 22,
+    "attack": 4
+  },
+  {
+    "name": "BONE WARD",
+    "hp": 25,
+    "attack": 5
+  },
+  {
+    "name": "SALT WITCH",
+    "hp": 27,
+    "attack": 5
+  },
+  {
+    "name": "JADE FANG",
+    "hp": 30,
+    "attack": 6
+  },
+  {
+    "name": "IRON SHADE",
+    "hp": 33,
+    "attack": 6
+  },
+  {
+    "name": "RELIC GUARD",
+    "hp": 37,
+    "attack": 7
+  },
+  {
+    "name": "THE FIRST KING",
+    "hp": 48,
+    "attack": 8
+  }
+]

@@ -1,0 +1,1 @@
+{"id":"abyss-signal","title":"ABYSS SIGNAL","version":"1.0.0","ramKiB":16,"entry":768,"modules":["state.inc","main.asm","navigation.asm","draw.asm"]}

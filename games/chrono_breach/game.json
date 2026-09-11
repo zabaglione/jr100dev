@@ -1,0 +1,8 @@
+{
+  "id": "chrono-breach",
+  "title": "CHRONO BREACH",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": ["state.inc", "main.asm", "turn.asm", "draw.asm"]
+}

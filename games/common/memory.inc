@@ -1,0 +1,37 @@
+; Shared platform state. No BASIC zero-page bytes are used.
+FRAMEBUFFER: .equ $3000
+STATE_BEGIN: .equ $3300
+SRC: .equ $3300
+DST: .equ $3302
+COUNT: .equ $3304
+VALUE: .equ $3306
+TEXT_PTR: .equ $3307
+TEXT_OUT: .equ $3309
+KEYS: .equ $330B
+KEY_ROW: .equ $3314
+KEY_LAST: .equ $3315
+KEY_ACTION: .equ $3316
+TICK: .equ $3317
+CLOCK_X: .equ $3318
+PRESENT_X: .equ $331A
+SFX_PTR: .equ $331C
+SFX_LEFT: .equ $331E
+SFX_TIME: .equ $331F
+SFX_PRIORITY: .equ $3320
+SFX_PITCH: .equ $3321
+BGM_PTR: .equ $3322
+BGM_START: .equ $3324
+BGM_TIME: .equ $3326
+BGM_PITCH: .equ $3327
+SOUND_LAST: .equ $3328
+NUM_VALUE: .equ $3329
+NUM_DIGIT: .equ $332A
+KEY_PENDING: .equ $332B
+STATE_END: .equ $3800
+SAVE_PCG: .equ $3900
+SAVE_SP: .equ $3A00
+SAVE_CC: .equ $3A02
+SAVE_VIA: .equ $3A03
+SAVE_SCREEN: .equ $3B00
+
+; Action codes: north, south, west, east, confirm, back, wait, fire.

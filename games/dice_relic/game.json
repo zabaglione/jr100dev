@@ -1,0 +1,12 @@
+{
+  "id": "dice-relic",
+  "title": "DICE RELIC",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [
+    "state.inc",
+    "main.asm",
+    "draw.asm"
+  ]
+}

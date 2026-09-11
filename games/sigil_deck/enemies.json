@@ -1,0 +1,50 @@
+[
+  {
+    "name": "ASH WRAITH",
+    "hp": 18,
+    "attack": 4,
+    "guard": 4
+  },
+  {
+    "name": "IRON GOLEM",
+    "hp": 24,
+    "attack": 5,
+    "guard": 7
+  },
+  {
+    "name": "PALE MOTH",
+    "hp": 20,
+    "attack": 6,
+    "guard": 3
+  },
+  {
+    "name": "GLASS WYRM",
+    "hp": 27,
+    "attack": 6,
+    "guard": 4
+  },
+  {
+    "name": "HOLLOW SHADE",
+    "hp": 28,
+    "attack": 7,
+    "guard": 4
+  },
+  {
+    "name": "OATH KNIGHT",
+    "hp": 32,
+    "attack": 7,
+    "guard": 8
+  },
+  {
+    "name": "THE ORACLE",
+    "hp": 42,
+    "attack": 8,
+    "guard": 6
+  },
+  {
+    "name": "VOID SOVEREIGN",
+    "hp": 61,
+    "attack": 10,
+    "guard": 8
+  }
+]

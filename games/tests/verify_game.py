@@ -1,0 +1,22 @@
+"""Verify the public game layout and run its rule checks and input replay."""
+
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+game = Path(sys.argv[1]).resolve()
+metadata = json.loads((game / "game.json").read_text())
+symbols = json.loads((game / "build/symbols.json").read_text())
+assert metadata["ramKiB"] == 16 and metadata["entry"] == 0x300
+assert symbols["CODE_END"] <= symbols["FRAMEBUFFER"] == 0x3000
+assert symbols["STATE_END"] <= symbols["SAVE_PCG"]
+assert symbols["SAVE_PCG"] + 256 <= symbols["SAVE_SP"]
+assert symbols["SAVE_SCREEN"] + 768 == 0x3E00
+art = json.loads((game / "build/art.json").read_text())
+assert len(art["game_pcg"]) == len(art["title_pcg"]) == 256
+assert len(art["title_screen"]) == 768
+assert all(code < 0xA0 for code in art["title_screen"])
+for script in ("check_rules.py", "replay.py"):
+    subprocess.run([sys.executable, str(game / script)], check=True)
+print("PASS: standard 16KB layout and 32 PCG slots")

@@ -1,0 +1,8 @@
+{
+  "id": "sigil-deck",
+  "title": "SIGIL DECK",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": ["state.inc", "main.asm", "cards.asm", "draw.asm"]
+}

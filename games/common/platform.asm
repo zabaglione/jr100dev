@@ -1,0 +1,355 @@
+; Native MB8861H platform for standalone 16KB games.
+ENTRY:
+    TPA
+    STAA SAVE_CC
+    SEI
+    STS SAVE_SP
+    LDS #$3FFF
+    LDX #STATE_BEGIN
+    CLRA
+ENTRY_CLEAR:
+    STAA 0,X
+    INX
+    CPX #STATE_END
+    BNE ENTRY_CLEAR
+    LDX #$C000
+    STX SRC
+    LDX #SAVE_PCG
+    STX DST
+    LDX #256
+    STX COUNT
+    JSR COPY
+    LDX #$C100
+    STX SRC
+    LDX #SAVE_SCREEN
+    STX DST
+    LDX #768
+    STX COUNT
+    JSR COPY
+    LDAA $C800
+    STAA SAVE_VIA
+    LDAA $C801
+    STAA SAVE_VIA + 1
+    LDAA $C802
+    STAA SAVE_VIA + 2
+    LDAA $C803
+    STAA SAVE_VIA + 3
+    LDAA $C80B
+    STAA SAVE_VIA + 4
+    LDAA $C80E
+    STAA SAVE_VIA + 5
+    LDAA #$7F
+    STAA $C80E
+    LDAA $C803
+    ORAA #15
+    STAA $C803
+    LDAA $C802
+    ANDA #$E0
+    ORAA #$A0
+    STAA $C802
+    LDAA $C800
+    ANDA #$7F
+    ORAA #$20
+    STAA $C800
+    LDAA $C80B
+    ANDA #$1F
+    STAA $C80B
+    LDAA #$FF
+    STAA SOUND_LAST
+    STAA KEY_LAST
+    JSR CLOCK_RELOAD
+    JMP GAME_START
+
+EXIT_GAME:
+    JSR SOUND_STOP
+    LDX #SAVE_PCG
+    STX SRC
+    LDX #$C000
+    STX DST
+    LDX #256
+    STX COUNT
+    JSR COPY
+    LDX #SAVE_SCREEN
+    STX SRC
+    LDX #$C100
+    STX DST
+    LDX #768
+    STX COUNT
+    JSR COPY
+    LDAA SAVE_VIA
+    STAA $C800
+    LDAA SAVE_VIA + 1
+    STAA $C801
+    LDAA SAVE_VIA + 2
+    STAA $C802
+    LDAA SAVE_VIA + 3
+    STAA $C803
+    LDAA SAVE_VIA + 4
+    STAA $C80B
+    LDAA #$7F
+    STAA $C80E
+    LDAA SAVE_VIA + 5
+    ORAA #$80
+    STAA $C80E
+    LDS SAVE_SP
+    LDAA SAVE_CC
+    TAP
+    RTS
+
+COPY:
+    LDX SRC
+    LDAA 0,X
+    INX
+    STX SRC
+    LDX DST
+    STAA 0,X
+    INX
+    STX DST
+    LDX COUNT
+    DEX
+    STX COUNT
+    BNE COPY
+    RTS
+
+LOAD_PCG:
+    STX SRC
+    ; Hide the old bank before changing shared character definitions.
+    LDX #$C100
+    LDAA #$40
+BANK_CLEAR_SCREEN:
+    STAA 0,X
+    INX
+    CPX #$C400
+    BNE BANK_CLEAR_SCREEN
+    LDX #$C000
+    STX DST
+    LDX #256
+    STX COUNT
+    JMP COPY
+
+CLEAR_SCREEN:
+    LDX #FRAMEBUFFER
+    LDAA #$40
+CLEAR_LOOP:
+    STAA 0,X
+    INX
+    CPX #FRAMEBUFFER + 768
+    BNE CLEAR_LOOP
+    RTS
+
+; Copy a row at a time; service sound between rows.
+PRESENT:
+    LDX #FRAMEBUFFER
+    STX SRC
+    LDX #$C100
+    STX DST
+PRESENT_ROW:
+    LDAB #32
+PRESENT_BYTE:
+    LDX SRC
+    LDAA 0,X
+    INX
+    STX SRC
+    LDX DST
+    CMPA 0,X
+    BEQ PRESENT_SAME
+    STAA 0,X
+PRESENT_SAME:
+    INX
+    STX DST
+    DECB
+    BNE PRESENT_BYTE
+    JSR CLOCK_SERVICE
+    LDX SRC
+    CPX #FRAMEBUFFER + 768
+    BNE PRESENT_ROW
+    RTS
+
+; Text uses ordinary ROM letters while custom graphics use PCG.
+TEXT:
+    LDX TEXT_PTR
+    LDAA 0,X
+    BEQ TEXT_DONE
+    INX
+    STX TEXT_PTR
+    LDX TEXT_OUT
+    CMPA #32
+    BNE TEXT_CHAR
+    LDAA #$60
+TEXT_CHAR:
+    SUBA #32
+    STAA 0,X
+    INX
+    STX TEXT_OUT
+    BRA TEXT
+TEXT_DONE:
+    RTS
+
+; Print A as three decimal digits at X, preserving other platform pointers.
+NUMBER:
+    STAA NUM_VALUE
+    CLR NUM_DIGIT
+NUMBER_HUNDREDS:
+    LDAA NUM_VALUE
+    CMPA #100
+    BCS NUMBER_HUNDREDS_DONE
+    SUBA #100
+    STAA NUM_VALUE
+    INC NUM_DIGIT
+    BRA NUMBER_HUNDREDS
+NUMBER_HUNDREDS_DONE:
+    LDAA NUM_DIGIT
+    ADDA #16
+    STAA 0,X
+    INX
+    CLR NUM_DIGIT
+NUMBER_TENS:
+    LDAA NUM_VALUE
+    CMPA #10
+    BCS NUMBER_TENS_DONE
+    SUBA #10
+    STAA NUM_VALUE
+    INC NUM_DIGIT
+    BRA NUMBER_TENS
+NUMBER_TENS_DONE:
+    LDAA NUM_DIGIT
+    ADDA #16
+    STAA 0,X
+    LDAA NUM_VALUE
+    ADDA #16
+    STAA 1,X
+    RTS
+
+CLOCK_RELOAD:
+    LDAA #$18
+    STAA $C808
+    LDAA #$3A
+    STAA $C809
+    RTS
+
+CLOCK_SERVICE:
+    PSHA
+    PSHB
+    STX CLOCK_X
+    LDAA $C80D
+    BITA #$20
+    BEQ CLOCK_DONE
+    JSR CLOCK_RELOAD
+    INC TICK
+    JSR SOUND_TICK
+    JSR INPUT_CAPTURE
+CLOCK_DONE:
+    LDX CLOCK_X
+    PULB
+    PULA
+    RTS
+
+POLL_INPUT:
+    CLR KEY_ROW
+    LDX #KEYS
+INPUT_ROW:
+    LDAA KEY_ROW
+    STAA $C801
+    NOP
+    NOP
+    LDAA $C800
+    COMA
+    ANDA #31
+    STAA 0,X
+    INX
+    INC KEY_ROW
+    LDAA KEY_ROW
+    CMPA #9
+    BNE INPUT_ROW
+    LDAA KEYS
+    ANDA #17
+    CMPA #17
+    BEQ EXIT_GAME
+    CLRB
+    LDAA KEYS + 8
+    BITA #8
+    BNE INPUT_CONFIRM
+    BITA #2
+    BNE INPUT_BACK
+    LDAA $CC02
+    CMPA #$FF
+    BEQ INPUT_KEYS
+    BITA #16
+    BNE INPUT_CONFIRM
+    ANDA #15
+    BEQ INPUT_KEYS
+    CMPA #4
+    BEQ INPUT_NORTH
+    CMPA #8
+    BEQ INPUT_SOUTH
+    CMPA #2
+    BEQ INPUT_WEST
+    CMPA #1
+    BEQ INPUT_EAST
+    BRA INPUT_EDGE
+INPUT_KEYS:
+    LDAA KEYS + 2
+    BITA #2
+    BNE INPUT_NORTH
+    LDAA KEYS
+    BITA #8
+    BNE INPUT_SOUTH
+    LDAA KEYS + 1
+    BITA #1
+    BNE INPUT_WEST
+    BITA #4
+    BNE INPUT_EAST
+    BITA #2
+    BNE INPUT_WAIT
+    BITA #8
+    BNE INPUT_FIRE
+    BRA INPUT_EDGE
+INPUT_NORTH:
+    LDAB #1
+    BRA INPUT_EDGE
+INPUT_SOUTH:
+    LDAB #2
+    BRA INPUT_EDGE
+INPUT_WEST:
+    LDAB #3
+    BRA INPUT_EDGE
+INPUT_EAST:
+    LDAB #4
+    BRA INPUT_EDGE
+INPUT_CONFIRM:
+    LDAB #5
+    BRA INPUT_EDGE
+INPUT_BACK:
+    LDAB #6
+    BRA INPUT_EDGE
+INPUT_WAIT:
+    LDAB #7
+    BRA INPUT_EDGE
+INPUT_FIRE:
+    LDAB #8
+INPUT_EDGE:
+    CLR KEY_ACTION
+    LDAA KEY_LAST
+    CMPA #$FF
+    BNE INPUT_COMPARE
+    TSTB
+    BNE INPUT_DONE
+    STAB KEY_LAST
+    BRA INPUT_DONE
+INPUT_COMPARE:
+    CMPB KEY_LAST
+    BEQ INPUT_DONE
+    STAB KEY_LAST
+    STAB KEY_ACTION
+INPUT_DONE:
+    RTS
+
+; Retain one fresh input while drawing, instead of losing short taps.
+INPUT_CAPTURE:
+    JSR POLL_INPUT
+    TST KEY_PENDING
+    BNE CAPTURE_DONE
+    LDAA KEY_ACTION
+    STAA KEY_PENDING
+CAPTURE_DONE:
+    RTS

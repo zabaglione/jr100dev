@@ -1,0 +1,12 @@
+{
+  "id": "trace-blade",
+  "title": "TRACE BLADE",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [
+    "state.inc",
+    "main.asm",
+    "draw.asm"
+  ]
+}
