@@ -7,7 +7,7 @@ SOURCES := $(addprefix src/,$(MODULES))
 
 all: build/relic-dive.prg images
 
-build/game.asm: $(SOURCES) build_source.py pack_text.py title_art.py text.json | build
+build/game.asm: $(SOURCES) build_source.py pack_text.py title_art.py ../native/artwork.py ../common/art.py ../common/title_styles.py text.json | build
 	$(PYTHON) build_source.py
 
 build/relic-dive.prg: build/game.asm

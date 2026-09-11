@@ -10,6 +10,10 @@
 
 ![Title](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/abyss-signal/title.png)
 
+## タイトルのデザイン
+
+横に広いABYSSと深い海底のシルエットで、潜水艇の小ささと探索の不安を表します。
+
 ## 画面の奥行き
 
 岩の側面と潜水艇の下側に陰影を加え、発見画面の海底には奥へ収束する線を敷きました。航行中のソナーは正確な位置が読める平面表示を保っています。

@@ -10,6 +10,10 @@
 
 ![Title](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/trace-blade/title.png)
 
+## タイトルのデザイン
+
+大きな斜めの刃が経路を横切る構図です。傾いた文字と標的の菱形を斬撃の方向に揃えています。
+
 ## 画面の奥行き
 
 壁を石積みの立体ブロック、出口をくぼんだ台座にしました。計画経路・標的の選択枠・斬撃は従来の位置で判別できます。

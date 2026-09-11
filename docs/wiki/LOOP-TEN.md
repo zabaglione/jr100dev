@@ -10,6 +10,10 @@
 
 ![Title](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/loop-ten/title.png)
 
+## タイトルのデザイン
+
+画面左を占める二重の巻き戻し矢印に「10」を収め、右の縦長TENで十手の制約を強調します。
+
 ## 画面の奥行き
 
 迷宮の石壁、門、封印に厚みを付け、主人公には接地影を加えました。時間ゲージと危険な床の記号は見やすさを優先しています。

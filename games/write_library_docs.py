@@ -16,9 +16,11 @@ IMAGES = "https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images"
 library = json.loads((ROOT / "library.json").read_text())
 manuals = json.loads((ROOT / "native/manuals.json").read_text())
 visuals = json.loads((ROOT / "visual-design.json").read_text())
+titles = json.loads((ROOT / "title-design.json").read_text())
 genres = {g["id"]: g for g in library["genres"]}
 games = library["games"]
 assert set(visuals) == {g["id"] for g in games}
+assert set(titles) == set(visuals)
 
 
 def page(genre):
@@ -31,7 +33,10 @@ def launch_note():
 
 def font_description(game):
     if game["id"] == "relic-dive":
-        return "今回はフォント変更を保留しました。タイトルはPCG全32枠、ゲーム中は31枠を使用し、コード・定数の空きも149バイトです。既存のロゴ・地形・アイテムの判別を優先しています。"
+        layout = json.loads(
+            (ROOT / game["directory"] / "build/layout.json").read_text()
+        )
+        return f"通常文字のフォント変更は保留しています。タイトルはPCG全32枠、ゲーム中は31枠を使用し、コード・定数の空きは{layout['code_free_bytes']}バイトです。ロゴ・地形・アイテムの判別を優先しています。"
     record = json.loads((ROOT / game["directory"] / "build/fonts.json").read_text())
     name, shape = STYLES[record["style"]]
     chars = record["game"]["characters"]
@@ -43,7 +48,10 @@ def font_description(game):
 
 def visual_section(game):
     return (
-        "## 画面の奥行き\n\n"
+        "## タイトルのデザイン\n\n"
+        + titles[game["id"]]
+        + "\n\n"
+        + "## 画面の奥行き\n\n"
         + visuals[game["id"]]
         + "\n\n"
         + "## ゲーム専用フォント\n\n"
@@ -53,6 +61,9 @@ def visual_section(game):
 
 
 def update_visual_section(text, game):
+    text = re.sub(
+        r"\n## タイトルのデザイン\n.*?(?=\n## |\Z)", "\n", text, flags=re.DOTALL
+    )
     text = re.sub(r"\n## 画面の奥行き\n.*?(?=\n## |\Z)", "\n", text, flags=re.DOTALL)
     text = re.sub(
         r"\n## ゲーム専用フォント\n.*?(?=\n## |\Z)", "\n", text, flags=re.DOTALL
@@ -74,7 +85,7 @@ for gid, genre in genres.items():
     subset = [g for g in games if g["genre"] == gid]
     home += f"| [{genre['title']}]({page(gid)}) | {len(subset)} | {genre['description']} |\n"
 home += (
-    "\n[タイトル順の全作品](All-Games) · [共通操作と起動方法](Controls) · [画面表現の工夫](Visual-Design) · [専用フォント](Font-Design)\n\n"
+    "\n[タイトル順の全作品](All-Games) · [タイトル画面ギャラリー](Title-Design) · [共通操作と起動方法](Controls) · [画面表現の工夫](Visual-Design) · [専用フォント](Font-Design)\n\n"
     + launch_note()
 )
 home += "\n\n基本の方向キーは **W/A/S/D**、8方向の作品は **QWE／AD／ZXC** です。作品ごとの操作は各ページに掲載しています。\n\nエミュレーターで確認済みです。実機での動作・音声は未確認です。\n\n"
@@ -83,7 +94,7 @@ home += f"[ビルド可能なソースと開発手順]({BASE}/tree/main/games)\n
 sidebar = "[JR-100 Games](Home)\n\n"
 for gid, genre in genres.items():
     sidebar += f"- [{genre['title']}]({page(gid)})\n"
-sidebar += "\n[全作品をタイトル順に探す](All-Games)\n\n[操作・起動方法](Controls)\n\n[画面表現の工夫](Visual-Design) · [専用フォント](Font-Design)\n"
+sidebar += "\n[全作品をタイトル順に探す](All-Games)\n\n[タイトル画面ギャラリー](Title-Design)\n\n[操作・起動方法](Controls)\n\n[画面表現の工夫](Visual-Design) · [専用フォント](Font-Design)\n"
 (WIKI / "_Sidebar.md").write_text(sidebar)
 all_games = "# 全作品・タイトル順\n\n[ホーム](Home) · [ジャンルから探す](Home)\n\n| タイトル | ジャンル | 起動 |\n| --- | --- | --- |\n"
 for g in sorted(games, key=lambda g: g["title"]):
@@ -275,3 +286,16 @@ for gid, genre in genres.items():
     font_page += "\n"
 font_page += "## 検証範囲\n\nRAM配置、文字と絵柄のPCG枠の衝突、全文字コードの描画、タイトルとゲームの切り替え、操作リプレイを検証しています。掲載画像は所有するBASIC ROMから起動したエミュレーターの実フレームです。実機での表示と動作は未確認です。\n"
 (WIKI / "Font-Design.md").write_text(font_page)
+
+title_page = "# タイトル画面ギャラリー\n\n[ホーム](Home) → タイトル画面ギャラリー\n\n"
+title_page += "全51作品のタイトルを、遊びの中心となる道具・場所・動きに合わせて個別に構成しました。文字の大きさと縦横比、余白、白い面の量も変えています。石の刻印・結晶の切り口・スリットを入れた文字は作品に合わせて使い、操作案内とパスワードは通常文字で揃えています。\n\n"
+title_page += "すべてゲーム本体のPCGで描画します。標準RAM 16KB、PCG最大32文字の範囲内です。画像は所有するBASIC ROMから起動したエミュレーターの実画面で、実機での表示は未確認です。\n\n"
+for gid, genre in genres.items():
+    title_page += f"## [{genre['title']}]({page(gid)})\n\n| タイトル画面 | デザインと起動 |\n| --- | --- |\n"
+    for game in sorted(
+        (g for g in games if g["genre"] == gid), key=lambda g: g["title"]
+    ):
+        game_id = game["id"]
+        title_page += f'| [<img src="{IMAGES}/{game_id}/title.png" width="300" alt="{game["title"]}">]({game_id.upper()}) | **[{game["title"]}]({game_id.upper()})**<br>{titles[game_id]}<br>[プレイ]({PLAY}{game_id}) |\n'
+    title_page += "\n"
+(WIKI / "Title-Design.md").write_text(title_page)

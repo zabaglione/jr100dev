@@ -15,6 +15,12 @@ def check(directory):
     data = json.loads((directory / "build/fonts.json").read_text())
     machine = Machine(directory.name)
     original = machine.code
+    art = json.loads((directory / "build/art.json").read_text())
+    if metadata.get("nativeRules"):
+        # The authored title, including its alternate logo tiles, is emitted by
+        # the real CPU. Password text occupies the separate bottom four rows.
+        assert machine.read(0xC100, 640) == bytes(art["title_screen"][:640])
+        assert machine.read(0xC000, 256) == bytes(art["title_pcg"])
     if not any(data[scene]["characters"] for scene in ("title", "game")):
         assert "FONT_GAME_MAP" not in machine.sym
         print(f"PASS: {metadata['id']}, ordinary font retained without mapping code")

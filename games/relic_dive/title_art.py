@@ -1,86 +1,15 @@
 """Authored stone lettering and dungeon portal using sixteen quarter-cell tiles."""
 
-FONT = {
-    "R": (30, 17, 17, 30, 20, 18, 17),
-    "E": (31, 16, 16, 30, 16, 16, 31),
-    "L": (16, 16, 16, 16, 16, 16, 31),
-    "I": (31, 4, 4, 4, 4, 4, 31),
-    "C": (15, 16, 16, 16, 16, 16, 15),
-    "D": (30, 17, 17, 17, 17, 17, 30),
-    "V": (17, 17, 17, 17, 17, 10, 4),
-}
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "native"))
+from artwork import poster
 
 
 def build():
-    pixels = [[0] * 64 for _ in range(34)]
-
-    def dot(x, y, value=1):
-        assert 0 <= x < 64 and 0 <= y < 34
-        pixels[y][x] = value
-
-    def line(x0, y0, x1, y1, value=1):
-        dx, dy = abs(x1 - x0), -abs(y1 - y0)
-        sx, sy = (1 if x0 < x1 else -1), (1 if y0 < y1 else -1)
-        error = dx + dy
-        while True:
-            dot(x0, y0, value)
-            if (x0, y0) == (x1, y1):
-                break
-            twice = error * 2
-            if twice >= dy:
-                error += dy
-                x0 += sx
-            if twice <= dx:
-                error += dx
-                y0 += sy
-
-    # Broken stone frame and a full-width, 28-pixel-high inscription.
-    line(1, 1, 62, 1)
-    line(1, 1, 1, 11)
-    line(62, 1, 62, 11)
-    line(2, 12, 61, 12)
-    x = 4
-    for letter in "RELIC DIVE":
-        if letter == " ":
-            x += 3
-            continue
-        for y, bits in enumerate(FONT[letter]):
-            for bit in range(5):
-                if bits & (16 >> bit):
-                    dot(x + bit, y + 4)
-        x += 6
-    # Perspective columns, a central relic and descending steps.
-    for left, right in ((3, 60), (12, 51), (20, 43)):
-        top = 19 + (left // 9)
-        for edge in (left, right):
-            line(edge, top, edge, 32)
-            line(
-                edge + (1 if edge < 32 else -1),
-                top,
-                edge + (1 if edge < 32 else -1),
-                32,
-            )
-        line(left, top, left + 4, top)
-        line(right - 4, top, right, top)
-        line(left, 32, left + 3, 32)
-        line(right - 3, 32, right, 32)
-    for x0, x1, y in ((27, 36, 28), (25, 38, 30), (23, 40, 32)):
-        line(x0, y, x1, y)
-    line(27, 28, 22, 33)
-    line(36, 28, 41, 33)
-    # Faceted diamond hanging in the dark doorway.
-    for a, b in (
-        ((31, 19), (27, 23)),
-        ((27, 23), (31, 27)),
-        ((31, 27), (35, 23)),
-        ((35, 23), (31, 19)),
-    ):
-        line(*a, *b)
-    line(29, 23, 33, 23)
-    line(31, 21, 31, 25)
-    for y in (20, 24, 28):
-        for x in (5, 58):
-            dot(x, y)
+    pixels = poster({"id": "relic-dive"}).p[:34]
     tiles = []
     for mask in range(16):
         tiles += [(0xF0 if mask & 1 else 0) | (0x0F if mask & 2 else 0)] * 4
@@ -106,9 +35,9 @@ def build():
                 for dx in (0, 1)
             )
             screen[y * 32 + x] = (
-                (144 + mask if 2 <= y <= 5 else 128 + mask) if mask else 64
+                (144 + mask if x < 15 and y < 13 else 128 + mask) if mask else 64
             )
-    for x, y in ((10, 8), (21, 8), (12, 11), (19, 11), (9, 14), (22, 14)):
+    for x, y in ((16, 2), (16, 10), (24, 13)):
         screen[y * 32 + x] = 144
     stream = []
     index = 0

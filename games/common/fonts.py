@@ -6,6 +6,7 @@ from pathlib import Path
 
 from art import FONT_ROWS, emit
 from relief import NATIVE
+from title_styles import FINISH_FOR
 
 ROOT = Path(__file__).resolve().parents[1]
 STYLES = {
@@ -97,14 +98,16 @@ def free_slots(metadata):
     if not metadata.get("nativeRules"):
         return CUSTOM_FREE[gid]
     if gid == "brick-pulse":
-        return list(range(16, 32)), list(range(16, 32))
+        return [], list(range(16, 32))
     tiles = set(NATIVE[gid])
     if gid == "seed-merge":
         tiles.clear()  # The relief version uses ROM linework instead of tile 7.
     occupied = {t * 4 + q for t in tiles for q in range(4)}
     if metadata.get("rankedCampaign"):
         occupied.update(range(24, 30))
-    return list(range(16, 32)), sorted(set(range(32)) - occupied)
+    return ([] if gid in FINISH_FOR else list(range(16, 32))), sorted(
+        set(range(32)) - occupied
+    )
 
 
 def choose(metadata, slots, scene):

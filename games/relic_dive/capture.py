@@ -29,6 +29,7 @@ DIRECTIONS = ((0, -1, 1), (0, 1, 2), (-1, 0, 3), (1, 0, 4))
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--rom", type=Path, required=True)
+    parser.add_argument("--title-only", action="store_true")
     args = parser.parse_args()
     rom = args.rom.read_bytes()
     machine = lib.create(rom, len(rom))
@@ -92,6 +93,9 @@ def main():
         assert 0x300 <= lib.pc(machine) < SYMBOLS["CODE_END"]
         assert get("G_MODE") == 0, "BASIC autostart did not reach title"
         capture("title.png")
+        if args.title_only:
+            print("Captured title from BASIC boot")
+            return
         action(1)
         action(5)
         assert get("G_MODE") == 1

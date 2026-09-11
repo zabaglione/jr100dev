@@ -9,6 +9,8 @@
 
 [全作品をタイトル順に探す](All-Games)
 
+[タイトル画面ギャラリー](Title-Design)
+
 [操作・起動方法](Controls)
 
 [画面表現の工夫](Visual-Design) · [専用フォント](Font-Design)

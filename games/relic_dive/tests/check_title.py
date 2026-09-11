@@ -39,7 +39,7 @@ def check():
             m.call("RENDER_SCREEN")
             expected = bytearray(art["screen"])
             goal = display(strings["S_GOAL"])
-            expected[229 : 229 + len(goal)] = goal
+            expected[549 : 549 + len(goal)] = goal
             for index in range(3):
                 offset = (9 + index) * 64
                 label = display(strings[f"DIFFICULTY_NAMES_{index}"])
