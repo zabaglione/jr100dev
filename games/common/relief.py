@@ -8,8 +8,9 @@ import math
 
 
 class Pixels:
-    def __init__(self, width=16, height=16):
+    def __init__(self, width=16, height=16, *, contact_shadow=True):
         self.p = [[0] * width for _ in range(height)]
+        self.contact_shadow = contact_shadow
 
     def dot(self, x, y, value=1):
         x, y = round(x), round(y)
@@ -56,6 +57,8 @@ class Pixels:
             )
 
     def shadow(self, left=3, right=13, y=15):
+        if not self.contact_shadow:
+            return
         for x in range(left, right + 1):
             if x % 2:
                 self.dot(x, y)
@@ -87,8 +90,8 @@ def shade_figure(pixels):
     return result
 
 
-def sprite(kind):
-    c = Pixels()
+def sprite(kind, *, contact_shadow=True):
+    c = Pixels(contact_shadow=contact_shadow)
     if kind.startswith("wall-") or kind in ("crate", "cargo", "stone"):
         # The top is a parallelogram; the front and side remain inside the cell.
         c.poly([(0, 3), (3, 0), (15, 0), (12, 3)])
@@ -428,4 +431,8 @@ def replace_sprites(bank, replacements):
 def native_bank(info):
     defaults = ("floor", "wall-stone", "person", "gem", "crate", "foe", "door", "frame")
     bank = [byte for kind in defaults for byte in sprite(kind)]
-    return replace_sprites(bank, NATIVE[info["id"]])
+    bank = replace_sprites(bank, NATIVE[info["id"]])
+    if info["id"] == "frost-steps":
+        for slot, kind in ((2, "person"), (3, "gem")):
+            bank[slot * 32 : (slot + 1) * 32] = sprite(kind, contact_shadow=False)
+    return bank
