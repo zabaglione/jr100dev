@@ -59,7 +59,7 @@ make -C games/chrono_breach
 ## 検証と制作データ
 
 ```sh
-# 合成ROM、実CPU、パッド入力による全20面のリプレイ
+# 合成ROM、MB8861Hエミュレーター、パッド入力による全20面のリプレイ
 JR100EMU_ROOT=/path/to/pyjr100emu make -C games/chrono_breach test
 # キーボードによる同じ全20面のリプレイ
 JR100EMU_ROOT=/path/to/pyjr100emu python3 games/chrono_breach/replay.py --keyboard
