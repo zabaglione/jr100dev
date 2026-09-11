@@ -106,17 +106,28 @@ for gid, genre in genres.items():
     subset = [g for g in games if g["genre"] == gid]
     home += f"| [{genre['title']}]({page(gid)}) | {len(subset)} | {genre['description']} |\n"
 home += (
-    "\n[タイトル順の全作品](All-Games) · [タイトル画面ギャラリー](Title-Design) · [共通操作と起動方法](Controls) · [画面表現の工夫](Visual-Design) · [専用フォント](Font-Design)\n\n"
+    "\n[タイトル順の全作品](All-Games) · [タイトル画面ギャラリー](#タイトル画面ギャラリー) · [共通操作と起動方法](Controls) · [画面表現の工夫](Visual-Design) · [専用フォント](Font-Design)\n\n"
     + launch_note()
 )
 home += "\n\n基本の方向キーは **W/A/S/D**、8方向の作品は **QWE／AD／ZXC** です。作品ごとの操作は各ページに掲載しています。\n\nエミュレーターで確認済みです。実機での動作・音声は未確認です。\n\n"
 home += "[移動とクリア演出・動作動画](Motion-and-Clear)\n\n"
 home += f"[ビルド可能なソースと開発手順]({BASE}/tree/main/games)\n"
-(WIKI / "Home.md").write_text(home)
+home += "\n## タイトル画面ギャラリー\n\n"
+home += f"全{len(games)}作品のタイトルを、遊びの中心となる道具・場所・動きに合わせて個別に構成しました。文字の大きさと縦横比、余白、白い面の量も変えています。石の刻印・結晶の切り口・スリットを入れた文字は作品に合わせて使い、操作案内とパスワードは通常文字で揃えています。\n\n"
+home += "すべてゲーム本体のPCGで描画します。標準RAM 16KB、PCG最大32文字の範囲内です。画像は所有するBASIC ROMから起動したエミュレーターの実画面で、実機での表示は未確認です。\n\n"
+for gid, genre in genres.items():
+    home += f"### [{genre['title']}]({page(gid)})\n\n| タイトル画面 | デザインと起動 |\n| --- | --- |\n"
+    for game in sorted(
+        (g for g in games if g["genre"] == gid), key=lambda g: g["title"]
+    ):
+        game_id = game["id"]
+        home += f'| [<img src="{IMAGES}/{game_id}/title.png" width="300" alt="{game["title"]}">]({game_id.upper()}) | **[{game["title"]}]({game_id.upper()})**<br>{titles[game_id]}<br>[プレイ]({PLAY}{game_id}) |\n'
+    home += "\n"
+(WIKI / "Home.md").write_text(home.rstrip() + "\n")
 sidebar = "[JR-100 Games](Home)\n\n"
 for gid, genre in genres.items():
     sidebar += f"- [{genre['title']}]({page(gid)})\n"
-sidebar += "\n[全作品をタイトル順に探す](All-Games)\n\n[タイトル画面ギャラリー](Title-Design)\n\n[操作・起動方法](Controls)\n\n[画面表現の工夫](Visual-Design) · [専用フォント](Font-Design)\n"
+sidebar += "\n[全作品をタイトル順に探す](All-Games)\n\n[タイトル画面ギャラリー](Home#タイトル画面ギャラリー)\n\n[操作・起動方法](Controls)\n\n[画面表現の工夫](Visual-Design) · [専用フォント](Font-Design)\n"
 sidebar += "\n[移動とクリア演出](Motion-and-Clear)\n"
 (WIKI / "_Sidebar.md").write_text(sidebar)
 all_games = "# 全作品・タイトル順\n\n[ホーム](Home) · [ジャンルから探す](Home)\n\n| タイトル | ジャンル | 起動 |\n| --- | --- | --- |\n"
@@ -317,20 +328,6 @@ for gid, genre in genres.items():
     font_page += "\n"
 font_page += "## 検証範囲\n\nRAM配置、文字と絵柄のPCG枠の衝突、全文字コードの描画、タイトルとゲームの切り替え、操作リプレイを検証しています。掲載画像は所有するBASIC ROMから起動したエミュレーターの実フレームです。実機での表示と動作は未確認です。\n"
 (WIKI / "Font-Design.md").write_text(font_page)
-
-title_page = "# タイトル画面ギャラリー\n\n[ホーム](Home) → タイトル画面ギャラリー\n\n"
-title_page += "全51作品のタイトルを、遊びの中心となる道具・場所・動きに合わせて個別に構成しました。文字の大きさと縦横比、余白、白い面の量も変えています。石の刻印・結晶の切り口・スリットを入れた文字は作品に合わせて使い、操作案内とパスワードは通常文字で揃えています。\n\n"
-title_page += "すべてゲーム本体のPCGで描画します。標準RAM 16KB、PCG最大32文字の範囲内です。画像は所有するBASIC ROMから起動したエミュレーターの実画面で、実機での表示は未確認です。\n\n"
-for gid, genre in genres.items():
-    title_page += f"## [{genre['title']}]({page(gid)})\n\n| タイトル画面 | デザインと起動 |\n| --- | --- |\n"
-    for game in sorted(
-        (g for g in games if g["genre"] == gid), key=lambda g: g["title"]
-    ):
-        game_id = game["id"]
-        title_page += f'| [<img src="{IMAGES}/{game_id}/title.png" width="300" alt="{game["title"]}">]({game_id.upper()}) | **[{game["title"]}]({game_id.upper()})**<br>{titles[game_id]}<br>[プレイ]({PLAY}{game_id}) |\n'
-    title_page += "\n"
-(WIKI / "Title-Design.md").write_text(title_page)
-
 
 motion_page = "# 移動とクリア演出\n\n[ホーム](Home) → 移動とクリア演出\n\n"
 motion_page += "連続移動の途中経過を表示する演出を6作品に追加しました。途中のマス、合成、敵の応答など、入力から結果までの流れを追えるようにしています。全51作品にクリア時のジングルと結果を見せる間を設けています。\n\n"
