@@ -10,22 +10,6 @@
 
 ![Title](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/dice-relic/title.png)
 
-## タイトルのデザイン
-
-大きなダイスと遺物の紋章を並べ、上のDICEと右下のRELICが両者を結びます。
-
-## 画面の奥行き
-
-ダイスに斜めの上面と側面を付け、1〜9の目を前面に配置しました。守護者にも片側の陰影と接地影を加えています。
-
-## ゲーム専用フォント
-
-ゲーム中の**数字0〜9の10文字を石碑フォント**（上下の飾りを持つ刻印）で揃えています。部分的な英字の置き換えは行いません。タイトルの操作案内・説明・パスワード入力は通常フォントに統一しています。既存のロゴと絵柄を保ち、空きPCG枠だけを使用します。
-
-## 動きとクリア演出
-
-クリア時は完成した盤面・結果を残し、約1.6秒のジングルと余韻を挟みます。その後、キーを押し直して次の操作に進みます。クリア直前から押し続けたキーや、演出中に押したキーで結果を飛ばすことはありません。
-
 ## 操作
 
 | 操作 | キーボード | 1ボタンパッド |
@@ -54,15 +38,3 @@ ATTACKは出目の値だけ攻撃、GUARDは同じ値の防御、HEALは同じ�
 
 ![Workshop](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/dice-relic/workshop.png)
 ![The First King](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/dice-relic/battle-09.png)
-
-## ビルドと検証
-
-開発環境を用意して `make -C games/dice_relic` を実行します。出力は `build/dice-relic.prg`、開始番地 `$0300`。本体・定数は8,063 bytes。画面・状態・保存領域・512 bytesのスタックを含め標準16KB内、PCGは32文字です。
-
-`make -C games/dice_relic test` は攻防、回復上限、使用済みダイス、振り直し上限、強攻撃、購入価格、面の上限と次戦への持越しを独立モデルと照合します。入力だけで9戦を完走し、8回の面変更を確認しました。パッドとキーボードの両方を検証しています。
-
-```sh
-.venv/bin/python games/dice_relic/replay.py --rom /path/to/owned-rom.prg --capture
-```
-
-画像は実BASICから起動したエミュレーターの実画面です。実機は未確認。振り直し時のアニメーション、効果音、32小節の独自タイトル曲・戦闘曲を収録。ソース・画像・曲は[MIT License](https://github.com/zabaglione/jr100dev/blob/main/games/LICENSE)。ROMは含みません。

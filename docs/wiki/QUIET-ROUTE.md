@@ -10,24 +10,6 @@
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/quiet-route/title.png)
 
-## タイトルのデザイン
-
-白い街のシルエットとサーチライトの中に黒い人影を隠し、上部に暗い空とロゴの余白を取ります。
-
-## 画面の奥行き
-
-石壁と扉の奥行き、人物の接地影で通路を表現しました。警備員は帽子とバイザーで主人公と区別できます。
-
-## ゲーム専用フォント
-
-今回は通常フォントを維持しています。絵柄やアニメーションに使うPCGを残すと、一式の数字・英字を揃える枠が足りないためです。一部の文字だけ書体が変わる置き換えは行いません。
-
-## 動きとクリア演出
-
-プレイヤーが動いた盤面を一度表示してから、警備員が応答します。自分の行動と敵の行動を区別できます。演出中の追加入力は受け付けません。
-
-クリア時は完成した盤面・結果を残し、約1.6秒のジングルと余韻を挟みます。その後、キーを押し直して次の操作に進みます。クリア直前から押し続けたキーや、演出中に押したキーで結果を飛ばすことはありません。
-
 ## 操作と遊び方
 
 WASDで移動、RETURNで静音歩行を切り替えます。静音中は移動に電池を2消費しますが、聞きつけられる距離が短くなります。
@@ -39,22 +21,3 @@ WASDで移動、RETURNで静音歩行を切り替えます。静音中は移動�
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/quiet-route/play-01.png)
 
 ![プレイ中の場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/quiet-route/play-02.png)
-
-## ビルドと検証
-
-バージョン 1.3.0。開始番地 `$0300`、ゲーム本体と定数は 7,154 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
-
-```sh
-make -C games/quiet_route
-make -C games/quiet_route test
-```
-
-出力はゲームの `build/` ディレクトリに作られます。`rules.py` はビルド時にMB8861Hの機械語へ変換されます。JR-100上でPythonを実行する方式ではありません。
-
-キー入力による全ステージのクリア、失敗を含む入力試験、画面範囲、RAM配置、スタック、PCM出力をエミュレーターで検査しています。掲載画像は所有するBASIC ROMからPRGを起動した実フレームです。実機での動作・音声は未確認です。
-
-```sh
-.venv/bin/python games/native/replay.py quiet_route --rom /path/to/owned-rom.prg --capture --keyboard
-```
-
-タイトルには長めの単音曲、プレイ中には効果音を付けています。ソース・画像・曲は[MIT License](https://github.com/zabaglione/jr100dev/blob/main/games/LICENSE)。`art/`にはPCG Workbench用の画面データもあります。

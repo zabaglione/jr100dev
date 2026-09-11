@@ -10,24 +10,6 @@
 
 ![タイトル・難易度選択](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/relic-dive/title.png)
 
-縦長の石文字と遺跡の門を対置した専用タイトル画面です。周囲の光が明滅します。文字列の圧縮で900バイトを節約し、標準16KB内に収めています。
-
-## タイトルのデザイン
-
-左の縦長の石文字と右の巨大な遺跡の門を対置します。門の奥の遺物と小さくきらめく光が探索へ誘います。
-
-## 画面の奥行き
-
-8×8ドットの石壁に明るい上面と斜めの肩、暗い側面を付けました。視界・品物・敵の記号と広い迷宮の表示範囲を保ち、追加RAMは使っていません。タイトルは石文字と遺跡の門を組み合わせた専用の構図です。
-
-## ゲーム専用フォント
-
-通常文字のフォント変更は保留しています。タイトルはPCG全32枠、ゲーム中は31枠を使用し、コード・定数の空きは21バイトです。ロゴ・地形・アイテムの判別を優先しています。
-
-## 動きとクリア演出
-
-クリア時は完成した盤面・結果を残し、約1.9秒のジングルと余韻を挟みます。その後、キーを押し直して次の操作に進みます。クリア直前から押し続けたキーや、演出中に押したキーで結果を飛ばすことはありません。
-
 ## 操作と遊び方
 
 ```text
@@ -60,31 +42,8 @@ Z X C
 
 ![冒険開始・周辺の品物](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/relic-dive/play-01.png)
 
-階段の上でメニューを開くとDESCENDが現れます。SEARCHは足元と周囲8マスの隠し通路・罠を調べます。INSPECTはカーソルで周辺を確認する操作です。SUSPENDはRAM内だけの中断で、電源を切ったりエミュレーターをリセットしたりすると失われます。
+階段の上でメニューを開くとDESCENDが現れます。SEARCHは足元と周囲8マスの隠し通路・罠を調べます。INSPECTはカーソルで周辺を確認する操作です。SUSPENDで一時中断できます。電源を切ったりエミュレーターをリセットしたりすると、中断した記録は失われます。
 
 ![探索が進んだ迷宮](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/relic-dive/play-02.png)
 
 ![持ち物・装備選択](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/relic-dive/inventory.png)
-
-## ビルドと検証
-
-バージョン：1.4.0。開始番地は `$0300`、ゲーム本体と定数は11,499 bytes、PCGはタイトルで32文字、ゲーム中は31文字を切り替えて使います。画面バッファー・地形・状態・復帰用保存領域・512 bytesのスタックを含めて標準RAM 16KB内に収めています。
-
-```sh
-make -C games/relic_dive
-make -C games/relic_dive test
-```
-
-出力は `games/relic_dive/build/relic-dive.prg` です。手動ロード時はBASICから `A=USR($0300)` を実行します。
-
-地形1,000種の接続・配置、8方向入力、品物・戦闘・視界・罠、描画と命令をC++エミュレーターで検査しています。保存入力だけを再生し、EASYの5階・NORMALの10階・HARDの20階で遺物取得を確認しました。
-
-掲載画像は所有するBASIC ROMからPRGを自動起動し、キーボード入力で取得したエミュレーターの実フレームです。Web配布用WASMでも標準16KBでのタイトル表示とゲーム開始を確認しています。実機でのロード・表示・操作は未確認です。クリア時に短いジングルを流します。通常プレイ中の効果音・BGMはありません。
-
-```sh
-.venv/bin/python games/relic_dive/capture.py --rom /path/to/owned-rom.prg
-```
-
-画像取得には `games/requirements-qa.txt` の追加依存が必要です。BASIC ROMは配布物に含めません。
-
-[JR-800版RELIC DIVE](https://github.com/zabaglione/jr800-web-emulator/tree/main/sdk/examples/lcd/07-relic-dive)を基にJR-100用のアセンブリで実装しています。ソース・画像・文章は[MIT License](https://github.com/zabaglione/jr100dev/blob/main/games/relic_dive/LICENSE)です。

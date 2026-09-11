@@ -6,27 +6,9 @@
 
 同じブラウザーで自分のBASIC ROMを事前に設定してください。登録済みなら「プレイ」からタイトルまで自動起動します。音は最初のキー入力または画面クリックで有効になります。
 
-壁にぶつかるまで滑る氷の洞窟パズル。必須の菱形クリスタルをすべて回収するとクリアです。40面を5段階に分け、序盤は短い滑走、後半は回収順序と壁で止まる位置を考える構成にしています。丸いルーンは任意の回収物です。
+壁にぶつかるまで滑る氷の洞窟パズル。必須の菱形クリスタルをすべて回収するとクリアです。全40面。序盤は短い滑走から始まり、後半は回収順序と壁で止まる位置が鍵になります。丸いルーンは任意の回収物です。
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/frost-steps/title.png)
-
-## タイトルのデザイン
-
-右上へ続く氷の足場と結晶を描き、横長のFROSTに細かい切り口を入れています。
-
-## 画面の奥行き
-
-氷壁の上面と斜めの反射線、床の短い光沢線、結晶の面で冷たい奥行きを出しました。プレイヤーと必須クリスタルの接地影は省き、輪郭をすっきり見せています。任意ルーンと必須の結晶は異なる輪郭を保っています。
-
-## ゲーム専用フォント
-
-ゲーム中の**数字0〜9の10文字を結晶フォント**（細い角形と斜めの切り口）で揃えています。部分的な英字の置き換えは行いません。タイトルの操作案内・説明・パスワード入力は通常フォントに統一しています。既存のロゴと絵柄を保ち、空きPCG枠だけを使用します。
-
-## 動きとクリア演出
-
-氷上を1マスずつ滑り、途中でクリスタルやルーンを拾う様子を表示します。1回の方向入力は、滑走距離にかかわらず1手です。演出中の追加入力は受け付けません。
-
-クリア時は完成した盤面・結果を残し、約1.6秒のジングルと余韻を挟みます。その後、キーを押し直して次の操作に進みます。クリア直前から押し続けたキーや、演出中に押したキーで結果を飛ばすことはありません。
 
 ## 操作と遊び方
 
@@ -44,7 +26,7 @@ ICE COMPASSのCRYSTALSは残っている必須クリスタル数。下部のMOV�
 
 ![1面を滑走して3つ星クリアする実画面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/frost-steps/slide-clear.gif)
 
-[音付き動画を見る](https://github.com/zabaglione/jr100dev/blob/main/games/frost_steps/images/slide-clear.mp4)。キーボード入力だけで1面をクリアした、約7.5秒のエミュレーター録画です。GIFには音がありません。
+[音付き動画を見る](https://github.com/zabaglione/jr100dev/blob/main/games/frost_steps/images/slide-clear.mp4)。1面を3つ星でクリアする動画です。GIFには音がありません。
 
 ## 手数と星評価
 
@@ -56,7 +38,7 @@ ICE COMPASSのCRYSTALSは残っている必須クリスタル数。下部のMOV�
 | 星2 | 規定手数以内でクリアし、ルーンが未回収。 |
 | 星3 | 規定手数以内でクリアし、ルーン2つを両方回収。 |
 
-PARは、両方のルーンを回収してクリアできる最短手数を探索して設定しています。すべての面に、ルーンを取り切らずに短い手数でクリアする経路もあります。手数が255を超えるとMOVは255+を表示し、評価は星1です。
+PARは、両方のルーンを回収してクリアできる最短手数です。すべての面に、ルーンを取り切らずに短い手数でクリアする経路もあります。手数が255を超えるとMOVは255+を表示し、評価は星1です。
 
 ![3つ星クリア](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/frost-steps/three-stars.png)
 
@@ -80,7 +62,7 @@ Fで面選択を開き、WASDまたはパッドで選び、RETURNまたはボタ
 
 タイトルと面選択の下部に表示される **PW** を書き留めてください。選択中の面番号と、全40面の最高評価を復元できます。盤面の途中経過は保存せず、復元後にRETURNでその面の最初から再開します。
 
-コードは空白を除いて **4〜24文字**。先頭の3つ星達成済みの面と末尾の未クリア面を省略するため、順番に3つ星を取って進める場合は通常5〜6文字です。数字は使わず、次の16種類の大文字だけを使います。
+コードは空白を除いて **4〜24文字**。順番に3つ星を取って進める場合は通常5〜6文字です。数字は使わず、次の16種類の大文字だけを使います。
 
 ```text
 ACDEFGHJKMNPQRTW
@@ -95,24 +77,3 @@ ACDEFGHJKMNPQRTW
 ![パスワード入力](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/frost-steps/password-entry.png)
 
 ![再起動後の記録復元](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/frost-steps/password-restored.png)
-
-## ビルドと検証
-
-バージョン 1.6.1。開始番地 `$0300`、ゲーム本体と定数は 10,937 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
-
-```sh
-make -C games/frost_steps
-make -C games/frost_steps test
-```
-
-出力はゲームの `build/` ディレクトリに作られます。`rules.py` はビルド時にMB8861Hの機械語へ変換されます。JR-100上でPythonを実行する方式ではありません。
-
-盤面はビルド時に2マスを1バイトへ圧縮します。`levels.json` が編集用の面データ、`challenges.json` がクリア経路とルーン回収経路、`solutions.json` が全40面の3つ星リプレイです。`native/campaign_levels.py` で再生成でき、`native/campaign_checks.py` は全盤面の解探索、評価条件、再挑戦、面選択、最高評価の保持、手数カウンターの上限を検査します。回転・鏡映だけの地形の重複は除外しています。`native/password_checks.py` はパスワードの圧縮・展開、誤入力の検出、別作品のコード拒否と、再起動後のキー／パッド入力による記録復元を検証します。
-
-キー入力による全ステージのクリア、失敗を含む入力試験、画面範囲、RAM配置、スタック、PCM出力をエミュレーターで検査しています。掲載画像は所有するBASIC ROMからPRGを起動した実フレームです。実機での動作・音声は未確認です。
-
-```sh
-.venv/bin/python games/native/replay.py frost_steps --rom /path/to/owned-rom.prg --capture --keyboard
-```
-
-タイトルには長めの単音曲、プレイ中には効果音を付けています。ソース・画像・曲は[MIT License](https://github.com/zabaglione/jr100dev/blob/main/games/LICENSE)。`art/`にはPCG Workbench用の画面データもあります。

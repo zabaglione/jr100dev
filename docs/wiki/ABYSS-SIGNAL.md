@@ -10,22 +10,6 @@
 
 ![Title](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/abyss-signal/title.png)
 
-## タイトルのデザイン
-
-横に広いABYSSと深い海底のシルエットで、潜水艇の小ささと探索の不安を表します。
-
-## 画面の奥行き
-
-岩の側面と潜水艇の下側に陰影を加え、発見画面の海底には奥へ収束する線を敷きました。航行中のソナーは正確な位置が読める平面表示を保っています。
-
-## ゲーム専用フォント
-
-今回は通常フォントを維持しています。絵柄やアニメーションに使うPCGを残すと、一式の数字・英字を揃える枠が足りないためです。一部の文字だけ書体が変わる置き換えは行いません。
-
-## 動きとクリア演出
-
-クリア時は完成した盤面・結果を残し、約1.6秒のジングルと余韻を挟みます。その後、キーを押し直して次の操作に進みます。クリア直前から押し続けたキーや、演出中に押したキーで結果を飛ばすことはありません。
-
 ## 操作
 
 | 操作 | キーボード | 1ボタンパッド |
@@ -50,19 +34,3 @@ HUDは酸素と残量バー、船体、深度、次の未記録地点への距�
 ![Black Sun](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/abyss-signal/discovery-05.png)
 
 やり直し／プレイ中のタイトル移動は実行前に確認します。NOが初期選択です。A/Dで選びRETURNで確定、SPACEで取り消します。
-
-## ビルドと検証
-
-リポジトリの開発環境を用意して `make -C games/abyss_signal` を実行します。出力は `build/abyss-signal.prg`、開始番地は `$0300`。ゲーム本体と定数は10,174 bytes、画面・状態・保存領域・512 bytesのスタックを含めて標準16KB内です。PCGは場面ごとに32文字を使います。
-
-`make -C games/abyss_signal test` は独立したPythonのルールモデルとC++エミュレーターの結果を照合し、岩礁・海流4方向・酸素枯渇・被弾・ソナー・静音・記録・帰還を検査します。入力だけで全5地点を観測して帰還する試験は117行動、酸素80・船体4を残して成功しました。キーボードとパッドの両方を確認しています。
-
-所有するBASIC ROMを使う起動と画面取得は次のとおりです。ROMはリポジトリに含めません。
-
-```sh
-.venv/bin/python games/abyss_signal/replay.py --rom /path/to/owned-rom.prg --capture
-```
-
-掲載画像は実BASICからPRGを起動したエミュレーターの実フレームです。実機での動作・音声は未確認です。タイトルに独自の短い単音曲、探索中は効果音のみを使います。
-
-ソース・画像・曲は[MIT License](https://github.com/zabaglione/jr100dev/blob/main/games/LICENSE)。`art/`にはPCG Workbenchで開ける画面データもあります。

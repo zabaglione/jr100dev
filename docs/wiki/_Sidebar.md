@@ -12,7 +12,3 @@
 [タイトル画面ギャラリー](Home#タイトル画面ギャラリー)
 
 [操作・起動方法](Controls)
-
-[画面表現の工夫](Visual-Design) · [専用フォント](Font-Design)
-
-[移動とクリア演出](Motion-and-Clear)

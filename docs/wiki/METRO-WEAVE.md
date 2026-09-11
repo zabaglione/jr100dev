@@ -10,22 +10,6 @@
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/metro-weave/title.png)
 
-## タイトルのデザイン
-
-交差する三本の路線と駅、上部の車両で交通網を描き、路線の余白へロゴを配置しています。
-
-## 画面の奥行き
-
-列車と分岐スイッチを立体化し、線路の下に高架の側面と支柱を描きました。行先と信号の対応関係は水平の線路で保っています。
-
-## ゲーム専用フォント
-
-ゲーム中の**数字0〜9の10文字を計器盤フォント**（角張った太線）で揃えています。部分的な英字の置き換えは行いません。タイトルの操作案内・説明・パスワード入力は通常フォントに統一しています。既存のロゴと絵柄を保ち、空きPCG枠だけを使用します。
-
-## 動きとクリア演出
-
-クリア時は完成した盤面・結果を残し、約1.6秒のジングルと余韻を挟みます。その後、キーを押し直して次の操作に進みます。クリア直前から押し続けたキーや、演出中に押したキーで結果を飛ばすことはありません。
-
 ## 操作と遊び方
 
 W/Sで分岐を選び、A/DまたはRETURNで切り替えます。列車のカウント3より前に経路を設定してください。
@@ -37,22 +21,3 @@ W/Sで分岐を選び、A/DまたはRETURNで切り替えます。列車のカ�
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/metro-weave/play-01.png)
 
 ![プレイ中の場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/metro-weave/play-02.png)
-
-## ビルドと検証
-
-バージョン 1.4.0。開始番地 `$0300`、ゲーム本体と定数は 6,492 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
-
-```sh
-make -C games/metro_weave
-make -C games/metro_weave test
-```
-
-出力はゲームの `build/` ディレクトリに作られます。`rules.py` はビルド時にMB8861Hの機械語へ変換されます。JR-100上でPythonを実行する方式ではありません。
-
-キー入力による全ステージのクリア、失敗を含む入力試験、画面範囲、RAM配置、スタック、PCM出力をエミュレーターで検査しています。掲載画像は所有するBASIC ROMからPRGを起動した実フレームです。実機での動作・音声は未確認です。
-
-```sh
-.venv/bin/python games/native/replay.py metro_weave --rom /path/to/owned-rom.prg --capture --keyboard
-```
-
-タイトルには長めの単音曲、プレイ中には効果音を付けています。ソース・画像・曲は[MIT License](https://github.com/zabaglione/jr100dev/blob/main/games/LICENSE)。`art/`にはPCG Workbench用の画面データもあります。

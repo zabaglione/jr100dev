@@ -10,22 +10,6 @@
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/corner-crown/title.png)
 
-## タイトルのデザイン
-
-角を強調した盤と大きな王冠を左右に分け、CORNERとCROWNをそれぞれに対応させます。
-
-## 画面の奥行き
-
-明るい駒と中が暗い駒に縁の厚みを付けました。盤は正方格子のまま、角と挟み取りの範囲を判別しやすくしています。
-
-## ゲーム専用フォント
-
-ゲーム中の**数字0〜9の10文字を活字フォント**（読みやすいセリフ体）で揃えています。部分的な英字の置き換えは行いません。タイトルの操作案内・説明・パスワード入力は通常フォントに統一しています。既存のロゴと絵柄を保ち、空きPCG枠だけを使用します。
-
-## 動きとクリア演出
-
-クリア時は完成した盤面・結果を残し、約1.6秒のジングルと余韻を挟みます。その後、キーを押し直して次の操作に進みます。クリア直前から押し続けたキーや、演出中に押したキーで結果を飛ばすことはありません。
-
 ## 操作と遊び方
 
 WASDで位置を選び、RETURNで置きます。合法手がない場合はRETURNでパスします。
@@ -37,22 +21,3 @@ WASDで位置を選び、RETURNで置きます。合法手がない場合はRETU
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/corner-crown/play-01.png)
 
 ![プレイ中の場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/corner-crown/play-02.png)
-
-## ビルドと検証
-
-バージョン 1.4.0。開始番地 `$0300`、ゲーム本体と定数は 7,605 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
-
-```sh
-make -C games/corner_crown
-make -C games/corner_crown test
-```
-
-出力はゲームの `build/` ディレクトリに作られます。`rules.py` はビルド時にMB8861Hの機械語へ変換されます。JR-100上でPythonを実行する方式ではありません。
-
-キー入力による全ステージのクリア、失敗を含む入力試験、画面範囲、RAM配置、スタック、PCM出力をエミュレーターで検査しています。掲載画像は所有するBASIC ROMからPRGを起動した実フレームです。実機での動作・音声は未確認です。
-
-```sh
-.venv/bin/python games/native/replay.py corner_crown --rom /path/to/owned-rom.prg --capture --keyboard
-```
-
-タイトルには長めの単音曲、プレイ中には効果音を付けています。ソース・画像・曲は[MIT License](https://github.com/zabaglione/jr100dev/blob/main/games/LICENSE)。`art/`にはPCG Workbench用の画面データもあります。
