@@ -128,6 +128,8 @@ for(const game of selected) {
       check(wasm._jr_set_key(row,bit,1)); frame(6);
       check(wasm._jr_set_key(row,bit,0)); frame(60);
     }
+    assert(Array.from({length:768}, (_, i) => peek(0xc100 + i)).every(code => code < 128),
+      `${game.id} password entry must use only the ordinary font`);
     press(5);
     assert.equal(peek(modeAddress), 6);
     assert.equal(peek(symbols.LEVEL), 1);

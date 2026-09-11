@@ -34,14 +34,11 @@ def font_description(game):
         return "今回はフォント変更を保留しました。タイトルはPCG全32枠、ゲーム中は31枠を使用し、コード・定数の空きも149バイトです。既存のロゴ・地形・アイテムの判別を優先しています。"
     record = json.loads((ROOT / game["directory"] / "build/fonts.json").read_text())
     name, shape = STYLES[record["style"]]
-    title_chars = "".join(record["title"]["characters"])
-    game_chars = "".join(record["game"]["characters"])
-    title_note = (
-        f"タイトル／説明用に{len(title_chars)}文字"
-        if title_chars
-        else "タイトルは時計のアニメーションを優先"
-    )
-    return f"**{name}フォント**（{shape}）を採用。{title_note}、ゲーム用に{len(game_chars)}文字を割り当てています。ゲーム中の対象は `{game_chars}` です。空きPCG枠だけを使い、残りの文字は通常フォントで表示します。数字を変更する作品では0〜9を一式で揃えています。"
+    chars = record["game"]["characters"]
+    if not chars:
+        return "今回は通常フォントを維持しています。絵柄やアニメーションに使うPCGを残すと、一式の数字・英字を揃える枠が足りないためです。一部の文字だけ書体が変わる置き換えは行いません。"
+    target = "英大文字A〜Zの26文字" if "A" in chars else "数字0〜9の10文字"
+    return f"ゲーム中の**{target}を{name}フォント**（{shape}）で揃えています。部分的な英字の置き換えは行いません。タイトルの操作案内・説明・パスワード入力は通常フォントに統一しています。既存のロゴと絵柄を保ち、空きPCG枠だけを使用します。"
 
 
 def visual_section(game):
@@ -247,8 +244,8 @@ visual_page += "## 検証範囲\n\n掲載画像は所有するBASIC ROMから起
 print(f"Generated {len(games)} game manuals and {len(genres)} genre navigation pages")
 
 font_page = "# ゲーム専用フォント\n\n[ホーム](Home) → ゲーム専用フォント\n\n"
-font_page += "51作品のPCG使用状況を調べ、50作品に専用フォントを追加しました。画面ごとの空き枠を使うため、タイトルとプレイ中では対象文字が異なります。既存のロゴや立体的な絵柄を保ち、すべて標準RAM 16KB・PCG最大32文字に収めています。\n\n"
-font_page += "英字・数字・記号は作品に合う6系統で描き分けました。文字パターンはゲーム内に含まれ、BASIC ROMのフォントデータを配布物へコピーしていません。数字の0には斜線を入れ、Oと区別しています。パスワードの文字種類と操作方法は変更していません。\n\n"
+font_page += "51作品のPCG使用状況を調べ、統一した書体を揃えられる42作品に専用フォントを追加しました。41作品は数字0〜9の一式、WORD FOUNDRYは英大文字A〜Zの一式を使用します。残り9作品は通常フォントを維持しています。既存のロゴや立体的な絵柄を保ち、すべて標準RAM 16KB・PCG最大32文字に収めています。\n\n"
+font_page += "英字と数字は作品に合う6系統で描き分けました。一つの単語の中で書体が混ざるような部分置換は行いません。タイトルの操作案内・説明・パスワード入力は通常フォントで統一しています。専用フォントはゲーム内に含まれます。数字の0には斜線を入れ、Oと区別しています。パスワードの文字種類と操作方法は変更していません。\n\n"
 font_page += "| 系統 | 文字の特徴 |\n| --- | --- |\n"
 for name, shape in STYLES.values():
     font_page += f"| {name} | {shape} |\n"

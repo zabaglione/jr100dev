@@ -15,6 +15,10 @@ def check(directory):
     data = json.loads((directory / "build/fonts.json").read_text())
     machine = Machine(directory.name)
     original = machine.code
+    if not any(data[scene]["characters"] for scene in ("title", "game")):
+        assert "FONT_GAME_MAP" not in machine.sym
+        print(f"PASS: {metadata['id']}, ordinary font retained without mapping code")
+        return
     assert machine.read("FONT_OFFSET", 1) == bytes(1)
     maps = {}
     for scene in ("title", "game"):
@@ -28,6 +32,9 @@ def check(directory):
         for char, slot in assigned.items():
             assert maps[scene][ord(char) - 32] == 128 + slot
             assert bank[slot * 8 : slot * 8 + 8] == bytes(glyph(char, data["style"]))
+        letters = set(assigned) & set("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+        assert not letters or len(letters) == 26, "Never mix alphabet styles"
+        assert scene != "title" or not assigned, "Keep title instructions uniform"
         digits = set(assigned) & set("0123456789")
         assert not digits or len(digits) == 10, "Never mix numeral styles"
     # Rendering fixture: exercise all byte codes through the real 6800 routine,

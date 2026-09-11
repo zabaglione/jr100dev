@@ -106,43 +106,45 @@ def free_slots(metadata):
 
 
 def choose(metadata, slots, scene):
-    """Prefer complete digit sets and complete label words over arbitrary letters."""
-    if not slots:
+    """A scene gets a complete alphabet or numeral set, never partial words."""
+    if scene != "game":
         return ""
-    gid = metadata["id"]
-    if scene == "game" and len(slots) < 10:
-        return {
-            "chrono-breach": "+/",
-            "sigil-deck": "HP+>/",
-            "abyss-signal": "OXY+",
-            "trace-blade": ">+/",
-            "loop-ten": "LOP",
-            "magnet-vault": "PARMOV",
-            "glyph-shift": ">+",
-            "quiet-route": "ROUTE+>/",
-        }.get(gid, ">+/:" + metadata["title"].replace(" ", ""))[: len(slots)]
-    # Word games need their full active alphabet before optional HUD digits.
-    if scene == "game" and gid == "word-foundry":
-        words = metadata["dataTables"]["words"]
-        letters = "".join(sorted(set(map(chr, words))))
-        priority = letters + ">" + "0123456789"
-    else:
-        priority = "0123456789" if scene == "game" else ""
-    chosen = list(dict.fromkeys(priority))
-    assert len(chosen) <= len(slots)
-    words = metadata["title"].split()
-    if scene == "game":
-        words = [str(row[2]) for row in metadata.get("hud", [])] + words
-    words += [">", "+", "/", ":", "RETURN", "PLAY", "SPACE", "STG"]
-    for word in words:
-        add = [
-            c
-            for c in dict.fromkeys(word)
-            if c in FONT_ROWS | SYMBOLS and c != " " and c not in chosen
-        ]
-        if len(chosen) + len(add) <= len(slots):
-            chosen.extend(add)
-    return "".join(chosen)
+    if metadata["id"] == "word-foundry" and len(slots) >= 26:
+        return "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    return "0123456789" if len(slots) >= 10 else ""
+
+
+def instrument(source):
+    """Install text mapping only for games with an actual complete font set."""
+    source = source.replace(
+        "LOAD_PCG:\n    STX SRC\n",
+        """LOAD_PCG:
+    STX SRC
+    CPX #GAME_PCG
+    BEQ FONT_GAME_BANK
+    LDX #FONT_TITLE_MAP
+    BRA FONT_BANK_READY
+FONT_GAME_BANK:
+    LDX #FONT_GAME_MAP
+FONT_BANK_READY:
+    STX FONT_MAP
+""",
+    )
+    return source.replace(
+        "    STX SRC\n    LDX DST\n    CMPA 0,X\n",
+        """    STX SRC
+    ; Convert text at presentation only; preserve semantic text and all artwork.
+    CMPA #64
+    BCC FONT_RAW
+    STAA FONT_OFFSET + 1
+    LDX FONT_MAP
+    ADX FONT_OFFSET
+    LDAA 0,X
+FONT_RAW:
+    LDX DST
+    CMPA 0,X
+""",
+    )
 
 
 def apply(output, metadata):
@@ -151,6 +153,10 @@ def apply(output, metadata):
     art = json.loads((output / "art.json").read_text())
     source = (output / "assets.inc").read_text()
     records = {"style": STYLE_FOR[gid]}
+    enabled = any(
+        choose(metadata, free, scene)
+        for scene, free in zip(("title", "game"), free_slots(metadata))
+    )
     for scene, free in zip(("title", "game"), free_slots(metadata)):
         chars = choose(metadata, free, scene)
         mapping = list(range(64))
@@ -168,8 +174,11 @@ def apply(output, metadata):
             count=1,
         )
         assert count == 1
-        source += emit("FONT_" + scene.upper() + "_MAP", mapping)
+        if enabled:
+            source += emit("FONT_" + scene.upper() + "_MAP", mapping)
         records[scene] = {"free_slots": free, "characters": assigned}
     (output / "assets.inc").write_text(source)
     (output / "art.json").write_text(json.dumps(art, indent=2) + "\n")
     (output / "fonts.json").write_text(json.dumps(records, indent=2) + "\n")
+
+    return enabled

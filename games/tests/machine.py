@@ -74,6 +74,10 @@ class Machine:
         self.metadata = json.loads((self.directory / "game.json").read_text())
         font_path = self.directory / "build/fonts.json"
         self.fonts = json.loads(font_path.read_text()) if font_path.exists() else None
+        if self.fonts and not any(
+            self.fonts[scene]["characters"] for scene in ("title", "game")
+        ):
+            self.fonts = None
         self.sym = json.loads((self.directory / "build/symbols.json").read_text())
         self.code = (
             self.directory / "build" / f"{game.replace('_', '-')}.bin"

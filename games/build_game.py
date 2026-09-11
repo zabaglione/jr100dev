@@ -92,8 +92,9 @@ def build(directory):
 
         apply_title(output, metadata)
     from fonts import apply as apply_fonts
+    from fonts import instrument as instrument_fonts
 
-    apply_fonts(output, metadata)
+    fonts_enabled = apply_fonts(output, metadata)
     modules = [
         ROOT / "common" / name for name in ("memory.inc", "platform.asm", "sound.asm")
     ]
@@ -112,6 +113,17 @@ def build(directory):
             module_source = (ROOT / "native/campaign_runtime.asm").read_text()
             module_source += "\n" + (ROOT / "native/password.asm").read_text()
             module_source += "\nN_INDEX:\n" + helpers
+        if path.name == "platform.asm" and fonts_enabled:
+            module_source = instrument_fonts(module_source)
+        if (
+            path.name == "runtime.asm"
+            and metadata.get("rankedCampaign")
+            and fonts_enabled
+        ):
+            # Password entry uses one plain font for letters, numbers and hints.
+            module_source = module_source.replace(
+                "P_DRAW:\n", "P_DRAW:\n    LDX #FONT_TITLE_MAP\n    STX FONT_MAP\n", 1
+            )
         if path.name == "platform.asm" and metadata.get("rankedCampaign"):
             from password import input_hook
 

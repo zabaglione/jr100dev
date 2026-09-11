@@ -113,14 +113,6 @@ COPY:
 
 LOAD_PCG:
     STX SRC
-    CPX #GAME_PCG
-    BEQ FONT_GAME_BANK
-    LDX #FONT_TITLE_MAP
-    BRA FONT_BANK_READY
-FONT_GAME_BANK:
-    LDX #FONT_GAME_MAP
-FONT_BANK_READY:
-    STX FONT_MAP
     ; Hide the old bank before changing shared character definitions.
     LDX #$C100
     LDAA #$40
@@ -158,14 +150,6 @@ PRESENT_BYTE:
     LDAA 0,X
     INX
     STX SRC
-    ; Only ASCII text codes are remapped. PCG art and ROM linework pass through.
-    CMPA #64
-    BCC FONT_RAW
-    STAA FONT_OFFSET + 1
-    LDX FONT_MAP
-    ADX FONT_OFFSET
-    LDAA 0,X
-FONT_RAW:
     LDX DST
     CMPA 0,X
     BEQ PRESENT_SAME
@@ -181,7 +165,7 @@ PRESENT_SAME:
     BNE PRESENT_ROW
     RTS
 
-; Keep semantic ROM text codes in RAM; PRESENT applies the active PCG font.
+; Text uses ordinary ROM letters while custom graphics use PCG.
 TEXT:
     LDX TEXT_PTR
     LDAA 0,X
