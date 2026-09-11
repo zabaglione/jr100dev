@@ -44,6 +44,7 @@ m.action(5)
 m.action(2)
 m.action(2)
 m.action(5)
+m.answer_reset(True)
 assert (m.get("PLAYER_X"), m.get("PLAYER_Y"), m.get("TURNS"), m.get("AMMO")) == (
     2,
     4,
@@ -64,6 +65,7 @@ for _ in range(12):
     m.action(7)
 assert m.get("MODE") == 3 and m.get("DEATHS") == 1
 m.action(5, pad=True)
+m.answer_reset(True, pad=True)
 assert m.get("MODE") == 1 and m.get("DEATHS") == 1 and m.get("TURNS") == 0
 # A live lethal effect may not block movement or the input scan.
 assert m.get("SFX_PRIORITY") == 0

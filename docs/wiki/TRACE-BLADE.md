@@ -37,9 +37,11 @@ HUDのTARGETは標的数、MARKEDは経路に入った数、PATHは歩数、COMB
 ![Strike in motion](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/trace-blade/strike-15.png)
 ![Ending](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/trace-blade/ending.png)
 
+やり直し／プレイ中のタイトル移動は実行前に確認します。NOが初期選択です。A/Dで選びRETURNで確定、SPACEで取り消します。
+
 ## ビルドと検証
 
-開発環境を用意して `make -C games/trace_blade` を実行します。出力は `build/trace-blade.prg`、開始番地は `$0300`。本体・定数は8,325 bytesで、状態、画面、BASICへ戻すための保存領域、512 bytesのスタックを含めて標準16KB内です。PCGは32文字です。
+開発環境を用意して `make -C games/trace_blade` を実行します。出力は `build/trace-blade.prg`、開始番地は `$0300`。本体・定数は8,569 bytesで、状態、画面、BASICへ戻すための保存領域、512 bytesのスタックを含めて標準16KB内です。PCGは32文字です。
 
 `make -C games/trace_blade test` は経路の重複、壁、未完成経路の実行拒否、戻し、標的数、リセット、連続実行、次面への遷移を検証します。全30面を915歩の入力でクリアし、コード領域の破壊がないこととスタック範囲を確認しています。
 

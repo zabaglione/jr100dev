@@ -54,7 +54,7 @@
 | [NIGHT SWARM](night_swarm/) | 迫る群れを誘導し射線を開いて生還する |
 | [ORBIT DODGE](orbit_dodge/) | 円軌道を移動して放射状の攻撃を避ける |
 | [GATE RUNNER](gate_runner/) | 三本の走路で障壁と穴を突破する |
-| [BRICK PULSE](brick_pulse/) | 反射角を使い分けて障壁を崩す |
+| [BRICK PULSE](brick_pulse/) | 装甲ブロック・アイテム・ドローンに挑む12面のブロック崩し |
 | [STAR LANCE](star_lance/) | 隊列の隙間を抜いて迎撃する |
 | [RIBBON SNAKE](ribbon_snake/) | 伸びる軌跡を制御して食料を回収する |
 | [LUNAR TOUCHDOWN](lunar_touchdown/) | 燃料と降下速度を調整する着陸挑戦 |

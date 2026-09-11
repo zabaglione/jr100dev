@@ -119,6 +119,7 @@ select(m, 4)
 m.action(5)
 assert m.get("MODE") == 3 and m.get("HP") == 0 and m.get("ENEMY_HP") == 0
 m.action(5, pad=True)
+m.answer_reset(True, pad=True)
 assert m.get("MODE") == 1 and m.get("HP") == 60 and m.get("DECK_COUNT") == 8
 # Poison can win before the enemy's attack; resting heals and advances a battle.
 m = fixture(0, ENEMY_HP=1, POISON=1, HP=1, SHIELD=0, WEAK=0)

@@ -173,7 +173,19 @@ def begin(name, rom=None):
     return m, r
 
 
-def action(m, r, a, pad=False):
+def action(m, r, a, pad=False, confirm=None):
+    if m.metadata.get("rankedCampaign") and (
+        a == 6 and r.s.mode in (1, 2, 3, 4) or a == 8 and r.s.mode == 1
+    ):
+        assert confirm is not None, "Reset/abandon needs an explicit test answer"
+        m.action(a, pad=pad)
+        m.answer_reset(confirm, pad=pad)
+        if confirm:
+            r.dispatch_ranked(a)
+        else:
+            r.s.action = a
+        assert_state(m, r)
+        return
     r.held = a
     keys = EIGHT_KEYS if m.metadata.get("directions") == 8 else KEYS
     if pad:
@@ -189,6 +201,21 @@ def action(m, r, a, pad=False):
         r.tick()
         m.until("FRAME_READY")
         assert_state(m, r)
+    if r.s.mode == 3 and a == 5 and not m.metadata.get("rankedCampaign"):
+        assert confirm is not None, "Retry needs an explicit test answer"
+        m.until("CONFIRM_READY")
+        if pad:
+            lib.pad(m.p, 0)
+        else:
+            lib.key(m.p, *keys[a], 0)
+        m.until("INPUT_DONE")
+        m.answer_reset(confirm, pad=pad)
+        if confirm:
+            r.init(r.s.level)
+        r.s.action = a
+        r.held = 0
+        assert_state(m, r)
+        return
     if m.metadata.get("rankedCampaign"):
         r.dispatch_ranked(a)
     elif r.s.mode == 1:

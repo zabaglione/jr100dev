@@ -84,16 +84,22 @@ for(const game of selected) {
     const symbols = JSON.parse(fs.readFileSync(path.join(directory, 'build/symbols.json'), 'utf8'));
     const value = field => peek(symbols[slots[`s.${field}`]]);
     for (const pad of [false, true]) {
+      if (pad) {
+        check(wasm._jr_create_core(transfer(fs.readFileSync(romFile)),0)); frame(100);
+        check(wasm.ccall('jr_load_program','number',['number','string'],[transfer(data),`${game.id}.prg`])); frame(450);
+        check(wasm._jr_set_key(8,3,1)); frame(6); check(wasm._jr_set_key(8,3,0)); frame(30);
+      }
       check(wasm._jr_set_key(8, 1, 1)); frame(6);
       check(wasm._jr_set_key(8, 1, 0)); frame(6);
+      assert.equal(peek(symbols.CN_ACTIVE), 0, 'SPACE must not open a reset');
       const direction = (right, down) => pad
         ? check(wasm._jr_set_joystick(down ? (right ? 1 : 2) : 0))
         : check(wasm._jr_set_key(1, right ? 2 : 0, down ? 1 : 0));
       const before = value('clock');
-      direction(false, true); frame(65);
+      direction(false, true); frame(95);
       assert.equal(value('paddle'), 0, 'Held left must reach the boundary');
       assert(((value('clock') - before) & 255) >= 4, 'Holding must not stall physics');
-      direction(false, false); direction(true, true); frame(140);
+      direction(false, false); direction(true, true); frame(180);
       assert.equal(value('paddle'), 24, 'Held right must reach the boundary');
       direction(true, false); direction(false, true); frame(15);
       direction(false, false); frame(3);
@@ -104,6 +110,24 @@ for(const game of selected) {
       assert.equal(peek(modeAddress), 1);
       console.log(`PASS: brick-pulse, shipping WASM ${pad ? 'pad' : 'keyboard'} hold, reversal, release and active ball`);
     }
+  }
+  if (metadata.nativeRules && !metadata.disableSpaceReset && !metadata.rankedCampaign) {
+    const symbols = JSON.parse(fs.readFileSync(path.join(gamesRoot, game.id.replaceAll('-', '_'), 'build/symbols.json'), 'utf8'));
+    const press = (row, bit) => {
+      check(wasm._jr_set_key(row,bit,1)); frame(6);
+      check(wasm._jr_set_key(row,bit,0)); frame(30);
+    };
+    press(8,1);
+    assert.equal(peek(symbols.CN_ACTIVE), 1);
+    assert.equal(peek(symbols.CN_CHOICE), 0);
+    const snapshot = () => Array.from({length:1024}, (_,i)=>peek(0x3400+i));
+    const paused = snapshot(); frame(120);
+    assert.deepEqual(snapshot(), paused, `${game.id} advances during reset question`);
+    press(8,3);
+    assert.equal(peek(symbols.CN_ACTIVE), 0);
+    press(8,1); press(1,2); press(8,3);
+    assert.equal(peek(symbols.CN_ACTIVE), 0);
+    assert.equal(peek(modeAddress), 1);
   }
   if (metadata.rankedCampaign) {
     const directory = path.join(gamesRoot, game.id.replaceAll('-', '_'));
@@ -129,10 +153,14 @@ for(const game of selected) {
     assert.equal(value('moves'), value('par'));
     assert.equal(peek(symbols.BEST), 3);
     press(6);
+    assert.equal(peek(symbols.CN_ACTIVE), 1);
+    press(4); press(5);
     assert.equal(peek(modeAddress), 1);
     assert.equal(value('moves'), 0);
     assert.equal(peek(symbols.BEST), 3);
     press(8);
+    assert.equal(peek(symbols.CN_ACTIVE), 1);
+    press(4); press(5);
     assert.equal(peek(modeAddress), 6);
     press(4);
     press(5);
@@ -140,6 +168,7 @@ for(const game of selected) {
     assert.equal(peek(symbols.LEVEL), 1);
     console.log(`PASS: ${game.id}, shipping WASM three-star clear, retry and stage selection`);
     press(8);
+    press(4); press(5);
     const password = Array.from({length:peek(symbols.P_LEN)}, (_,i)=>peek(symbols.P_BUFFER+i));
     const ratings = Array.from({length:40}, (_,i)=>peek(symbols.BEST+i));
     check(wasm._jr_create_core(transfer(fs.readFileSync(romFile)),0));

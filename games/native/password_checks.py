@@ -160,7 +160,7 @@ def check(name, rom=None, capture=False):
     for a in proof["bonus"]:
         action(old, model, a)
     action(old, model, 5)
-    action(old, model, 8)
+    action(old, model, 8, confirm=True)
     code = shown(old)
     assert decode(code, tag) == (1, bytes([3] + [0] * 39))
     fresh = Machine(name, rom=rom)
@@ -183,6 +183,7 @@ def check(name, rom=None, capture=False):
     assert_state(fresh, expected)
     # The one-button pad can enter and restore a full code without a keyboard.
     fresh.action(8)
+    fresh.answer_reset(True)
     fresh.action(7)
     for char in code:
         while fresh.get("P_CURSOR") != ALPHABET.index(char):

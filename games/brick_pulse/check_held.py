@@ -33,7 +33,7 @@ def check(rom=None):
             )
             start = value(machine, "clock")
             set_direction(machine, direction, True, pad)
-            lib.ticks(machine.p, 800_000)
+            lib.ticks(machine.p, 1_200_000)
             assert value(machine, "paddle") == edge, (
                 "Hold must move continuously to the edge"
             )

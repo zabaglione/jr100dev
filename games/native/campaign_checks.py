@@ -57,7 +57,7 @@ def check(name):
     m, r = begin(name)
 
     def press(a, pad=False):
-        action(m, r, a, pad)
+        action(m, r, a, pad, confirm=True)
 
     def route(sequence):
         for a in sequence:

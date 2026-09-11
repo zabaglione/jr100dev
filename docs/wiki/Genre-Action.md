@@ -6,7 +6,7 @@
 
 | 画面 | ゲーム・概要 | 起動 |
 | --- | --- | --- |
-| [<img src="https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/brick-pulse/title.png" width="200" alt="BRICK PULSE">](BRICK-PULSE) | **[BRICK PULSE](BRICK-PULSE)**<br>反射角を使い分けて障壁を崩す | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=brick-pulse) |
+| [<img src="https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/brick-pulse/title.png" width="200" alt="BRICK PULSE">](BRICK-PULSE) | **[BRICK PULSE](BRICK-PULSE)**<br>装甲ブロック・アイテム・ドローンに挑む12面のブロック崩し | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=brick-pulse) |
 | [<img src="https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/echo-parry/title.png" width="200" alt="ECHO PARRY">](ECHO-PARRY) | **[ECHO PARRY](ECHO-PARRY)**<br>敵の予備動作を読んで反撃する | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=echo-parry) |
 | [<img src="https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/gate-runner/title.png" width="200" alt="GATE RUNNER">](GATE-RUNNER) | **[GATE RUNNER](GATE-RUNNER)**<br>三本の走路で障壁と穴を突破する | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=gate-runner) |
 | [<img src="https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/lunar-touchdown/title.png" width="200" alt="LUNAR TOUCHDOWN">](LUNAR-TOUCHDOWN) | **[LUNAR TOUCHDOWN](LUNAR-TOUCHDOWN)**<br>燃料と降下速度を調整する着陸挑戦 | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=lunar-touchdown) |

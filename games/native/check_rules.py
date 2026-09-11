@@ -26,6 +26,8 @@ def check(name):
         if r.s.mode != 1:
             level = r.s.level + (1 if r.s.mode == 2 else 0)
             m.action(5)
+            if m.get("CN_ACTIVE"):
+                m.answer_reset(True)
             if level == levels:
                 assert m.get("MODE") == 4
                 m.action(5)
@@ -35,17 +37,20 @@ def check(name):
             r.init(level)
             r.s.action = 5
             assert_state(m, r)
-        if i % 31 == 30:
+        if i % 31 == 30 and not m.metadata.get("disableSpaceReset"):
             # No writes to game state: retry restores its authored initial data.
             level = r.s.level
             m.action(6)
+            m.answer_reset(True)
             r.init(level)
             r.s.action = 6
             assert_state(m, r)
         elif m.metadata.get("rate", 255) < 255 and i % 3 == 0:
             tick(m, r)
         else:
-            action(m, r, rng.choice(directions + [5, 5, 5]), pad=bool(i % 2))
+            action(
+                m, r, rng.choice(directions + [5, 5, 5]), pad=bool(i % 2), confirm=True
+            )
     # A title melody must keep progressing without input and emit actual PCM.
     title = Machine(name)
     before = title.read("BGM_PTR", 2)

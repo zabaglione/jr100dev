@@ -6,13 +6,13 @@
 
 同じブラウザーで自分のBASIC ROMを事前に設定してください。登録済みなら「プレイ」からタイトルまで自動起動します。音は最初のキー入力または画面クリックで有効になります。
 
-パドルで球を反射し、18個のブロックをすべて壊します。3球落とすと失敗です。
+12面のブロック崩しです。各面のブロックとドローンをすべて壊すとクリア。各面は3球で開始し、3球を落とすと同じ面から再挑戦できます。序盤は隙間の多い配置、後半は2〜3回の打撃が必要な装甲ブロックが増えます。3面目からドローン、6面目からその落下爆弾が登場します。
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/brick-pulse/title.png)
 
 ## 画面の奥行き
 
-反射フィールドの側壁と手前の縁に厚みを加えました。ボール・パドル・ブロックは軌道が読みやすい平面表示を保っています。
+無理な遠近表現や離れた影を使わず、太い輪郭を揃えた平面のアーケード画面にしています。ブロックの耐久は内部の模様、アイテムはW/S/Gで区別し、同じ形の枠とパドルで統一しています。
 
 ## ゲーム専用フォント
 
@@ -20,19 +20,25 @@
 
 ## 操作と遊び方
 
-A/Dまたはパッドの左右を押し続けると、パドルが連続移動します。短押しでは2文字分ずつ動き、離すと止まります。中央で受けると急な角度、端で受けると浅い角度で反射します。
+A/Dまたはパッドの左右を押し続けると連続移動し、短押しでは2文字分ずつ動き、離すと止まります。中央で受けると急な角度、端で受けると浅い角度になります。ブロックを3個壊すごとにW・S・Gのいずれかが落下します。Wは一定時間パドル拡大、Sは一定時間ボール減速、Gは落球または爆弾を1回防ぎます。ドローン撃破でもGが落ちます。同時に出るアイテムは1個です。爆弾を受けるとパドルが一定時間短くなります。Wを取ると解除できます。
 
-方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面をやり直し、CTRL+CでBASICへ戻ります。
+方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。プレイ中のSPACEは無効です。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-下部に残球数と残るブロック数を表示します。
+下部のBALLは残球、BRICKは残ブロック数、DRONEは敵の残耐久です。WIDE・SLOW・GUARDは有効な効果、JAMは爆弾による縮小を示します。ブロックの模様は残る耐久を表します。クリア後のRETURNは次の面、失敗後のRETURNは確認付きの再挑戦です。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/brick-pulse/play-01.png)
 
 ![プレイ中の場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/brick-pulse/play-02.png)
 
+![落下アイテム](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/brick-pulse/items.png)
+
+![後半のドローンと装甲ブロック](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/brick-pulse/drone.png)
+
+![やり直し確認](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/brick-pulse/reset.png)
+
 ## ビルドと検証
 
-バージョン 1.2.1。開始番地 `$0300`、ゲーム本体と定数は 6,443 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
+バージョン 2.0.0。開始番地 `$0300`、ゲーム本体と定数は 9,932 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
 
 ```sh
 make -C games/brick_pulse

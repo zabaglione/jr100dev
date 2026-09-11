@@ -35,9 +35,11 @@ HUDは酸素と残量バー、船体、深度、次の未記録地点への距�
 ![Broken Gate](images/discovery-02.png)
 ![Black Sun](images/discovery-05.png)
 
+やり直し／プレイ中のタイトル移動は実行前に確認します。NOが初期選択です。A/Dで選びRETURNで確定、SPACEで取り消します。
+
 ## ビルドと検証
 
-リポジトリの開発環境を用意して `make -C games/abyss_signal` を実行します。出力は `build/abyss-signal.prg`、開始番地は `$0300`。ゲーム本体と定数は9,849 bytes、画面・状態・保存領域・512 bytesのスタックを含めて標準16KB内です。PCGは場面ごとに32文字を使います。
+リポジトリの開発環境を用意して `make -C games/abyss_signal` を実行します。出力は `build/abyss-signal.prg`、開始番地は `$0300`。ゲーム本体と定数は10,093 bytes、画面・状態・保存領域・512 bytesのスタックを含めて標準16KB内です。PCGは場面ごとに32文字を使います。
 
 `make -C games/abyss_signal test` は独立したPythonのルールモデルとC++エミュレーターの結果を照合し、岩礁・海流4方向・酸素枯渇・被弾・ソナー・静音・記録・帰還を検査します。入力だけで全5地点を観測して帰還する試験は117行動、酸素80・船体4を残して成功しました。キーボードとパッドの両方を確認しています。
 

@@ -55,6 +55,30 @@ def generate(output, metadata, directory):
         put(guide, 1, 3 + i * 2, value)
     put(guide, 1, 22, "ANY INPUT : TITLE")
     bank = native_bank(info)
+    if info["id"] == "brick-pulse":
+        # Flat arcade shapes: matching two-pixel outlines, armor and a drone.
+        sprites = [
+            [127, 255, 192, 192, 192, 192, 255, 127],
+            [254, 255, 3, 3, 3, 3, 255, 254],
+            [255, 255, 0, 0, 0, 0, 255, 255],
+            [255, 255, 51, 51, 51, 51, 255, 255],
+            [255, 255, 85, 170, 85, 170, 255, 255],
+            [0, 24, 60, 126, 126, 60, 24, 0],
+            [63, 127, 255, 240, 240, 255, 127, 63],
+            [255, 255, 255, 0, 0, 255, 255, 255],
+            [252, 254, 255, 15, 15, 255, 254, 252],
+            [128, 192, 254, 127, 63, 30, 4, 0],
+            [24, 60, 126, 255, 165, 255, 60, 24],
+            [1, 3, 127, 254, 252, 120, 32, 0],
+            [24, 24, 60, 126, 90, 126, 60, 24],
+            [24] * 8,
+            [0, 0, 0, 255, 255, 0, 0, 0],
+        ]
+        bank[: len(sprites) * 8] = [v for sprite in sprites for v in sprite]
+        for row in (1, 20):
+            hud[row * 32 : (row + 1) * 32] = [142] * 32
+        for row in range(2, 20):
+            hud[row * 32] = hud[row * 32 + 31] = 141
     if ranked:
         # A faceted optional rune (tile 6), plus filled/empty 8x8 rating stars.
         rune = [
@@ -107,6 +131,8 @@ def generate(output, metadata, directory):
         ("STATUS_LOSE", "TRY AGAIN - BUTTON TO RESTART"),
         ("STATUS_END", "ALL STAGES CLEAR - THANK YOU"),
     ]:
+        if info["id"] == "brick-pulse":
+            value = value.ljust(31)
         text += emit(label, [*value.encode(), 0])
     if ranked:
         for label, value in {

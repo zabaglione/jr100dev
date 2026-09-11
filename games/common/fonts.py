@@ -96,6 +96,8 @@ def free_slots(metadata):
     gid = metadata["id"]
     if not metadata.get("nativeRules"):
         return CUSTOM_FREE[gid]
+    if gid == "brick-pulse":
+        return list(range(16, 32)), list(range(16, 32))
     tiles = set(NATIVE[gid])
     if gid == "seed-merge":
         tiles.clear()  # The relief version uses ROM linework instead of tile 7.

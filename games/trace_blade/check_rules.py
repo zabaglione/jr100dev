@@ -43,6 +43,7 @@ m.action(5, True)
 m.action(2, True)
 m.action(2, True)
 m.action(5, True)
+m.answer_reset(True, pad=True)
 assert m.get("PATH_LEN") == m.get("MARKED") == 0
 for a in solution:
     m.action(a)

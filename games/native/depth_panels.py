@@ -161,11 +161,8 @@ def decorate(screen, game):
                 text(17 + spread // 3, row, "\\")
         panel(0, 20, 32, 3)
     elif game == "brick-pulse":
-        for y in range(2, 20):
-            text(0, y, "|")
-            text(31, y, ":")
-        text(0, 20, "\\______________________________/")
-        hline(0, 22, 32, "-")
+        # Its flat arena frame is authored in the same PCG bank as the sprites.
+        pass
     elif game == "star-lance":
         for x, y in ((6, 2), (24, 2), (3, 11), (12, 12), (29, 10), (7, 18), (22, 21)):
             text(x, y, ".")

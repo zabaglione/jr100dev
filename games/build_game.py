@@ -101,6 +101,8 @@ def build(directory):
     if metadata.get("nativeRules"):
         modules += [ROOT / "native/runtime.asm", output / "rules.inc"]
     modules += [directory / "src" / name for name in metadata["modules"]]
+    if metadata["id"] != "loop-ten":
+        modules += [ROOT / "common/confirm.asm"]
     modules += [output / "assets.inc", output / "levels.inc"]
     source = "    .org $0300\n    JMP ENTRY\n"
     if metadata.get("nativeRules"):
@@ -137,6 +139,15 @@ def build(directory):
             from input_eight import apply_eight_way
 
             module_source = apply_eight_way(module_source)
+        if path.name == "runtime.asm" and metadata.get("disableSpaceReset"):
+            module_source = module_source.replace("BEQ N_SPACE_RETRY", "BEQ N_DRAW")
+        if path.name == "confirm.asm" and fonts_enabled:
+            module_source = module_source.replace(
+                "CONFIRM_RESET:\n",
+                "CONFIRM_RESET:\n    LDX FONT_MAP\n    STX CN_FONT\n    LDX #FONT_TITLE_MAP\n    STX FONT_MAP\n",
+            ).replace(
+                "CONFIRM_DONE:\n", "CONFIRM_DONE:\n    LDX CN_FONT\n    STX FONT_MAP\n"
+            )
         source += f"\n; Module: {path.name}\n" + module_source + "\n"
     if not metadata.get("nativeRules"):
         source = re.sub(

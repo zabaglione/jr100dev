@@ -51,7 +51,26 @@ class Player:
         self.ticks += 1
         if self.capture and self.ticks == 30:
             self.m.capture(self.directory / "images/play-02.png")
-        assert self.ticks < 6000, (self.name, "tick limit")
+        if self.capture and self.name == "brick_pulse":
+            if (
+                self.s.item
+                and self.s.iy >= 9
+                and abs(self.s.iy - self.s.y) > 1
+                and not getattr(self, "item_captured", False)
+            ):
+                self.m.capture(self.directory / "images/items.png")
+                self.item_captured = True
+            if (
+                self.s.level >= 5
+                and self.s.bomb
+                and not getattr(self, "drone_captured", False)
+            ):
+                self.m.capture(self.directory / "images/drone.png")
+                self.drone_captured = True
+        assert self.ticks < (24000 if self.name == "brick_pulse" else 6000), (
+            self.name,
+            "tick limit",
+        )
 
     def go(self, target, width):
         while self.s.cursor // width > target // width:
@@ -106,7 +125,7 @@ class Player:
                 # Keep the final solved layout as a second representative scene.
                 self.m.capture(self.directory / "images/play-02.png")
             if self.m.metadata.get("rankedCampaign"):
-                action(self.m, self.r, 8)
+                action(self.m, self.r, 8, confirm=True)
                 self.m.capture(self.directory / "images/stage-select.png")
         assert lib.audio_peak(self.m.p) > 0, "No PCM produced"
         print(
@@ -655,23 +674,18 @@ def solve_realtime(p):
             if s.dir != desired:
                 p.press(desired)
         elif name == "brick_pulse":
-            # Forecast the next landing from visible ball velocity and bricks.
-            forecast = Model(name)
-            restore(forecast, snapshot(r))
-            for _ in range(100):
-                f = forecast.s
-                if f.dy and f.y == 15:
-                    landing = f.x
-                    if not f.steep or (f.clock + 1) % 2 == 0:
-                        landing = f.x + (1 if f.dx or f.x == 0 else -1)
-                        if f.x == 29:
-                            landing = 28
-                    break
-                forecast.tick()
-            else:
-                raise AssertionError("No future paddle crossing")
-            offset = (0, 3, 5, 2, 1, 4)[s.bounces % 6]
-            target = max(0, min(24, landing - offset))
+            from sys import path
+
+            if str(p.directory) not in path:
+                path.insert(0, str(p.directory))
+            from ai import target as paddle_target
+
+            # Replan after every rebound, damage, power-up or changed brick.
+            key = (s.bounces, s.hp, s.enemy, sum(r.b), s.width, s.caught)
+            if getattr(p, "brick_key", None) != key:
+                p.brick_key = key
+                p.brick_target = paddle_target(r)
+            target = p.brick_target
             if s.paddle + 1 < target:
                 p.press(4)
             elif s.paddle > target + 1:

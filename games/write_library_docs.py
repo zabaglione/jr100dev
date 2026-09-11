@@ -123,7 +123,9 @@ Q/E/Z/Cが斜め、Xが下です。Sは移動に使いません。RELIC DIVEで�
 
 ## 開始・やり直し・終了
 
-タイトルでRETURNまたはパッドのボタンを押すと開始します。最初の50作品はSPACEで説明を開けます。新作44本のプレイ中はSPACEで現在の面をやり直せます。最初の6作品は各ページに記載の操作パネルを使います。RELIC DIVEはタイトルでW/Xにより難易度を選び、プレイ中のRETURNメニューからHELPを開きます。SPACEは戻る操作です。CTRL+Cでゲームを終了してBASICへ戻ります。
+タイトルでRETURNまたはパッドのボタンを押すと開始します。最初の50作品はSPACEで説明を開けます。新作44本のうちBRICK PULSE以外では、プレイ中のSPACEで現在の面のやり直し確認を開きます。BRICK PULSEのプレイ中のSPACEには何も割り当てていません。最初の6作品は各ページに記載の操作パネルを使います。RELIC DIVEはタイトルでW/Xにより難易度を選び、プレイ中のRETURNメニューからHELPを開きます。SPACEは戻る操作です。CTRL+Cでゲームを終了してBASICへ戻ります。
+
+やり直しは「REALLY RESET?」で確認します。最初はNOが選ばれ、A/D（パッド左右）で選択、RETURN（ボタン）で確定します。SPACEでも取り消せます。確認中はゲーム進行を止めます。面選択への移動など、途中の盤面を捨てる操作も確認します。1手の取り消し、LOOP TENの巻き戻し、RELIC DIVEの中断・再開は通常操作として扱います。ブラウザのResetボタンも実行前に確認します。
 
 ゲームは主な操作に1ボタンパッドも使えます。説明の表示、任意のタイミングでのやり直し、BASICへ戻る操作にはキーボードを使用します。
 
@@ -171,8 +173,16 @@ for g in games:
     prefix = f"# {g['title']}\n\n{breadcrumb}\n\n[プレイ]({PLAY}{g['id']}) · [ビルドソース]({BASE}/tree/main/games/{g['directory']})\n\n{launch_note()}\n\n"
     body = f"{objective}\n\n![タイトル]({IMAGES}/{g['id']}/title.png)\n\n"
     body += visual_section(g) + f"## 操作と遊び方\n\n{controls}\n\n"
-    body += "方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面をやり直し、CTRL+CでBASICへ戻ります。\n\n"
+    body += "方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。"
+    body += (
+        "プレイ中のSPACEは無効です。"
+        if meta.get("disableSpaceReset")
+        else "SPACEでこの面のやり直し確認を開きます。"
+    )
+    body += "やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。\n\n"
     body += f"{hud}\n\n![ゲーム開始時]({IMAGES}/{g['id']}/play-01.png)\n\n![プレイ中の場面]({IMAGES}/{g['id']}/play-02.png)\n\n"
+    if g["id"] == "brick-pulse":
+        body += f"![落下アイテム]({IMAGES}/brick-pulse/items.png)\n\n![後半のドローンと装甲ブロック]({IMAGES}/brick-pulse/drone.png)\n\n![やり直し確認]({IMAGES}/brick-pulse/reset.png)\n\n"
     if meta.get("rankedCampaign"):
         levels = json.loads((directory / "levels.json").read_text())
         body += "## 手数と星評価\n\n規定手数を超えても失敗にはならず、そのままクリアできます。ルーンは丸い枠に十字の印がある任意の回収物で、各面に2つあります。\n\n"

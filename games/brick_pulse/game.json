@@ -1,31 +1,38 @@
 {
   "id": "brick-pulse",
   "title": "BRICK PULSE",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
-  "levels": 1,
+  "levels": 12,
   "rate": 5,
   "hud": [
     [
       21,
       1,
-      "BALLS"
+      "BALL"
     ],
     [
       21,
-      16,
-      "BRICKS"
+      10,
+      "BRICK"
+    ],
+    [
+      21,
+      22,
+      "DRONE"
     ]
   ],
   "help": [
     "HOLD A/D : MOVE THE PADDLE",
-    "KEEP THE BALL IN THE ARENA.",
-    "PADDLE EDGES AIM THE REBOUNDS.",
-    "BREAK ALL EIGHTEEN BRICKS.",
-    "THREE LOST BALLS END THE GAME."
+    "12 ARENAS / THREE BALLS EACH",
+    "W WIDE / S SLOW / G GUARD",
+    "ARMORED BRICKS NEED MORE HITS.",
+    "HIT DRONES / DODGE THEIR BOMBS.",
+    "CLEAR BRICKS AND DRONE TO WIN."
   ],
-  "footer": "HOLD A/D PADDLE  SPACE RESET"
+  "footer": "HOLD A/D MOVE   W/S/G ITEMS",
+  "disableSpaceReset": true
 }

@@ -1,7 +1,7 @@
 {
   "id": "phase-pairs",
   "title": "PHASE PAIRS",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],

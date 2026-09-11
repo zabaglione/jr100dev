@@ -67,6 +67,7 @@ assert m.get("SAMPLES") == 1 and m.get("OXYGEN") == before
 # Retry clears all survey flags and damage.
 m, s = scenario(State(oxygen=1), 4)
 m.action(5, True)
+m.answer_reset(True, pad=True)
 compare(m, State())
 # Single-voice title audio is produced without waiting for input.
 t = Machine("abyss_signal")

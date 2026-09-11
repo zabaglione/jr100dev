@@ -150,13 +150,25 @@ class Machine:
             lib.pad(self.p, PADS[action])
         else:
             lib.key(self.p, *keys[action], 1)
-        self.until("DISPATCH")
-        self.until("FRAME_READY")
+        modal = "CN_ACTIVE" in self.sym and self.get("CN_ACTIVE")
+        self.until("CONFIRM_DISPATCH" if modal else "DISPATCH")
+        if "CONFIRM_READY" in self.sym:
+            assert lib.until_either(
+                self.p, self.sym["FRAME_READY"], self.sym["CONFIRM_READY"], 3_000_000
+            )
+        else:
+            self.until("FRAME_READY")
         if pad:
             lib.pad(self.p, 0)
         else:
             lib.key(self.p, *keys[action], 0)
         self.until("INPUT_DONE")
+
+    def answer_reset(self, yes, pad=False):
+        assert self.get("CN_ACTIVE") == 1, "No reset question is open"
+        self.action(4 if yes else 3, pad=pad)
+        self.action(5, pad=pad)
+        assert self.get("CN_ACTIVE") == 0
 
     def capture(self, filename):
         from PIL import Image, ImageOps
