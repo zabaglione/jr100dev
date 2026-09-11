@@ -1,12 +1,12 @@
 {
   "id": "gravity-well",
   "title": "GRAVITY WELL",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
-  "levels": 10,
+  "levels": 40,
   "rate": 255,
   "hud": [
     [
@@ -15,23 +15,22 @@
       "GRAVITY"
     ],
     [
-      6,
+      5,
       20,
-      "TILTS"
-    ],
-    [
-      13,
-      20,
-      "RESERVE"
+      "SOCKETS /2"
     ]
   ],
   "help": [
     "WASD / PAD : TILT THE ROOM",
     "BOTH BALLS ROLL TOGETHER.",
-    "WALLS AND BALLS STOP MOTION.",
     "FILL BOTH DIAMOND SOCKETS.",
-    "THIRTY TILTS PER CHAMBER.",
-    "SPACE : RESTART"
+    "ROLL OVER OPTIONAL RUNES.",
+    "PAR OR LESS = TWO STARS.",
+    "PLUS BOTH RUNES = THREE STARS.",
+    "OVER PAR = CLEAR / ONE STAR.",
+    "SPACE RETRY / F STAGE SELECT",
+    "FORTY ROOMS. RECORDS IN RAM."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  "footer": "WASD MOVE RET USE SPACE RETRY",
+  "rankedCampaign": true
 }

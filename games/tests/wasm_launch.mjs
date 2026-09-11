@@ -57,5 +57,38 @@ for(const game of selected) {
   check(wasm._jr_clear_audio());
   check(wasm._jr_set_key(8,3,1));frame(6);check(wasm._jr_set_key(8,3,0));frame(startFrames);
   assert.equal(peek(modeAddress),1,`${game.id} did not begin play`);
+  if (metadata.rankedCampaign) {
+    const directory = path.join(gamesRoot, game.id.replaceAll('-', '_'));
+    const slots = JSON.parse(fs.readFileSync(path.join(directory, 'build/state_slots.json'), 'utf8'));
+    const symbols = JSON.parse(fs.readFileSync(path.join(directory, 'build/symbols.json'), 'utf8'));
+    const proof = JSON.parse(fs.readFileSync(path.join(directory, 'challenges.json'), 'utf8'))[0];
+    const keys = {1:[2,1],2:[1,1],3:[1,0],4:[1,2],5:[8,3],6:[8,1],8:[1,3]};
+    const value = field => peek(symbols[slots[`s.${field}`]]);
+    const press = action => {
+      const [row, bit] = keys[action];
+      check(wasm._jr_set_key(row, bit, 1)); frame(6);
+      check(wasm._jr_set_key(row, bit, 0)); frame(60);
+    };
+    for (const action of proof.bonus) {
+      assert.equal(peek(modeAddress), 1);
+      press(action);
+    }
+    assert.equal(peek(modeAddress), 2);
+    assert.equal(value('stars'), 3);
+    assert.equal(value('runes'), 3);
+    assert.equal(value('moves'), value('par'));
+    assert.equal(peek(symbols.BEST), 3);
+    press(6);
+    assert.equal(peek(modeAddress), 1);
+    assert.equal(value('moves'), 0);
+    assert.equal(peek(symbols.BEST), 3);
+    press(8);
+    assert.equal(peek(modeAddress), 6);
+    press(4);
+    press(5);
+    assert.equal(peek(modeAddress), 1);
+    assert.equal(peek(symbols.LEVEL), 1);
+    console.log(`PASS: ${game.id}, shipping WASM three-star clear, retry and stage selection`);
+  }
   console.log(`PASS: ${game.id}, shipped WASM, BASIC autostart, 16KB, title, input and PCM`);
 }

@@ -5,10 +5,12 @@ def init():
         b[i] = d[i]
     c[d[64]] = 1
     c[d[65]] = 1
+    s.par = d[69]
 
 
 def act():
     if s.action < 5:
+        changed = 0
         for step in range(6):
             for k in range(64):
                 i = 63 - k if s.action == 2 or s.action == 4 else k
@@ -17,16 +19,17 @@ def act():
                     if b[n] != 1 and not c[n]:
                         c[n] = 1
                         c[i] = 0
-        s.moves += 1
-        sound(1)
-        filled = 0
+                        changed = 1
+                        take_rune(n)
+        if changed:
+            spend_move()
+            sound(1)
+        s.filled = 0
         for i in range(64):
             if c[i] and b[i] == 3:
-                filled += 1
-        if filled == 2:
-            win()
-        elif s.moves >= 30:
-            lose()
+                s.filled += 1
+        if s.filled == 2:
+            ranked_clear()
 
 
 def tick():
@@ -35,8 +38,12 @@ def tick():
 
 def draw():
     grid(8, 8, 0, 3)
+    draw_runes(0)
     for i in range(64):
         if c[i]:
             tile(i % 8 * 2, 3 + i // 8 * 2, 4)
-    number(24, 7, s.moves)
-    number(24, 14, 30 - s.moves)
+    number(22, 7, s.filled)
+    tile(20, 12, 4)
+    tile(25, 12, 6)
+    text(19, 16, "ROLL / RUNE")
+    ranked_hud()

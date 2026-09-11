@@ -72,6 +72,14 @@ class Player:
 
     def next(self):
         assert self.s.mode == 2, (self.name, "did not clear", self.s.__dict__)
+        if self.m.metadata.get("rankedCampaign"):
+            assert self.s.stars == 3 and self.s.runes == 3
+            assert self.s.moves == self.s.par
+            assert self.m.read("BEST", self.s.level + 1) == bytes(
+                [3] * (self.s.level + 1)
+            )
+            if self.capture and self.s.level == 0:
+                self.m.capture(self.directory / "images/three-stars.png")
         last = self.s.level + 1 == self.m.metadata.get("levels", 10)
         self.m.action(5, pad=self.pad)
         if last:
@@ -81,6 +89,13 @@ class Player:
             self.r.init(self.s.level + 1)
             self.s.action = 5
         assert_state(self.m, self.r)
+        if (
+            self.capture
+            and self.m.metadata.get("rankedCampaign")
+            and self.s.level == 39
+            and not last
+        ):
+            self.m.capture(self.directory / "images/play-02.png")
         return not last
 
     def finish(self):
@@ -90,6 +105,9 @@ class Player:
             if not (self.directory / "images/play-02.png").exists():
                 # Keep the final solved layout as a second representative scene.
                 self.m.capture(self.directory / "images/play-02.png")
+            if self.m.metadata.get("rankedCampaign"):
+                action(self.m, self.r, 8)
+                self.m.capture(self.directory / "images/stage-select.png")
         assert lib.audio_peak(self.m.p) > 0, "No PCM produced"
         print(
             f"PASS: {self.name}, {self.actions} inputs, {self.ticks} clock steps, full campaign, min SP {lib.min_sp(self.m.p):04X}",

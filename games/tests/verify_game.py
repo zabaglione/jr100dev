@@ -24,4 +24,9 @@ for script in ("check_rules.py", "replay.py"):
         else [sys.executable, str(game / script)]
     )
     subprocess.run(command, check=True)
+if metadata.get("rankedCampaign"):
+    subprocess.run(
+        [sys.executable, str(game.parent / "native/campaign_checks.py"), game.name],
+        check=True,
+    )
 print("PASS: standard 16KB layout and 32 PCG slots")

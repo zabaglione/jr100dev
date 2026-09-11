@@ -34,6 +34,12 @@ def generate(output, metadata, directory):
     library = json.loads((directory.parent / "library.json").read_text())
     info = next(g for g in library["games"] if g["id"] == metadata["id"])
     pcg, screen = title(info)
+    ranked = metadata.get("rankedCampaign", False)
+    if ranked:
+        put(screen, 0, 21, " " * 32)
+        put(screen, 1, 21, "RETURN PLAY  F STAGES  SPACE ?")
+        put(screen, 0, 23, " " * 32)
+        put(screen, 4, 23, "40 ROOMS / CTRL+C EXIT")
     hud = [64] * 768
     guide = [64] * 768
     put(hud, 0, 0, info["title"][:24])
@@ -46,16 +52,68 @@ def generate(output, metadata, directory):
         put(guide, 1, 3 + i * 2, value)
     put(guide, 1, 22, "ANY INPUT : TITLE")
     bank = sprite_bank(info)
+    if ranked:
+        # A faceted optional rune (tile 6), plus filled/empty 8x8 rating stars.
+        rune = [
+            [
+                int(
+                    28 <= (x - 7) ** 2 + (y - 7) ** 2 <= 42
+                    or (x == 7 and 4 <= y <= 10)
+                    or (y == 7 and 4 <= x <= 10)
+                )
+                for x in range(16)
+            ]
+            for y in range(16)
+        ]
+        bank[192:224] = [
+            sum(rune[y + dy][x + dx] << (7 - dx) for dx in range(8))
+            for y in (0, 8)
+            for x in (0, 8)
+            for dy in range(8)
+        ]
+        bank[224:240] = [
+            16,
+            56,
+            254,
+            124,
+            56,
+            108,
+            198,
+            0,
+            16,
+            40,
+            198,
+            68,
+            40,
+            84,
+            130,
+            0,
+        ]
+        put(hud, 1, 21, "BEST       F MAP  NOW")
     text = (
         emit("TITLE_PCG", pcg) + emit("TITLE_SCREEN", screen) + emit("GAME_PCG", bank)
     )
     text += emit("HUD_SCREEN", hud) + emit("HELP_SCREEN", guide)
     for label, value in [
-        ("STATUS_CLEAR", "CLEAR - BUTTON FOR NEXT STAGE"),
+        (
+            "STATUS_CLEAR",
+            "RETURN NEXT  SPACE RETRY  F MAP"
+            if ranked
+            else "CLEAR - BUTTON FOR NEXT STAGE",
+        ),
         ("STATUS_LOSE", "TRY AGAIN - BUTTON TO RESTART"),
         ("STATUS_END", "ALL STAGES CLEAR - THANK YOU"),
     ]:
         text += emit(label, [*value.encode(), 0])
+    if ranked:
+        for label, value in {
+            "SELECT_HEADER": "FORTY CHAMBERS / STAR RECORDS",
+            "SELECT_FOOTER": "TOTAL STARS 000 / 120",
+            "SELECT_PAR": "STAGE 000 / PAR 000",
+            "SELECT_CONTROLS": "WASD SELECT / RETURN PLAY",
+            "SELECT_EXIT": "SPACE TITLE / RECORDS IN RAM",
+        }.items():
+            text += emit(label, [*value.encode(), 0])
     level_file = directory / "levels.json"
     if level_file.exists():
         levels = json.loads(level_file.read_text())
@@ -67,7 +125,12 @@ def generate(output, metadata, directory):
         )
         for i, values in enumerate(levels):
             assert len(values) <= 128
-            text += emit(f"N_LEVEL_{i}", values + [0] * (128 - len(values)))
+            if ranked:
+                assert len(values) == 70 and all(0 <= v < 16 for v in values[:64])
+                packed = [values[j] * 16 + values[j + 1] for j in range(0, 64, 2)]
+                text += emit(f"N_LEVEL_{i}", packed + values[64:])
+            else:
+                text += emit(f"N_LEVEL_{i}", values + [0] * (128 - len(values)))
     else:
         text += (
             "N_LEVEL_TABLE:\n    .word "

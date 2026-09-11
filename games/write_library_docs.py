@@ -82,6 +82,8 @@ Q/E/Z/Cが斜め、Xが下です。Sは移動に使いません。RELIC DIVEで�
 
 ゲームは主な操作に1ボタンパッドも使えます。説明の表示、任意のタイミングでのやり直し、BASICへ戻る操作にはキーボードを使用します。
 
+FROST STEPS、MAGNET VAULT、GLYPH SHIFT、GRAVITY WELLは40面と星評価に対応しています。Fで面選択、WASDで選択、RETURNで開始、SPACEでタイトルへ戻ります。面選択は最初から全40面を選べます。クリア画面のSPACEは同じ面の再挑戦、RETURNは次の面です。最高評価はゲーム起動中のRAMに保持され、終了・再読み込みで消えます。
+
 ## Wikiから起動する
 
 1. [JR-100 Web Emulator](https://zabaglione.github.io/pyjr100emu/)で、自分のBASIC ROMを事前に設定します。
@@ -114,9 +116,23 @@ for g in games:
     body = f"{objective}\n\n![タイトル]({IMAGES}/{g['id']}/title.png)\n\n## 操作と遊び方\n\n{controls}\n\n"
     body += "方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面をやり直し、CTRL+CでBASICへ戻ります。\n\n"
     body += f"{hud}\n\n![ゲーム開始時]({IMAGES}/{g['id']}/play-01.png)\n\n![プレイ中の場面]({IMAGES}/{g['id']}/play-02.png)\n\n"
+    if meta.get("rankedCampaign"):
+        levels = json.loads((directory / "levels.json").read_text())
+        body += "## 手数と星評価\n\n規定手数を超えても失敗にはならず、そのままクリアできます。ルーンは丸い枠に十字の印がある任意の回収物で、各面に2つあります。\n\n"
+        body += "| 評価 | 条件 |\n| --- | --- |\n| 星1 | 規定手数を超えてクリア。ルーンの回収数は問いません。 |\n| 星2 | 規定手数以内でクリアし、ルーンが未回収。 |\n| 星3 | 規定手数以内でクリアし、ルーン2つを両方回収。 |\n\n"
+        body += "PARは、両方のルーンを回収してクリアできる最短手数を探索して設定しています。すべての面に、ルーンを取り切らずに短い手数でクリアする経路もあります。手数が255を超えるとMOVは255+を表示し、評価は星1です。\n\n"
+        body += f"![3つ星クリア]({IMAGES}/{g['id']}/three-stars.png)\n\n"
+        body += "## 40面の構成と再挑戦\n\n| 面 | 難度の段階 | PARの範囲 |\n| --- | --- | ---: |\n"
+        for i, tier in enumerate(("入門", "基本", "応用", "上級", "最終課題")):
+            pars = [v[69] for v in levels[i * 8 : (i + 1) * 8]]
+            body += f"| {i * 8 + 1}〜{i * 8 + 8} | {tier} | {min(pars)}〜{max(pars)} |\n"
+        body += "\nFで面選択を開き、WASDまたはパッドで選び、RETURNまたはボタンで開始します。全40面を最初から選択でき、選択した面のPARと各面の最高評価を確認できます。面選択のSPACEはタイトルへ戻ります。\n\nクリア後はSPACEで同じ面に再挑戦、RETURNで次の面へ進みます。BESTは最高評価、NOWは今回の評価です。低い評価で再クリアしてもBESTは下がりません。評価はゲーム実行中のRAMだけに保存し、BASICへ終了・エミュレーターのリセット・PRGの再読み込みで消えます。\n\n"
+        body += f"![40面の最高評価一覧]({IMAGES}/{g['id']}/stage-select.png)\n\n"
     body += f"## ビルドと検証\n\nバージョン {meta['version']}。開始番地 `$0300`、ゲーム本体と定数は {layout['code_bytes']:,} bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。\n\n"
     body += f"```sh\nmake -C games/{g['directory']}\nmake -C games/{g['directory']} test\n```\n\n"
     body += "出力はゲームの `build/` ディレクトリに作られます。`rules.py` はビルド時にMB8861Hの機械語へ変換されます。JR-100上でPythonを実行する方式ではありません。\n\n"
+    if meta.get("rankedCampaign"):
+        body += "盤面はビルド時に2マスを1バイトへ圧縮します。`levels.json` が編集用の面データ、`challenges.json` がクリア経路とルーン回収経路、`solutions.json` が全40面の3つ星リプレイです。`native/campaign_levels.py` で再生成でき、`native/campaign_checks.py` は全盤面の解探索、評価条件、再挑戦、面選択、最高評価の保持、手数カウンターの上限を検査します。回転・鏡映だけの地形の重複は除外しています。\n\n"
     body += "キー入力による全ステージのクリア、失敗を含む入力試験、画面範囲、RAM配置、スタック、PCM出力をエミュレーターで検査しています。掲載画像は所有するBASIC ROMからPRGを起動した実フレームです。実機での動作・音声は未確認です。\n\n"
     body += f"```sh\n.venv/bin/python games/native/replay.py {g['directory']} --rom /path/to/owned-rom.prg --capture --keyboard\n```\n\n"
     body += "タイトルには長めの単音曲、プレイ中には効果音を付けています。"

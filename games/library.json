@@ -142,7 +142,7 @@
       "id": "magnet-vault",
       "title": "MAGNET VAULT",
       "genre": "puzzle",
-      "summary": "押せない金属塊を磁力で引いて収納する",
+      "summary": "押せない金属塊を磁力で引いて収納する。40面・規定手数と任意ルーンによる3段階評価。",
       "motif": "magnet"
     },
     {
@@ -150,7 +150,7 @@
       "id": "frost-steps",
       "title": "FROST STEPS",
       "genre": "puzzle",
-      "summary": "氷上を止まれず滑り、全結晶を拾う",
+      "summary": "氷上を止まれず滑り、全結晶を拾う。40面・規定手数と任意ルーンによる3段階評価。",
       "motif": "iceberg"
     },
     {
@@ -174,7 +174,7 @@
       "id": "glyph-shift",
       "title": "GLYPH SHIFT",
       "genre": "puzzle",
-      "summary": "物体の通行ルールを書き換えて脱出する",
+      "summary": "物体の通行ルールを書き換えて脱出する。40面・規定手数と任意ルーンによる3段階評価。",
       "motif": "glyphs"
     },
     {
@@ -182,7 +182,7 @@
       "id": "gravity-well",
       "title": "GRAVITY WELL",
       "genre": "puzzle",
-      "summary": "盤面を傾けて複数の球を同時に収める",
+      "summary": "盤面を傾けて複数の球を同時に収める。40面・規定手数と任意ルーンによる3段階評価。",
       "motif": "well"
     },
     {

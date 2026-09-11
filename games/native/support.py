@@ -94,3 +94,43 @@ def ray(pos, direction):
     if direction == 6:
         return pos + 7 if x > 0 and y < 7 else 255
     return pos - 7 if x < 7 and y > 0 else 255
+
+
+def spend_move():
+    if s.moves < 255:
+        s.moves += 1
+    else:
+        s.overflow = 1
+
+
+def take_rune(pos):
+    before = s.runes
+    if pos == d[67]:
+        s.runes |= 1
+    if pos == d[68]:
+        s.runes |= 2
+    if before != s.runes:
+        sound(1)
+
+
+def ranked_clear():
+    s.stars = 1
+    if s.moves <= s.par and not s.overflow:
+        s.stars = 3 if s.runes == 3 else 2
+    win()
+
+
+def draw_runes(left):
+    for rune in range(2):
+        if not (s.runes & (1 << rune)):
+            pos = d[67 + rune]
+            tile(left + pos % 8 * 2, 3 + pos // 8 * 2, 6)
+
+
+def ranked_hud():
+    text(1, 20, "MOV 000  PAR 000  RUNES 0/2")
+    number(5, 20, s.moves)
+    if s.overflow:
+        letter(8, 20, 43)
+    number(14, 20, s.par)
+    letter(25, 20, 48 + (s.runes & 1) + (s.runes >> 1))

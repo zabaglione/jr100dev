@@ -78,6 +78,8 @@ def build(directory):
 
         native_assets.generate(output, metadata, directory)
         compiled, state_slots = compile_file(directory / "rules.py")
+        if metadata.get("rankedCampaign"):
+            compiled += f"\nRANK_STARS: .equ {state_slots['s.stars']}\n"
         (output / "rules.inc").write_text(compiled)
         (output / "state_slots.json").write_text(
             json.dumps(state_slots, indent=2) + "\n"
@@ -101,6 +103,11 @@ def build(directory):
         source += f"GAME_RATE: .equ {metadata.get('rate', 255)}\nGAME_LEVELS: .equ {metadata.get('levels', 10)}\n"
     for path in modules:
         module_source = path.read_text()
+        if path.name == "runtime.asm" and metadata.get("rankedCampaign"):
+            # Use the ranked menu/loader, with the existing arithmetic and drawing ABI.
+            helpers = module_source.split("N_INDEX:\n", 1)[1].split("N_WIN:\n", 1)[0]
+            module_source = (ROOT / "native/campaign_runtime.asm").read_text()
+            module_source += "\nN_INDEX:\n" + helpers
         if path.name == "platform.asm" and metadata.get("clockModule"):
             before, remainder = module_source.split("CLOCK_RELOAD:\n", 1)
             _, after = remainder.split("POLL_INPUT:\n", 1)

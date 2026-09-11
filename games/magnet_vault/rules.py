@@ -3,14 +3,16 @@
 def init():
     for i in range(64):
         b[i] = d[i]
-    s.pos = 27
+    s.pos = d[64]
     s.facing = 4
-    c[d[64]] = 1
     c[d[65]] = 1
-    s.limit = 100
+    c[d[66]] = 1
+    s.par = d[69]
 
 
 def act():
+    before = s.pos
+    facing = s.facing
     if s.action < 5:
         s.facing = s.action
         target = move(s.pos, s.action, 8, 8)
@@ -28,13 +30,18 @@ def act():
             c[front] = 0
             c[s.pos] = 1
             s.pos = behind
-            s.pulls += 1
+            if s.pulls < 255:
+                s.pulls += 1
             sound(1)
-    s.moves += 1
-    if c[18] and c[42]:
-        win()
-    elif s.moves >= s.limit:
-        lose()
+    if s.pos != before or s.facing != facing:
+        spend_move()
+        take_rune(s.pos)
+    filled = 0
+    for i in range(64):
+        if b[i] == 3 and c[i]:
+            filled += 1
+    if filled == 2:
+        ranked_clear()
 
 
 def tick():
@@ -43,10 +50,19 @@ def tick():
 
 def draw():
     grid(8, 8, 1, 3)
+    draw_runes(1)
     for i in range(64):
         if c[i]:
             tile(1 + i % 8 * 2, 3 + i // 8 * 2, 4)
     tile(1 + s.pos % 8 * 2, 3 + s.pos // 8 * 2, 2)
     number(24, 5, s.pulls)
-    number(24, 10, s.limit - s.moves)
-    number(24, 15, s.facing)
+    letter(
+        23,
+        10,
+        78
+        if s.facing == 1
+        else (83 if s.facing == 2 else (87 if s.facing == 3 else 69)),
+    )
+    tile(23, 13, 6)
+    text(20, 16, "WALK OVER")
+    ranked_hud()

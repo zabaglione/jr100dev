@@ -5,24 +5,26 @@ def init():
         b[i] = 1 if d[i] == 1 else 0
         c[i] = 1 if d[i] == 3 else 0
         s.left += c[i]
-    s.pos = 9
+    s.pos = d[64]
+    s.par = d[69]
 
 
 def act():
     if s.action < 5:
+        before = s.pos
         for i in range(7):
             target = move(s.pos, s.action, 8, 8)
             if b[target] != 1:
                 s.pos = target
+                take_rune(s.pos)
                 if c[target]:
                     c[target] = 0
                     s.left -= 1
                     sound(1)
-        s.moves += 1
+        if s.pos != before:
+            spend_move()
         if s.left == 0:
-            win()
-        elif s.moves >= 80:
-            lose()
+            ranked_clear()
 
 
 def tick():
@@ -34,6 +36,10 @@ def draw():
     for i in range(64):
         if c[i]:
             tile(i % 8 * 2, 3 + i // 8 * 2, 3)
+    draw_runes(0)
     tile(s.pos % 8 * 2, 3 + s.pos // 8 * 2, 2)
-    number(24, 6, s.left)
-    number(24, 13, s.moves)
+    number(23, 7, s.left)
+    text(19, 11, "ICE RUNES")
+    tile(22, 13, 6)
+    text(19, 16, "OPTIONAL")
+    ranked_hud()

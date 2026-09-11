@@ -21,6 +21,8 @@ class State:
 class Model:
     def __init__(self, name):
         self.name = name
+        self.metadata = json.loads((ROOT / name / "game.json").read_text())
+        self.best = bytearray(self.metadata.get("levels", 10))
         self.s = State()
         self.s.mode = 1
         self.b = bytearray(128)
@@ -36,7 +38,7 @@ class Model:
             "letter": lambda *a: None,
             "number": lambda *a: None,
             "sound": lambda *a: None,
-            "win": lambda: setattr(self.s, "mode", 2),
+            "win": self.win,
             "lose": lambda: setattr(self.s, "mode", 3),
         }
         self.env.update(
@@ -72,6 +74,43 @@ class Model:
         self.s.action = a
         self.env["act"]()
 
+    def win(self):
+        self.s.mode = 2
+        if self.metadata.get("rankedCampaign"):
+            self.best[self.s.level] = max(self.best[self.s.level], self.s.stars)
+
+    def dispatch_ranked(self, a):
+        mode, level = self.s.mode, self.s.level
+        if mode == 5:
+            self.s.mode = 0
+        elif mode == 6:
+            if a == 5:
+                self.init(level)
+            elif a == 6:
+                self.s.mode = 0
+            elif a in (1, 2, 3, 4):
+                self.s.level = (level + {1: -5, 2: 5, 3: -1, 4: 1}[a]) % len(self.best)
+        elif a == 8:
+            self.s.mode = 6
+        elif mode == 0:
+            if a == 5:
+                self.init(level)
+            else:
+                self.s.mode = 5
+        elif a == 6:
+            self.init(level)
+        elif mode == 1:
+            self.action(a)
+        elif a == 5:
+            if mode == 2:
+                if level + 1 < len(self.best):
+                    self.init(level + 1)
+                else:
+                    self.s.mode = 4
+            else:
+                self.s.mode = 0
+        self.s.action = a
+
     def tick(self):
         self.env["tick"]()
 
@@ -104,13 +143,17 @@ def assert_state(machine, model):
     for key, label in slots.items():
         if key.startswith("s."):
             field = key[2:]
-            assert machine.get(label) == getattr(
-                model.s, field
-            ), f"{machine.directory.name} {field}: native={machine.get(label)}, model={getattr(model.s,field)}"
+            assert machine.get(label) == getattr(model.s, field), (
+                f"{machine.directory.name} {field}: native={machine.get(label)}, model={getattr(model.s, field)}"
+            )
     for name in ("b", "c", "d"):
         assert machine.read(name.upper() + "_ARRAY", 128) == bytes(
             getattr(model, name)
         ), f"{machine.directory.name} {name} array differs"
+    if machine.metadata.get("rankedCampaign"):
+        assert machine.read("BEST", len(model.best)) == bytes(model.best), (
+            "Best ratings differ"
+        )
     assert lib.min_sp(machine.p) >= 0x3E00, "Stack exceeded reserved 512 bytes"
     assert machine.read(0x300, len(machine.code)) == machine.code, "Code/data changed"
 
@@ -138,7 +181,9 @@ def action(m, r, a, pad=False):
         r.tick()
         m.until("FRAME_READY")
         assert_state(m, r)
-    if r.s.mode == 1:
+    if m.metadata.get("rankedCampaign"):
+        r.dispatch_ranked(a)
+    elif r.s.mode == 1:
         r.action(a)
     else:
         mode = r.s.mode
