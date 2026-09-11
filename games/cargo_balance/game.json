@@ -1,0 +1,37 @@
+{
+  "id": "cargo-balance",
+  "title": "CARGO BALANCE",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 1,
+  "rate": 255,
+  "hud": [
+    [
+      4,
+      1,
+      "NEXT LOAD"
+    ],
+    [
+      4,
+      19,
+      "LOADED"
+    ],
+    [
+      17,
+      1,
+      "=============================="
+    ]
+  ],
+  "help": [
+    "A/D : MOVE THE CRANE",
+    "BUTTON : DROP THE NEXT CRATE",
+    "OUTER HOLDS ADD TRIPLE LEAN.",
+    "KEEP THE LEAN DIFFERENCE <=8.",
+    "LOAD TWELVE CRATES TO DEPART.",
+    "FOUR CRATES FIT IN A HOLD."
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

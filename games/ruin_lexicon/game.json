@@ -1,0 +1,32 @@
+{
+  "id": "ruin-lexicon",
+  "title": "RUIN LEXICON",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 4,
+  "rate": 255,
+  "hud": [
+    [
+      2,
+      1,
+      "INSCRIPTIONS"
+    ],
+    [
+      2,
+      19,
+      "LEXICON"
+    ]
+  ],
+  "help": [
+    "A/D : CHOOSE A GLYPH",
+    "W/S : SET ITS VALUE ONE TO FOUR",
+    "THE INSCRIPTIONS SHOW SUMS.",
+    "A HAS ONE KNOWN TRANSLATION.",
+    "BUTTON : SUBMIT THE DICTIONARY",
+    "FIVE FALSE DICTIONARIES FAIL."
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

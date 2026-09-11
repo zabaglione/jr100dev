@@ -36,6 +36,16 @@ int until(Machine* m, int address, int budget) {
     } while (m->emulator.clock_count() < end);
     return 0;
 }
+int until_either(Machine* m, int first, int second, int budget) {
+    const auto end = m->emulator.clock_count() + budget;
+    do {
+        m->step();
+        const auto address = m->emulator.cpu().registers().pc;
+        if (address == first) return 1;
+        if (address == second) return 2;
+    } while (m->emulator.clock_count() < end);
+    return 0;
+}
 void ticks(Machine* m, int cycles) {
     auto end = m->emulator.clock_count() + cycles;
     while(m->emulator.clock_count() < end) m->step();

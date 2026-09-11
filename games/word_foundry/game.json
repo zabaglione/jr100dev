@@ -1,0 +1,108 @@
+{
+  "id": "word-foundry",
+  "title": "WORD FOUNDRY",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 5,
+  "rate": 255,
+  "hud": [
+    [
+      3,
+      1,
+      "CURRENT"
+    ],
+    [
+      3,
+      19,
+      "TARGET"
+    ],
+    [
+      6,
+      2,
+      "THE WORD FOUNDRY"
+    ],
+    [
+      20,
+      18,
+      "STEPS"
+    ]
+  ],
+  "help": [
+    "WASD / PAD : CHOOSE A WORD",
+    "BUTTON : REPLACE CURRENT WORD",
+    "CHANGE EXACTLY ONE LETTER.",
+    "REACH THE TARGET IN 8 STEPS.",
+    "ONLY THE SIXTEEN WORDS COUNT.",
+    "SPACE : RESTART THE LADDER"
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY",
+  "dataTables": {
+    "words": [
+      67,
+      65,
+      84,
+      67,
+      79,
+      84,
+      67,
+      79,
+      71,
+      68,
+      79,
+      71,
+      68,
+      79,
+      84,
+      68,
+      65,
+      84,
+      66,
+      65,
+      84,
+      66,
+      79,
+      84,
+      66,
+      65,
+      71,
+      66,
+      79,
+      71,
+      66,
+      73,
+      71,
+      68,
+      73,
+      71,
+      80,
+      73,
+      71,
+      80,
+      73,
+      84,
+      83,
+      73,
+      84,
+      83,
+      65,
+      84
+    ],
+    "starts": [
+      0,
+      6,
+      8,
+      10,
+      14
+    ],
+    "goals": [
+      3,
+      11,
+      15,
+      0,
+      8
+    ]
+  }
+}

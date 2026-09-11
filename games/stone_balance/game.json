@@ -1,0 +1,27 @@
+{
+  "id": "stone-balance",
+  "title": "STONE BALANCE",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 10,
+  "rate": 255,
+  "hud": [
+    [
+      2,
+      2,
+      "THREE HEAPS / LAST STONE WINS"
+    ]
+  ],
+  "help": [
+    "W/S : CHOOSE A PILE",
+    "A/D : TAKE ONE TO THREE",
+    "BUTTON : REMOVE THE STONES",
+    "THEN THE RIVAL TAKES A TURN.",
+    "TAKE THE LAST STONE TO WIN.",
+    "SPACE : RESTART"
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

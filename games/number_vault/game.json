@@ -1,0 +1,42 @@
+{
+  "id": "number-vault",
+  "title": "NUMBER VAULT",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 10,
+  "rate": 255,
+  "hud": [
+    [
+      3,
+      2,
+      "FOUR DIALS / FOUR SYMBOLS"
+    ],
+    [
+      12,
+      3,
+      "EXACT"
+    ],
+    [
+      12,
+      20,
+      "NEAR"
+    ],
+    [
+      19,
+      2,
+      "ATTEMPTS REMAINING"
+    ]
+  ],
+  "help": [
+    "A/D : SELECT A DIAL",
+    "W/S : DIGIT ONE TO FOUR",
+    "BUTTON : TEST YOUR CODE",
+    "EXACT MEANS THE CORRECT SLOT.",
+    "NEAR MEANS THE WRONG SLOT.",
+    "OPEN THE VAULT IN TEN TRIES."
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

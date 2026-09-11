@@ -1,0 +1,52 @@
+{
+  "id": "potion-path",
+  "title": "POTION PATH",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 6,
+  "rate": 255,
+  "hud": [
+    [
+      2,
+      18,
+      "RECIPE"
+    ],
+    [
+      5,
+      20,
+      "ASH  L2"
+    ],
+    [
+      8,
+      20,
+      "MOSS R1 D2"
+    ],
+    [
+      11,
+      20,
+      "SALT U1"
+    ],
+    [
+      14,
+      20,
+      "ROOT R3 D1"
+    ],
+    [
+      19,
+      18,
+      "DOSES"
+    ]
+  ],
+  "help": [
+    "WASD : SELECT AN INGREDIENT",
+    "BUTTON : ADD TO THE FLASK",
+    "ASH LEFT 2 / MOSS RIGHT1 DOWN2",
+    "SALT UP1 / ROOT RIGHT3 DOWN1",
+    "REACH THE DIAMOND ORDER.",
+    "TWELVE DOSES PER POTION."
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

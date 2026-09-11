@@ -1,5 +1,7 @@
 # DICE RELIC
 
+[ホーム](Home) → [カード・ボード](Genre-Tabletop) → DICE RELIC
+
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=dice-relic) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/dice_relic)
 
 同じブラウザーでBASIC ROMを事前に登録してください。
@@ -13,9 +15,9 @@
 | 操作 | キーボード | 1ボタンパッド |
 | --- | --- | --- |
 | ダイスを選択 | A/D | 左右 |
-| 割当先を選択 | W/X | 上下 |
+| 割当先を選択 | W/S | 上下 |
 | 使用／決定 | RETURN | ボタン |
-| 工房で面を選択 | W/X | 上下 |
+| 工房で面を選択 | W/S | 上下 |
 | 工房のサービスを選択 | A/D | 左右 |
 | BASICへ戻る | CTRL+C | キーボードを使用 |
 
@@ -39,7 +41,7 @@ ATTACKは出目の値だけ攻撃、GUARDは同じ値の防御、HEALは同じ�
 
 ## ビルドと検証
 
-開発環境を用意して `make -C games/dice_relic` を実行します。出力は `build/dice-relic.prg`、開始番地 `$0300`。本体・定数は7,449 bytes。画面・状態・保存領域・512 bytesのスタックを含め標準16KB内、PCGは32文字です。
+開発環境を用意して `make -C games/dice_relic` を実行します。出力は `build/dice-relic.prg`、開始番地 `$0300`。本体・定数は7,436 bytes。画面・状態・保存領域・512 bytesのスタックを含め標準16KB内、PCGは32文字です。
 
 `make -C games/dice_relic test` は攻防、回復上限、使用済みダイス、振り直し上限、強攻撃、購入価格、面の上限と次戦への持越しを独立モデルと照合します。入力だけで9戦を完走し、8回の面変更を確認しました。パッドとキーボードの両方を検証しています。
 

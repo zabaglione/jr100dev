@@ -1,0 +1,41 @@
+{
+  "id": "lumen-cross",
+  "title": "LUMEN CROSS",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 10,
+  "hud": [
+    [
+      3,
+      20,
+      "CROSS ARRAY"
+    ],
+    [
+      6,
+      21,
+      "PRESSES"
+    ],
+    [
+      12,
+      21,
+      "REMAIN"
+    ],
+    [
+      18,
+      1,
+      "EXTINGUISH EVERY LIGHT"
+    ]
+  ],
+  "help": [
+    "WASD / PAD : SELECT A CELL",
+    "RETURN / BUTTON : FLIP CROSS",
+    "A CROSS FLIPS FIVE LIGHTS.",
+    "SWITCH EVERY LIGHT OFF.",
+    "SIXTY PRESSES PER PANEL.",
+    "SPACE : RESTART THIS PANEL",
+    "CTRL+C : RETURN TO BASIC"
+  ]
+}

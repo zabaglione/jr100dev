@@ -1,0 +1,37 @@
+{
+  "id": "sand-rescue",
+  "title": "SAND RESCUE",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 1,
+  "rate": 14,
+  "hud": [
+    [
+      3,
+      19,
+      "THREE CROPS"
+    ],
+    [
+      10,
+      20,
+      "SPILLED"
+    ],
+    [
+      15,
+      20,
+      "RELEASED"
+    ]
+  ],
+  "help": [
+    "A/D : SELECT A GATE",
+    "BUTTON : OPEN ONLY THIS GATE",
+    "THE SOURCE SHIFTS EVERY 4 DROPS",
+    "WATER EACH CROP FOUR TIMES.",
+    "SIX SOURCE SPILLS LOSE.",
+    "RESERVOIR LIMIT: THIRTY UNITS."
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

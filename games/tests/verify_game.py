@@ -18,5 +18,10 @@ assert len(art["game_pcg"]) == len(art["title_pcg"]) == 256
 assert len(art["title_screen"]) == 768
 assert all(code < 0xA0 for code in art["title_screen"])
 for script in ("check_rules.py", "replay.py"):
-    subprocess.run([sys.executable, str(game / script)], check=True)
+    command = (
+        [sys.executable, str(game.parent / "native" / script), game.name]
+        if metadata.get("nativeRules")
+        else [sys.executable, str(game / script)]
+    )
+    subprocess.run(command, check=True)
 print("PASS: standard 16KB layout and 32 PCG slots")

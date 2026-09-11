@@ -1,0 +1,32 @@
+{
+  "id": "gate-runner",
+  "title": "GATE RUNNER",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 1,
+  "rate": 10,
+  "hud": [
+    [
+      20,
+      2,
+      "HULL"
+    ],
+    [
+      20,
+      16,
+      "CLEARED"
+    ]
+  ],
+  "help": [
+    "A/D : CHANGE RUNNING LANE",
+    "W / BUTTON : JUMP",
+    "WALLS MUST BE DODGED.",
+    "PITS CAN BE JUMPED OR DODGED.",
+    "CLEAR EIGHTEEN OBSTACLES.",
+    "THREE COLLISIONS END THE RUN."
+  ],
+  "footer": "A/D LANE  W/RET JUMP"
+}

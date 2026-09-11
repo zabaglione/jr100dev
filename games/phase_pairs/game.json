@@ -1,0 +1,37 @@
+{
+  "id": "phase-pairs",
+  "title": "PHASE PAIRS",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 10,
+  "rate": 255,
+  "hud": [
+    [
+      3,
+      21,
+      "TEN PAIRS"
+    ],
+    [
+      6,
+      21,
+      "LEFT"
+    ],
+    [
+      13,
+      21,
+      "ERRORS"
+    ]
+  ],
+  "help": [
+    "WASD / PAD : CHOOSE A NUMBER",
+    "BUTTON : SELECT TWO NEIGHBORS",
+    "THEIR SUM MUST BE TEN.",
+    "REMOVE ALL SIXTEEN NUMBERS.",
+    "SIX WRONG PAIRS END A ROUND.",
+    "SPACE : RESTART"
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

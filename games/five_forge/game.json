@@ -1,0 +1,32 @@
+{
+  "id": "five-forge",
+  "title": "FIVE FORGE",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 1,
+  "rate": 255,
+  "hud": [
+    [
+      3,
+      19,
+      "FIVE FORGE"
+    ],
+    [
+      7,
+      20,
+      "STONES"
+    ]
+  ],
+  "help": [
+    "WASD / PAD : SELECT A CELL",
+    "BUTTON : PLACE YOUR STONE",
+    "MAKE FIVE IN ANY DIRECTION.",
+    "THE RIVAL BLOCKS IMMEDIATE WINS",
+    "AND BUILDS ITS OWN THREATS.",
+    "A FULL BOARD WITHOUT FIVE LOSES"
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

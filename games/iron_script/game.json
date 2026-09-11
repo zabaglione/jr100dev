@@ -1,0 +1,42 @@
+{
+  "id": "iron-script",
+  "title": "IRON SCRIPT",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 20,
+  "rate": 12,
+  "hud": [
+    [
+      2,
+      19,
+      "PROGRAMMER"
+    ],
+    [
+      5,
+      19,
+      "BATTERY"
+    ],
+    [
+      9,
+      19,
+      "BLOCKED"
+    ],
+    [
+      12,
+      18,
+      "INSTRUCTIONS"
+    ]
+  ],
+  "help": [
+    "A/D : PROGRAM SLOT",
+    "W/S : CHANGE INSTRUCTION",
+    "0 WAIT 1 UP 2 DOWN 3 L 4 R",
+    "BUTTON : RUN TWELVE STEPS",
+    "REACH THE DIAMOND TERMINAL.",
+    "SPACE : RESET THE PROGRAM"
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

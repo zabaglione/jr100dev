@@ -1,0 +1,47 @@
+{
+  "id": "twenty-one",
+  "title": "TWENTY ONE",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 1,
+  "rate": 255,
+  "hud": [
+    [
+      3,
+      4,
+      "PLAYER"
+    ],
+    [
+      3,
+      21,
+      "DEALER"
+    ],
+    [
+      13,
+      12,
+      "COINS"
+    ],
+    [
+      17,
+      18,
+      "HANDS"
+    ],
+    [
+      19,
+      6,
+      "HIT            STAND"
+    ]
+  ],
+  "help": [
+    "WASD : HIT OR STAND",
+    "BUTTON : CONFIRM",
+    "CARDS ARE VALUED TWO TO TEN.",
+    "DEALER DRAWS TO SEVENTEEN.",
+    "HIGHER TOTAL WINS TWO COINS.",
+    "KEEP EIGHT COINS AFTER 5 HANDS."
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

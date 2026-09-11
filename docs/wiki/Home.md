@@ -1,30 +1,22 @@
 # JR-100 Games
 
-JR-100・標準RAM 16KB向けのオリジナルゲーム集です。各作品に概要、操作、実画面を掲載しています。
+標準RAM 16KB向けのオリジナルゲーム50作品です。ジャンルから選ぶと、各作品の画面・遊び方・起動リンクを探せます。
 
-| ゲーム | 概要 | 対応 |
-| --- | --- | --- |
-| [CHRONO BREACH](CHRONO-BREACH) | 動くときだけ時間が進む20面の戦術パズル | 標準16KB、キーボード／1ボタンパッド |
-| [SIGIL DECK](SIGIL-DECK) | 24種のカードで構築する10戦のバトル | 標準16KB、キーボード／1ボタンパッド |
-| [ABYSS SIGNAL](ABYSS-SIGNAL) | 海底の5地点を観測して帰還する探索ゲーム | 標準16KB、キーボード／1ボタンパッド |
-| [TRACE BLADE](TRACE-BLADE) | 一筆の経路で連続撃破する30面のパズル | 標準16KB、キーボード／1ボタンパッド |
-| [DICE RELIC](DICE-RELIC) | ダイスの面を作り替える9戦のバトル | 標準16KB、キーボード／1ボタンパッド |
-| [LOOP TEN](LOOP-TEN) | 10秒の巻き戻しを使う12部屋の探索パズル | 標準16KB、キーボード／1ボタンパッド |
+| ジャンル | 作品数 | 内容 |
+| --- | ---: | --- |
+| [パズル](Genre-Puzzle) | 14 | 考える時間を楽しむ、経路・反転・数のゲーム |
+| [カード・ボード](Genre-Tabletop) | 9 | 札・ダイス・盤面を使う読み合い |
+| [戦術・自動化](Genre-Tactics) | 5 | 手順・配置・流れを組み立てるゲーム |
+| [アクション](Genre-Action) | 9 | 移動・照準・タイミングを使うゲーム |
+| [探索・アドベンチャー](Genre-Exploration) | 7 | 地図・手掛かり・環境を読み解くゲーム |
+| [経営・サバイバル](Genre-Management) | 6 | 資源を配分し、状況の変化に備えるゲーム |
 
-「プレイ」は[JR-100 Web Emulator](https://zabaglione.github.io/pyjr100emu/)を開きます。同じブラウザーで自分のBASIC ROMを事前設定してください。登録済みならゲームのファイル選択やUSR入力は不要です。音は最初のキー入力または画面クリックで有効になります。
+[タイトル順の全作品](All-Games) · [共通操作と起動方法](Controls)
 
-エミュレーターで確認済み、実機は未確認です。
+同じブラウザーで自分のBASIC ROMを事前に設定してください。登録済みなら「プレイ」からタイトルまで自動起動します。音は最初のキー入力または画面クリックで有効になります。
 
-[![CHRONO BREACH](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/chrono-breach/title.png)](CHRONO-BREACH)
+基本の方向キーは **W/A/S/D**、8方向の作品は **QWE／AD／ZXC** です。作品ごとの操作は各ページに掲載しています。
 
-[![SIGIL DECK](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/sigil-deck/title.png)](SIGIL-DECK)
-
-[![ABYSS SIGNAL](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/abyss-signal/title.png)](ABYSS-SIGNAL)
-
-[![TRACE BLADE](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/trace-blade/title.png)](TRACE-BLADE)
-
-[![DICE RELIC](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/dice-relic/title.png)](DICE-RELIC)
-
-[![LOOP TEN](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/loop-ten/title.png)](LOOP-TEN)
+エミュレーターで確認済みです。実機での動作・音声は未確認です。
 
 [ビルド可能なソースと開発手順](https://github.com/zabaglione/jr100dev/tree/main/games)

@@ -1,0 +1,43 @@
+{
+  "id": "night-swarm",
+  "title": "NIGHT SWARM",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 1,
+  "rate": 10,
+  "hud": [
+    [
+      3,
+      19,
+      "SURVIVAL"
+    ],
+    [
+      5,
+      20,
+      "HULL"
+    ],
+    [
+      10,
+      20,
+      "DOWN"
+    ],
+    [
+      15,
+      20,
+      "PULSE"
+    ]
+  ],
+  "help": [
+    "QWE / AD / ZXC : EIGHT WAYS",
+    "BUTTON : AREA PULSE WHEN READY",
+    "CLOSE ENEMIES ARE AUTO FIRED.",
+    "DODGE THE SWARM BETWEEN PULSES.",
+    "DEFEAT EIGHTEEN CREATURES.",
+    "FOUR CONTACTS END THE MISSION."
+  ],
+  "footer": "QWE AD ZXC MOVE  RET PULSE",
+  "directions": 8
+}

@@ -43,6 +43,7 @@ for name, args, result in [
     ("clocks", [C.c_void_p], C.c_longlong),
     ("until", [C.c_void_p, C.c_int, C.c_int], C.c_int),
     ("ticks", [C.c_void_p, C.c_int], None),
+    ("until_either", [C.c_void_p, C.c_int, C.c_int, C.c_int], C.c_int),
     ("frame", [C.c_void_p], None),
     ("load_prg", [C.c_void_p, C.c_void_p, C.c_int], C.c_int),
     ("key", [C.c_void_p] + [C.c_int] * 3, None),
@@ -55,15 +56,16 @@ for name, args, result in [
 
 KEYS = {
     1: (2, 1),
-    2: (0, 3),
+    2: (1, 1),
     3: (1, 0),
     4: (1, 2),
     5: (8, 3),
     6: (8, 1),
-    7: (1, 1),
+    7: (0, 3),
     8: (1, 3),
 }
-PADS = {1: 4, 2: 8, 3: 2, 4: 1, 5: 16}
+PADS = {1: 4, 2: 8, 3: 2, 4: 1, 5: 16, 9: 6, 10: 5, 11: 10, 12: 9}
+EIGHT_KEYS = KEYS | {2: (0, 3), 9: (2, 0), 10: (2, 2), 11: (0, 2), 12: (0, 4)}
 
 
 class Machine:
@@ -128,16 +130,17 @@ class Machine:
         return lib.clocks(self.p) - before
 
     def action(self, action, pad=False):
+        keys = EIGHT_KEYS if self.metadata.get("directions") == 8 else KEYS
         if pad:
             lib.pad(self.p, PADS[action])
         else:
-            lib.key(self.p, *KEYS[action], 1)
+            lib.key(self.p, *keys[action], 1)
         self.until("DISPATCH")
         self.until("FRAME_READY")
         if pad:
             lib.pad(self.p, 0)
         else:
-            lib.key(self.p, *KEYS[action], 0)
+            lib.key(self.p, *keys[action], 0)
         self.until("INPUT_DONE")
 
     def capture(self, filename):

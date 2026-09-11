@@ -70,18 +70,35 @@ def build(directory):
     metadata = json.loads((directory / "game.json").read_text())
     output = directory / "build"
     output.mkdir(exist_ok=True)
-    spec = importlib.util.spec_from_file_location(
-        "game_assets", directory / "assets.py"
-    )
-    assets = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(assets)
-    assets.generate(output)
+    if metadata.get("nativeRules"):
+        sys.path.insert(0, str(ROOT / "common"))
+        sys.path.insert(0, str(ROOT / "native"))
+        import assets as native_assets
+        from compiler import compile_file
+
+        native_assets.generate(output, metadata, directory)
+        compiled, state_slots = compile_file(directory / "rules.py")
+        (output / "rules.inc").write_text(compiled)
+        (output / "state_slots.json").write_text(
+            json.dumps(state_slots, indent=2) + "\n"
+        )
+    else:
+        load_assets(directory, output)
+        sys.path.insert(0, str(ROOT / "native"))
+        sys.path.insert(0, str(ROOT / "common"))
+        from art_direction import apply_title
+
+        apply_title(output, metadata)
     modules = [
         ROOT / "common" / name for name in ("memory.inc", "platform.asm", "sound.asm")
     ]
+    if metadata.get("nativeRules"):
+        modules += [ROOT / "native/runtime.asm", output / "rules.inc"]
     modules += [directory / "src" / name for name in metadata["modules"]]
     modules += [output / "assets.inc", output / "levels.inc"]
     source = "    .org $0300\n    JMP ENTRY\n"
+    if metadata.get("nativeRules"):
+        source += f"GAME_RATE: .equ {metadata.get('rate', 255)}\nGAME_LEVELS: .equ {metadata.get('levels', 10)}\n"
     for path in modules:
         module_source = path.read_text()
         if path.name == "platform.asm" and metadata.get("clockModule"):
@@ -89,7 +106,18 @@ def build(directory):
             _, after = remainder.split("POLL_INPUT:\n", 1)
             clock = (directory / "src" / metadata["clockModule"]).read_text()
             module_source = before + clock + "\nPOLL_INPUT:\n" + after
+        if path.name == "platform.asm" and metadata.get("directions") == 8:
+            from input_eight import apply_eight_way
+
+            module_source = apply_eight_way(module_source)
         source += f"\n; Module: {path.name}\n" + module_source + "\n"
+    if not metadata.get("nativeRules"):
+        source = re.sub(
+            r"TITLE_TEXT:\n(?:    \.word[^\n]*\n)+",
+            "TITLE_TEXT:\n    .word 0\n",
+            source,
+            count=1,
+        )
     source += "CODE_END:\n"
     source = long_branches(source)
     (output / "game.asm").write_text(source)
@@ -120,6 +148,15 @@ def build(directory):
     }
     (output / "layout.json").write_text(json.dumps(layout, indent=2) + "\n")
     print(json.dumps({"game": metadata["id"], **layout}))
+
+
+def load_assets(directory, output):
+    spec = importlib.util.spec_from_file_location(
+        "game_assets", directory / "assets.py"
+    )
+    assets = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(assets)
+    assets.generate(output)
 
 
 if __name__ == "__main__":

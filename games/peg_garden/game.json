@@ -1,0 +1,37 @@
+{
+  "id": "peg-garden",
+  "title": "PEG GARDEN",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 1,
+  "rate": 255,
+  "hud": [
+    [
+      3,
+      20,
+      "STONE GARDEN"
+    ],
+    [
+      6,
+      21,
+      "REMAIN"
+    ],
+    [
+      12,
+      21,
+      "TARGET"
+    ]
+  ],
+  "help": [
+    "WASD / PAD : SELECT A CELL",
+    "BUTTON : PEG THEN EMPTY CELL",
+    "JUMP OVER ONE ADJACENT PEG.",
+    "THE JUMPED PEG IS REMOVED.",
+    "LEAVE FIVE PEGS OR FEWER.",
+    "SPACE : RESTORE THE GARDEN"
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

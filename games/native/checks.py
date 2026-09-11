@@ -1,0 +1,225 @@
+"""Exercise generated MB8861H games through keyboard/pad and inspect their state."""
+
+import json
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tests"))
+from machine import EIGHT_KEYS, KEYS, PADS, Machine, lib
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+class State:
+    def __getattr__(self, name):
+        return 0
+
+    def __setattr__(self, name, value):
+        self.__dict__[name] = int(value) & 255
+
+
+class Model:
+    def __init__(self, name):
+        self.name = name
+        self.s = State()
+        self.s.mode = 1
+        self.b = bytearray(128)
+        self.c = bytearray(128)
+        self.d = bytearray(128)
+        self.env = {
+            "s": self.s,
+            "b": self.b,
+            "c": self.c,
+            "d": self.d,
+            "tile": lambda *a: None,
+            "text": lambda *a: None,
+            "letter": lambda *a: None,
+            "number": lambda *a: None,
+            "sound": lambda *a: None,
+            "win": lambda: setattr(self.s, "mode", 2),
+            "lose": lambda: setattr(self.s, "mode", 3),
+        }
+        self.env.update(
+            {
+                k: bytearray(v)
+                for k, v in json.loads((ROOT / name / "game.json").read_text())
+                .get("dataTables", {})
+                .items()
+            }
+        )
+        exec(  # noqa: S102 - executes only project-owned rule sources for QA
+            (ROOT / "native/support.py").read_text()
+            + "\n"
+            + (ROOT / name / "rules.py").read_text(),
+            self.env,
+        )
+        self.init()
+
+    def init(self, level=0):
+        self.s.__dict__.clear()
+        self.s.mode = 1
+        self.s.level = level
+        self.b[:] = bytes(128)
+        self.c[:] = bytes(128)
+        self.d[:] = bytes(128)
+        levels = ROOT / self.name / "levels.json"
+        if levels.exists():
+            values = json.loads(levels.read_text())[level]
+            self.d[: len(values)] = bytes(values)
+        self.env["init"]()
+
+    def action(self, a):
+        self.s.action = a
+        self.env["act"]()
+
+    def tick(self):
+        self.env["tick"]()
+
+
+def render_bounds(model):
+    def check(x, y, width=1, height=1):
+        assert 0 <= x and 0 <= y and x + width <= 32 and y + height <= 24, (
+            model.name,
+            "drawing outside screen",
+            x,
+            y,
+            width,
+            height,
+        )
+
+    model.env.update(
+        {
+            "tile": lambda x, y, g: check(x, y, 2, 2),
+            "letter": lambda x, y, g: check(x, y),
+            "number": lambda x, y, n: check(x, y, 3),
+            "text": lambda x, y, t: check(x, y, len(t)),
+        }
+    )
+    model.env["draw"]()
+
+
+def assert_state(machine, model):
+    render_bounds(model)
+    slots = json.loads((machine.directory / "build/state_slots.json").read_text())
+    for key, label in slots.items():
+        if key.startswith("s."):
+            field = key[2:]
+            assert machine.get(label) == getattr(
+                model.s, field
+            ), f"{machine.directory.name} {field}: native={machine.get(label)}, model={getattr(model.s,field)}"
+    for name in ("b", "c", "d"):
+        assert machine.read(name.upper() + "_ARRAY", 128) == bytes(
+            getattr(model, name)
+        ), f"{machine.directory.name} {name} array differs"
+    assert lib.min_sp(machine.p) >= 0x3E00, "Stack exceeded reserved 512 bytes"
+    assert machine.read(0x300, len(machine.code)) == machine.code, "Code/data changed"
+
+
+def begin(name, rom=None):
+    m = Machine(name, rom=rom)
+    r = Model(name)
+    m.action(5)
+    r.s.action = 5
+    assert_state(m, r)
+    return m, r
+
+
+def action(m, r, a, pad=False):
+    keys = EIGHT_KEYS if m.metadata.get("directions") == 8 else KEYS
+    if pad:
+        lib.pad(m.p, PADS[a])
+    else:
+        lib.key(m.p, *keys[a], 1)
+    while True:
+        event = lib.until_either(m.p, m.sym["DISPATCH"], m.sym["FN_TICK"], 10_000_000)
+        assert event, "No input or clock event"
+        if event == 1:
+            break
+        r.tick()
+        m.until("FRAME_READY")
+        assert_state(m, r)
+    if r.s.mode == 1:
+        r.action(a)
+    else:
+        mode = r.s.mode
+        r.s.action = a
+        if a == 5:
+            if mode == 3:
+                r.init(r.s.level)
+            elif mode == 2:
+                level = r.s.level + 1
+                if level == m.metadata.get("levels", 10):
+                    r.s.mode = 4
+                else:
+                    r.init(level)
+            elif mode == 4:
+                r.s.mode = 0
+            r.s.action = a
+    m.until("FRAME_READY", budget=30_000_000)
+    if pad:
+        lib.pad(m.p, 0)
+    else:
+        lib.key(m.p, *keys[a], 0)
+    while True:
+        event = lib.until_either(m.p, m.sym["INPUT_DONE"], m.sym["FN_TICK"], 10_000_000)
+        assert event
+        if event == 1:
+            break
+        r.tick()
+        m.until("FRAME_READY")
+        assert_state(m, r)
+    assert_state(m, r)
+
+
+def tick(m, r):
+    m.until("FN_TICK")
+    r.tick()
+    m.until("FRAME_READY")
+    assert_state(m, r)
+
+
+def go(m, r, target, width, pad=False):
+    while r.s.cursor // width > target // width:
+        action(m, r, 1, pad)
+    while r.s.cursor // width < target // width:
+        action(m, r, 2, pad)
+    while r.s.cursor % width > target % width:
+        action(m, r, 3, pad)
+    while r.s.cursor % width < target % width:
+        action(m, r, 4, pad)
+
+
+def solve_lights(board):
+    # Independent GF(2) elimination; do not depend on the scramble recipe.
+    rows = []
+    for p in range(25):
+        mask = 0
+        for q in range(25):
+            if p == q or abs(p % 5 - q % 5) + abs(p // 5 - q // 5) == 1:
+                mask |= 1 << q
+        rows.append(mask | (board[p] << 25))
+    pivots = []
+    row = 0
+    for col in range(25):
+        candidate = next((i for i in range(row, 25) if rows[i] >> col & 1), None)
+        if candidate is None:
+            continue
+        rows[row], rows[candidate] = rows[candidate], rows[row]
+        for i in range(25):
+            if i != row and rows[i] >> col & 1:
+                rows[i] ^= rows[row]
+        pivots.append(col)
+        row += 1
+    assert all(v & ((1 << 25) - 1) or not (v >> 25) for v in rows)
+    return [pivots[i] for i in range(row) if rows[i] >> 25 & 1]
+
+
+if __name__ == "__main__":
+    m, r = begin("lumen_cross")
+    for p in solve_lights(r.b):
+        go(m, r, p, 5)
+        action(m, r, 5)
+    assert r.s.mode == 2
+    print(
+        "PASS: compiler, keyboard input, Lights Out independent solution and complete-state match"
+    )

@@ -1,0 +1,437 @@
+{
+  "target": 50,
+  "genres": [
+    {
+      "id": "puzzle",
+      "title": "パズル",
+      "description": "考える時間を楽しむ、経路・反転・数のゲーム"
+    },
+    {
+      "id": "tabletop",
+      "title": "カード・ボード",
+      "description": "札・ダイス・盤面を使う読み合い"
+    },
+    {
+      "id": "tactics",
+      "title": "戦術・自動化",
+      "description": "手順・配置・流れを組み立てるゲーム"
+    },
+    {
+      "id": "action",
+      "title": "アクション",
+      "description": "移動・照準・タイミングを使うゲーム"
+    },
+    {
+      "id": "exploration",
+      "title": "探索・アドベンチャー",
+      "description": "地図・手掛かり・環境を読み解くゲーム"
+    },
+    {
+      "id": "management",
+      "title": "経営・サバイバル",
+      "description": "資源を配分し、状況の変化に備えるゲーム"
+    }
+  ],
+  "games": [
+    {
+      "directory": "chrono_breach",
+      "id": "chrono-breach",
+      "title": "CHRONO BREACH",
+      "genre": "tactics",
+      "summary": "弾道を読んで突破する20面の時間停止戦術",
+      "motif": "breach"
+    },
+    {
+      "directory": "sigil_deck",
+      "id": "sigil-deck",
+      "title": "SIGIL DECK",
+      "genre": "tabletop",
+      "summary": "カードを組み合わせて虚空の王を封じる",
+      "motif": "cards"
+    },
+    {
+      "directory": "abyss_signal",
+      "id": "abyss-signal",
+      "title": "ABYSS SIGNAL",
+      "genre": "exploration",
+      "summary": "ソナーと酸素計を頼りに海底遺構を観測",
+      "motif": "submarine"
+    },
+    {
+      "directory": "trace_blade",
+      "id": "trace-blade",
+      "title": "TRACE BLADE",
+      "genre": "puzzle",
+      "summary": "一筆の経路を計画して連続撃破する",
+      "motif": "blade"
+    },
+    {
+      "directory": "dice_relic",
+      "id": "dice-relic",
+      "title": "DICE RELIC",
+      "genre": "tabletop",
+      "summary": "出目を使い、ダイスの面そのものを鍛える",
+      "motif": "dice"
+    },
+    {
+      "directory": "loop_ten",
+      "id": "loop-ten",
+      "title": "LOOP TEN",
+      "genre": "exploration",
+      "summary": "10秒の巻き戻しを越えて12の封印を解く",
+      "motif": "hourglass"
+    },
+    {
+      "directory": "iron_script",
+      "id": "iron-script",
+      "title": "IRON SCRIPT",
+      "genre": "tactics",
+      "summary": "命令列を組んでロボットをゴールへ導く",
+      "motif": "robot"
+    },
+    {
+      "directory": "chain_suit",
+      "id": "chain-suit",
+      "title": "CHAIN SUIT",
+      "genre": "tabletop",
+      "summary": "手札交換と役の選択で得点ノルマに挑む",
+      "motif": "fan"
+    },
+    {
+      "directory": "quiet_route",
+      "id": "quiet-route",
+      "title": "QUIET ROUTE",
+      "genre": "exploration",
+      "summary": "巡回の向きと足音を読んで機密を運ぶ",
+      "motif": "searchlight"
+    },
+    {
+      "directory": "circuit_works",
+      "id": "circuit-works",
+      "title": "CIRCUIT WORKS",
+      "genre": "tactics",
+      "summary": "導線を接続し順序回路を完成させる",
+      "motif": "factory"
+    },
+    {
+      "directory": "hearth_zero",
+      "id": "hearth-zero",
+      "title": "HEARTH ZERO",
+      "genre": "management",
+      "summary": "食料・薪・熱を配分して寒波を越える",
+      "motif": "furnace"
+    },
+    {
+      "directory": "night_swarm",
+      "id": "night-swarm",
+      "title": "NIGHT SWARM",
+      "genre": "action",
+      "summary": "迫る群れを誘導し射線を開いて生還する",
+      "motif": "swarm"
+    },
+    {
+      "directory": "lumen_cross",
+      "id": "lumen-cross",
+      "title": "LUMEN CROSS",
+      "genre": "puzzle",
+      "summary": "十字の反転で光の格子を消す",
+      "motif": "constellation"
+    },
+    {
+      "directory": "magnet_vault",
+      "id": "magnet-vault",
+      "title": "MAGNET VAULT",
+      "genre": "puzzle",
+      "summary": "押せない金属塊を磁力で引いて収納する",
+      "motif": "magnet"
+    },
+    {
+      "directory": "frost_steps",
+      "id": "frost-steps",
+      "title": "FROST STEPS",
+      "genre": "puzzle",
+      "summary": "氷上を止まれず滑り、全結晶を拾う",
+      "motif": "iceberg"
+    },
+    {
+      "directory": "prism_trace",
+      "id": "prism-trace",
+      "title": "PRISM TRACE",
+      "genre": "puzzle",
+      "summary": "鏡の向きを変えて光を受光器へ導く",
+      "motif": "prism"
+    },
+    {
+      "directory": "tide_bridge",
+      "id": "tide-bridge",
+      "title": "TIDE BRIDGE",
+      "genre": "puzzle",
+      "summary": "潮位の連動する橋を切り替えて渡る",
+      "motif": "bridge"
+    },
+    {
+      "directory": "glyph_shift",
+      "id": "glyph-shift",
+      "title": "GLYPH SHIFT",
+      "genre": "puzzle",
+      "summary": "物体の通行ルールを書き換えて脱出する",
+      "motif": "glyphs"
+    },
+    {
+      "directory": "gravity_well",
+      "id": "gravity-well",
+      "title": "GRAVITY WELL",
+      "genre": "puzzle",
+      "summary": "盤面を傾けて複数の球を同時に収める",
+      "motif": "well"
+    },
+    {
+      "directory": "seed_merge",
+      "id": "seed-merge",
+      "title": "SEED MERGE",
+      "genre": "puzzle",
+      "summary": "同じ芽を合成して大樹を育てる",
+      "motif": "tree"
+    },
+    {
+      "directory": "orbit_draft",
+      "id": "orbit-draft",
+      "title": "ORBIT DRAFT",
+      "genre": "tabletop",
+      "summary": "九つの軌道に札を配り三連の共鳴を作る",
+      "motif": "orrery"
+    },
+    {
+      "directory": "five_forge",
+      "id": "five-forge",
+      "title": "FIVE FORGE",
+      "genre": "tabletop",
+      "summary": "妨害と四連の脅威を読む五目対戦",
+      "motif": "anvil"
+    },
+    {
+      "directory": "corner_crown",
+      "id": "corner-crown",
+      "title": "CORNER CROWN",
+      "genre": "tabletop",
+      "summary": "挟み取りと角の支配を競う盤面対戦",
+      "motif": "crown"
+    },
+    {
+      "directory": "stone_balance",
+      "id": "stone-balance",
+      "title": "STONE BALANCE",
+      "genre": "tabletop",
+      "summary": "三つの山の取り方を読み切る石取り",
+      "motif": "scales"
+    },
+    {
+      "directory": "memory_mosaic",
+      "id": "memory-mosaic",
+      "title": "MEMORY MOSAIC",
+      "genre": "tabletop",
+      "summary": "失敗回数を抑えて模様の対を探す",
+      "motif": "mosaic"
+    },
+    {
+      "directory": "twenty_one",
+      "id": "twenty-one",
+      "title": "TWENTY ONE",
+      "genre": "tabletop",
+      "summary": "追加・停止を判断する21点カード勝負",
+      "motif": "chips"
+    },
+    {
+      "directory": "orbit_dodge",
+      "id": "orbit-dodge",
+      "title": "ORBIT DODGE",
+      "genre": "action",
+      "summary": "円軌道を移動して放射状の攻撃を避ける",
+      "motif": "eclipse"
+    },
+    {
+      "directory": "gate_runner",
+      "id": "gate-runner",
+      "title": "GATE RUNNER",
+      "genre": "action",
+      "summary": "三本の走路で障壁と穴を突破する",
+      "motif": "tunnel"
+    },
+    {
+      "directory": "brick_pulse",
+      "id": "brick-pulse",
+      "title": "BRICK PULSE",
+      "genre": "action",
+      "summary": "反射角を使い分けて障壁を崩す",
+      "motif": "bricks"
+    },
+    {
+      "directory": "star_lance",
+      "id": "star-lance",
+      "title": "STAR LANCE",
+      "genre": "action",
+      "summary": "隊列の隙間を抜いて迎撃する",
+      "motif": "fleet"
+    },
+    {
+      "directory": "ribbon_snake",
+      "id": "ribbon-snake",
+      "title": "RIBBON SNAKE",
+      "genre": "action",
+      "summary": "伸びる軌跡を制御して食料を回収する",
+      "motif": "ribbon"
+    },
+    {
+      "directory": "lunar_touchdown",
+      "id": "lunar-touchdown",
+      "title": "LUNAR TOUCHDOWN",
+      "genre": "action",
+      "summary": "燃料と降下速度を調整する着陸挑戦",
+      "motif": "lander"
+    },
+    {
+      "directory": "echo_parry",
+      "id": "echo-parry",
+      "title": "ECHO PARRY",
+      "genre": "action",
+      "summary": "敵の予備動作を読んで反撃する",
+      "motif": "shield"
+    },
+    {
+      "directory": "pendulum_port",
+      "id": "pendulum-port",
+      "title": "PENDULUM PORT",
+      "genre": "action",
+      "summary": "振り子の頂点で次の足場へ跳ぶ",
+      "motif": "pendulum"
+    },
+    {
+      "directory": "ruin_lexicon",
+      "id": "ruin-lexicon",
+      "title": "RUIN LEXICON",
+      "genre": "exploration",
+      "summary": "碑文の対応から失われた記号を解読する",
+      "motif": "tablet"
+    },
+    {
+      "directory": "shadow_archive",
+      "id": "shadow-archive",
+      "title": "SHADOW ARCHIVE",
+      "genre": "exploration",
+      "summary": "証言と記録を照合して容疑者を特定する",
+      "motif": "dossier"
+    },
+    {
+      "directory": "compass_rose",
+      "id": "compass-rose",
+      "title": "COMPASS ROSE",
+      "genre": "exploration",
+      "summary": "方位の手掛かりを頼りに隠れた宝を探す",
+      "motif": "compass"
+    },
+    {
+      "directory": "mirror_relic",
+      "id": "mirror-relic",
+      "title": "MIRROR RELIC",
+      "genre": "exploration",
+      "summary": "四つの視点を回して遺物の通路を開く",
+      "motif": "mirror"
+    },
+    {
+      "directory": "orchard_days",
+      "id": "orchard-days",
+      "title": "ORCHARD DAYS",
+      "genre": "management",
+      "summary": "種まきと水やりを配分して果樹園を育てる",
+      "motif": "orchard"
+    },
+    {
+      "directory": "tidal_nets",
+      "id": "tidal-nets",
+      "title": "TIDAL NETS",
+      "genre": "management",
+      "summary": "潮の流れに網を置き魚群を捕らえる",
+      "motif": "nets"
+    },
+    {
+      "directory": "potion_path",
+      "id": "potion-path",
+      "title": "POTION PATH",
+      "genre": "management",
+      "summary": "素材の移動量を組み合わせ注文を調合する",
+      "motif": "flask"
+    },
+    {
+      "directory": "auction_house",
+      "id": "auction-house",
+      "title": "AUCTION HOUSE",
+      "genre": "management",
+      "summary": "相場と残金を読んで競売に参加する",
+      "motif": "gavel"
+    },
+    {
+      "directory": "metro_weave",
+      "id": "metro-weave",
+      "title": "METRO WEAVE",
+      "genre": "tactics",
+      "summary": "分岐と信号を操作して乗客を運ぶ",
+      "motif": "metro"
+    },
+    {
+      "directory": "cargo_balance",
+      "id": "cargo-balance",
+      "title": "CARGO BALANCE",
+      "genre": "management",
+      "summary": "積荷の位置を選び船の傾きを抑える",
+      "motif": "cargo"
+    },
+    {
+      "directory": "peg_garden",
+      "id": "peg-garden",
+      "title": "PEG GARDEN",
+      "genre": "puzzle",
+      "summary": "飛び越しで石を取り除く庭園パズル",
+      "motif": "garden"
+    },
+    {
+      "directory": "number_vault",
+      "id": "number-vault",
+      "title": "NUMBER VAULT",
+      "genre": "puzzle",
+      "summary": "一致数の手掛かりから暗証番号を解く",
+      "motif": "safe"
+    },
+    {
+      "directory": "phase_pairs",
+      "id": "phase-pairs",
+      "title": "PHASE PAIRS",
+      "genre": "puzzle",
+      "summary": "隣り合う数を10にして盤面を消す",
+      "motif": "phase"
+    },
+    {
+      "directory": "fuse_box",
+      "id": "fuse-box",
+      "title": "FUSE BOX",
+      "genre": "puzzle",
+      "summary": "行と列の個数を読んで配線図を復元する",
+      "motif": "switchboard"
+    },
+    {
+      "directory": "sand_rescue",
+      "id": "sand-rescue",
+      "title": "SAND RESCUE",
+      "genre": "tactics",
+      "summary": "堰を開閉して水を作物へ導く",
+      "motif": "sand"
+    },
+    {
+      "directory": "word_foundry",
+      "id": "word-foundry",
+      "title": "WORD FOUNDRY",
+      "genre": "puzzle",
+      "summary": "一文字ずつ置き換えて指定の単語へ至る",
+      "motif": "typewriter"
+    }
+  ]
+}

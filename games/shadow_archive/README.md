@@ -1,0 +1,38 @@
+# SHADOW ARCHIVE
+
+[Wiki](https://github.com/zabaglione/jr100dev/wiki/SHADOW-ARCHIVE) · [プレイ](https://zabaglione.github.io/pyjr100emu/?game=shadow-archive)
+
+記録を読み、階とバッジ番号の条件から容疑者を特定する6件の小さな推理です。
+
+![タイトル](images/title.png)
+
+## 操作と遊び方
+
+W/Sで閲覧と告発を切り替え、A/Dで資料または容疑者を選び、RETURNで実行します。A～Fのバッジは0～5、A～Cは1階、D～Fは2階です。誤った告発は即失敗です。
+
+方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面をやり直し、CTRL+CでBASICへ戻ります。
+
+ファイルの手掛かりと、選択中の容疑者・操作モードを表示します。
+
+![ゲーム開始時](images/play-01.png)
+
+![プレイ中の場面](images/play-02.png)
+
+## ビルドと検証
+
+バージョン 1.0.0。開始番地 `$0300`、ゲーム本体と定数は 6,056 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
+
+```sh
+make -C games/shadow_archive
+make -C games/shadow_archive test
+```
+
+出力はゲームの `build/` ディレクトリに作られます。`rules.py` はビルド時にMB8861Hの機械語へ変換されます。JR-100上でPythonを実行する方式ではありません。
+
+キー入力による全ステージのクリア、失敗を含む入力試験、画面範囲、RAM配置、スタック、PCM出力をエミュレーターで検査しています。掲載画像は所有するBASIC ROMからPRGを起動した実フレームです。実機での動作・音声は未確認です。
+
+```sh
+.venv/bin/python games/native/replay.py shadow_archive --rom /path/to/owned-rom.prg --capture --keyboard
+```
+
+タイトルには長めの単音曲、プレイ中には効果音を付けています。ソース・画像・曲は[MIT License](https://github.com/zabaglione/jr100dev/blob/main/games/LICENSE)。`art/`にはPCG Workbench用の画面データもあります。

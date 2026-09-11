@@ -1,0 +1,37 @@
+{
+  "id": "compass-rose",
+  "title": "COMPASS ROSE",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 10,
+  "rate": 255,
+  "hud": [
+    [
+      3,
+      19,
+      "EXPEDITION"
+    ],
+    [
+      12,
+      20,
+      "STEPS"
+    ],
+    [
+      16,
+      20,
+      "DIGS"
+    ]
+  ],
+  "help": [
+    "WASD / PAD : EXPLORE",
+    "READ NORTH/SOUTH/EAST/WEST.",
+    "BUTTON : DIG AT YOUR POSITION",
+    "THE COMPASS SAYS HERE AT GOAL.",
+    "THREE DIGS AND 32 STEPS.",
+    "FIND TEN SEPARATE CACHES."
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

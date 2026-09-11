@@ -1,0 +1,37 @@
+{
+  "id": "mirror-relic",
+  "title": "MIRROR RELIC",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 1,
+  "rate": 255,
+  "hud": [
+    [
+      3,
+      19,
+      "FOUR VIEWS"
+    ],
+    [
+      6,
+      20,
+      "RELICS"
+    ],
+    [
+      13,
+      20,
+      "ROTATIONS"
+    ]
+  ],
+  "help": [
+    "WASD / PAD : WALK",
+    "BUTTON : QUARTER TURN YOURSELF",
+    "THE WALLS REMAIN IN PLACE.",
+    "TURNING INTO A WALL IS BLOCKED.",
+    "COLLECT THREE RELICS THEN EXIT.",
+    "TWENTY TURNS AT MOST."
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

@@ -1,0 +1,37 @@
+{
+  "id": "tidal-nets",
+  "title": "TIDAL NETS",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 1,
+  "rate": 255,
+  "hud": [
+    [
+      2,
+      2,
+      "READ THE TIDE BEFORE CASTING"
+    ],
+    [
+      19,
+      1,
+      "FISH"
+    ],
+    [
+      19,
+      19,
+      "CASTS"
+    ]
+  ],
+  "help": [
+    "A/D : PLACE YOUR NET",
+    "BUTTON : CAST THROUGH THE TIDE",
+    "FISH DRIFT ONE CELL WITH TIDE.",
+    "EACH CATCH ADDS TWO FISH.",
+    "CATCH 16 FISH IN 12 CASTS.",
+    "THE CURRENT WRAPS AT AN EDGE."
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

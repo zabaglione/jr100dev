@@ -1,6 +1,6 @@
 PYTHON ?= python3
 PYTHONPATH := $(CURDIR)/src
-GAMES := chrono_breach sigil_deck abyss_signal trace_blade dice_relic loop_ten
+GAMES := $(shell $(PYTHON) -c 'import json; print(" ".join(json.load(open("games/collection.json"))["games"]))')
 SAMPLES := hello counter io_demo key_display multi pcg_clock pcg_animation sound_demo maze relic_dive
 
 .PHONY: samples games test games-test clean
@@ -14,6 +14,7 @@ games:
 	@for game in $(GAMES); do $(MAKE) -C games/$$game || exit $$?; done
 
 games-test:
+	PYTHONPATH=$(PYTHONPATH) $(PYTHON) games/native/check_compiler.py
 	@for game in $(GAMES); do $(MAKE) -C games/$$game test || exit $$?; done
 
 test:

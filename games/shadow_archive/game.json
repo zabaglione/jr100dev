@@ -1,0 +1,27 @@
+{
+  "id": "shadow-archive",
+  "title": "SHADOW ARCHIVE",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 6,
+  "rate": 255,
+  "hud": [
+    [
+      2,
+      2,
+      "SIX SUSPECTS"
+    ]
+  ],
+  "help": [
+    "A/D : SELECT A SUSPECT / FILE",
+    "W/S : READ OR ACCUSE MODE",
+    "BUTTON : READ NOTE OR ACCUSE",
+    "BADGES A TO F ARE 0 TO 5.",
+    "A B C ON FLOOR1 / D E F FLOOR2",
+    "ONE FALSE ACCUSATION LOSES."
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

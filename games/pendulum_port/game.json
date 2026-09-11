@@ -1,0 +1,31 @@
+{
+  "id": "pendulum-port",
+  "title": "PENDULUM PORT",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 1,
+  "rate": 6,
+  "hud": [
+    [
+      20,
+      1,
+      "ROPES"
+    ],
+    [
+      20,
+      17,
+      "PORTS"
+    ]
+  ],
+  "help": [
+    "BUTTON : RELEASE THE SWING",
+    "LAND WITHIN ONE MARK OF TARGET",
+    "THE DIAMOND IS THE NEXT PORT.",
+    "TIME EIGHT SUCCESSFUL RELEASES.",
+    "THREE FALLS END THE CROSSING."
+  ],
+  "footer": "RETURN / BUTTON RELEASE"
+}

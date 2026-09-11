@@ -1,0 +1,36 @@
+{
+  "id": "ribbon-snake",
+  "title": "RIBBON SNAKE",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 1,
+  "rate": 14,
+  "hud": [
+    [
+      3,
+      20,
+      "RIBBON"
+    ],
+    [
+      6,
+      20,
+      "LENGTH"
+    ],
+    [
+      13,
+      20,
+      "EATEN"
+    ]
+  ],
+  "help": [
+    "WASD / PAD : STEER THE HEAD",
+    "MOTION CONTINUES ON ITS OWN.",
+    "DO NOT HIT YOUR TAIL OR EDGES.",
+    "EAT TWELVE DIAMONDS TO WIN.",
+    "REVERSING DIRECTION IS IGNORED."
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

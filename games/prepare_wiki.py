@@ -9,7 +9,9 @@ root = Path(__file__).resolve().parents[1]
 destination = Path(sys.argv[1]).resolve()
 destination.mkdir(parents=True, exist_ok=True)
 directories = json.loads((root / "games/collection.json").read_text())["games"]
-pages = ["Home", "_Sidebar"]
+library = json.loads((root / "games/library.json").read_text())
+pages = ["Home", "_Sidebar", "All-Games", "Controls"]
+pages += ["Genre-" + genre["id"].title() for genre in library["genres"]]
 for directory in directories:
     game = root / "games" / directory
     metadata = json.loads((game / "game.json").read_text())

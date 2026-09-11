@@ -1,0 +1,36 @@
+{
+  "id": "orbit-dodge",
+  "title": "ORBIT DODGE",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 1,
+  "rate": 14,
+  "hud": [
+    [
+      6,
+      13,
+      "HULL"
+    ],
+    [
+      10,
+      13,
+      "WAVES"
+    ],
+    [
+      14,
+      13,
+      "IMPACT"
+    ]
+  ],
+  "help": [
+    "A/D OR W/S : ROTATE IN ORBIT",
+    "AVOID THE MARKED RADIAL LANE.",
+    "THE ATTACK HITS AT COUNT ZERO.",
+    "SURVIVE TWENTY WAVES.",
+    "THREE HITS DESTROY THE SHIP."
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

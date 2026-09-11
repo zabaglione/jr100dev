@@ -90,7 +90,7 @@ def generate(output):
         "HELP_TEXT": [
             (1, 10, "TRACE BLADE"),
             (3, 1, "THIRTY CHAMBERS. ONE STROKE."),
-            (5, 1, "WAXD / PAD : EXTEND YOUR PATH"),
+            (5, 1, "WASD / PAD : EXTEND YOUR PATH"),
             (6, 1, "SPACE : UNDO THE LAST STEP"),
             (7, 1, "RETURN / BUTTON : OPEN MENU"),
             (8, 1, "F : EXECUTE YOUR STRIKE"),
@@ -110,7 +110,7 @@ def generate(output):
             (5, 25, "MARKED"),
             (8, 25, "PATH"),
             (11, 25, "COMBO"),
-            (22, 0, "WAXD PLAN  SPACE UNDO  F CUT"),
+            (22, 0, "WASD PLAN  SPACE UNDO  F CUT"),
             (23, 0, "BUTTON MENU  CTRL+C EXIT"),
         ],
         "WIN_TEXT": [

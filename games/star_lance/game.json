@@ -1,0 +1,32 @@
+{
+  "id": "star-lance",
+  "title": "STAR LANCE",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 1,
+  "rate": 10,
+  "hud": [
+    [
+      15,
+      1,
+      "HULL"
+    ],
+    [
+      15,
+      16,
+      "ENEMIES"
+    ]
+  ],
+  "help": [
+    "A/D : MOVE THE INTERCEPTOR",
+    "BUTTON : FIRE VERTICAL LANCE",
+    "THE FORMATION SHIFTS SIDEWAYS.",
+    "DODGE THE FALLING MISSILES.",
+    "DESTROY ALL EIGHTEEN SHIPS.",
+    "TIME LIMIT: 220 FLIGHT TICKS."
+  ],
+  "footer": "A/D MOVE  RETURN FIRE"
+}

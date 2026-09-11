@@ -1,0 +1,32 @@
+{
+  "id": "chain-suit",
+  "title": "CHAIN SUIT",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 1,
+  "rate": 255,
+  "hud": [
+    [
+      2,
+      1,
+      "THREE HANDS / BUILD YOUR HAND"
+    ],
+    [
+      14,
+      1,
+      "SCORE      GOAL       REDRAWS"
+    ]
+  ],
+  "help": [
+    "A/D : CHOOSE A CARD",
+    "W : REPLACE IT (TWICE/HAND)",
+    "BUTTON : SCORE THE HAND",
+    "HIGH 3 / PAIR 8 / MULTI 16",
+    "ALL SAME SUIT SCORES 25.",
+    "MAKE 25 POINTS IN THREE HANDS."
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

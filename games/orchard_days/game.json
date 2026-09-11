@@ -1,0 +1,42 @@
+{
+  "id": "orchard-days",
+  "title": "ORCHARD DAYS",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 1,
+  "rate": 255,
+  "hud": [
+    [
+      2,
+      19,
+      "ORCHARD LOG"
+    ],
+    [
+      4,
+      20,
+      "SEEDS"
+    ],
+    [
+      9,
+      20,
+      "FRUIT"
+    ],
+    [
+      14,
+      20,
+      "DAY"
+    ]
+  ],
+  "help": [
+    "WASD : SELECT A PLOT",
+    "BUTTON : PLANT / WATER / PICK",
+    "GROW THREE TIMES TO RIPEN.",
+    "RAIN FALLS EVERY FOUR DAYS.",
+    "HARVEST 18 FRUIT IN 28 DAYS.",
+    "PICKING RETURNS TWO SEEDS."
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

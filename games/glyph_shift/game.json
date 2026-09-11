@@ -1,0 +1,32 @@
+{
+  "id": "glyph-shift",
+  "title": "GLYPH SHIFT",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 10,
+  "rate": 255,
+  "hud": [
+    [
+      2,
+      18,
+      "RULE TABLE"
+    ],
+    [
+      14,
+      19,
+      "REWRITES"
+    ]
+  ],
+  "help": [
+    "WASD / PAD : MOVE",
+    "BUTTON : SWAP THE WALL RULE",
+    "ONLY ONE OBJECT TYPE BLOCKS.",
+    "CHANGE THE RULE TO CROSS IT.",
+    "REACH THE DIAMOND.",
+    "SPACE : RESTART"
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

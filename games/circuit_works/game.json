@@ -1,0 +1,42 @@
+{
+  "id": "circuit-works",
+  "title": "CIRCUIT WORKS",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 10,
+  "rate": 255,
+  "hud": [
+    [
+      2,
+      2,
+      "LOGIC WORKBENCH"
+    ],
+    [
+      3,
+      18,
+      "IN   WANT NOW"
+    ],
+    [
+      18,
+      2,
+      "A AND  B OR  C XOR"
+    ],
+    [
+      19,
+      18,
+      "TESTS"
+    ]
+  ],
+  "help": [
+    "W/S : SELECT A GATE",
+    "A/D : AND / OR / XOR",
+    "BUTTON : RUN THE TRUTH TABLE",
+    "G1=A OP B / G2=G1 OP A",
+    "G3=G2 OP B : MATCH ALL OUTPUTS",
+    "A AND / B OR / C XOR"
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

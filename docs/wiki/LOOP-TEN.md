@@ -1,5 +1,7 @@
 # LOOP TEN
 
+[ホーム](Home) → [探索・アドベンチャー](Genre-Exploration) → LOOP TEN
+
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=loop-ten) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/loop_ten)
 
 同じブラウザーでBASIC ROMを事前に登録してください。
@@ -12,7 +14,7 @@
 
 | 操作 | キーボード | 1ボタンパッド |
 | --- | --- | --- |
-| 移動 | W/A/X/D、長押し可 | 上下左右、長押し可 |
+| 移動 | W/A/S/D、長押し可 | 上下左右、長押し可 |
 | 封印／アンカーを使う | RETURN | ボタン |
 | 早めに巻き戻す | SPACE | 点灯済みの封印をもう一度使う |
 | BASICへ戻る | CTRL+C | キーボードを使用 |
@@ -30,7 +32,7 @@ HUDは残り秒数、太い時間バー、ループ回数、部屋番号、12個
 
 ## ビルドと検証
 
-開発環境を用意して `make -C games/loop_ten` を実行します。出力は `build/loop-ten.prg`、開始番地は `$0300`。本体と定数は7,041 bytes。画面・状態・保存領域・512 bytesのスタックを含めて標準16KB内、PCGは32文字です。
+開発環境を用意して `make -C games/loop_ten` を実行します。出力は `build/loop-ten.prg`、開始番地は `$0300`。本体と定数は7,028 bytes。画面・状態・保存領域・512 bytesのスタックを含めて標準16KB内、PCGは32文字です。
 
 `make -C games/loop_ten test` は時間切れ、長押し、封印の持越し、扉の開閉、アンカー、罠、時間計算の桁あふれを検証します。12回の巻き戻し区間を使う安全な入力手順で、180歩・全12封印をクリアしました。これは最短ループ数ではありません。
 

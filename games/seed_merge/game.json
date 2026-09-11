@@ -1,0 +1,36 @@
+{
+  "id": "seed-merge",
+  "title": "SEED MERGE",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 1,
+  "rate": 255,
+  "hud": [
+    [
+      3,
+      23,
+      "NURSERY"
+    ],
+    [
+      6,
+      23,
+      "BEST"
+    ],
+    [
+      13,
+      23,
+      "MOVES"
+    ]
+  ],
+  "help": [
+    "WASD / PAD : SLIDE ALL SEEDS",
+    "EQUAL NUMBERS MERGE ONCE A TURN",
+    "A NEW TWO APPEARS AFTER A MOVE",
+    "GROW A SIXTY FOUR TO WIN.",
+    "NO POSSIBLE MERGES ENDS GAME."
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}

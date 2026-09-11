@@ -1,0 +1,36 @@
+{
+  "id": "frost-steps",
+  "title": "FROST STEPS",
+  "version": "1.0.0",
+  "ramKiB": 16,
+  "entry": 768,
+  "modules": [],
+  "nativeRules": true,
+  "levels": 10,
+  "rate": 255,
+  "hud": [
+    [
+      3,
+      19,
+      "ICE COMPASS"
+    ],
+    [
+      5,
+      20,
+      "CRYSTALS"
+    ],
+    [
+      12,
+      20,
+      "SLIDES"
+    ]
+  ],
+  "help": [
+    "WASD / PAD : START SLIDING",
+    "YOU STOP ONLY AT A WALL.",
+    "COLLECT EVERY ICE CRYSTAL.",
+    "EIGHTY SLIDES PER CAVERN.",
+    "SPACE : RESTART"
+  ],
+  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+}
