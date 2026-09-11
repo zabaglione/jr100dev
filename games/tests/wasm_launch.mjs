@@ -37,6 +37,22 @@ for(const game of selected) {
   assert(state().programCounter>=768 && state().programCounter<0x3000);
   const pixels=wasm.HEAPU8.slice(wasm._jr_frame_data(),wasm._jr_frame_data()+wasm._jr_frame_size());
   assert(pixels.some(n=>n===1));
+  if (metadata.launchCheck?.titleAnimation) {
+    const {address, size, frames} = metadata.launchCheck.titleAnimation;
+    const bank = () => Array.from({length: 256}, (_, i) => peek(0xc000 + i));
+    const original = bank();
+    const offset = address - 0xc000;
+    const seen = new Set();
+    for (let i = 0; i < frames; i++) {
+      frame(1);
+      const current = bank();
+      assert.deepEqual(current.slice(0, offset), original.slice(0, offset));
+      assert.deepEqual(current.slice(offset + size), original.slice(offset + size));
+      seen.add(current.slice(offset, offset + size).join(','));
+    }
+    assert(seen.size >= 2, `${game.id} title did not animate`);
+    assert.equal(peek(modeAddress), 0);
+  }
   assert(wasm._jr_audio_size()>0);
   check(wasm._jr_clear_audio());
   check(wasm._jr_set_key(8,3,1));frame(6);check(wasm._jr_set_key(8,3,0));frame(startFrames);

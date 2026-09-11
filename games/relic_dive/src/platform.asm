@@ -55,12 +55,6 @@ ENTRY_FAST_ZERO:
     LDAA $C800
     ORAA #$20
     STAA $C800
-    LDX #TILES
-    STX TEXT_SRC
-    LDX #$C000
-    STX TEXT_DEST
-    LDAB #TILES_END - TILES
-    JSR COPY_BYTES
     LDAA #1
     STAA G_SEED + 1
     STAA G_DIFFICULTY
@@ -335,6 +329,8 @@ GLYPH_STORE:
     RTS
 ; X string, A:B VRAM address.
 TEXT:
+    PSHB
+    CLR TEXT_PAIR_INDEX
     STX TEXT_SRC
     STAA TEXT_DEST
     STAB TEXT_DEST + 1
@@ -344,14 +340,33 @@ TEXT_NEXT:
     BEQ TEXT_DONE
     INX
     STX TEXT_SRC
+    JSR TEXT_EMIT
+    BRA TEXT_NEXT
+TEXT_DONE:
+    PULB
+    RTS
+; Tokens 128..255 expand to two earlier symbols; literals are ASCII.
+TEXT_EMIT:
+    TSTA
+    BPL TEXT_LITERAL
+    ASLA
+    STAA TEXT_PAIR_INDEX + 1
+    LDX #TEXT_PAIRS
+    ADX TEXT_PAIR_INDEX
+    LDAB 1,X
+    PSHB
+    LDAA 0,X
+    JSR TEXT_EMIT
+    PULA
+    BRA TEXT_EMIT
+TEXT_LITERAL:
     LDX TEXT_DEST
     CPX #FRAMEBUFFER + 768
-    BGE TEXT_DONE
+    BGE TEXT_EMIT_DONE
     JSR GLYPH
     INX
     STX TEXT_DEST
-    BRA TEXT_NEXT
-TEXT_DONE:
+TEXT_EMIT_DONE:
     RTS
 
 ; Compose offscreen, then touch VRAM only where the completed frame differs.

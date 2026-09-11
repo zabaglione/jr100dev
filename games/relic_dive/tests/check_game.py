@@ -492,6 +492,9 @@ def main():
     from check_rendering import check as check_rendering
 
     result["rendering"] = check_rendering()
+    from check_title import check as check_title
+
+    result["title"] = check_title()
     from check_menu_wrap import check as check_menu_wrap
 
     result["menu_wrap"] = check_menu_wrap()

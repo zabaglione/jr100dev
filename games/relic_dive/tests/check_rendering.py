@@ -20,7 +20,8 @@ def stats(before, after):
 
 
 def check():
-    # Golden completed screens captured from the original direct-VRAM renderer.
+    # Unchanged gameplay screens from the original direct-VRAM renderer.
+    # The redesigned title has separate pixel/text/bank checks in check_title.
     goldens = json.loads(Path(__file__).with_name("render_goldens.json").read_text())
     for r in goldens:
         m = Machine()
