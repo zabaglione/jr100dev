@@ -16,6 +16,8 @@ games:
 games-test:
 	PYTHONPATH=$(PYTHONPATH) $(PYTHON) games/native/check_compiler.py
 	@for game in $(GAMES); do $(MAKE) -C games/$$game test || exit $$?; done
+	$(PYTHON) games/tests/check_motion.py
+	$(PYTHON) games/tests/check_feedback.py
 
 test:
 	PYTHONPATH=$(PYTHONPATH) $(PYTHON) -m pytest tests

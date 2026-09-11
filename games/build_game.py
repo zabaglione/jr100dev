@@ -95,11 +95,19 @@ def build(directory):
     from fonts import instrument as instrument_fonts
 
     fonts_enabled = apply_fonts(output, metadata)
+    from art import emit
+    from feedback import jingle
+
+    with (output / "assets.inc").open("a") as asset_file:
+        asset_file.write(emit("RESULT_JINGLE", jingle(metadata["id"])))
     modules = [
-        ROOT / "common" / name for name in ("memory.inc", "platform.asm", "sound.asm")
+        ROOT / "common" / name
+        for name in ("memory.inc", "platform.asm", "sound.asm", "feedback.asm")
     ]
     if metadata.get("nativeRules"):
         modules += [ROOT / "native/runtime.asm", output / "rules.inc"]
+        if "JSR N_ANIMATE" in compiled:
+            modules += [ROOT / "native/motion.asm"]
     modules += [directory / "src" / name for name in metadata["modules"]]
     if metadata["id"] != "loop-ten":
         modules += [ROOT / "common/confirm.asm"]

@@ -17,7 +17,6 @@ def act():
             if b[s.cursor] == 4:
                 s.selected = s.cursor
         else:
-            valid = 0
             for a in range(4):
                 mid = move(s.selected, a + 1, 5, 5)
                 end = move(mid, a + 1, 5, 5)
@@ -30,10 +29,17 @@ def act():
                 ):
                     b[mid] = 0
                     b[s.selected] = 0
+                    s.jumping = 1
+                    s.jump = s.selected
+                    animate(3)
+                    s.jump = mid
+                    animate(6)
+                    s.jump = end
+                    animate(3)
                     b[end] = 4
+                    s.jumping = 0
                     s.left -= 1
                     sound(1)
-                    valid = 1
             s.selected = 255
             if s.left <= 5:
                 win()
@@ -51,3 +57,5 @@ def draw():
     number(24, 13, 5)
     if s.selected != 255:
         letter(2 + s.selected % 5 * 3, 4 + s.selected // 5 * 3, 83)
+    if s.jumping:
+        tile(2 + s.jump % 5 * 3, 3 + s.jump // 5 * 3, 4)

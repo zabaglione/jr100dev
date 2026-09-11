@@ -116,6 +116,9 @@ N_RETRY:
     TSTA
     BNE N_NEW_LEVEL
 N_DRAW:
+    JSR N_RENDER
+    JMP FRAME_READY
+N_RENDER:
     LDX #HUD_SCREEN
     STX SRC
     LDX #FRAMEBUFFER
@@ -144,7 +147,7 @@ N_STATUS:
     STX TEXT_OUT
     JSR TEXT
 N_PRESENT:
-    JSR PRESENT
+    JMP PRESENT
 FRAME_READY:
     JMP IDLE
 N_SCREEN:
@@ -156,12 +159,11 @@ N_SCREEN:
     JSR COPY
     JMP PRESENT
 N_INDEX:
-    TSTA
-    BEQ N_INDEX_END
-    INX
-    DECA
-    BRA N_INDEX
-N_INDEX_END:
+    ; MB8861H's native 16-bit add avoids walking every preceding array cell.
+    ; The high byte stays zero from ENTRY_CLEAR; retain A=0 on return.
+    STAA $333C
+    ADX $333B
+    CLRA
     RTS
 N_MUL:
     STAA N_TMP
@@ -260,9 +262,7 @@ N_SOUND:
 N_WIN:
     LDAA #2
     STAA MODE
-    LDAA #2
-    STAA N_ARG0
-    JMP N_SOUND
+    JMP QUEUE_CLEAR
 N_LOSE:
     LDAA #3
     STAA MODE

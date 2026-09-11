@@ -495,6 +495,9 @@ def main():
     from check_title import check as check_title
 
     result["title"] = check_title()
+    from check_feedback import check as check_feedback
+
+    result["feedback"] = check_feedback()
     from check_menu_wrap import check as check_menu_wrap
 
     result["menu_wrap"] = check_menu_wrap()

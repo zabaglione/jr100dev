@@ -7,6 +7,8 @@ def trace():
     direction = 4
     for i in range(64):
         c[p] = 1
+        if s.turns:
+            animate(2)
         if p == 6:
             win()
             return
@@ -53,12 +55,18 @@ def tick():
 
 
 def draw():
+    x = 2
+    y = 4
     for i in range(49):
-        tile(2 + i % 7 * 2, 4 + i // 7 * 2, 0)
+        tile(x, y, 0)
         if c[i]:
-            letter(2 + i % 7 * 2, 4 + i // 7 * 2, 46)
+            letter(x, y, 46)
         if b[i]:
-            tile(2 + i % 7 * 2, 4 + i // 7 * 2, 4 if b[i] == 1 else 5)
+            tile(x, y, 4 if b[i] == 1 else 5)
+        x += 2
+        if x == 16:
+            x = 2
+            y += 2
     tile(14, 4, 3)
     letter(1 + s.cursor % 7 * 2, 4 + s.cursor // 7 * 2, 62)
     number(24, 9, s.turns)

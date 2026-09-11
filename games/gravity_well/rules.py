@@ -12,6 +12,7 @@ def act():
     if s.action < 5:
         changed = 0
         for step in range(6):
+            moved = 0
             for k in range(64):
                 i = 63 - k if s.action == 2 or s.action == 4 else k
                 if c[i]:
@@ -20,7 +21,10 @@ def act():
                         c[n] = 1
                         c[i] = 0
                         changed = 1
+                        moved = 1
                         take_rune(n)
+            if moved:
+                animate(4)
         if changed:
             spend_move()
             sound(1)
@@ -37,11 +41,19 @@ def tick():
 
 
 def draw():
-    grid(8, 8, 0, 3)
-    draw_runes(0)
+    x = 0
+    y = 3
     for i in range(64):
+        kind = b[i]
+        if i == d[67] and not (s.runes & 1) or i == d[68] and not (s.runes & 2):
+            kind = 6
         if c[i]:
-            tile(i % 8 * 2, 3 + i // 8 * 2, 4)
+            kind = 4
+        tile(x, y, kind)
+        x += 2
+        if x == 16:
+            x = 0
+            y += 2
     number(22, 7, s.filled)
     tile(20, 12, 4)
     tile(25, 12, 6)

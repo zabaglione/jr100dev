@@ -21,6 +21,23 @@ genres = {g["id"]: g for g in library["genres"]}
 games = library["games"]
 assert set(visuals) == {g["id"] for g in games}
 assert set(titles) == set(visuals)
+MOTION = {
+    "frost-steps": "氷上を1マスずつ滑り、途中でクリスタルやルーンを拾う様子を表示します。1回の方向入力は、滑走距離にかかわらず1手です。",
+    "gravity-well": "重力を変えると、球が1マスずつ転がって止まるまでを表示します。複数の球が移動する順序も追えます。",
+    "seed-merge": "種の移動、同じ種の合成、隙間を詰める移動、新しい種の出現を順に表示します。",
+    "prism-trace": "鏡を回した後、光が通るマスを順に表示します。反射して進む経路を追えます。",
+    "peg-garden": "選んだ駒が隣の駒を飛び越え、空いた穴に着地する様子を表示します。",
+    "quiet-route": "プレイヤーが動いた盤面を一度表示してから、警備員が応答します。自分の行動と敵の行動を区別できます。",
+}
+
+
+def feedback_section(game):
+    text = "## 動きとクリア演出\n\n"
+    if game["id"] in MOTION:
+        text += MOTION[game["id"]] + "演出中の追加入力は受け付けません。\n\n"
+    duration = "約1.9秒" if game["id"] == "relic-dive" else "約1.6秒"
+    text += f"クリア時は完成した盤面・結果を残し、{duration}のジングルと余韻を挟みます。その後、キーを押し直して次の操作に進みます。クリア直前から押し続けたキーや、演出中に押したキーで結果を飛ばすことはありません。\n\n"
+    return text
 
 
 def page(genre):
@@ -57,10 +74,14 @@ def visual_section(game):
         + "## ゲーム専用フォント\n\n"
         + font_description(game)
         + "\n\n"
+        + feedback_section(game)
     )
 
 
 def update_visual_section(text, game):
+    text = re.sub(
+        r"\n## 動きとクリア演出\n.*?(?=\n## |\Z)", "\n", text, flags=re.DOTALL
+    )
     text = re.sub(
         r"\n## タイトルのデザイン\n.*?(?=\n## |\Z)", "\n", text, flags=re.DOTALL
     )
@@ -89,12 +110,14 @@ home += (
     + launch_note()
 )
 home += "\n\n基本の方向キーは **W/A/S/D**、8方向の作品は **QWE／AD／ZXC** です。作品ごとの操作は各ページに掲載しています。\n\nエミュレーターで確認済みです。実機での動作・音声は未確認です。\n\n"
+home += "[移動とクリア演出・動作動画](Motion-and-Clear)\n\n"
 home += f"[ビルド可能なソースと開発手順]({BASE}/tree/main/games)\n"
 (WIKI / "Home.md").write_text(home)
 sidebar = "[JR-100 Games](Home)\n\n"
 for gid, genre in genres.items():
     sidebar += f"- [{genre['title']}]({page(gid)})\n"
 sidebar += "\n[全作品をタイトル順に探す](All-Games)\n\n[タイトル画面ギャラリー](Title-Design)\n\n[操作・起動方法](Controls)\n\n[画面表現の工夫](Visual-Design) · [専用フォント](Font-Design)\n"
+sidebar += "\n[移動とクリア演出](Motion-and-Clear)\n"
 (WIKI / "_Sidebar.md").write_text(sidebar)
 all_games = "# 全作品・タイトル順\n\n[ホーム](Home) · [ジャンルから探す](Home)\n\n| タイトル | ジャンル | 起動 |\n| --- | --- | --- |\n"
 for g in sorted(games, key=lambda g: g["title"]):
@@ -141,6 +164,10 @@ Q/E/Z/Cが斜め、Xが下です。Sは移動に使いません。RELIC DIVEで�
 ゲームは主な操作に1ボタンパッドも使えます。説明の表示、任意のタイミングでのやり直し、BASICへ戻る操作にはキーボードを使用します。
 
 FROST STEPS、MAGNET VAULT、GLYPH SHIFT、GRAVITY WELLは40面と星評価に対応しています。Fで面選択、WASDで選択、RETURNで開始、SPACEでタイトルへ戻ります。面選択は最初から全40面を選べます。クリア画面のSPACEは同じ面の再挑戦、RETURNは次の面です。終了前にタイトル／面選択のPWを書き留めると、次回Xから面番号と全40面の最高評価を復元できます。
+
+## 移動中・クリア直後の入力
+
+連続移動の演出中は追加の操作を受け付けません。クリア時は完成した盤面・結果を残し、約1.6秒（RELIC DIVEは約1.9秒）のジングルと余韻を挟みます。終わってからキーを押し直してください。[動作動画と作品ごとの変更](Motion-and-Clear)も掲載しています。
 
 ## Wikiから起動する
 
@@ -192,6 +219,8 @@ for g in games:
     )
     body += "やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。\n\n"
     body += f"{hud}\n\n![ゲーム開始時]({IMAGES}/{g['id']}/play-01.png)\n\n![プレイ中の場面]({IMAGES}/{g['id']}/play-02.png)\n\n"
+    if g["id"] == "frost-steps":
+        body += f"## 滑走とクリアの動画\n\n![1面を滑走して3つ星クリアする実画面]({IMAGES}/frost-steps/slide-clear.gif)\n\n[音付き動画を見る]({BASE}/blob/main/games/frost_steps/images/slide-clear.mp4)。キーボード入力だけで1面をクリアした、約7.5秒のエミュレーター録画です。GIFには音がありません。\n\n"
     if g["id"] == "brick-pulse":
         body += f"![落下アイテム]({IMAGES}/brick-pulse/items.png)\n\n![後半のドローンと装甲ブロック]({IMAGES}/brick-pulse/drone.png)\n\n![やり直し確認]({IMAGES}/brick-pulse/reset.png)\n\n"
     if meta.get("rankedCampaign"):
@@ -299,3 +328,16 @@ for gid, genre in genres.items():
         title_page += f'| [<img src="{IMAGES}/{game_id}/title.png" width="300" alt="{game["title"]}">]({game_id.upper()}) | **[{game["title"]}]({game_id.upper()})**<br>{titles[game_id]}<br>[プレイ]({PLAY}{game_id}) |\n'
     title_page += "\n"
 (WIKI / "Title-Design.md").write_text(title_page)
+
+
+motion_page = "# 移動とクリア演出\n\n[ホーム](Home) → 移動とクリア演出\n\n"
+motion_page += "連続移動の途中経過を表示する演出を6作品に追加しました。途中のマス、合成、敵の応答など、入力から結果までの流れを追えるようにしています。全51作品にクリア時のジングルと結果を見せる間を設けています。\n\n"
+motion_page += f"## FROST STEPSの実画面\n\n![滑走から3つ星クリアまで]({IMAGES}/frost-steps/slide-clear.gif)\n\n[音付き動画]({BASE}/blob/main/games/frost_steps/images/slide-clear.mp4) · [プレイ]({PLAY}frost-steps)\n\n"
+motion_page += "## 移動の途中経過\n\n| 作品 | 演出 |\n| --- | --- |\n"
+for game_id, description in MOTION.items():
+    motion_page += f"| [{game_id.upper().replace('-', ' ')}]({game_id.upper()}) | {description} |\n"
+motion_page += "\n元から1マスずつ進む移動、時間を区切って進むアクション、カーソル選択、LOOP TENの意図したワープは、それぞれのテンポを保っています。追加した演出中の入力は捨て、次の行動が勝手に出ないようにしています。\n\n"
+motion_page += "## クリア後の余韻\n\n最初の50作品は、完成した盤面と結果を残し、約1.6秒のジングルと余韻を挟んでから次の操作を受け付けます。曲は明るい結晶系、探索系、標準の3種類を作品に合わせて使います。押しっぱなしや演出中の入力では結果を飛ばしません。RELIC DIVEは容量に合わせた専用の約1.9秒のジングルを最終クリア時に鳴らします。通常プレイ中の効果音・BGMはありません。\n\n"
+motion_page += "## 検証と録画\n\nすべて標準RAM 16KB内で、JR-100のCPUと音源を使って実行します。手数・盤面・評価、全ステージの入力リプレイ、途中フレーム、結果表示の保持、ジングルの音声出力と入力の抑止をエミュレーターで検査しています。掲載動画は所有するBASIC ROMから起動し、ゲームの状態を書き換えずに入力だけで録画しました。実機での表示・動作・音声は未確認です。\n\n"
+motion_page += "```sh\nmake games-test\n.venv/bin/python games/frost_steps/capture_motion.py --rom /path/to/owned-rom.prg\n```\n"
+(WIKI / "Motion-and-Clear.md").write_text(motion_page)

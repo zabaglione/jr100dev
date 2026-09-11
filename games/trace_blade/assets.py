@@ -136,7 +136,6 @@ def generate(output):
             "SFX_UNDO": [1, 2, 20, 1, 13, 2],
             "SFX_EMPTY": [2, 1, 6, 3],
             "SFX_CUT": [3, 3, 42, 1, 30, 1, 18, 2],
-            "SFX_CLEAR": [4, 5, 18, 3, 22, 3, 25, 3, 30, 3, 37, 10],
         },
         extended_theme(3),
     )

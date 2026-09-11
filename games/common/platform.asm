@@ -163,7 +163,7 @@ PRESENT_SAME:
     LDX SRC
     CPX #FRAMEBUFFER + 768
     BNE PRESENT_ROW
-    RTS
+    JMP RESULT_PRESENTED
 
 ; Text uses ordinary ROM letters while custom graphics use PCG.
 TEXT:

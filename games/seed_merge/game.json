@@ -1,7 +1,7 @@
 {
   "id": "seed-merge",
   "title": "SEED MERGE",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],

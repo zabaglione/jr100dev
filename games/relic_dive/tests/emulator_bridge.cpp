@@ -73,6 +73,14 @@ int reg(Emulator* e,int id) {
     switch(id){case 0:return r.pc;case 1:return r.sp;case 2:return r.a;case 3:return r.b;default:return r.ix;}
 }
 long long clocks(Emulator* e) { return e->clock_count(); }
+int audio_peak(Emulator* e) {
+    auto& sound = e->sound();
+    sound.execute(e->clock_count());
+    int peak = 0;
+    for (auto sample : sound.samples()) peak = std::max(peak, std::abs(int(sample)));
+    sound.clear_samples();
+    return peak;
+}
 int run_until(Emulator* e, int pc, int max_cycles) {
     auto end=e->clock_count()+max_cycles;
     do {

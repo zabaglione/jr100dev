@@ -14,15 +14,16 @@ def act():
         before = s.pos
         for i in range(7):
             target = move(s.pos, s.action, 8, 8)
-            if b[target] != 1:
+            if target != s.pos and b[target] != 1:
+                if s.pos == before:
+                    spend_move()
                 s.pos = target
                 take_rune(s.pos)
                 if c[target]:
                     c[target] = 0
                     s.left -= 1
                     sound(1)
-        if s.pos != before:
-            spend_move()
+                animate(4)
         if s.left == 0:
             ranked_clear()
 
@@ -32,12 +33,19 @@ def tick():
 
 
 def draw():
-    grid(8, 8, 0, 3)
+    x = 0
+    y = 3
     for i in range(64):
-        if c[i]:
-            tile(i % 8 * 2, 3 + i // 8 * 2, 3)
-    draw_runes(0)
-    tile(s.pos % 8 * 2, 3 + s.pos // 8 * 2, 2)
+        kind = 3 if c[i] else b[i]
+        if i == d[67] and not (s.runes & 1) or i == d[68] and not (s.runes & 2):
+            kind = 6
+        if i == s.pos:
+            kind = 2
+        tile(x, y, kind)
+        x += 2
+        if x == 16:
+            x = 0
+            y += 2
     number(23, 7, s.left)
     text(19, 11, "ICE RUNES")
     tile(22, 13, 6)

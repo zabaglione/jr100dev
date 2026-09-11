@@ -44,6 +44,7 @@ for name, args, ret in [
     ("registers_set", [C.c_void_p] + [C.c_int] * 5, None),
     ("reg", [C.c_void_p, C.c_int], C.c_int),
     ("clocks", [C.c_void_p], C.c_longlong),
+    ("audio_peak", [C.c_void_p], C.c_int),
     ("run_until", [C.c_void_p, C.c_int, C.c_int], C.c_int),
     ("key", [C.c_void_p] + [C.c_int] * 3, None),
     ("pad", [C.c_void_p, C.c_int], None),

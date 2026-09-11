@@ -1,4 +1,55 @@
 ; SPDX-License-Identifier: MIT
+; A tiny one-shot victory phrase. Only the finished adventure uses sound.
+END_FEEDBACK:
+    LDAA G_MODE
+    CMPA #9
+    BNE END_SOUND_DONE
+    TST G_CLEAR_SUNG
+    BNE END_SOUND_DONE
+    INC G_CLEAR_SUNG
+    LDAA $C80B
+    PSHA
+    ANDA #$1F
+    ORAA #$C0
+    STAA $C80B
+    LDAA $C802
+    PSHA
+    ORAA #$80
+    STAA $C802
+    LDX #END_NOTES
+END_SOUND_NOTE:
+    LDAA 1,X
+    STAA $C804
+    LDAA 0,X
+    STAA $C805
+    LDAB 2,X
+    INX
+    INX
+    INX
+END_SOUND_DURATION:
+    LDAA #$FF
+    STAA $C808
+    STAA $C809
+END_SOUND_WAIT:
+    LDAA $C80D
+    BITA #$20
+    BEQ END_SOUND_WAIT
+    DECB
+    BNE END_SOUND_DURATION
+    CPX #END_NOTES_END
+    BNE END_SOUND_NOTE
+    PULA
+    STAA $C802
+    PULA
+    STAA $C80B
+    JSR POLL_KEY
+    CLR G_PENDING
+END_SOUND_DONE:
+    RTS
+END_NOTES:
+    .byte $06,$AB,3, $05,$4C,3, $04,$74,4
+    .byte $03,$57,3, $04,$74,3, $03,$57,10
+END_NOTES_END:
 ; Native JR-100 I/O. CC02 bit 0..4 is active-high; no polarity probing.
 ENTRY:
     TPA

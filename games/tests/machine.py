@@ -50,6 +50,8 @@ for name, args, result in [
     ("pad", [C.c_void_p, C.c_int], None),
     ("pixels", [C.c_void_p, C.c_void_p], None),
     ("audio_peak", [C.c_void_p], C.c_int),
+    ("audio_size", [C.c_void_p], C.c_int),
+    ("audio_copy", [C.c_void_p, C.c_void_p], None),
 ]:
     f = getattr(lib, name)
     f.argtypes, f.restype = args, result
@@ -127,7 +129,7 @@ class Machine:
         address = self.sym[name] if isinstance(name, str) else name
         return bytes(self.get(address + i) for i in range(length))
 
-    def until(self, name, budget=3_000_000):
+    def until(self, name, budget=12_000_000):
         address = self.sym[name] if isinstance(name, str) else name
         before = lib.clocks(self.p)
         assert lib.until(self.p, address, budget), (
@@ -154,7 +156,7 @@ class Machine:
         self.until("CONFIRM_DISPATCH" if modal else "DISPATCH")
         if "CONFIRM_READY" in self.sym:
             assert lib.until_either(
-                self.p, self.sym["FRAME_READY"], self.sym["CONFIRM_READY"], 3_000_000
+                self.p, self.sym["FRAME_READY"], self.sym["CONFIRM_READY"], 12_000_000
             )
         else:
             self.until("FRAME_READY")

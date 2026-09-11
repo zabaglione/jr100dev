@@ -298,7 +298,6 @@ def generate(output):
         "SFX_SHOT": [3, 4, 46, 1, 30, 1, 16, 2, 5, 2],
         "SFX_KILL": [4, 4, 20, 2, 32, 2, 39, 3, 44, 4],
         "SFX_DEATH": [5, 5, 28, 4, 24, 5, 18, 6, 11, 8, 3, 12],
-        "SFX_CLEAR": [4, 6, 25, 4, 29, 4, 32, 4, 37, 6, 0, 3, 44, 10],
         "SFX_EMPTY": [2, 2, 5, 2, 0, 2],
     }
     for name, values in effects.items():

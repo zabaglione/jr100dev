@@ -1,0 +1,38 @@
+; Finish drawing before the victory phrase. Poll sound/input while the final
+; board remains visible; discard these inputs so a held key cannot skip it.
+RESULT_PENDING: .equ $3335
+RESULT_ACTIVE: .equ $3336
+RESULT_TAIL: .equ $3337
+
+QUEUE_CLEAR:
+    LDAA #1
+    STAA RESULT_PENDING
+    RTS
+
+RESULT_PRESENTED:
+    TST RESULT_PENDING
+    BEQ RESULT_DONE
+    CLR RESULT_PENDING
+    INC RESULT_ACTIVE
+    JSR SOUND_STOP
+    LDX #RESULT_JINGLE
+    JSR PLAY_SFX
+RESULT_LISTEN:
+    JSR CLOCK_SERVICE
+    CLR KEY_PENDING
+    LDAA SFX_LEFT
+    ORAA SFX_TIME
+    BNE RESULT_LISTEN
+    LDAA TICK
+    STAA RESULT_TAIL
+RESULT_BREATHE:
+    JSR CLOCK_SERVICE
+    CLR KEY_PENDING
+    LDAA TICK
+    SUBA RESULT_TAIL
+    CMPA #18
+    BCS RESULT_BREATHE
+    CLR KEY_ACTION
+    CLR RESULT_ACTIVE
+RESULT_DONE:
+    RTS

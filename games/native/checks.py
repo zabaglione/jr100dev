@@ -39,6 +39,7 @@ class Model:
             "letter": lambda *a: None,
             "number": lambda *a: None,
             "sound": lambda *a: None,
+            "animate": lambda *a: None,
             "held": lambda: self.held,
             "win": self.win,
             "lose": lambda: setattr(self.s, "mode", 3),

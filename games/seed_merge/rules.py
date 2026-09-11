@@ -26,41 +26,49 @@ def init():
     s.best = 1
 
 
+def settle():
+    changed = 0
+    for step in range(3):
+        moved = 0
+        for line in range(4):
+            for i in range(3):
+                p = index(line, i, s.action)
+                n = index(line, i + 1, s.action)
+                if not b[p] and b[n]:
+                    b[p] = b[n]
+                    b[n] = 0
+                    moved = 1
+                    changed = 1
+        if moved:
+            animate(3)
+    return changed
+
+
 def act():
     if s.action >= 5:
         return
-    changed = 0
+    changed = settle()
+    merged = 0
     for line in range(4):
-        for i in range(4):
-            c[i] = 0
-        count = 0
-        for i in range(4):
-            value = b[index(line, i, s.action)]
-            if value:
-                c[count] = value
-                count += 1
         for i in range(3):
-            if c[i] and c[i] == c[i + 1]:
-                c[i] += 1
-                c[i + 1] = 0
-                if c[i] > s.best:
-                    s.best = c[i]
-        count = 0
-        for i in range(4):
-            if c[i]:
-                c[count] = c[i]
-                if count != i:
-                    c[i] = 0
-                count += 1
-        for i in range(4):
             p = index(line, i, s.action)
-            if b[p] != c[i]:
+            n = index(line, i + 1, s.action)
+            if b[p] and b[p] == b[n]:
+                b[p] += 1
+                b[n] = 0
+                merged = 1
                 changed = 1
-            b[p] = c[i]
+                if b[p] > s.best:  # noqa: PLR1730 - native DSL has no max()
+                    s.best = b[p]
+    if merged:
+        sound(1)
+        animate(8)
+    changed |= settle()
     if changed:
         spawn()
         s.moves += 1
         sound(1)
+        animate(4)
     possible = 0
     for i in range(16):
         if b[i] == 0:

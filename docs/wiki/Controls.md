@@ -33,6 +33,10 @@ Q/E/Z/Cが斜め、Xが下です。Sは移動に使いません。RELIC DIVEで�
 
 FROST STEPS、MAGNET VAULT、GLYPH SHIFT、GRAVITY WELLは40面と星評価に対応しています。Fで面選択、WASDで選択、RETURNで開始、SPACEでタイトルへ戻ります。面選択は最初から全40面を選べます。クリア画面のSPACEは同じ面の再挑戦、RETURNは次の面です。終了前にタイトル／面選択のPWを書き留めると、次回Xから面番号と全40面の最高評価を復元できます。
 
+## 移動中・クリア直後の入力
+
+連続移動の演出中は追加の操作を受け付けません。クリア時は完成した盤面・結果を残し、約1.6秒（RELIC DIVEは約1.9秒）のジングルと余韻を挟みます。終わってからキーを押し直してください。[動作動画と作品ごとの変更](Motion-and-Clear)も掲載しています。
+
 ## Wikiから起動する
 
 1. [JR-100 Web Emulator](https://zabaglione.github.io/pyjr100emu/)で、自分のBASIC ROMを事前に設定します。

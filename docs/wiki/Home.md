@@ -19,4 +19,6 @@
 
 エミュレーターで確認済みです。実機での動作・音声は未確認です。
 
+[移動とクリア演出・動作動画](Motion-and-Clear)
+
 [ビルド可能なソースと開発手順](https://github.com/zabaglione/jr100dev/tree/main/games)

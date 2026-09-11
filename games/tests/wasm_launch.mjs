@@ -138,10 +138,29 @@ for(const game of selected) {
     const letterKeys = [[1,0],[0,4],[1,2],[2,2],[1,3],[1,4],[6,0],[6,1],
       [6,2],[7,3],[7,2],[5,4],[2,0],[2,3],[2,4],[2,1]];
     const value = field => peek(symbols[slots[`s.${field}`]]);
+    let slideObserved = false;
+    let clearObserved = false;
     const press = action => {
       const [row, bit] = keys[action];
       check(wasm._jr_set_key(row, bit, 1)); frame(6);
-      check(wasm._jr_set_key(row, bit, 0)); frame(60);
+      check(wasm._jr_set_key(row, bit, 0));
+      const positions = new Set();
+      let clearFrames = 0;
+      let resultScreen;
+      // Allow the CPU to draw each cell, then finish the victory phrase.
+      for (let i = 0; i < 300; i++) {
+        frame(1);
+        if (game.id !== 'frost-steps') continue;
+        positions.add(value('pos'));
+        if (peek(symbols.RESULT_ACTIVE)) {
+          clearFrames++;
+          const screen = Array.from({length:768}, (_,j)=>peek(0xc100+j));
+          if (resultScreen) assert.deepEqual(screen, resultScreen, 'Clear board must stay visible');
+          resultScreen = screen;
+        }
+      }
+      slideObserved ||= positions.size >= 3;
+      clearObserved ||= clearFrames >= 85;
     };
     for (const action of proof.bonus) {
       assert.equal(peek(modeAddress), 1);
@@ -152,6 +171,11 @@ for(const game of selected) {
     assert.equal(value('runes'), 3);
     assert.equal(value('moves'), value('par'));
     assert.equal(peek(symbols.BEST), 3);
+    if (game.id === 'frost-steps') {
+      assert(slideObserved, 'FROST STEPS must display intermediate positions');
+      assert(clearObserved, 'FROST STEPS must hold the completed board through its jingle');
+      console.log('PASS: frost-steps, shipping WASM intermediate slide and stable clear hold');
+    }
     press(6);
     assert.equal(peek(symbols.CN_ACTIVE), 1);
     press(4); press(5);

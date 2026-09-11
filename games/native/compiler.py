@@ -147,6 +147,10 @@ class Compiler:
         elif name == "held":
             assert not n.args, "held() takes no arguments"
             self.emit("    LDAA KEY_LAST")
+        elif name == "animate":
+            assert len(n.args) == 1
+            self.load(n.args[0])
+            self.emit("    JSR N_ANIMATE")
         elif name in ("tile", "number", "letter", "sound"):
             for i, arg in enumerate(n.args):
                 self.load(arg)

@@ -69,4 +69,14 @@ int audio_peak(Machine* m) {
     s.clear_samples();
     return peak;
 }
+int audio_size(Machine* m) {
+    auto& sound = m->emulator.sound();
+    sound.execute(m->emulator.clock_count());
+    return int(sound.samples().size());
+}
+void audio_copy(Machine* m, int16_t* output) {
+    auto& sound = m->emulator.sound();
+    std::copy(sound.samples().begin(), sound.samples().end(), output);
+    sound.clear_samples();
+}
 }

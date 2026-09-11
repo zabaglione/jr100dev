@@ -1,6 +1,7 @@
 ; SPDX-License-Identifier: MIT
 ; Turn dispatch, difficulty selection, and new adventure state.
 NEW_GAME:
+    CLR G_CLEAR_SUNG
     CLR G_WAND_SLOT
     LDAB G_SEED + 1
     LDAA G_SEED
@@ -152,6 +153,7 @@ SHUFFLE_NEW_SCROLL:
     RTS
 REDRAW:
     JSR RENDER_SCREEN
+    JSR END_FEEDBACK
     JSR POLL_KEY
 FRAME_READY:
     NOP

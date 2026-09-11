@@ -34,6 +34,7 @@ def act():
             win()
             return
         s.alert = distance(s.pos, s.guard) < (2 if s.quiet else 5)
+        animate(5)
         if s.alert:
             a = (
                 1
@@ -63,11 +64,19 @@ def tick():
 
 
 def draw():
-    grid(8, 8, 0, 3)
-    if s.key:
-        tile(12, 5, 0)
-    tile(s.guard % 8 * 2, 3 + s.guard // 8 * 2, 5)
-    tile(s.pos % 8 * 2, 3 + s.pos // 8 * 2, 2)
+    x = 0
+    y = 3
+    for i in range(64):
+        kind = 0 if i == 14 and s.key else b[i]
+        if i == s.guard:
+            kind = 5
+        if i == s.pos:
+            kind = 2
+        tile(x, y, kind)
+        x += 2
+        if x == 16:
+            x = 0
+            y += 2
     number(24, 5, s.battery)
     number(24, 10, s.quiet)
     number(24, 15, s.key)
