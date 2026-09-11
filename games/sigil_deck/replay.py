@@ -138,8 +138,9 @@ def replay(rom=None, captures=None, pad=True):
     m = Machine("sigil_deck", rom=rom)
     if captures:
         captures.mkdir(parents=True, exist_ok=True)
+        (ROOT / "art").mkdir(exist_ok=True)
         m.capture(captures / "title.png")
-        m.export_workbench(captures / "title.pcg.json")
+        m.export_workbench(ROOT / "art/title.pcg.json")
     m.action(5, pad=pad)
     invariant(m)
     steps = 0
@@ -151,7 +152,7 @@ def replay(rom=None, captures=None, pad=True):
         mode = m.get("MODE")
         if mode == 2:
             fight = m.get("BATTLE") + 1
-            print(f'Battle {fight:02}: WIN, HP {m.get("HP")}', flush=True)
+            print(f"Battle {fight:02}: WIN, HP {m.get('HP')}", flush=True)
             if captures and fight in (1, 5):
                 m.capture(captures / f"reward-{fight:02}.png")
             ranks = [
@@ -194,7 +195,7 @@ def replay(rom=None, captures=None, pad=True):
         if captures and fight not in seen:
             m.capture(captures / f"battle-{fight:02}.png")
             if fight == 5:
-                m.export_workbench(captures / "battle.pcg.json")
+                m.export_workbench(ROOT / "art/battle.pcg.json")
             seen.add(fight)
         hand = list(m.read("HAND", 4))
         candidates = [
@@ -214,13 +215,13 @@ def replay(rom=None, captures=None, pad=True):
             select(m, 4, pad)
             m.action(5, pad=pad)
         invariant(m)
-    assert m.get("MODE") == 4, f'Lost battle {m.get("BATTLE")+1}, HP {m.get("HP")}'
+    assert m.get("MODE") == 4, f"Lost battle {m.get('BATTLE') + 1}, HP {m.get('HP')}"
     assert m.read(0x300, len(m.code)) == m.code
     assert lib.min_sp(m.p) >= 0x3E00
     if captures:
         m.capture(captures / "victory.png")
     print(
-        f'PASS: ten battles, HP {m.get("HP")}, {steps} decisions, {len(cards_played)} card types, SP ${lib.min_sp(m.p):04X}'
+        f"PASS: ten battles, HP {m.get('HP')}, {steps} decisions, {len(cards_played)} card types, SP ${lib.min_sp(m.p):04X}"
     )
     return m
 

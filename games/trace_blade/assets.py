@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parent / "common"))
 from art import emit, extended_theme, quad_bank, quads, sound, strings, text_table, word
+from relief import replace_sprites
 
 
 def tiles(kind):
@@ -69,6 +70,7 @@ def generate(output):
         p[y][3] = p[y][60] = 1
     screen = quads(p)
     pcg = [b for i in range(8) for b in tiles(i)]
+    pcg = replace_sprites(pcg, {0: "wall-stone", 3: "socket"})
     text = (
         emit("TITLE_PCG", quad_bank())
         + emit("TITLE_SCREEN", screen)

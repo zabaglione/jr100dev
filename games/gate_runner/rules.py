@@ -36,12 +36,13 @@ def tick():
 
 
 def draw():
-    for y in range(17):
-        letter(3, 3 + y, 58)
-        letter(11, 3 + y, 58)
-        letter(19, 3 + y, 58)
-        letter(27, 3 + y, 58)
-    tile(6 + s.obstacle * 8, 3 + s.age * 2, 1 if s.kind == 0 else 6)
+    # Perspective changes the picture only: lane and collision timing stay exact.
+    spread = 2 + s.age * 6 // 5
+    x = 14 - spread if s.obstacle == 0 else (14 + spread if s.obstacle == 2 else 14)
+    if s.age < 2:
+        letter(x, 4 + s.age * 2, 35 if s.kind == 0 else 79)
+    else:
+        tile(x, 4 + s.age * 2 + (2 if s.age > 3 else 0), 1 if s.kind == 0 else 6)
     tile(6 + s.lane * 8, 17 - s.jump, 2)
-    number(8, 20, s.hp)
-    number(23, 20, s.gates)
+    number(8, 21, s.hp)
+    number(26, 21, s.gates)

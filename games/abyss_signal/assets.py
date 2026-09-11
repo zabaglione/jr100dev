@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parent / "common"))
 from art import emit, extended_theme, quad_bank, quads, sound, strings, text_table, word
+from relief import Pixels
 
 
 def line(p, x0, y0, x1, y1):
@@ -82,6 +83,13 @@ def sprite(kind):
     else:
         ring(p, 7, 7, 6)
         ring(p, 7, 7, 3)
+    if kind == 1:
+        # Preserve the irregular rock silhouette; facets suggest its shaded side.
+        for y in range(3, 12, 2):
+            line(p, 11, y, 13, y + 1)
+    if kind == 0:
+        line(p, 3, 12, 12, 12)
+        p[13][4] = p[13][8] = p[13][12] = 1
     return [
         sum(p[y + dy][x + dx] << (7 - dx) for dx in range(8))
         for y in (0, 8)
@@ -108,6 +116,13 @@ def title():
 
 def photo(index):
     p = [[0] * 64 for _ in range(36)]
+    # A sparse receding seabed sits behind the original discovery silhouettes.
+    ground = Pixels(64, 36)
+    for end in (0, 16, 47, 63):
+        ground.line(31 + (end - 31) // 3, 26, end, 35)
+    ground.line(0, 30, 63, 30)
+    ground.line(0, 34, 63, 34)
+    p = ground.p
     # Sparse particles, layered seabed, and unique authored silhouettes.
     for x in range(64):
         p[32 + (x * 7 % 3)][x] = 1

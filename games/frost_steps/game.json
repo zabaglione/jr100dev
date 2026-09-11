@@ -1,7 +1,7 @@
 {
   "id": "frost-steps",
   "title": "FROST STEPS",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],

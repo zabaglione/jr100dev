@@ -71,3 +71,32 @@ assert m.read("DICE", 3) == before and m.get("RNG") == rng and lib.audio_peak(m.
 print(
     "PASS: attack, guard, heal, heavy attack, defeat, used dice, reroll limit, face prices/cap, healing, persistent faces, idle PCM"
 )
+
+# The perspective faces must never merge a pip into a border or another pip.
+from assets import dice
+
+for value in range(1, 10):
+    cells = dice(value)
+    assert len(cells) == 49
+    lit = set()
+    for i, code in enumerate(cells):
+        for dy in range(2):
+            for dx in range(2):
+                x, y = i % 7 * 2 + dx, i // 7 * 2 + dy
+                if 1 <= x <= 10 and 3 <= y <= 12 and (code - 128) >> (dy * 2 + dx) & 1:
+                    lit.add((x, y))
+    components = []
+    while lit:
+        pending = [lit.pop()]
+        size = 0
+        while pending:
+            x, y = pending.pop()
+            assert 1 < x < 10 and 3 < y < 12, ("Pip touches bevel", value)
+            size += 1
+            for q in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+                if q in lit:
+                    lit.remove(q)
+                    pending.append(q)
+        components.append(size)
+    assert len(components) == value and set(components) == {4}, (value, components)
+print("PASS: all nine die faces have isolated, readable pips inside their bevels")

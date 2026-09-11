@@ -9,6 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))
 from art import extended_theme
+from relief import replace_sprites
 
 FONT = {
     "C": ["11111", "10000", "10000", "10000", "10000", "10000", "11111"],
@@ -259,6 +260,9 @@ def generate(output):
     bank, screen = title()
     game_bank = functools.reduce(
         operator.iadd, (sprite(image) for image in SPRITES), []
+    )
+    game_bank = replace_sprites(
+        game_bank, {2: "wall-metal", 3: "floor-metal", 4: "door"}
     )
     game_bank[224:] = (
         [0x88] * 8

@@ -1,9 +1,12 @@
 """Original title, eight large PCG monsters, card data and single-voice music."""
 
 import json
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT.parent / "common"))
+from relief import shade_figure
 
 FONT = {
     "S": ["11111", "10000", "10000", "11111", "00001", "00001", "11111"],
@@ -207,8 +210,8 @@ def bank():
         [24, 36, 66, 129, 153, 153, 126, 0],
         [0, 102, 255, 255, 126, 60, 24, 0],
         [24, 60, 126, 219, 219, 126, 60, 24],
-        [0, 0, 0, 255, 0, 255, 0, 0],
-        [129] * 8,
+        [0, 0, 255, 0, 255, 85, 0, 0],
+        [129, 129, 161, 129, 129, 161, 129, 129],
         [255, 129, 165, 153, 153, 165, 129, 255],
         [0, 24, 60, 126, 255, 0, 0, 0],
         [0, 255, 129, 129, 129, 129, 255, 0],
@@ -252,7 +255,7 @@ def text_table(name, rows):
     text = name + ":\n"
     for i, (row, col, value) in enumerate(rows):
         assert col + len(value) <= 32, (name, value)
-        text += f"    .word FRAMEBUFFER + {row*32+col}, {name}_{i}\n"
+        text += f"    .word FRAMEBUFFER + {row * 32 + col}, {name}_{i}\n"
     text += "    .word 0\n"
     for i, (_, _, value) in enumerate(rows):
         text += emit(f"{name}_{i}", [*value.encode(), 0])
@@ -265,7 +268,8 @@ def generate(output):
     text = emit("TITLE_PCG", pcg) + emit("TITLE_SCREEN", screen) + emit("GAME_PCG", pcg)
     for i, lines in enumerate(MONSTERS):
         assert len(lines) == 16 and all(len(row) == 16 for row in lines)
-        text += emit(f"MONSTER_{i}", quads([[c == "#" for c in r] for r in lines]))
+        pixels = shade_figure([[c == "#" for c in r] for r in lines])
+        text += emit(f"MONSTER_{i}", quads(pixels))
     text += (
         "MONSTER_TABLE:\n    .word " + ",".join(f"MONSTER_{i}" for i in range(8)) + "\n"
     )

@@ -65,6 +65,17 @@ def main():
         if args.capture and i == 4:
             m.capture(ROOT / "images/chamber-05.png")
             m.export_workbench(ROOT / "art/chamber.pcg.json")
+        if args.capture and i == 0:
+            # Wait in the actual game; keep the timer running for this scene.
+            for _ in range(600):
+                lib.frame(m.p)
+                m.until("INPUT_IDLE")
+                if m.get("SECONDS") == 1:
+                    break
+            else:
+                raise AssertionError("Last-second capture was not reached")
+            assert m.get("MODE") == 1 and m.get("ROOM") == 0
+            m.capture(ROOT / "images/last-second.png")
         m.action(5, pad)
         assert int.from_bytes(m.read("FLAGS", 2), "little") == (1 << (i + 1)) - 1
         if i < 11:
@@ -77,7 +88,7 @@ def main():
     if args.capture:
         m.capture(ROOT / "images/ending.png")
     print(
-        f'PASS: twelve seals persist across rewinds, {steps} moves, {m.get("LOOPS")} loops, SP ${lib.min_sp(m.p):04X}'
+        f"PASS: twelve seals persist across rewinds, {steps} moves, {m.get('LOOPS')} loops, SP ${lib.min_sp(m.p):04X}"
     )
 
 

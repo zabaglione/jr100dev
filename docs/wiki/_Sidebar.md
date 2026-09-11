@@ -10,3 +10,5 @@
 [全作品をタイトル順に探す](All-Games)
 
 [操作・起動方法](Controls)
+
+[画面表現の工夫](Visual-Design)

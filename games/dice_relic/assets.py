@@ -7,16 +7,20 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT.parent / "common"))
 from art import emit, extended_theme, quad_bank, quads, sound, strings, text_table, word
+from relief import Pixels, shade_figure
 
 
 def dice(value):
-    p = [[0] * 12 for _ in range(12)]
-    for y in range(12):
-        for x in range(12):
-            p[y][x] = x in (0, 11) or y in (0, 11)
+    # A 12x12 front retains the original pip spacing and a black gap around
+    # every pip. Two extra pixels carry the top/right faces, never the numbers.
+    c = Pixels(14, 14)
+    c.rect(0, 2, 12, 12)
+    c.poly([(0, 2), (2, 0), (13, 0), (11, 2)])
+    c.poly([(11, 2), (13, 0), (13, 11), (11, 13)])
+    p = c.p
     if value == 0:
-        for x in range(2, 10):
-            p[x][x] = p[x][11 - x] = 1
+        c.line(3, 5, 8, 10)
+        c.line(8, 5, 3, 10)
     else:
         dots = {
             1: [(5, 5)],
@@ -30,6 +34,7 @@ def dice(value):
             9: [(x, y) for y in (2, 5, 8) for x in (2, 5, 8)],
         }[value]
         for x, y in dots:
+            y += 2
             for dy in range(2):
                 for dx in range(2):
                     p[y + dy][x + dx] = 1
@@ -55,7 +60,7 @@ def enemy(n):
     if n == 8:
         for x in range(1, 15):
             p[0][x] = 1
-    return quads(p)
+    return quads(shade_figure(p))
 
 
 def generate(output):

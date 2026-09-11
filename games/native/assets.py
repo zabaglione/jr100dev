@@ -4,7 +4,9 @@ import json
 import random
 
 from art import emit, sound
-from artwork import put, sprite_bank, title
+from artwork import put, title
+from depth_panels import decorate
+from relief import native_bank
 
 
 def theme(info):
@@ -42,6 +44,7 @@ def generate(output, metadata, directory):
         put(screen, 4, 23, "40 ROOMS / CTRL+C EXIT")
     hud = [64] * 768
     guide = [64] * 768
+    decorate(hud, info["id"])
     put(hud, 0, 0, info["title"][:24])
     put(hud, 25, 0, "STG")
     for y, x, value in metadata["hud"]:
@@ -51,7 +54,7 @@ def generate(output, metadata, directory):
     for i, value in enumerate(metadata["help"]):
         put(guide, 1, 3 + i * 2, value)
     put(guide, 1, 22, "ANY INPUT : TITLE")
-    bank = sprite_bank(info)
+    bank = native_bank(info)
     if ranked:
         # A faceted optional rune (tile 6), plus filled/empty 8x8 rating stars.
         rune = [

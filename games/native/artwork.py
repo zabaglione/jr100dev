@@ -328,8 +328,9 @@ def scene(m):
         C(32, 22, 12)
         C(32, 22, 20)
         for a in range(180):
-            x, y = 32 + 11 * math.cos(a * math.pi / 90), 22 + 11 * math.sin(
-                a * math.pi / 90
+            x, y = (
+                32 + 11 * math.cos(a * math.pi / 90),
+                22 + 11 * math.sin(a * math.pi / 90),
             )
             if x < 34:
                 L(x, y, 34, y)
@@ -611,126 +612,3 @@ def title(info):
     put(screen, 3, 21, "RETURN / BUTTON : START")
     put(screen, 3, 23, "SPACE : GUIDE   CTRL+C EXIT")
     return quad_bank(), screen
-
-
-def sprite_bank(info):
-    # Eight 16x16 glyphs. Character silhouettes follow the game's setting.
-    motif = info["motif"]
-    bank = []
-    for k in range(8):
-        p = [[0] * 16 for _ in range(16)]
-        for y in range(16):
-            for x in range(16):
-                if k == 0:
-                    v = (x, y) == (7, 7)
-                elif k == 1:
-                    v = x in (0, 15) or y in (0, 15) or (y == 7 and x % 8 < 6)
-                elif k == 2:
-                    if info["genre"] == "action":
-                        v = (abs(x - 7) <= y // 2 and y < 12) or (
-                            y > 11 and x in (3, 4, 10, 11)
-                        )
-                    elif info["genre"] == "tabletop":
-                        v = 20 <= (x - 7) ** 2 + (y - 7) ** 2 <= 42 or (
-                            5 <= x <= 9 and 5 <= y <= 9
-                        )
-                    else:
-                        v = (
-                            (4 <= x <= 10 and 2 <= y <= 5)
-                            or (3 <= x <= 11 and 7 <= y <= 11)
-                            or (y >= 12 and x in (4, 5, 9, 10))
-                        )
-                elif k == 3:
-                    v = abs(x - 7) + abs(y - 7) in (5, 6) or (x == 7 and y in (6, 7, 8))
-                elif k == 4:
-                    v = (
-                        2 <= x <= 13
-                        and 2 <= y <= 13
-                        and (
-                            x in (2, 3, 12, 13)
-                            or y in (2, 3, 12, 13)
-                            or x == y
-                            or x + y == 15
-                        )
-                    )
-                elif k == 5:
-                    v = (
-                        2 <= x <= 13
-                        and 3 <= y <= 11
-                        and not (5 <= y <= 7 and x in (4, 5, 10, 11))
-                    ) or (y > 11 and x in (3, 6, 9, 12))
-                elif k == 6:
-                    v = x in (1, 4, 11, 14) or y in (1, 14) or (x == 7 and 5 <= y <= 10)
-                else:
-                    v = (x in (0, 15) and (y < 3 or y > 12)) or (
-                        y in (0, 15) and (x < 3 or x > 12)
-                    )
-                if info["id"] in ("five-forge", "corner-crown") and k in (2, 5):
-                    if info["id"] == "five-forge":
-                        v = (
-                            (28 <= (x - 7) ** 2 + (y - 7) ** 2 <= 43)
-                            if k == 2
-                            else (abs(x - y) <= 1 or abs(x + y - 15) <= 1)
-                            and 2 <= x <= 13
-                            and 2 <= y <= 13
-                        )
-                    else:
-                        v = (
-                            (x - 7) ** 2 + (y - 7) ** 2 <= 40
-                            if k == 2
-                            else 28 <= (x - 7) ** 2 + (y - 7) ** 2 <= 43
-                        )
-                if k == 4 and motif in ("iceberg", "prism", "constellation"):
-                    v = abs(x - 7) + abs(y - 7) <= 6 and (
-                        x in (6, 7, 8) or y in (6, 7, 8) or x == y or x + y == 14
-                    )
-                if k == 4 and motif in ("tree", "orchard", "garden"):
-                    v = (x - 7) ** 2 + (y - 5) ** 2 <= 21 or (
-                        x in (6, 7, 8) and 6 <= y <= 14
-                    )
-                if k == 4 and motif in ("flask", "nets", "sand"):
-                    v = abs(x - 7) <= min(y, 14 - y) // 2 and 2 <= y <= 13
-                if motif == "prism" and k in (4, 5):
-                    v = (abs(x + y - 15) <= 1) if k == 4 else (abs(x - y) <= 1)
-                if motif == "well" and k == 4:
-                    v = (x - 7) ** 2 + (y - 7) ** 2 <= 37 and not (x < 6 and y < 6)
-                if motif == "furnace" and k == 3:
-                    v = (2 <= y <= 13 and abs(x - 7) <= min(y // 2, 14 - y)) or (
-                        x == 9 and 1 <= y <= 4
-                    )
-                if motif == "ribbon" and k == 4:
-                    v = (
-                        2 <= x <= 13
-                        and 2 <= y <= 13
-                        and (y not in (6, 10) or x % 4 < 2)
-                    )
-                if motif == "ribbon" and k == 2:
-                    v = (x - 7) ** 2 + (y - 7) ** 2 <= 46 and not (
-                        y in (4, 5) and x in (4, 5, 10, 11)
-                    )
-                if motif in ("chips", "fan") and k == 7:
-                    v = x in (0, 15) or y in (0, 15)
-                if motif == "shield" and k == 5:
-                    v = (3 <= x <= 12 and 2 <= y <= 10) or (
-                        y > 10 and abs(x - 7) < 15 - y
-                    )
-                if motif == "shield" and k == 2:
-                    v = (
-                        (3 <= x <= 11 and 3 <= y <= 8)
-                        or (6 <= y <= 13 and x in (4, 5, 10, 11))
-                        or (x >= 12 and y == 5)
-                    )
-                if motif == "shield" and k == 6:
-                    v = (
-                        (2 <= y <= 11 and x in (2, 3, 12, 13))
-                        or (y == 2 and 3 <= x <= 12)
-                        or (y >= 11 and abs(x - 7) == 14 - y)
-                    )
-                p[y][x] = int(v)
-        bank += [
-            sum(p[y + dy][x + dx] << (7 - dx) for dx in range(8))
-            for y in (0, 8)
-            for x in (0, 8)
-            for dy in range(8)
-        ]
-    return bank

@@ -81,7 +81,6 @@ def tick():
 
 def draw():
     for i in range(16):
-        tile(1 + i % 4 * 5, 4 + i // 4 * 4, 7)
         if b[i]:
             number(1 + i % 4 * 5, 5 + i // 4 * 4, 1 << b[i])
     number(26, 7, 1 << s.best)

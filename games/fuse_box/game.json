@@ -1,7 +1,7 @@
 {
   "id": "fuse-box",
   "title": "FUSE BOX",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],

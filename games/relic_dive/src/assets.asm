@@ -14,7 +14,8 @@ DIRECTION_DX: .BYTE 0,0,255,1,0,0,255,1,255,1
 DIRECTION_DY: .BYTE 255,1,0,0,0,0,255,255,1,1
 TILES:
     .BYTE 0,0,0,0,0,0,0,0
-    .BYTE 255,136,136,255,34,34,255,0
+    ; Beveled stone: highlighted top, diagonal shoulder, dark right face.
+    .BYTE 63,97,223,145,149,145,158,252
     .BYTE 0,0,0,16,0,0,0,0
     .BYTE 24,60,126,24,24,24,0,0
     .BYTE 0,24,24,24,126,60,24,0

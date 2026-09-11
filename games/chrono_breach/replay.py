@@ -48,8 +48,9 @@ def replay(rom=None, captures=None, pad=True):
     m = Machine(rom=rom)
     if captures:
         captures.mkdir(parents=True, exist_ok=True)
+        (ROOT / "art").mkdir(exist_ok=True)
         m.capture(captures / "title.png")
-        m.export_workbench(captures / "title.pcg.json")
+        m.export_workbench(ROOT / "art/title.pcg.json")
     m.action(5, pad=pad)
     total = 0
     for i, (data, solution) in enumerate(zip(rooms, solutions)):
@@ -62,12 +63,12 @@ def replay(rom=None, captures=None, pad=True):
             play_action(m, action, pad)
             assert snapshot(m) == state, (i, n, action, snapshot(m), state)
             if captures and (i, n) in ((1, 4), (4, 4), (14, 2)):
-                m.capture(captures / f"sector-{i+1:02}.png")
+                m.capture(captures / f"sector-{i + 1:02}.png")
                 if i == 1:
-                    m.export_workbench(captures / "play.pcg.json")
+                    m.export_workbench(ROOT / "art/play.pcg.json")
             total += 1
         assert m.get("MODE") == 4, (i, m.get("MODE"))
-        print(f'Sector {i+1:02}: {len(solution["actions"])} actions PASS', flush=True)
+        print(f"Sector {i + 1:02}: {len(solution['actions'])} actions PASS", flush=True)
         if captures and i == 19:
             m.capture(captures / "last-sector.png")
         m.action(5, pad=pad)
@@ -77,7 +78,7 @@ def replay(rom=None, captures=None, pad=True):
     if captures:
         m.capture(captures / "ending.png")
     print(
-        f'PASS: {total} world actions; min SP ${lib.min_sp(m.p):04X}; input source {"pad" if pad else "keyboard"}'
+        f"PASS: {total} world actions; min SP ${lib.min_sp(m.p):04X}; input source {'pad' if pad else 'keyboard'}"
     )
     return m
 

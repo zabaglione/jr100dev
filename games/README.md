@@ -2,7 +2,7 @@
 
 標準RAM 16KB向けの独立したオリジナルゲーム51作品です。教材用の `samples/` とは分けて管理します。
 
-[Wikiのジャンル別一覧](https://github.com/zabaglione/jr100dev/wiki) · [共通操作](https://github.com/zabaglione/jr100dev/wiki/Controls)
+[Wikiのジャンル別一覧](https://github.com/zabaglione/jr100dev/wiki) · [共通操作](https://github.com/zabaglione/jr100dev/wiki/Controls) · [画面表現の工夫](https://github.com/zabaglione/jr100dev/wiki/Visual-Design)
 
 ## パズル
 
