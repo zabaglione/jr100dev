@@ -10,16 +10,32 @@ def init():
     s.paddle = 12
     s.hp = 3
     s.left = 18
+    s.repeat = 0
 
 
-def act():
-    if s.action == 3:
+def move_paddle(direction):
+    if direction == 3:
         s.paddle = max(0, s.paddle - 2) if s.paddle >= 2 else 0
-    if s.action == 4:
+    if direction == 4:
         s.paddle = min(24, s.paddle + 2)
 
 
+def act():
+    if s.action == 3 or s.action == 4:
+        move_paddle(s.action)
+        # One physics update of grace preserves precise short taps.
+        s.repeat = 1
+
+
 def tick():
+    direction = held()
+    if direction == 3 or direction == 4:
+        if s.repeat:
+            s.repeat -= 1
+        else:
+            move_paddle(direction)
+    else:
+        s.repeat = 0
     if s.x == 0:
         s.dx = 1
     if s.x == 29:

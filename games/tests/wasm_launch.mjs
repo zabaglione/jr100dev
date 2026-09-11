@@ -78,6 +78,33 @@ for(const game of selected) {
   check(wasm._jr_set_key(8,3,1));frame(6);check(wasm._jr_set_key(8,3,0));frame(startFrames);
   assert.equal(peek(modeAddress),1,`${game.id} did not begin play`);
   checkFont('game');
+  if (game.id === 'brick-pulse') {
+    const directory = path.join(gamesRoot, 'brick_pulse');
+    const slots = JSON.parse(fs.readFileSync(path.join(directory, 'build/state_slots.json'), 'utf8'));
+    const symbols = JSON.parse(fs.readFileSync(path.join(directory, 'build/symbols.json'), 'utf8'));
+    const value = field => peek(symbols[slots[`s.${field}`]]);
+    for (const pad of [false, true]) {
+      check(wasm._jr_set_key(8, 1, 1)); frame(6);
+      check(wasm._jr_set_key(8, 1, 0)); frame(6);
+      const direction = (right, down) => pad
+        ? check(wasm._jr_set_joystick(down ? (right ? 1 : 2) : 0))
+        : check(wasm._jr_set_key(1, right ? 2 : 0, down ? 1 : 0));
+      const before = value('clock');
+      direction(false, true); frame(65);
+      assert.equal(value('paddle'), 0, 'Held left must reach the boundary');
+      assert(((value('clock') - before) & 255) >= 4, 'Holding must not stall physics');
+      direction(false, false); direction(true, true); frame(140);
+      assert.equal(value('paddle'), 24, 'Held right must reach the boundary');
+      direction(true, false); direction(false, true); frame(15);
+      direction(false, false); frame(3);
+      const stopped = value('paddle');
+      assert(stopped > 0 && stopped < 24);
+      frame(12);
+      assert.equal(value('paddle'), stopped, 'Paddle moves after key release');
+      assert.equal(peek(modeAddress), 1);
+      console.log(`PASS: brick-pulse, shipping WASM ${pad ? 'pad' : 'keyboard'} hold, reversal, release and active ball`);
+    }
+  }
   if (metadata.rankedCampaign) {
     const directory = path.join(gamesRoot, game.id.replaceAll('-', '_'));
     const slots = JSON.parse(fs.readFileSync(path.join(directory, 'build/state_slots.json'), 'utf8'));

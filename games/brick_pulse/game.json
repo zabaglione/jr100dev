@@ -1,7 +1,7 @@
 {
   "id": "brick-pulse",
   "title": "BRICK PULSE",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -21,11 +21,11 @@
     ]
   ],
   "help": [
-    "A/D : MOVE THE PADDLE",
+    "HOLD A/D : MOVE THE PADDLE",
     "KEEP THE BALL IN THE ARENA.",
     "PADDLE EDGES AIM THE REBOUNDS.",
     "BREAK ALL EIGHTEEN BRICKS.",
     "THREE LOST BALLS END THE GAME."
   ],
-  "footer": "A/D PADDLE  SPACE RESET"
+  "footer": "HOLD A/D PADDLE  SPACE RESET"
 }

@@ -22,6 +22,7 @@ def init(): pass
 def tick(): pass
 def draw(): pass
 def act():
+    s.key = held()
     s.add = s.a + s.b
     s.sub = s.a - s.b
     s.mul = s.a * s.b
@@ -38,7 +39,8 @@ def act():
 compiled = compiler.compile()
 runtime = Path(__file__).with_name("runtime.asm").read_text()
 helpers = runtime[runtime.index("N_INDEX:") : runtime.index("N_XY:")]
-source = """    .org $0300
+source = (
+    """    .org $0300
     JSR FN_ACT
 STOP:
     BRA STOP
@@ -47,10 +49,14 @@ CLOCK_SERVICE:
 MODE: .equ $3340
 LEVEL: .equ $3341
 ACTION: .equ $3342
+KEY_LAST: .equ $3315
 N_TMP: .equ $3344
 N_ACC: .equ $3345
 B_ARRAY: .equ $3600
-""" + compiled + helpers
+"""
+    + compiled
+    + helpers
+)
 result = Assembler(long_branches(source)).assemble()
 rom = bytearray(8192)
 rom[:3] = bytes([0x7E, 0xE0, 0x00])
@@ -65,9 +71,11 @@ try:
         for b in (1, 2, 3, 7, 127, 128, 255):
             for key, value in [("s.a", a), ("s.b", b)]:
                 lib.poke(m, result.symbols[compiler.slots[key]], value)
+            lib.poke(m, result.symbols["KEY_LAST"], a % 8)
             lib.fixture_pc(m, 0x300, 0x3FFF)
             assert lib.until(m, result.symbols["STOP"], 1_000_000), hex(lib.pc(m))
             expected = {
+                "key": a % 8,
                 "add": (a + b) & 255,
                 "sub": (a - b) & 255,
                 "mul": (a * b) & 255,

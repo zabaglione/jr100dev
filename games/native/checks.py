@@ -23,6 +23,7 @@ class Model:
         self.name = name
         self.metadata = json.loads((ROOT / name / "game.json").read_text())
         self.best = bytearray(self.metadata.get("levels", 10))
+        self.held = 0
         self.s = State()
         self.s.mode = 1
         self.b = bytearray(128)
@@ -38,6 +39,7 @@ class Model:
             "letter": lambda *a: None,
             "number": lambda *a: None,
             "sound": lambda *a: None,
+            "held": lambda: self.held,
             "win": self.win,
             "lose": lambda: setattr(self.s, "mode", 3),
         }
@@ -172,6 +174,7 @@ def begin(name, rom=None):
 
 
 def action(m, r, a, pad=False):
+    r.held = a
     keys = EIGHT_KEYS if m.metadata.get("directions") == 8 else KEYS
     if pad:
         lib.pad(m.p, PADS[a])
@@ -182,6 +185,7 @@ def action(m, r, a, pad=False):
         assert event, "No input or clock event"
         if event == 1:
             break
+        r.held = m.get("KEY_LAST")  # Input becomes visible at the matrix scan.
         r.tick()
         m.until("FRAME_READY")
         assert_state(m, r)
@@ -205,6 +209,7 @@ def action(m, r, a, pad=False):
                 r.s.mode = 0
             r.s.action = a
     m.until("FRAME_READY", budget=30_000_000)
+    r.held = 0
     if pad:
         lib.pad(m.p, 0)
     else:
@@ -214,6 +219,7 @@ def action(m, r, a, pad=False):
         assert event
         if event == 1:
             break
+        r.held = m.get("KEY_LAST")  # Input becomes visible at the matrix scan.
         r.tick()
         m.until("FRAME_READY")
         assert_state(m, r)
@@ -222,6 +228,7 @@ def action(m, r, a, pad=False):
 
 def tick(m, r):
     m.until("FN_TICK")
+    r.held = m.get("KEY_LAST")
     r.tick()
     m.until("FRAME_READY")
     assert_state(m, r)

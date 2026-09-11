@@ -2,6 +2,8 @@
 
 Rules remain editable per game. No interpreter or Python runs on the JR-100.
 All arithmetic wraps at eight bits; arrays contain 128 bytes. No recursion.
+held() reads the most recently scanned input (0 released; directions 1-4),
+without manufacturing repeat events or changing the physics update cadence.
 """
 
 import ast
@@ -142,6 +144,9 @@ class Compiler:
                 self.load(arg)
                 self.emit(f"    STAA N_ARG{i}")
             self.emit(f"    LDX #{label}\n    STX TEXT_PTR\n    JSR N_TEXT")
+        elif name == "held":
+            assert not n.args, "held() takes no arguments"
+            self.emit("    LDAA KEY_LAST")
         elif name in ("tile", "number", "letter", "sound"):
             for i, arg in enumerate(n.args):
                 self.load(arg)
@@ -155,7 +160,7 @@ class Compiler:
             self.load(n.args[1])
             self.emit("    TAB\n    PULA\n    CBA")
             end = self.label()
-            self.emit(f'    {"BLS" if name=="min" else "BCC"} {end}\n    TBA\n{end}:')
+            self.emit(f"    {'BLS' if name == 'min' else 'BCC'} {end}\n    TBA\n{end}:")
         elif name in self.funcs:
             fn = self.funcs[name]
             assert len(fn.args.args) == len(n.args)
@@ -238,7 +243,7 @@ class Compiler:
         declarations = []
         for i, (key, slot) in enumerate(self.slots.items()):
             if slot.startswith("V_"):
-                declarations.append(f"{slot}: .equ ${0x3400+i:04X}")
+                declarations.append(f"{slot}: .equ ${0x3400 + i:04X}")
         from art import emit
 
         return (
