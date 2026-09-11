@@ -37,6 +37,26 @@ for(const game of selected) {
   assert(state().programCounter>=768 && state().programCounter<0x3000);
   const pixels=wasm.HEAPU8.slice(wasm._jr_frame_data(),wasm._jr_frame_data()+wasm._jr_frame_size());
   assert(pixels.some(n=>n===1));
+  function checkFont(scene) {
+    const directory = path.join(gamesRoot, game.id.replaceAll('-', '_'));
+    const fontPath = path.join(directory, 'build/fonts.json');
+    if (!fs.existsSync(fontPath)) return;
+    const fonts = JSON.parse(fs.readFileSync(fontPath, 'utf8'));
+    const symbols = JSON.parse(fs.readFileSync(path.join(directory, 'build/symbols.json'), 'utf8'));
+    const chars = Object.values(fonts[scene].characters);
+    const bankAddress = symbols[`${scene.toUpperCase()}_PCG`];
+    for (const slot of chars) {
+      for (let row = 0; row < 8; row++) {
+        assert.equal(peek(0xc000 + slot * 8 + row), peek(bankAddress + slot * 8 + row),
+          `${game.id} ${scene} font bank differs`);
+      }
+    }
+    if (chars.length) {
+      const screen = Array.from({length:768}, (_, i) => peek(0xc100 + i));
+      assert(screen.some(code => chars.includes(code - 128)), `${game.id} ${scene} font not displayed`);
+    }
+  }
+  checkFont('title');
   if (metadata.launchCheck?.titleAnimation) {
     const {address, size, frames} = metadata.launchCheck.titleAnimation;
     const bank = () => Array.from({length: 256}, (_, i) => peek(0xc000 + i));
@@ -57,6 +77,7 @@ for(const game of selected) {
   check(wasm._jr_clear_audio());
   check(wasm._jr_set_key(8,3,1));frame(6);check(wasm._jr_set_key(8,3,0));frame(startFrames);
   assert.equal(peek(modeAddress),1,`${game.id} did not begin play`);
+  checkFont('game');
   if (metadata.rankedCampaign) {
     const directory = path.join(gamesRoot, game.id.replaceAll('-', '_'));
     const slots = JSON.parse(fs.readFileSync(path.join(directory, 'build/state_slots.json'), 'utf8'));

@@ -72,16 +72,18 @@ class Machine:
     def __init__(self, game="chrono_breach", rom=None):
         self.directory = ROOT / game
         self.metadata = json.loads((self.directory / "game.json").read_text())
+        font_path = self.directory / "build/fonts.json"
+        self.fonts = json.loads(font_path.read_text()) if font_path.exists() else None
         self.sym = json.loads((self.directory / "build/symbols.json").read_text())
         self.code = (
-            self.directory / "build" / f'{game.replace("_", "-")}.bin'
+            self.directory / "build" / f"{game.replace('_', '-')}.bin"
         ).read_bytes()
         if rom:
             self.p = lib.create(rom, len(rom))
             for _ in range(100):
                 lib.frame(self.p)
             data = (
-                self.directory / "build" / f'{game.replace("_", "-")}.prg'
+                self.directory / "build" / f"{game.replace('_', '-')}.prg"
             ).read_bytes()
             assert lib.load_prg(self.p, data, len(data))
             # The genuine BASIC ROM consumes the core's automatic USR command.
@@ -124,9 +126,18 @@ class Machine:
     def until(self, name, budget=3_000_000):
         address = self.sym[name] if isinstance(name, str) else name
         before = lib.clocks(self.p)
-        assert lib.until(
-            self.p, address, budget
-        ), f"timeout {name}: pc={lib.pc(self.p):04x}"
+        assert lib.until(self.p, address, budget), (
+            f"timeout {name}: pc={lib.pc(self.p):04x}"
+        )
+        if name == "FRAME_READY" and self.fonts:
+            # FRAMEBUFFER still holds semantic text. No sprite may claim a slot
+            # assigned to type, even in animation, reward or ending scenes.
+            address = self.get("FONT_MAP") * 256 + self.get(self.sym["FONT_MAP"] + 1)
+            scene = "game" if address == self.sym["FONT_GAME_MAP"] else "title"
+            occupied = {c - 128 for c in self.read(0x3000, 768) if 128 <= c < 160}
+            assert not occupied.intersection(
+                self.fonts[scene]["characters"].values()
+            ), (self.directory.name, scene, "Artwork overwrites font slots", occupied)
         return lib.clocks(self.p) - before
 
     def action(self, action, pad=False):

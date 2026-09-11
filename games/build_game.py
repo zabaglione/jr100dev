@@ -91,6 +91,9 @@ def build(directory):
         from art_direction import apply_title
 
         apply_title(output, metadata)
+    from fonts import apply as apply_fonts
+
+    apply_fonts(output, metadata)
     modules = [
         ROOT / "common" / name for name in ("memory.inc", "platform.asm", "sound.asm")
     ]

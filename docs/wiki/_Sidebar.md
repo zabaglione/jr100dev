@@ -11,4 +11,4 @@
 
 [操作・起動方法](Controls)
 
-[画面表現の工夫](Visual-Design)
+[画面表現の工夫](Visual-Design) · [専用フォント](Font-Design)

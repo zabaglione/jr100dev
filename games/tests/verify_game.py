@@ -17,6 +17,9 @@ art = json.loads((game / "build/art.json").read_text())
 assert len(art["game_pcg"]) == len(art["title_pcg"]) == 256
 assert len(art["title_screen"]) == 768
 assert all(code < 0xA0 for code in art["title_screen"])
+subprocess.run(
+    [sys.executable, str(game.parent / "tests/check_fonts.py"), game.name], check=True
+)
 for script in ("check_rules.py", "replay.py"):
     command = (
         [sys.executable, str(game.parent / "native" / script), game.name]

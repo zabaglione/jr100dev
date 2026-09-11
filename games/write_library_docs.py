@@ -2,9 +2,13 @@
 
 import json
 import re
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT / "common"))
+from fonts import STYLES
+
 WIKI = ROOT.parent / "docs/wiki"
 BASE = "https://github.com/zabaglione/jr100dev"
 PLAY = "https://zabaglione.github.io/pyjr100emu/?game="
@@ -25,12 +29,37 @@ def launch_note():
     return "同じブラウザーで自分のBASIC ROMを事前に設定してください。登録済みなら「プレイ」からタイトルまで自動起動します。音は最初のキー入力または画面クリックで有効になります。"
 
 
+def font_description(game):
+    if game["id"] == "relic-dive":
+        return "今回はフォント変更を保留しました。タイトルはPCG全32枠、ゲーム中は31枠を使用し、コード・定数の空きも149バイトです。既存のロゴ・地形・アイテムの判別を優先しています。"
+    record = json.loads((ROOT / game["directory"] / "build/fonts.json").read_text())
+    name, shape = STYLES[record["style"]]
+    title_chars = "".join(record["title"]["characters"])
+    game_chars = "".join(record["game"]["characters"])
+    title_note = (
+        f"タイトル／説明用に{len(title_chars)}文字"
+        if title_chars
+        else "タイトルは時計のアニメーションを優先"
+    )
+    return f"**{name}フォント**（{shape}）を採用。{title_note}、ゲーム用に{len(game_chars)}文字を割り当てています。ゲーム中の対象は `{game_chars}` です。空きPCG枠だけを使い、残りの文字は通常フォントで表示します。数字を変更する作品では0〜9を一式で揃えています。"
+
+
 def visual_section(game):
-    return "## 画面の奥行き\n\n" + visuals[game["id"]] + "\n\n"
+    return (
+        "## 画面の奥行き\n\n"
+        + visuals[game["id"]]
+        + "\n\n"
+        + "## ゲーム専用フォント\n\n"
+        + font_description(game)
+        + "\n\n"
+    )
 
 
 def update_visual_section(text, game):
     text = re.sub(r"\n## 画面の奥行き\n.*?(?=\n## |\Z)", "\n", text, flags=re.DOTALL)
+    text = re.sub(
+        r"\n## ゲーム専用フォント\n.*?(?=\n## |\Z)", "\n", text, flags=re.DOTALL
+    )
     position = text.find("\n## ")
     if position < 0:
         position = len(text.rstrip())
@@ -48,7 +77,7 @@ for gid, genre in genres.items():
     subset = [g for g in games if g["genre"] == gid]
     home += f"| [{genre['title']}]({page(gid)}) | {len(subset)} | {genre['description']} |\n"
 home += (
-    "\n[タイトル順の全作品](All-Games) · [共通操作と起動方法](Controls) · [画面表現の工夫](Visual-Design)\n\n"
+    "\n[タイトル順の全作品](All-Games) · [共通操作と起動方法](Controls) · [画面表現の工夫](Visual-Design) · [専用フォント](Font-Design)\n\n"
     + launch_note()
 )
 home += "\n\n基本の方向キーは **W/A/S/D**、8方向の作品は **QWE／AD／ZXC** です。作品ごとの操作は各ページに掲載しています。\n\nエミュレーターで確認済みです。実機での動作・音声は未確認です。\n\n"
@@ -57,7 +86,7 @@ home += f"[ビルド可能なソースと開発手順]({BASE}/tree/main/games)\n
 sidebar = "[JR-100 Games](Home)\n\n"
 for gid, genre in genres.items():
     sidebar += f"- [{genre['title']}]({page(gid)})\n"
-sidebar += "\n[全作品をタイトル順に探す](All-Games)\n\n[操作・起動方法](Controls)\n\n[画面表現の工夫](Visual-Design)\n"
+sidebar += "\n[全作品をタイトル順に探す](All-Games)\n\n[操作・起動方法](Controls)\n\n[画面表現の工夫](Visual-Design) · [専用フォント](Font-Design)\n"
 (WIKI / "_Sidebar.md").write_text(sidebar)
 all_games = "# 全作品・タイトル順\n\n[ホーム](Home) · [ジャンルから探す](Home)\n\n| タイトル | ジャンル | 起動 |\n| --- | --- | --- |\n"
 for g in sorted(games, key=lambda g: g["title"]):
@@ -177,7 +206,7 @@ for g in games:
     readme += body.replace(f"{IMAGES}/{g['id']}/", "images/")
     (directory / "README.md").write_text(readme)
 readme = f"# JR-100 Games\n\n標準RAM 16KB向けの独立したオリジナルゲーム{len(games)}作品です。教材用の `samples/` とは分けて管理します。\n\n"
-readme += f"[Wikiのジャンル別一覧]({BASE}/wiki) · [共通操作]({BASE}/wiki/Controls) · [画面表現の工夫]({BASE}/wiki/Visual-Design)\n\n"
+readme += f"[Wikiのジャンル別一覧]({BASE}/wiki) · [共通操作]({BASE}/wiki/Controls) · [画面表現の工夫]({BASE}/wiki/Visual-Design) · [専用フォント]({BASE}/wiki/Font-Design)\n\n"
 for gid, genre in genres.items():
     readme += f"## {genre['title']}\n\n| ゲーム | 内容 |\n| --- | --- |\n"
     for g in games:
@@ -216,3 +245,26 @@ for gid, genre in genres.items():
 visual_page += "## 検証範囲\n\n掲載画像は所有するBASIC ROMから起動したエミュレーターの実フレームです。全作品のRAM配置・操作・ゲーム進行と、公開用WASMでの起動を確認しています。実機での表示・動作は未確認です。\n"
 (WIKI / "Visual-Design.md").write_text(visual_page)
 print(f"Generated {len(games)} game manuals and {len(genres)} genre navigation pages")
+
+font_page = "# ゲーム専用フォント\n\n[ホーム](Home) → ゲーム専用フォント\n\n"
+font_page += "51作品のPCG使用状況を調べ、50作品に専用フォントを追加しました。画面ごとの空き枠を使うため、タイトルとプレイ中では対象文字が異なります。既存のロゴや立体的な絵柄を保ち、すべて標準RAM 16KB・PCG最大32文字に収めています。\n\n"
+font_page += "英字・数字・記号は作品に合う6系統で描き分けました。文字パターンはゲーム内に含まれ、BASIC ROMのフォントデータを配布物へコピーしていません。数字の0には斜線を入れ、Oと区別しています。パスワードの文字種類と操作方法は変更していません。\n\n"
+font_page += "| 系統 | 文字の特徴 |\n| --- | --- |\n"
+for name, shape in STYLES.values():
+    font_page += f"| {name} | {shape} |\n"
+font_page += "\n## 代表的な画面\n\n"
+for gid, caption in (
+    ("seed-merge", "栽培槽と丸みのある数字"),
+    ("circuit-works", "論理回路の計器文字"),
+    ("word-foundry", "単語パズルの活字"),
+    ("frost-steps", "氷の迷宮と結晶風の手数表示"),
+):
+    font_page += f"### [{gid.upper()}]({gid.upper()})\n\n![{caption}]({IMAGES}/{gid}/play-01.png)\n\n{caption}。\n\n"
+for gid, genre in genres.items():
+    font_page += f"## {genre['title']}\n\n| 作品 | フォント対応 |\n| --- | --- |\n"
+    for game in games:
+        if game["genre"] == gid:
+            font_page += f"| [{game['title']}]({game['id'].upper()}) | {font_description(game)} |\n"
+    font_page += "\n"
+font_page += "## 検証範囲\n\nRAM配置、文字と絵柄のPCG枠の衝突、全文字コードの描画、タイトルとゲームの切り替え、操作リプレイを検証しています。掲載画像は所有するBASIC ROMから起動したエミュレーターの実フレームです。実機での表示と動作は未確認です。\n"
+(WIKI / "Font-Design.md").write_text(font_page)
