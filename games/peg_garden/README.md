@@ -14,7 +14,7 @@
 
 ![最初の目標を達成した場面](images/demo-clear.png)
 
-**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=peg-garden)**
+**[音付きプレイ動画を見る（約45秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=peg-garden)**
 
 1ステージのクリアまでを収録。
 

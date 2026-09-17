@@ -36,7 +36,16 @@ def verify(name):
         )
     )
     seconds = float(probe["format"]["duration"])
-    assert 25 <= seconds <= 35 and abs(seconds - report["video_seconds"]) < 0.1
+    assert seconds >= 25 and abs(seconds - report["video_seconds"]) < 0.1
+    if report["id"] == "peg-garden":
+        assert not report["edited"]
+        assert len(report["source_segments"]) == 1
+        start, end = report["source_segments"][0]
+        assert start == 0 and abs(end - report["source_seconds"]) < 0.001
+        assert abs(seconds - report["source_seconds"]) < 0.1
+        assert report["outcome"] == "first stage cleared" and report["final_mode"] == 2
+    else:
+        assert seconds <= 35
     video = next(s for s in probe["streams"] if s["codec_type"] == "video")
     audio = next(s for s in probe["streams"] if s["codec_type"] == "audio")
     assert (video["codec_name"], video["pix_fmt"], video["width"], video["height"]) == (

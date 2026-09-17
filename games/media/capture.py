@@ -1,7 +1,7 @@
 """Record genuine-ROM, input-only game demonstrations at the JR-100 clock rate.
 
-Long games are edited at normal speed, never accelerated. The cut list, input
-times, final state and PRG hash are retained alongside every published clip.
+Long games use a digest unless selected for full-length publication. Playback
+is never accelerated. Cut lists, inputs, final states and PRG hashes are retained.
 """
 
 import argparse
@@ -188,9 +188,9 @@ def probe_native(name, rom):
     }
 
 
-def choose_segments(duration, clear_time):
+def choose_segments(duration, clear_time, full_length=False):
     """Keep the opening and unbroken final action/jingle at original speed."""
-    if duration <= 35:
+    if full_length or duration <= 35:
         return [[0, round(duration, 4)]]
     # A hard cut, visibly labelled in the player, removes only the middle.
     tail = max(10, min(16, duration - clear_time + 7))
@@ -206,7 +206,9 @@ def choose_segments(duration, clear_time):
 
 def encode(rec, destination, clear_time, outcome, extra):
     duration = rec.frames // 2 / FPS
-    segments = choose_segments(duration, clear_time)
+    segments = choose_segments(
+        duration, clear_time, full_length=rec.m.metadata["id"] == "peg-garden"
+    )
     filters = []
     for i, (start, end) in enumerate(segments):
         filters += [
