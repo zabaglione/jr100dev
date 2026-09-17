@@ -4,7 +4,6 @@ import argparse
 import itertools
 import json
 from collections import Counter, deque
-from functools import cache
 from pathlib import Path
 
 from checks import ROOT, Model, action, assert_state, begin, lib, solve_lights, tick
@@ -149,65 +148,28 @@ def walk_plan(player, path):
 
 
 def fuse_plan(rows, cols):
-    """Work from the largest visible totals, trying each line's centre first."""
-    choices = [
-        [mask for mask in range(32) if mask.bit_count() == count] for count in rows
-    ]
-
-    def possible(filled):
-        masks = [
-            sum(1 << col for col in range(5) if row * 5 + col in filled)
-            for row in range(5)
-        ]
-        options = [
-            [mask for mask in choices[row] if mask & masks[row] == masks[row]]
-            for row in range(5)
-        ]
-        order = sorted(range(5), key=lambda row: len(options[row]))
-
-        @cache
-        def complete(index, left):
-            if index == 5:
-                return not any(left)
-            for mask in options[order[index]]:
-                remaining = tuple(left[col] - ((mask >> col) & 1) for col in range(5))
-                if all(0 <= count <= 4 - index for count in remaining) and complete(
-                    index + 1, remaining
-                ):
-                    return True
-            return False
-
-        return complete(0, tuple(cols))
-
-    placed = set()
+    """Fill the largest rows using columns with the most switches still needed."""
+    assert len(rows) == len(cols) == 5
+    assert all(0 <= count <= 5 for count in (*rows, *cols))
+    assert sum(rows) == sum(cols), "Inconsistent fuse totals"
+    remaining = list(cols)
     plan = []
-    remaining = [list(rows), list(cols)]
-    assert possible(placed), "Inconsistent fuse totals"
-    while any(remaining[0]):
-        axis, line = max(
-            (
-                (axis, line)
-                for axis in range(2)
-                for line in range(5)
-                if remaining[axis][line]
-            ),
-            key=lambda item: (remaining[item[0]][item[1]], -abs(item[1] - 2), -item[0]),
-        )
-        while remaining[axis][line]:
-            for offset in (2, 1, 3, 0, 4):
-                row, col = (line, offset) if axis == 0 else (offset, line)
-                cell = row * 5 + col
-                if cell in placed or not remaining[0][row] or not remaining[1][col]:
-                    continue
-                if possible(placed | {cell}):
-                    placed.add(cell)
-                    plan.append(cell)
-                    remaining[0][row] -= 1
-                    remaining[1][col] -= 1
-                    break
-            else:
-                raise AssertionError("No valid central fuse placement")
-    assert not any(remaining[1])
+    cursor_col = 0
+    # Equal row totals are read top to bottom. Equal column deficits need no
+    # deduction: prefer a nearby switch, then the left one, to avoid detours.
+    for row in sorted(range(5), key=lambda row: (-rows[row], row)):
+        available = set(range(5))
+        for _ in range(rows[row]):
+            col = min(
+                available,
+                key=lambda col: (-remaining[col], abs(col - cursor_col), col),
+            )
+            assert remaining[col] > 0, "Inconsistent fuse totals"
+            plan.append(row * 5 + col)
+            available.remove(col)
+            remaining[col] -= 1
+            cursor_col = col
+    assert not any(remaining), "Inconsistent fuse totals"
     return plan
 
 

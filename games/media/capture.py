@@ -32,6 +32,8 @@ lib.host_mutations.restype = C.c_uint
 CLOCK = 894000
 FPS = 30
 LUT = bytes([0] + [255] * 255)
+FUSE_READ_SECONDS = 0.8
+FUSE_ROW_SECONDS = 0.75
 
 
 def load_module(game, name):
@@ -146,6 +148,9 @@ class DemoPlayer(Player):
         if self.rec:
             self.rec.mark("stage-start")
             self.m.capture(recorder / "start.png")
+            if name == "fuse_box":
+                self.rec.mark("read-clues")
+                idle(self.m, FUSE_READ_SECONDS)
 
     def press(self, a):
         if self.rec and self.m.metadata.get("rate", 255) == 255:
@@ -157,6 +162,18 @@ class DemoPlayer(Player):
         super().press(a)
         if self.rec:
             self.rec.mark("settled", action=a)
+            if self.name == "fuse_box" and a == 5 and self.s.mode == 1:
+                row = self.s.cursor // 5
+                cells = slice(row * 5, row * 5 + 5)
+                if sum(self.r.b[cells]) == sum(self.r.d[cells]):
+                    remaining = [
+                        sum(self.r.d[col:25:5]) - sum(self.r.b[col:25:5])
+                        for col in range(5)
+                    ]
+                    self.rec.mark(
+                        "row-complete", row=row + 1, remaining_columns=remaining
+                    )
+                    idle(self.m, FUSE_ROW_SECONDS)
 
 
 def probe_native(name, rom):
@@ -341,7 +358,11 @@ def record_native(name, rom, work):
     )
     work.mkdir(parents=True, exist_ok=True)
     probe_file.write_text(json.dumps(probe) + "\n")
-    pacing = max(0.15, min(5.5, (25 - probe["seconds"]) / max(1, probe["actions"])))
+    observations = FUSE_READ_SECONDS + 4 * FUSE_ROW_SECONDS if name == "fuse_box" else 0
+    pacing = max(
+        0.15,
+        min(5.5, (25 - observations - probe["seconds"]) / max(1, probe["actions"])),
+    )
     p = DemoPlayer(name, rom, work, pacing)
     try:
         if name == "pendulum_port":

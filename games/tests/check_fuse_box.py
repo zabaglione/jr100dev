@@ -116,10 +116,34 @@ def check(rom=None, capture=None):
     for cell in (12, 17, 17, 12):
         go(cell)
         press(5)  # Column: equal, over, equal, then under target.
-    assert fuse_plan([2, 3, 2, 2, 2], [3, 2, 2, 2, 2])[:3] == [7, 6, 8]
-    assert fuse_plan([1, 3, 5, 4, 1], [2, 3, 4, 3, 2])[:5] == [12, 11, 13, 10, 14]
+    plan = fuse_plan([2, 3, 2, 2, 2], [3, 2, 2, 2, 2])
+    assert plan[:3] == [5, 6, 7]  # Start at the intersection of the two 3 clues.
+    for rows, cols in (
+        ([2, 3, 2, 2, 2], [3, 2, 2, 2, 2]),
+        ([1, 3, 5, 4, 1], [2, 3, 4, 3, 2]),
+        ([0, 1, 0, 0, 0], [0, 0, 0, 0, 1]),
+    ):
+        remaining = list(cols)
+        board = [0] * 25
+        previous_row = None
+        for cell in fuse_plan(rows, cols):
+            row, col = divmod(cell, 5)
+            if row != previous_row and previous_row is not None:
+                assert (
+                    sum(board[previous_row * 5 : previous_row * 5 + 5])
+                    == rows[previous_row]
+                )
+            assert not board[cell] and remaining[col] > 0
+            assert remaining[col] == max(
+                remaining[c] for c in range(5) if not board[row * 5 + c]
+            )
+            board[cell] = 1
+            remaining[col] -= 1
+            previous_row = row
+        assert not any(remaining)
+        assert [sum(board[row * 5 : row * 5 + 5]) for row in range(5)] == rows
     print(
-        "PASS: fuse_box, row/column hints below/equal/over target, five poses both ways, isolated PCG and input, centre-first replay"
+        "PASS: fuse_box, row/column hints below/equal/over target, five poses both ways, isolated PCG and input, remaining-count replay"
     )
 
 
