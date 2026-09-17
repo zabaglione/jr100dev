@@ -148,11 +148,12 @@ def with_media(text, game, local=False):
         else "途中を省略せず、通常の速度で収録しています。"
     )
     block = (
-        f"\n## 紹介画像とプレイ動画\n\n**[音付きプレイ動画を見る（約{seconds}秒）]({url})**\n\n"
-        f"{outcomes[report['outcome']]}を収録。{edit}画面を確認する間を入れた自動キー入力によるプレイです。\n\n"
+        "\n## 紹介画像とプレイ動画\n\n"
         f"![開始時の盤面]({base}/demo-start.png)\n\n"
-        f"[![操作を進めた場面・クリックで動画]({base}/demo-play.png)]({url})\n\n"
-        f"![最初の目標を達成した場面]({base}/demo-clear.png)\n"
+        f"![操作を進めた場面]({base}/demo-play.png)\n\n"
+        f"![最初の目標を達成した場面]({base}/demo-clear.png)\n\n"
+        f"**[音付きプレイ動画を見る（約{seconds}秒）]({url})**\n\n"
+        f"{outcomes[report['outcome']]}を収録。{edit}画面を確認する間を入れた自動キー入力によるプレイです。\n"
     )
     position = text.find("\n## ")
     if position < 0:
