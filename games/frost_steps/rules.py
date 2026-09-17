@@ -54,7 +54,9 @@ def draw():
             x = 0
             y += 2
     mover(s.pos, s.origin, 2, 0)
-    number(23, 7, s.left)
+    tile(20, 7, 3)
+    number(24, 7, s.left)
+    text(19, 9, "COLLECT ALL")
     text(19, 11, "ICE RUNES")
     tile(22, 13, 6)
     text(19, 16, "OPTIONAL")

@@ -70,7 +70,7 @@ def decorate(screen, game):
             "quiet-route": (8, 13),
             "night-swarm": (9, 14),
             "magnet-vault": (7, 11),
-            "frost-steps": (9, 18),
+            "frost-steps": (10, 18),
             "glyph-shift": (7, 11),
             "gravity-well": (9, 18),
             "five-forge": (10,),
