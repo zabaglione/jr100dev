@@ -6,7 +6,7 @@
 
 ![開始、移動、被弾、石返し、撃破の実画面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/presentation/presentation.gif)
 
-**[音付き動画を見る（24秒）](https://github.com/zabaglione/jr100dev/blob/main/games/images/presentation.mp4)**。GIFには音がありません。動画はエミュレーターで実行したゲーム画面と音声です。
+**[音付き動画を見る（24秒）](https://zabaglione.github.io/pyjr100emu/presentation.html)**。GIFには音がありません。動画はエミュレーターで実行したゲーム画面と音声です。
 
 | 動画の場面 | 見どころ | 遊ぶ |
 | --- | --- | --- |
