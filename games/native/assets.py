@@ -122,6 +122,10 @@ def generate(output, metadata, directory):
         ]
         put(hud, 1, 21, "BEST       F MAP  NOW")
     face_assets = actor_assets(info["id"], bank)
+    if info["id"] == "phase-pairs":
+        from phase_pairs.presentation import prepare
+
+        face_assets += prepare(bank, hud)
     if info["id"] == "corner-crown":
         poses = disc_frames()
         bank[192:224] = poses[0]

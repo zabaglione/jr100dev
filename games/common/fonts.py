@@ -96,6 +96,8 @@ def free_slots(metadata):
     gid = metadata["id"]
     if not metadata.get("nativeRules"):
         return [], CUSTOM_FREE[gid][1]
+    if gid == "phase-pairs":
+        return [], []  # Tall numerals, card frames and four live fusion glyphs.
     if gid == "brick-pulse":
         return [], list(range(16, 32))
     tiles = set(NATIVE[gid])

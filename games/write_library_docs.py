@@ -22,6 +22,7 @@ games = library["games"]
 assert set(visuals) == {g["id"] for g in games}
 assert set(titles) == set(visuals)
 MOTION = {
+    "phase-pairs": "1枚目を選ぶと、隣接して合計10になる候補の枠がすべて点滅します。数字を読める状態で次の選択先を示します。合計10になる2枚は中央へ寄り合い、大きな「10」に合体してから光を散らして消えます。選択音と合体音で一組ずつの成立を確認できます。誤った組は盤面を残し、隣接していないのか、合計が10ではないのかを表示します。",
     "fuse-box": "マスは面が細くなり、側面を見せてから反対の面が開く順に切り替わります。入／切の両方向に途中の形と効果音があります。",
     "frost-steps": "氷上を滑る途中の位置を細かく表示し、向きの変化と移動音で進路を追えます。1回の方向入力は、滑走距離にかかわらず1手です。",
     "gravity-well": "重力を変えると、球がマスの中間を通って転がり、止まるまでを表示します。複数の球が移動する順序も音とともに追えます。",
@@ -62,6 +63,8 @@ def launch_note():
 
 
 def font_description(game):
+    if game["id"] == "phase-pairs":
+        return "盤面と計器の数字0〜9を、縦2文字の大きな専用数字で揃えています。PCG32文字のうち20文字が数字、8文字が駒の枠、4文字が候補の点滅と合体時の光です。点滅と光は同じ4文字を書き換えて動かします。"
     if game["id"] == "relic-dive":
         layout = json.loads(
             (ROOT / game["directory"] / "build/layout.json").read_text()

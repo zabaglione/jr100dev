@@ -58,6 +58,11 @@ class Recorder:
         self.base = lib.clocks(m.p)
         self.frames = 0
         self.events = []
+        self.fusion_slot = None
+        self.last_fusion = 0
+        if m.metadata["id"] == "phase-pairs":
+            slots = json.loads((m.directory / "build/state_slots.json").read_text())
+            self.fusion_slot = m.sym[slots["s.merging"]]
         self.error = None
         self.buffer = C.create_string_buffer(256 * 192)
         self.encoder = subprocess.Popen(
@@ -108,6 +113,11 @@ class Recorder:
             if self.frames % 2 == 0:
                 lib.pixels(self.m.p, self.buffer)
                 self.encoder.stdin.write(self.buffer.raw.translate(LUT))
+                if self.fusion_slot is not None:
+                    phase = self.m.get(self.fusion_slot)
+                    if phase == 2 and self.last_fusion != 2:
+                        self.mark("fusion")
+                    self.last_fusion = phase
             size = lib.audio_size(self.m.p)
             pcm = (C.c_int16 * size)()
             lib.audio_copy(self.m.p, pcm)
@@ -299,6 +309,10 @@ def encode(rec, destination, clear_time, outcome, extra):
     middle = (
         candidates[int(len(candidates) * fraction)] if candidates else clear_time / 2
     )
+    if rec.m.metadata["id"] == "phase-pairs":
+        fusions = [e["time"] for e in rec.events if e["kind"] == "fusion"]
+        # The state precedes rendering; choose a frame once the ten is visible.
+        middle = fusions[len(fusions) // 2] + 0.25
     subprocess.run(
         [
             "ffmpeg",

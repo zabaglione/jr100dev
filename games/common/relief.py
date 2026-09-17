@@ -411,7 +411,7 @@ NATIVE = {
     "cargo-balance": {4: "cargo"},
     "peg-garden": {0: "socket", 1: "stone", 4: "peg"},
     "number-vault": {7: "keycap"},
-    "phase-pairs": {7: "keycap"},
+    "phase-pairs": {},  # Authored numeral cards use the complete bank.
     "fuse-box": {4: "switch", 6: "frame", 7: "frame"},
     "sand-rescue": {
         0: "floor-soil",

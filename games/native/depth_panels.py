@@ -95,10 +95,11 @@ def decorate(screen, game):
         for y in (3, 19):
             text(1, y, "~   ~    ~    ~")
         instruments()
+    elif game == "phase-pairs":
+        pass  # The authored numeral-card presentation supplies its surround.
     elif game in (
         "seed-merge",
         "memory-mosaic",
-        "phase-pairs",
         "orchard-days",
         "orbit-draft",
     ):
