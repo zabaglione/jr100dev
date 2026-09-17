@@ -65,6 +65,7 @@ def hazards():
                     s.wide = 0
                     s.width = 4
                 sound(3)
+                impact(s.bx + 1, 18)
             s.bomb = 0
     if s.item and s.clock % 2 == 0:
         s.iy += 1
@@ -97,7 +98,11 @@ def ball():
     if s.y < 8:
         i = s.x // 5 + (s.y // 2) * 6
         if b[i]:
+            if b[i] == 1:
+                vanish(1 + i % 6 * 5, 2 + i // 6 * 2)
             b[i] -= 1
+            if b[i]:
+                impact(1 + i % 6 * 5, 2 + i // 6 * 2)
             s.dy ^= 1
             if not b[i]:
                 s.left -= 1
@@ -109,6 +114,10 @@ def ball():
         s.enemy -= 1
         s.dy ^= 1
         sound(1)
+        if s.enemy:
+            impact(s.ex, 12)
+        else:
+            vanish(s.ex, 12)
         if not s.enemy:
             drop(3, s.ex, 10)
     if s.y == 16:
@@ -125,8 +134,10 @@ def ball():
             sound(1)
         else:
             s.hp -= 1
-            serve()
             sound(3)
+            impact(s.x + 1, 18)
+            if s.hp:
+                serve()
 
 
 def tick():

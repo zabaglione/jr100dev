@@ -23,6 +23,13 @@ def tick():
         if s.lane == s.obstacle and (s.kind == 0 or s.jump == 0):
             s.hp -= 1
             sound(3)
+            impact(6 + s.lane * 8, 17 - s.jump)
+            if s.hp == 0:
+                if s.kind == 0:
+                    lose("HIT THE BARRIER")
+                else:
+                    lose("FELL INTO THE GAP")
+                return
         else:
             s.gates += 1
             sound(0)

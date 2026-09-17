@@ -18,6 +18,7 @@ games-test:
 	@for game in $(GAMES); do $(MAKE) -C games/$$game test || exit $$?; done
 	$(PYTHON) games/tests/check_motion.py
 	$(PYTHON) games/tests/check_feedback.py
+	$(PYTHON) games/tests/check_presentation.py
 
 test:
 	PYTHONPATH=$(PYTHONPATH) $(PYTHON) -m pytest tests

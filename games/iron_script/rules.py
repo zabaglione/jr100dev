@@ -1,9 +1,11 @@
 # ruff: noqa: F821
 # s, b, c, d and drawing functions are supplied by the native compiler.
 def init():
+    s.facing = 2
     for i in range(64):
         b[i] = d[i]
     s.pos = 9
+    s.origin = s.pos
     for i in range(12):
         c[i] = 0
     s.energy = 12
@@ -20,6 +22,7 @@ def act():
         c[s.cursor] = (c[s.cursor] + 4) % 5
     if s.action == 5:
         s.pos = 9
+        s.origin = s.pos
         s.energy = 12
         s.running = 1
         s.pc = 0
@@ -28,11 +31,17 @@ def act():
 
 def tick():
     if s.running:
+        if c[s.pc] > 0:
+            s.facing = c[s.pc]
         target = move(s.pos, c[s.pc], 8, 8)
         if b[target] == 1:
             s.error += 1
         else:
+            s.origin = s.pos
             s.pos = target
+            sound(0)
+            animate(2)
+            s.origin = s.pos
         s.energy -= 1
         s.pc += 1
         sound(0)
@@ -44,8 +53,9 @@ def tick():
 
 
 def draw():
+    face(2, s.facing)
     grid(8, 8, 0, 3)
-    tile(s.pos % 8 * 2, 3 + s.pos // 8 * 2, 2)
+    mover(s.pos, s.origin, 2, 0)
     number(24, 6, s.energy)
     number(24, 10, s.error)
     for i in range(12):

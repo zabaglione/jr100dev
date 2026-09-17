@@ -40,11 +40,7 @@ def check(name):
         if i % 31 == 30 and not m.metadata.get("disableSpaceReset"):
             # No writes to game state: retry restores its authored initial data.
             level = r.s.level
-            m.action(6)
-            m.answer_reset(True)
-            r.init(level)
-            r.s.action = 6
-            assert_state(m, r)
+            action(m, r, 6, confirm=True)
         elif m.metadata.get("rate", 255) < 255 and i % 3 == 0:
             tick(m, r)
         else:

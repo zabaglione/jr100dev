@@ -19,6 +19,8 @@ def clone(model):
         "c": copy.c,
         "d": copy.d,
         "sound": lambda *a: None,
+        "impact": lambda *a: None,
+        "vanish": lambda *a: None,
         "held": lambda: 0,
         "win": lambda: setattr(copy.s, "mode", 2),
         "lose": lambda: setattr(copy.s, "mode", 3),

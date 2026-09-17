@@ -139,6 +139,11 @@ CLEAR_LOOP:
 
 ; Copy a row at a time; service sound between rows.
 PRESENT:
+    TST INTRO_PENDING
+    BNE INTRO_SCENE
+    JSR PRESENT_ROWS
+    JMP RESULT_PRESENTED
+PRESENT_ROWS:
     LDX #FRAMEBUFFER
     STX SRC
     LDX #$C100
@@ -150,6 +155,7 @@ PRESENT_BYTE:
     LDAA 0,X
     INX
     STX SRC
+    JSR INTRO_FILTER
     LDX DST
     CMPA 0,X
     BEQ PRESENT_SAME
@@ -163,7 +169,7 @@ PRESENT_SAME:
     LDX SRC
     CPX #FRAMEBUFFER + 768
     BNE PRESENT_ROW
-    JMP RESULT_PRESENTED
+    RTS
 
 ; Text uses ordinary ROM letters while custom graphics use PCG.
 TEXT:

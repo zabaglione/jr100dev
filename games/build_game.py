@@ -96,18 +96,34 @@ def build(directory):
 
     fonts_enabled = apply_fonts(output, metadata)
     from art import emit
-    from feedback import jingle
+    from feedback import jingle, pacing_assets
 
     with (output / "assets.inc").open("a") as asset_file:
         asset_file.write(emit("RESULT_JINGLE", jingle(metadata["id"])))
+        asset_file.write(pacing_assets(metadata))
     modules = [
         ROOT / "common" / name
-        for name in ("memory.inc", "platform.asm", "sound.asm", "feedback.asm")
+        for name in (
+            "memory.inc",
+            "platform.asm",
+            "screens.asm",
+            "sound.asm",
+            "pacing.asm",
+            "feedback.asm",
+        )
     ]
     if metadata.get("nativeRules"):
         modules += [ROOT / "native/runtime.asm", output / "rules.inc"]
-        if "JSR N_ANIMATE" in compiled:
+        if "JSR N_ANIMATE" in compiled or "JSR N_HOLD" in compiled:
             modules += [ROOT / "native/motion.asm"]
+        if "JSR N_FACE" in compiled:
+            modules += [ROOT / "native/facing.asm"]
+        if "JSR N_IMPACT" in compiled:
+            modules += [ROOT / "native/impact.asm"]
+        if "JSR N_VANISH" in compiled:
+            modules += [ROOT / "native/vanish.asm"]
+        if "JSR N_MOVER" in compiled:
+            modules += [ROOT / "native/mover.asm"]
     modules += [directory / "src" / name for name in metadata["modules"]]
     if metadata["id"] != "loop-ten":
         modules += [ROOT / "common/confirm.asm"]
@@ -165,6 +181,17 @@ def build(directory):
             count=1,
         )
     source += "CODE_END:\n"
+    if metadata.get("nativeRules") and "JSR N_FACE" in compiled:
+        source = source.replace(
+            "    JSR FN_INIT\n", "    JSR N_FACE_RESET\n    JSR FN_INIT\n"
+        )
+    if metadata.get("nativeRules"):
+        source = source.replace(
+            "    JSR FN_INIT\n", "    JSR FN_INIT\n    JSR QUEUE_START\n"
+        )
+    from screens import compress
+
+    source = compress(source)
     source = long_branches(source)
     (output / "game.asm").write_text(source)
     result = Assembler(source, filename="build/game.asm").assemble()

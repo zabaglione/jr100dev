@@ -30,7 +30,11 @@ def tick():
         if s.x >= s.target and s.x <= s.target + 3 and s.speed <= 2:
             win()
         else:
-            lose()
+            impact(s.x, 18)
+            if s.speed > 2:
+                lose("DESCENT SPEED TOO HIGH")
+            else:
+                lose("MISSED THE LANDING PAD")
 
 
 def draw():

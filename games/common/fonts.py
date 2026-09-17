@@ -6,7 +6,6 @@ from pathlib import Path
 
 from art import FONT_ROWS, emit
 from relief import NATIVE
-from title_styles import FINISH_FOR
 
 ROOT = Path(__file__).resolve().parents[1]
 STYLES = {
@@ -96,7 +95,7 @@ def glyph(char, style):
 def free_slots(metadata):
     gid = metadata["id"]
     if not metadata.get("nativeRules"):
-        return CUSTOM_FREE[gid]
+        return [], CUSTOM_FREE[gid][1]
     if gid == "brick-pulse":
         return [], list(range(16, 32))
     tiles = set(NATIVE[gid])
@@ -105,9 +104,7 @@ def free_slots(metadata):
     occupied = {t * 4 + q for t in tiles for q in range(4)}
     if metadata.get("rankedCampaign"):
         occupied.update(range(24, 30))
-    return ([] if gid in FINISH_FOR else list(range(16, 32))), sorted(
-        set(range(32)) - occupied
-    )
+    return [], sorted(set(range(32)) - occupied)
 
 
 def choose(metadata, slots, scene):
@@ -136,8 +133,9 @@ FONT_BANK_READY:
 """,
     )
     return source.replace(
-        "    STX SRC\n    LDX DST\n    CMPA 0,X\n",
+        "    STX SRC\n    JSR INTRO_FILTER\n    LDX DST\n    CMPA 0,X\n",
         """    STX SRC
+    JSR INTRO_FILTER
     ; Convert text at presentation only; preserve semantic text and all artwork.
     CMPA #64
     BCC FONT_RAW

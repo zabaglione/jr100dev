@@ -52,6 +52,7 @@ def tick():
 
 
 def draw():
+    face(2, s.dir)
     for i in range(64):
         tile(1 + i % 8 * 2, 3 + i // 8 * 2, 0)
     for i in range(s.length):

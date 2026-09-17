@@ -16,6 +16,8 @@ WASDで歩行と向きを変え、RETURNで正面の箱を1マス引きます。
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
+ロボットは進行方向を向いて動きます。歩行と金属塊を引く動きには途中の位置と移動音があり、どの塊を動かしたか確認できます。演出が終わってから次のキーを押してください。
+
 MAGNETのPULLSは成功した引き寄せ回数。FACINGは現在の向きN/S/W/Eです。下部のMOVは使用手数、PARは規定手数、RUNESは任意ルーンの回収数です。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/magnet-vault/play-01.png)

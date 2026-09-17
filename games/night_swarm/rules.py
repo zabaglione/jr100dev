@@ -14,6 +14,7 @@ def act():
     if s.action == 5 and s.cooldown == 0:
         for i in range(8):
             if b[i] != 255 and distance(s.pos, b[i]) <= 3:
+                vanish(b[i] % 8 * 2, 3 + b[i] // 8 * 2)
                 b[i] = 255
                 s.kills += 1
         s.cooldown = 6
@@ -41,10 +42,12 @@ def tick():
                 b[i] = p
                 if p == s.pos:
                     s.hp -= 1
+                    impact(s.pos % 8 * 2, 3 + s.pos // 8 * 2)
                     b[i] = 255
                     sound(3)
                     if s.hp == 0:
                         lose()
+                        return
     if s.time % 4 == 0:
         placed = 0
         for i in range(8):
@@ -54,6 +57,7 @@ def tick():
     if s.time % 3 == 1:
         for i in range(8):
             if b[i] != 255 and distance(s.pos, b[i]) <= 1:
+                vanish(b[i] % 8 * 2, 3 + b[i] // 8 * 2)
                 b[i] = 255
                 s.kills += 1
                 sound(0)

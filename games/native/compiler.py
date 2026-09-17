@@ -147,16 +147,34 @@ class Compiler:
         elif name == "held":
             assert not n.args, "held() takes no arguments"
             self.emit("    LDAA KEY_LAST")
-        elif name == "animate":
+        elif name in ("animate", "hold"):
             assert len(n.args) == 1
             self.load(n.args[0])
-            self.emit("    JSR N_ANIMATE")
-        elif name in ("tile", "number", "letter", "sound"):
+            self.emit("    JSR N_" + name.upper())
+        elif name == "flip":
+            assert len(n.args) == 1
+            self.load(n.args[0])
+            self.emit("    LDAB #6\n    LDX #FLIP_FRAMES\n    JSR N_FACE")
+        elif name == "face":
+            assert len(n.args) == 2 and isinstance(n.args[0], ast.Constant)
+            slot = n.args[0].value
+            assert 0 <= slot < 8
+            self.load(n.args[1])
+            self.emit(f"    LDAB #{slot}\n    LDX #FACE_{slot}_FRAMES\n    JSR N_FACE")
+        elif name in ("tile", "number", "letter", "sound", "impact", "vanish", "mover"):
             for i, arg in enumerate(n.args):
                 self.load(arg)
                 self.emit(f"    STAA N_ARG{i}")
             self.emit("    JSR N_" + name.upper())
         elif name in ("win", "lose"):
+            if n.args:
+                assert name == "lose" and len(n.args) == 1
+                assert isinstance(n.args[0], ast.Constant) and isinstance(
+                    n.args[0].value, str
+                )
+                label = f"N_STRING_{len(self.strings)}"
+                self.strings.append((label, n.args[0].value))
+                self.emit(f"    LDX #{label}\n    STX LOSS_MESSAGE")
             self.emit("    JSR N_" + name.upper())
         elif name in ("min", "max"):
             self.load(n.args[0])

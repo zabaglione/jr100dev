@@ -21,12 +21,15 @@ def check(name, setup, action, rom=None, capture=None):
     if capture:
         m.capture(capture / f"{name}-before.png")
     states = []
+    flips = []
+    original_bank = m.read(0xC000, 256)
+    slots = json.loads((m.directory / "build/state_slots.json").read_text())
     lib.key(m.p, *KEYS[action], 1)
     m.until("DISPATCH")
     model.action(action)
     while True:
         event = lib.until_either(
-            m.p, m.sym["N_ANIMATE"], m.sym["FRAME_READY"], 12_000_000
+            m.p, m.sym["N_MOTION_ENTER"], m.sym["FRAME_READY"], 12_000_000
         )
         assert event, name
         if event == 2:
@@ -34,6 +37,11 @@ def check(name, setup, action, rom=None, capture=None):
         m.until("MOTION_VISIBLE")
         assert m.get("MOTION_ACTIVE") == 1
         states.append((lib.clocks(m.p), m.read(0xC100, 768)))
+        if name == "corner_crown" and m.get(slots["s.flipping"]):
+            bank = m.read(0xC000, 256)
+            assert bank[:192] == original_bank[:192]
+            assert bank[224:] == original_bank[224:]
+            flips.append((m.get(slots["s.flip_frame"]), bank[192:224]))
         if capture:
             m.capture(capture / f"{name}-{len(states)}.png")
         lib.key(m.p, *KEYS[action], 0)
@@ -47,6 +55,9 @@ def check(name, setup, action, rom=None, capture=None):
     for (a, _), (b, _) in zip(states, states[1:]):
         assert b - a > 14900 * 2, (name, "Intermediate frame not held")
     assert m.get("MOTION_ACTIVE") == 0 and m.get("KEY_PENDING") == 0
+    if name == "corner_crown":
+        assert [phase for phase, _ in flips] == [5, 4, 3, 2, 1, 1, 2, 3, 4, 5]
+        assert len({pose for _, pose in flips}) == 5
     print(
         f"PASS: {name}, {len(states)} intermediate frames, settled rules and input isolation"
     )
@@ -68,7 +79,10 @@ if __name__ == "__main__":
     for name in ("frost_steps", "gravity_well"):
         route = json.loads((root / name / "solutions.json").read_text())[0]
         check(name, [], route[0], **options)
+    check("magnet_vault", [], 5, **options)
     check("seed_merge", [], 3, **options)
     check("quiet_route", [], 4, **options)
     check("prism_trace", [2, 2, 2, 4, 4], 5, **options)
     check("peg_garden", [1, 1, 5, 2, 2], 5, **options)
+    check("corner_crown", [], 5, **options)
+    check("five_forge", [], 5, **options)

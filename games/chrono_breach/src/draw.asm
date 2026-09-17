@@ -547,7 +547,20 @@ ANIMATE_IDLE:
     ANDA #3
     ASLA
     ASLA
-    ADDA #$90
+    ASLA
+    ASLA
+    ASLA
+    STAA COUNT + 1
+    CLR COUNT
+    LDX #TITLE_CLOCK_FRAMES
+    ADX COUNT
+    STX SRC
+    LDX #$C0E0
+    STX DST
+    LDX #32
+    STX COUNT
+    JSR COPY
+    LDAA #$9C
     STAA FRAMEBUFFER + 32 * 2 + 29
     STAA $C100 + 32 * 2 + 29
     INCA

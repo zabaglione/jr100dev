@@ -1,12 +1,17 @@
 ; SPDX-License-Identifier: MIT
-; A tiny one-shot victory phrase. Only the finished adventure uses sound.
+; One-shot success/failure phrases; duration zero ends a phrase.
 END_FEEDBACK:
     LDAA G_MODE
-    CMPA #9
-    BNE END_SOUND_DONE
+    CMPA #8
+    BCS END_SOUND_DONE
     TST G_CLEAR_SUNG
     BNE END_SOUND_DONE
     INC G_CLEAR_SUNG
+    LDX #END_NOTES
+    CMPA #9
+    BEQ PLAY_PHRASE
+    LDX #FAIL_NOTES
+PLAY_PHRASE:
     LDAA $C80B
     PSHA
     ANDA #$1F
@@ -16,13 +21,13 @@ END_FEEDBACK:
     PSHA
     ORAA #$80
     STAA $C802
-    LDX #END_NOTES
 END_SOUND_NOTE:
+    LDAB 2,X
+    BEQ END_SOUND_RESTORE
     LDAA 1,X
     STAA $C804
     LDAA 0,X
     STAA $C805
-    LDAB 2,X
     INX
     INX
     INX
@@ -36,8 +41,8 @@ END_SOUND_WAIT:
     BEQ END_SOUND_WAIT
     DECB
     BNE END_SOUND_DURATION
-    CPX #END_NOTES_END
-    BNE END_SOUND_NOTE
+    BRA END_SOUND_NOTE
+END_SOUND_RESTORE:
     PULA
     STAA $C802
     PULA
@@ -50,6 +55,13 @@ END_NOTES:
     .byte $06,$AB,3, $05,$4C,3, $04,$74,4
     .byte $03,$57,3, $04,$74,3, $03,$57,10
 END_NOTES_END:
+    .byte 0,0,0
+FAIL_NOTES:
+    .byte $06,$AB,4, $08,$68,4, $0A,$98,12, 0,0,0
+START_NOTES:
+    .byte $05,$4C,3, $03,$57,7, 0,0,0
+HIT_NOTES:
+    .byte $0A,$98,4, 0,0,0
 ; Native JR-100 I/O. CC02 bit 0..4 is active-high; no polarity probing.
 ENTRY:
     TPA

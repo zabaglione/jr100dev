@@ -22,12 +22,24 @@ games = library["games"]
 assert set(visuals) == {g["id"] for g in games}
 assert set(titles) == set(visuals)
 MOTION = {
-    "frost-steps": "氷上を1マスずつ滑り、途中でクリスタルやルーンを拾う様子を表示します。1回の方向入力は、滑走距離にかかわらず1手です。",
-    "gravity-well": "重力を変えると、球が1マスずつ転がって止まるまでを表示します。複数の球が移動する順序も追えます。",
+    "frost-steps": "氷上を滑る途中の位置を細かく表示し、向きの変化と移動音で進路を追えます。1回の方向入力は、滑走距離にかかわらず1手です。",
+    "gravity-well": "重力を変えると、球がマスの中間を通って転がり、止まるまでを表示します。複数の球が移動する順序も音とともに追えます。",
     "seed-merge": "種の移動、同じ種の合成、隙間を詰める移動、新しい種の出現を順に表示します。",
     "prism-trace": "鏡を回した後、光が通るマスを順に表示します。反射して進む経路を追えます。",
     "peg-garden": "選んだ駒が隣の駒を飛び越え、空いた穴に着地する様子を表示します。",
-    "quiet-route": "プレイヤーが動いた盤面を一度表示してから、警備員が応答します。自分の行動と敵の行動を区別できます。",
+    "quiet-route": "探索者と警備員は進行方向を向き、マスの中間を通って移動します。探索者が動いてから警備員が応答するため、双方の行動を音とともに追えます。",
+    "iron-script": "ロボットが進行方向を向き、マスの中間を通って移動します。移動音に合わせ、命令を実行する順序を追えます。",
+    "magnet-vault": "ロボットは進行方向を向いて動きます。歩行と金属塊を引く動きには途中の位置と移動音があり、どの塊を動かしたか確認できます。",
+    "glyph-shift": "探索者が進行方向を向き、マスの中間を通って移動します。移動音とともに一手の結果を確認できます。",
+    "compass-rose": "探索者が進行方向を向き、マスの中間を通って移動します。移動音とともに進路を確認できます。",
+    "mirror-relic": "探索者の向きと、マスの中間を通る移動を表示します。鏡を使う前後の位置を音とともに確認できます。",
+    "ribbon-snake": "蛇の頭が進行方向を向きます。伸びた胴体と区別しながら、次に進む方向を確認できます。",
+    "corner-crown": "挟んだ石は一枚ずつ、面が細くなって側面を見せ、反対の面が開く順に回転します。白から黒、黒から白の両方に途中の形と石返しの音があります。",
+    "five-forge": "自分と相手が石を置く様子を一手ずつ表示します。着手音と短い間で、相手が置いた位置を確認できます。",
+    "star-lance": "撃破した敵は、発光、中心の破片、外側へ散る破片を経て消えます。撃破音で命中を確認できます。",
+    "night-swarm": "倒した敵は、発光して破片が外側へ散る順に消えます。接触時は被弾音と点滅が入り、危険な位置を確認できます。",
+    "brick-pulse": "装甲やドローンに命中すると点滅します。破壊時は発光して破片が散り、命中と撃破の違いを音と画面で確認できます。",
+    "echo-parry": "攻撃が当たると対象が点滅し、撃破時は発光して破片が散ります。防御を誤ると被弾音と短い停止が入り、失敗した方向を確認できます。",
 }
 
 
@@ -36,7 +48,7 @@ def feedback_section(game):
     if game["id"] in MOTION:
         text += MOTION[game["id"]] + "演出中の追加入力は受け付けません。\n\n"
     duration = "約1.9秒" if game["id"] == "relic-dive" else "約1.6秒"
-    text += f"クリア時は完成した盤面・結果を残し、{duration}のジングルと余韻を挟みます。その後、キーを押し直して次の操作に進みます。クリア直前から押し続けたキーや、演出中に押したキーで結果を飛ばすことはありません。\n\n"
+    text += f"クリア時は完成した盤面・結果を残し、{duration}のジングルと余韻を挟みます。失敗時も原因を表示し、ジングルの後に短い間を置きます。その後、キーを押し直して次の操作に進みます。直前から押し続けたキーや、演出中に押したキーで結果を飛ばすことはありません。\n\n"
     return text
 
 
@@ -53,7 +65,7 @@ def font_description(game):
         layout = json.loads(
             (ROOT / game["directory"] / "build/layout.json").read_text()
         )
-        return f"通常文字のフォント変更は保留しています。タイトルはPCG全32枠、ゲーム中は31枠を使用し、コード・定数の空きは{layout['code_free_bytes']}バイトです。ロゴ・地形・アイテムの判別を優先しています。"
+        return f"通常文字のフォント変更は保留しています。タイトルはPCG27枠、ゲーム中は31枠を使用し、コード・定数の空きは{layout['code_free_bytes']}バイトです。ロゴ・地形・アイテムの判別を優先しています。"
     record = json.loads((ROOT / game["directory"] / "build/fonts.json").read_text())
     name, shape = STYLES[record["style"]]
     chars = record["game"]["characters"]
@@ -110,9 +122,7 @@ def player_manual(text):
         "ビルドと検証",
         "対応と検証",
     ):
-        text = re.sub(
-            rf"\n## {heading}\n.*?(?=\n## |\Z)", "\n", text, flags=re.DOTALL
-        )
+        text = re.sub(rf"\n## {heading}\n.*?(?=\n## |\Z)", "\n", text, flags=re.DOTALL)
     return re.sub(r"\n{3,}", "\n\n", text).rstrip() + "\n"
 
 
@@ -127,6 +137,7 @@ home += (
 )
 home += "\n\n基本の方向キーは **W/A/S/D**、8方向の作品は **QWE／AD／ZXC** です。作品ごとの操作は各ページに掲載しています。\n\nエミュレーターで確認済みです。実機での動作・音声は未確認です。\n\n"
 home += f"[ビルド可能なソースと開発手順]({BASE}/tree/main/games)\n"
+home += "\n**2026年9月18日更新：** タイトルの立体表現、開始・被弾・結果の音と間を更新しました。石返し、大きな駒の移動、敵の消滅にも途中の動きを加えています。[動きと音を動画で見る](Presentation)。\n"
 home += "\n## タイトル画面ギャラリー\n\n"
 for gid, genre in genres.items():
     home += f"### [{genre['title']}]({page(gid)})\n\n| タイトル画面 | ゲーム・概要 |\n| --- | --- |\n"
@@ -140,7 +151,7 @@ for gid, genre in genres.items():
 sidebar = "[JR-100 Games](Home)\n\n"
 for gid, genre in genres.items():
     sidebar += f"- [{genre['title']}]({page(gid)})\n"
-sidebar += "\n[全作品をタイトル順に探す](All-Games)\n\n[タイトル画面ギャラリー](Home#タイトル画面ギャラリー)\n\n[操作・起動方法](Controls)\n"
+sidebar += "\n[全作品をタイトル順に探す](All-Games)\n\n[タイトル画面ギャラリー](Home#タイトル画面ギャラリー)\n\n[動きと音の紹介](Presentation)\n\n[操作・起動方法](Controls)\n"
 (WIKI / "_Sidebar.md").write_text(sidebar)
 all_games = "# 全作品・タイトル順\n\n[ホーム](Home) · [ジャンルから探す](Home)\n\n| タイトル | ジャンル | ゲーム・概要 | 起動 |\n| --- | --- | --- | --- |\n"
 for g in sorted(games, key=lambda g: g["title"]):
@@ -188,9 +199,13 @@ Q/E/Z/Cが斜め、Xが下です。Sは移動に使いません。RELIC DIVEで�
 
 FROST STEPS、MAGNET VAULT、GLYPH SHIFT、GRAVITY WELLは40面と星評価に対応しています。Fで面選択、WASDで選択、RETURNで開始、SPACEでタイトルへ戻ります。面選択は最初から全40面を選べます。クリア画面のSPACEは同じ面の再挑戦、RETURNは次の面です。終了前にタイトル／面選択のPWを書き留めると、次回Xから面番号と全40面の最高評価を復元できます。
 
-## 移動中・クリア直後の入力
+## 開始・移動・結果の演出中の入力
 
-連続移動の途中やクリア直後は、次の操作まで少し間があります。移動やクリアの曲が終わってからキーを押し直してください。
+開始時はSEと画面中央のGAME STARTを挟みます。作品によっては地形、目標、自分、敵の順に画面が現れます。表示が終わってから操作してください。開始演出中は制限時間を消費しません。
+
+移動や石返しの途中、被弾・撃破・クリア直後は、次の操作まで少し間があります。被弾時は対象が点滅し、失敗時は原因とジングルを表示します。演出と音が終わってからキーを押し直してください。演出中の入力は次の手に持ち越しません。
+
+[動きと音の紹介](Presentation)で、石返しや撃破の様子を確認できます。
 
 ## Wikiから起動する
 
@@ -243,6 +258,8 @@ for g in games:
         else "SPACEでこの面のやり直し確認を開きます。"
     )
     body += "やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。\n\n"
+    if g["id"] in MOTION:
+        body += MOTION[g["id"]] + "演出が終わってから次のキーを押してください。\n\n"
     body += f"{hud}\n\n![ゲーム開始時]({IMAGES}/{g['id']}/play-01.png)\n\n![プレイ中の場面]({IMAGES}/{g['id']}/play-02.png)\n\n"
     if g["id"] == "frost-steps":
         body += f"## 滑走とクリアの動画\n\n![1面を滑走して3つ星クリアする実画面]({IMAGES}/frost-steps/slide-clear.gif)\n\n[音付き動画を見る]({BASE}/blob/main/games/frost_steps/images/slide-clear.mp4)。1面を3つ星でクリアする動画です。GIFには音がありません。\n\n"

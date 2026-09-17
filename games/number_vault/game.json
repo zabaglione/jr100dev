@@ -1,7 +1,7 @@
 {
   "id": "number-vault",
   "title": "NUMBER VAULT",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],

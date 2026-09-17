@@ -2,8 +2,8 @@
 
 import math
 
-from art import FONT_ROWS, quad_bank, quads
-from title_styles import FINISH_FOR, finish_bank
+from art import FONT_ROWS
+from title_styles import compile_title, relief
 
 
 class Canvas:
@@ -778,17 +778,8 @@ def put(screen, x, y, value):
 
 def title(info):
     canvas = poster(info)
-    screen = quads(canvas.p) + [64] * 128
-    bank = quad_bank()
-    if finish := FINISH_FOR.get(info["id"]):
-        bank = finish_bank(bank, finish)
-        for value, x, y, style, wide, tall in canvas.titles:
-            width = (len(value) * 6 - 1) * wide + (2 if style == "speed" else 0)
-            for row in range(y // 2, (y + 7 * tall + 1) // 2):
-                for col in range(x // 2, (x + width + 1) // 2):
-                    offset = row * 32 + col
-                    if 128 < screen[offset] < 144:
-                        screen[offset] += 16
+    bank, screen = compile_title(relief(canvas), info["id"])
+    screen += [64] * 128
     if info["id"] == "chrono-breach":
         put(screen, 10, 22, "SECTOR")
     put(screen, 3, 21, "RETURN / BUTTON : START")

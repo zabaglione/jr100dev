@@ -49,7 +49,7 @@ def check():
             expected[736:] = display(strings["S_KEYS"])
             assert len(expected) == 768
             assert m.read(0xC100, 768) == expected
-            assert m.read(0xC000, 256) == bytes(art["pcg"])
+            assert m.read(0xC000, len(art["pcg"])) == bytes(art["pcg"])
 
         # Shimmer touches the sparkle slot only; title inputs remain edge driven.
         before = m.read(0xC000, 256)
@@ -58,10 +58,14 @@ def check():
             m.setw("G_SEED", phase << 8)
             m.call("TITLE_SHIMMER")
             after = m.read(0xC000, 256)
-            assert after[:128] == before[:128] and after[136:] == before[136:]
+            offset = SYMS["TITLE_SPARK_ADDRESS"] - 0xC000
+            assert (
+                after[:offset] == before[:offset]
+                and after[offset + 8 :] == before[offset + 8 :]
+            )
             assert m.read(0xC100, 768) == vram
             assert m.word("G_SEED") == phase << 8
-            assert after[128:136] != before[128:136]
+            assert after[offset : offset + 8] != before[offset : offset + 8]
             before = after
         # Simulate a completed game, then return to title and start again via keys.
         game_tiles = m.read("TILES", SYMS["TILES_END"] - SYMS["TILES"])
@@ -72,7 +76,7 @@ def check():
             m.resume()
             m.action(5)
             assert m.get("G_MODE") == 0
-            assert m.read(0xC000, 256) == bytes(art["pcg"])
+            assert m.read(0xC000, len(art["pcg"])) == bytes(art["pcg"])
             m.action(5)
             assert m.get("G_MODE") == 1
             assert m.read(0xC000, len(game_tiles)) == game_tiles

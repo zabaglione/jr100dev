@@ -19,6 +19,7 @@ def act():
         for k in range(24):
             i = 23 - k
             if not hit and b[i] and (i % 8 + s.shift) % 8 == s.ship:
+                vanish(1 + (i % 8 + s.shift) % 8 * 4, 3 + i // 8 * 3)
                 b[i] = 0
                 s.left -= 1
                 hit = 1
@@ -42,10 +43,13 @@ def tick():
         if s.bullet == 8:
             if s.bx == s.ship:
                 s.hp -= 1
+                impact(1 + s.ship * 4, 19)
                 sound(3)
             s.bullet = 255
-    if s.time == 220 or s.hp == 0:
-        lose()
+    if s.hp == 0:
+        lose("HIT BY ENEMY SHOT")
+    elif s.time == 220:
+        lose("TIME EXPIRED")
 
 
 def draw():

@@ -16,6 +16,8 @@ WASDで部屋を傾けます。少なくとも1つの球が動いた傾き1回�
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
+重力を変えると、球がマスの中間を通って転がり、止まるまでを表示します。複数の球が移動する順序も音とともに追えます。演出が終わってから次のキーを押してください。
+
 GRAVITYのSOCKETSは球が入っているソケット数です。下部のMOVは使用手数、PARは規定手数、RUNESは任意ルーンの回収数です。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/gravity-well/play-01.png)

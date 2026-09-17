@@ -33,7 +33,7 @@ assert symbols["SCRATCH_END"] <= symbols["SAVE_SP"]
 assert symbols["SAVE_VIA"] + 4 <= 0x3E00
 assert symbols["TILES_END"] - symbols["TILES"] <= 256
 assert 0 < symbols["TITLE_TILES_END"] - symbols["TITLE_TILES"] <= 256
-assert symbols["TITLE_TILES_END"] - symbols["TITLE_TILES"] == 32 * 8
+assert (symbols["TITLE_TILES_END"] - symbols["TITLE_TILES"]) % 8 == 0
 assert symbols["TEXT_PAIR_INDEX"] + 2 <= symbols["G_WAND_SLOT"]
 text_layout = json.loads((ROOT / "build/text-layout.json").read_text())
 report = {

@@ -16,6 +16,8 @@ WASDで位置を選び、RETURNで石を選択し、2マス先の空き位置を
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
+選んだ駒が隣の駒を飛び越え、空いた穴に着地する様子を表示します。演出が終わってから次のキーを押してください。
+
 庭園の石、選択中の石、残数を表示します。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/peg-garden/play-01.png)

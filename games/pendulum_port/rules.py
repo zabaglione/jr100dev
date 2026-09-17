@@ -19,6 +19,7 @@ def act():
         else:
             s.hp -= 1
             sound(3)
+            impact(s.swing * 2, 13)
             if s.hp == 0:
                 lose()
 

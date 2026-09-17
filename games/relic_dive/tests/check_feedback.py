@@ -6,7 +6,7 @@ from machine import KEYS, Machine, lib
 def check():
     m = Machine()
     try:
-        for mode in (0, 1, 8):
+        for mode in (0, 1):
             m.set("G_MODE", mode)
             assert m.call("END_FEEDBACK")[3] < 1000
         m.set("G_MODE", 9)
@@ -26,6 +26,15 @@ def check():
         assert m.read(0xC100, 768) == screen
         assert lib.audio_peak(m.p) > 0
         assert m.call("END_FEEDBACK")[3] < 1000, "Victory phrase repeated"
+        m.set("G_MODE", 8)
+        m.set("G_CLEAR_SUNG", 0)
+        m.call("RENDER_SCREEN")
+        screen = m.read(0xC100, 768)
+        cycles = m.call("END_FEEDBACK")[3]
+        assert 1.4 < cycles / 894886.25 < 1.6
+        assert m.read(0xC100, 768) == screen
+        assert m.get("G_PENDING") == 0 and m.get(0xC80B) == 0x20
+        assert m.call("END_FEEDBACK")[3] < 1000, "Failure phrase repeated"
         return {"status": "passed", "seconds": round(seconds, 3), "via_restored": True}
     finally:
         m.close()

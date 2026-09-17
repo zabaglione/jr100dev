@@ -5,6 +5,7 @@ import re
 
 from art import emit
 from artwork import title
+from title_styles import RESERVED
 
 
 def apply_title(output, metadata):
@@ -15,8 +16,14 @@ def apply_title(output, metadata):
     )
     art = json.loads((output / "art.json").read_text())
     bank, screen = title(info)
-    bank[128:] = art["title_pcg"][128:]
     text = (output / "assets.inc").read_text()
+    if metadata["id"] == "chrono-breach":
+        frames = art["title_pcg"][128:]
+        bank[224:] = frames[:32]
+        text += emit("TITLE_CLOCK_FRAMES", frames)
+    else:
+        for slot in RESERVED.get(metadata["id"], ()):
+            bank[slot * 8 : slot * 8 + 8] = art["title_pcg"][slot * 8 : slot * 8 + 8]
     for label, data in [("TITLE_PCG", bank), ("TITLE_SCREEN", screen)]:
         text, count = re.subn(
             label + r":\n(?:    \.byte[^\n]*\n)+", emit(label, data), text, count=1

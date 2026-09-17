@@ -3,6 +3,7 @@
 def init():
     for i in range(64):
         b[i] = d[i]
+        c[64 + i] = i
     c[d[64]] = 1
     c[d[65]] = 1
     s.par = d[69]
@@ -19,12 +20,16 @@ def act():
                     n = move(i, s.action, 8, 8)
                     if b[n] != 1 and not c[n]:
                         c[n] = 1
+                        c[64 + n] = i
                         c[i] = 0
                         changed = 1
                         moved = 1
                         take_rune(n)
             if moved:
-                animate(4)
+                sound(0)
+                animate(2)
+                for i in range(64):
+                    c[64 + i] = i
         if changed:
             spend_move()
             sound(1)
@@ -47,13 +52,14 @@ def draw():
         kind = b[i]
         if i == d[67] and not (s.runes & 1) or i == d[68] and not (s.runes & 2):
             kind = 6
-        if c[i]:
-            kind = 4
         tile(x, y, kind)
         x += 2
         if x == 16:
             x = 0
             y += 2
+    for i in range(64):
+        if c[i]:
+            mover(i, c[64 + i], 4, 0)
     number(22, 7, s.filled)
     tile(20, 12, 4)
     tile(25, 12, 6)

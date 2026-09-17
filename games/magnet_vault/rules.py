@@ -4,6 +4,7 @@ def init():
     for i in range(64):
         b[i] = d[i]
     s.pos = d[64]
+    s.origin = s.pos
     s.facing = 4
     c[d[65]] = 1
     c[d[66]] = 1
@@ -29,10 +30,19 @@ def act():
         if c[front] and not c[behind] and b[behind] != 1:
             c[front] = 0
             c[s.pos] = 1
+            s.pulling = 1
+            s.block_origin = front
             s.pos = behind
             if s.pulls < 255:
                 s.pulls += 1
             sound(1)
+    if s.pos != before:
+        s.origin = before
+        if not s.pulling:
+            sound(0)
+        animate(2)
+        s.origin = s.pos
+        s.pulling = 0
     if s.pos != before or s.facing != facing:
         spend_move()
         take_rune(s.pos)
@@ -49,12 +59,16 @@ def tick():
 
 
 def draw():
+    face(2, s.facing)
     grid(8, 8, 1, 3)
     draw_runes(1)
     for i in range(64):
         if c[i]:
-            tile(1 + i % 8 * 2, 3 + i // 8 * 2, 4)
-    tile(1 + s.pos % 8 * 2, 3 + s.pos // 8 * 2, 2)
+            if s.pulling and i == s.origin:
+                mover(i, s.block_origin, 4, 1)
+            else:
+                tile(1 + i % 8 * 2, 3 + i // 8 * 2, 4)
+    mover(s.pos, s.origin, 2, 1)
     number(24, 5, s.pulls)
     letter(
         23,

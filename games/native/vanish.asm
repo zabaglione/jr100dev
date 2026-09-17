@@ -1,0 +1,48 @@
+; Local four-frame destruction; no shared PCG or other enemy is rewritten.
+VANISH_PTR: .equ $339C
+VANISH_LEFT: .equ $339E
+N_VANISH:
+    JSR N_XY
+    STX IMPACT_CELL
+    LDAA IMPACT_CELL
+    ADDA #$91
+    STAA IMPACT_CELL
+    JSR N_RENDER
+    LDAA TICK
+    STAA PACE_CLOCK
+    INC PACE_ACTIVE
+    LDX #VANISH_NOTE
+    JSR PLAY_SFX
+    LDX #VANISH_FRAMES
+    STX VANISH_PTR
+    LDAA #4
+    STAA VANISH_LEFT
+VANISH_FRAME:
+    LDX VANISH_PTR
+    LDAA 0,X
+    LDAB 1,X
+    LDX IMPACT_CELL
+    STAA 0,X
+    STAB 1,X
+    LDX VANISH_PTR
+    LDAA 2,X
+    LDAB 3,X
+    ADX #4
+    STX VANISH_PTR
+    LDX IMPACT_CELL
+    STAA 32,X
+    STAB 33,X
+VANISH_VISIBLE:
+    LDAA #2
+    JSR PACE_WAIT
+    DEC VANISH_LEFT
+    BNE VANISH_FRAME
+    CLR PACE_ACTIVE
+    LDAA PACE_CLOCK
+    STAA TICK
+    RTS
+VANISH_FRAMES:
+    .byte $4E,$4E,$4E,$4E,$61,$73,$7A,$78
+    .byte $78,$7A,$73,$61,$40,$40,$40,$40
+VANISH_NOTE:
+    .byte 5,3,40,2,17,2,6,3

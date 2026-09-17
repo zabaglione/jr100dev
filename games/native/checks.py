@@ -40,9 +40,15 @@ class Model:
             "number": lambda *a: None,
             "sound": lambda *a: None,
             "animate": lambda *a: None,
+            "hold": lambda *a: None,
+            "face": lambda *a: None,
+            "flip": lambda *a: None,
+            "impact": lambda *a: None,
+            "vanish": lambda *a: None,
+            "mover": lambda *a: None,
             "held": lambda: self.held,
             "win": self.win,
-            "lose": lambda: setattr(self.s, "mode", 3),
+            "lose": lambda *a: setattr(self.s, "mode", 3),
         }
         self.env.update(
             {
@@ -136,6 +142,9 @@ def render_bounds(model):
     model.env.update(
         {
             "tile": lambda x, y, g: check(x, y, 2, 2),
+            "mover": lambda dest, start, g, left: check(
+                left + dest % 8 + start % 8, 3 + dest // 8 + start // 8, 2, 2
+            ),
             "letter": lambda x, y, g: check(x, y),
             "number": lambda x, y, n: check(x, y, 3),
             "text": lambda x, y, t: check(x, y, len(t)),
@@ -150,17 +159,17 @@ def assert_state(machine, model):
     for key, label in slots.items():
         if key.startswith("s."):
             field = key[2:]
-            assert machine.get(label) == getattr(model.s, field), (
-                f"{machine.directory.name} {field}: native={machine.get(label)}, model={getattr(model.s, field)}"
-            )
+            assert machine.get(label) == getattr(
+                model.s, field
+            ), f"{machine.directory.name} {field}: native={machine.get(label)}, model={getattr(model.s, field)}"
     for name in ("b", "c", "d"):
         assert machine.read(name.upper() + "_ARRAY", 128) == bytes(
             getattr(model, name)
         ), f"{machine.directory.name} {name} array differs"
     if machine.metadata.get("rankedCampaign"):
-        assert machine.read("BEST", len(model.best)) == bytes(model.best), (
-            "Best ratings differ"
-        )
+        assert machine.read("BEST", len(model.best)) == bytes(
+            model.best
+        ), "Best ratings differ"
     assert lib.min_sp(machine.p) >= 0x3E00, "Stack exceeded reserved 512 bytes"
     assert machine.read(0x300, len(machine.code)) == machine.code, "Code/data changed"
 
@@ -202,6 +211,33 @@ def action(m, r, a, pad=False, confirm=None):
         r.tick()
         m.until("FRAME_READY")
         assert_state(m, r)
+        if m.get("KEY_LAST") == a and not m.get("KEY_PENDING"):
+            # A hit hold intentionally discards input. Issue a fresh edge once
+            # the contact scene has finished, just as a player must do.
+            if pad:
+                lib.pad(m.p, 0)
+            else:
+                lib.key(m.p, *keys[a], 0)
+            m.until("INPUT_DONE")
+            if pad:
+                lib.pad(m.p, PADS[a])
+            else:
+                lib.key(m.p, *keys[a], 1)
+    if a == 6 and not m.metadata.get("rankedCampaign") and r.s.mode == 1:
+        assert confirm is not None, "Reset needs an explicit test answer"
+        m.until("CONFIRM_READY")
+        if pad:
+            lib.pad(m.p, 0)
+        else:
+            lib.key(m.p, *keys[a], 0)
+        m.until("INPUT_DONE")
+        m.answer_reset(confirm, pad=pad)
+        if confirm:
+            r.init(r.s.level)
+        r.s.action = a
+        r.held = 0
+        assert_state(m, r)
+        return
     if r.s.mode == 3 and a == 5 and not m.metadata.get("rankedCampaign"):
         assert confirm is not None, "Retry needs an explicit test answer"
         m.until("CONFIRM_READY")

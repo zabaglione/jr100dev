@@ -319,7 +319,7 @@ SELECT_BANK_READY:
     JMP COPY_BYTES
 SELECT_BANK_DONE:
     RTS
-; High bytes are PCG characters, low bytes skip blank cells, zero ends.
+; High bytes are PCG; 1..126 skip blanks; 127 repeats (count, code); zero ends.
 DRAW_TITLE_ART:
     LDX #FRAMEBUFFER
     STX TEXT_DEST
@@ -328,6 +328,8 @@ TITLE_ART_NEXT:
     LDAA 0,X
     BEQ TITLE_ART_DONE
     INX
+    CMPA #127
+    BEQ TITLE_ART_RUN
     STX TEXT_SRC
     TSTA
     BMI TITLE_ART_PIXEL
@@ -348,6 +350,20 @@ TITLE_ART_ADVANCE:
     BRA TITLE_ART_NEXT
 TITLE_ART_DONE:
     RTS
+TITLE_ART_RUN:
+    LDAB 0,X
+    LDAA 1,X
+    INX
+    INX
+    STX TEXT_SRC
+    LDX TEXT_DEST
+TITLE_ART_REPEAT:
+    STAA 0,X
+    INX
+    DECB
+    BNE TITLE_ART_REPEAT
+    STX TEXT_DEST
+    BRA TITLE_ART_ADVANCE
 ; Change one sparkle character every 256 title polls without redrawing VRAM.
 TITLE_SHIMMER:
     TST G_SEED + 1
@@ -359,7 +375,7 @@ TITLE_SHIMMER:
     ADX #8
 TITLE_SPARK_READY:
     STX TEXT_SRC
-    LDX #$C080
+    LDX #TITLE_SPARK_ADDRESS
     STX TEXT_DEST
     LDAB #8
     JMP COPY_BYTES
@@ -406,6 +422,10 @@ RENDER_END_TITLE:
     JSR TEXT
     LDX #FRAMEBUFFER + 399
     JSR RENDER_GOLD
+    TST G_MESSAGE
+    BEQ END_WITHOUT_CAUSE
+    JSR RENDER_MESSAGE
+END_WITHOUT_CAUSE:
     JMP RENDER_HUD
 RENDER_HUD:
     LDX #S_FLOOR

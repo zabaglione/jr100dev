@@ -39,23 +39,29 @@ def build():
             )
     for x, y in ((16, 2), (16, 10), (24, 13)):
         screen[y * 32 + x] = 144
+    used = sorted({code for code in screen if code >= 128})
+    mapping = {code: 128 + i for i, code in enumerate(used)}
+    tiles = [b for code in used for b in tiles[(code - 128) * 8 : (code - 127) * 8]]
+    screen = [mapping.get(code, code) for code in screen]
     stream = []
     index = 0
     while index < len(screen):
-        if screen[index] != 64:
-            stream.append(screen[index])
-            index += 1
-        else:
-            end = index
-            while end < len(screen) and screen[end] == 64 and end - index < 127:
-                end += 1
+        end = index + 1
+        while end < len(screen) and screen[end] == screen[index] and end - index < 126:
+            end += 1
+        if screen[index] == 64:
             stream.append(end - index)
-            index = end
+        elif end - index >= 4:
+            stream.extend((127, end - index, screen[index]))
+        else:
+            stream.extend(screen[index:end])
+        index = end
     stream.append(0)
     lines = ["TITLE_TILES: .BYTE " + ",".join(map(str, tiles)), "TITLE_TILES_END:"]
     lines.append("TITLE_ART: .BYTE " + ",".join(map(str, stream)))
     lines.append("TITLE_ART_END:")
     lines.append("TITLE_SPARK_FRAMES: .BYTE " + ",".join(map(str, sparkles)))
+    lines.append(f"TITLE_SPARK_ADDRESS: .equ {0xC000 + (mapping[144] - 128) * 8}")
     return "\n".join(lines), {
         "pcg": tiles,
         "screen": screen,

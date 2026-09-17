@@ -18,6 +18,11 @@ def ray_count(pos, direction, mark):
 def flips(pos, mark, apply):
     if b[pos] != 0:
         return 0
+    if apply:
+        s.placed = pos
+        s.placing = mark
+        sound(0)
+        animate(8)
     total = 0
     for direction in range(8):
         count = ray_count(pos, direction, mark)
@@ -26,9 +31,25 @@ def flips(pos, mark, apply):
             p = pos
             for i in range(count):
                 p = ray(p, direction)
+                s.flip = p
+                s.flipping = 1
+                for phase in range(5):
+                    s.flip_frame = phase + 1 if mark == 2 else 5 - phase
+                    flip(s.flip_frame)
+                    if phase == 0:
+                        animate(3)
+                    else:
+                        hold(3)
                 b[p] = mark
+                s.flipping = 0
+                totals()
+                sound(0)
+                animate(4)
     if apply and total:
         b[pos] = mark
+        s.placing = 0
+        totals()
+        animate(10)
     return total
 
 
@@ -93,6 +114,11 @@ def tick():
 def draw():
     for i in range(64):
         tile(i % 8 * 2, 3 + i // 8 * 2, 0 if b[i] == 0 else (2 if b[i] == 1 else 5))
+    if s.placing:
+        tile(s.placed % 8 * 2, 3 + s.placed // 8 * 2, 2 if s.placing == 1 else 5)
+    if s.flipping:
+        flip(s.flip_frame)
+        tile(s.flip % 8 * 2, 3 + s.flip // 8 * 2, 6)
     letter(s.cursor % 8 * 2, 3 + s.cursor // 8 * 2, 62)
     number(24, 7, s.white)
     number(24, 14, s.black)

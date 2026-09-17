@@ -16,6 +16,8 @@ WASDで位置を選び、RETURNで石を置きます。自分はO、相手はX�
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
+自分と相手が石を置く様子を一手ずつ表示します。着手音と短い間で、相手が置いた位置を確認できます。演出が終わってから次のキーを押してください。
+
 石数と自分・相手の記号を盤の右に表示します。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/five-forge/play-01.png)

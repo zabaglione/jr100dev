@@ -6,6 +6,8 @@ import random
 from art import emit, sound
 from artwork import put, title
 from depth_panels import decorate
+from directional import assets as actor_assets
+from disc_animation import frames as disc_frames
 from relief import native_bank
 
 
@@ -117,16 +119,23 @@ def generate(output, metadata, directory):
             0,
         ]
         put(hud, 1, 21, "BEST       F MAP  NOW")
-    text = (
+    face_assets = actor_assets(info["id"], bank)
+    if info["id"] == "corner-crown":
+        poses = disc_frames()
+        bank[192:224] = poses[0]
+        face_assets += emit("FLIP_FRAMES", [byte for pose in poses for byte in pose])
+    text = face_assets + (
         emit("TITLE_PCG", pcg) + emit("TITLE_SCREEN", screen) + emit("GAME_PCG", bank)
     )
     text += emit("HUD_SCREEN", hud) + emit("HELP_SCREEN", guide)
     for label, value in [
         (
             "STATUS_CLEAR",
-            "RETURN NEXT  SPACE RETRY  F MAP"
-            if ranked
-            else "CLEAR - BUTTON FOR NEXT STAGE",
+            (
+                "RETURN NEXT  SPACE RETRY  F MAP"
+                if ranked
+                else "CLEAR - BUTTON FOR NEXT STAGE"
+            ),
         ),
         ("STATUS_LOSE", "TRY AGAIN - BUTTON TO RESTART"),
         ("STATUS_END", "ALL STAGES CLEAR - THANK YOU"),

@@ -1,7 +1,7 @@
 {
   "id": "relic-dive",
   "title": "RELIC DIVE",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "ramKiB": 16,
   "entry": 768,
   "directions": 8,
@@ -9,7 +9,7 @@
     "modeAddress": 13061,
     "startFrames": 240,
     "titleAnimation": {
-      "address": 49280,
+      "address": 49264,
       "size": 8,
       "frames": 120
     }

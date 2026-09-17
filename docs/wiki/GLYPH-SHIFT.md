@@ -16,6 +16,8 @@ WASDで移動し、RETURNで通行ルールを切り替えます。移動でき�
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
+探索者が進行方向を向き、マスの中間を通って移動します。移動音とともに一手の結果を確認できます。演出が終わってから次のキーを押してください。
+
 RULE TABLEの矢印は現在有効な壁ルール、REWRITESは切替回数です。下部のMOVは移動と切替を合計した使用手数、PARは規定手数、RUNESは任意ルーンの回収数です。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/glyph-shift/play-01.png)

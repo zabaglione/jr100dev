@@ -16,6 +16,8 @@ WASDで滑走方向を選びます。実際に滑れた1回を1手と数え、�
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
+氷上を滑る途中の位置を細かく表示し、向きの変化と移動音で進路を追えます。1回の方向入力は、滑走距離にかかわらず1手です。演出が終わってから次のキーを押してください。
+
 ICE COMPASSのCRYSTALSは残っている必須クリスタル数。下部のMOVは使用手数、PARは規定手数、RUNESは任意ルーンの回収数です。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/frost-steps/play-01.png)

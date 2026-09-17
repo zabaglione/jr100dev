@@ -32,6 +32,8 @@ def act():
     if s.action == 5 and b[s.cursor] == 0:
         b[s.cursor] = 1
         s.stones += 1
+        sound(0)
+        animate(18)
         if line(s.cursor, 1) >= 5:
             win()
             return
@@ -53,10 +55,12 @@ def act():
             b[chosen] = 2
             s.last = chosen
             s.stones += 1
+            sound(1)
+            animate(18)
             if line(chosen, 2) >= 5:
-                lose()
+                lose("RIVAL COMPLETED FIVE")
         elif s.stones >= 64:
-            lose()
+            lose("BOARD FULL - NO FIVE")
         sound(1)
 
 

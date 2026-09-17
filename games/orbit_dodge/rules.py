@@ -18,6 +18,10 @@ def tick():
         if s.pos == s.target:
             s.hp -= 1
             sound(3)
+            impact(ringx(s.pos), ringy(s.pos))
+            if s.hp == 0:
+                lose()
+                return
         else:
             s.waves += 1
             sound(0)

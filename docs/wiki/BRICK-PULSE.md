@@ -16,6 +16,8 @@ A/Dまたはパッドの左右を押し続けると連続移動し、短押し�
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。プレイ中のSPACEは無効です。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
+装甲やドローンに命中すると点滅します。破壊時は発光して破片が散り、命中と撃破の違いを音と画面で確認できます。演出が終わってから次のキーを押してください。
+
 下部のBALLは残球、BRICKは残ブロック数、DRONEは敵の残耐久です。WIDE・SLOW・GUARDは有効な効果、JAMは爆弾による縮小を示します。ブロックの模様は残る耐久を表します。クリア後のRETURNは次の面、失敗後のRETURNは確認付きの再挑戦です。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/brick-pulse/play-01.png)

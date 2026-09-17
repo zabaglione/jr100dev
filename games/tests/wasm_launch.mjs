@@ -25,6 +25,15 @@ const selected = catalog.games.filter(game => !gameId || game.id === gameId);
 assert(selected.length, `Unknown game: ${gameId}`);
 for(const game of selected) {
   const metadata = JSON.parse(fs.readFileSync(path.join(gamesRoot, game.id.replaceAll('-', '_'), 'game.json'), 'utf8'));
+  const symbolsPath = path.join(gamesRoot, game.id.replaceAll('-', '_'), 'build/symbols.json');
+  const presentationSymbols = fs.existsSync(symbolsPath) ? JSON.parse(fs.readFileSync(symbolsPath, 'utf8')) : {};
+  function waitForPresentation() {
+    if (!('PACE_ACTIVE' in presentationSymbols)) return;
+    const pending = () => peek(presentationSymbols.INTRO_PENDING) || peek(presentationSymbols.PACE_ACTIVE);
+    for (let i = 0; i < 240 && pending(); i++) frame(1);
+    assert.equal(pending(), 0, `${game.id} presentation did not finish`);
+    frame(6);
+  }
   const {modeAddress = 0x3340, startFrames = 50} = metadata.launchCheck ?? {};
   check(wasm._jr_create_core(transfer(fs.readFileSync(romFile)),0));
   frame(100);
@@ -76,6 +85,9 @@ for(const game of selected) {
   assert(wasm._jr_audio_size()>0);
   check(wasm._jr_clear_audio());
   check(wasm._jr_set_key(8,3,1));frame(6);check(wasm._jr_set_key(8,3,0));frame(startFrames);
+  waitForPresentation();
+  // DICE RELIC finishes its opening roll after the start presentation.
+  for (let i = 0; i < 240 && peek(modeAddress) !== 1; i++) frame(1);
   assert.equal(peek(modeAddress),1,`${game.id} did not begin play`);
   checkFont('game');
   if (game.id === 'brick-pulse') {
@@ -88,6 +100,7 @@ for(const game of selected) {
         check(wasm._jr_create_core(transfer(fs.readFileSync(romFile)),0)); frame(100);
         check(wasm.ccall('jr_load_program','number',['number','string'],[transfer(data),`${game.id}.prg`])); frame(450);
         check(wasm._jr_set_key(8,3,1)); frame(6); check(wasm._jr_set_key(8,3,0)); frame(30);
+        waitForPresentation();
       }
       check(wasm._jr_set_key(8, 1, 1)); frame(6);
       check(wasm._jr_set_key(8, 1, 0)); frame(6);
@@ -116,6 +129,7 @@ for(const game of selected) {
     const press = (row, bit) => {
       check(wasm._jr_set_key(row,bit,1)); frame(6);
       check(wasm._jr_set_key(row,bit,0)); frame(30);
+      waitForPresentation();
     };
     press(8,1);
     assert.equal(peek(symbols.CN_ACTIVE), 1);

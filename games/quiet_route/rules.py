@@ -1,9 +1,13 @@
 # ruff: noqa: F821
 # s, b, c, d and drawing functions are supplied by the native compiler.
 def init():
+    s.facing = 2
     box()
     s.pos = 9
+    s.origin = s.pos
     s.guard = 49
+    s.guard_origin = s.guard
+    s.guard_facing = 4
     s.direction = 4
     s.battery = 50
     for i in range(6):
@@ -15,6 +19,8 @@ def init():
 
 
 def act():
+    if s.action < 5:
+        s.facing = s.action
     if s.action == 5:
         s.quiet ^= 1
         return
@@ -22,19 +28,24 @@ def act():
         n = move(s.pos, s.action, 8, 8)
         if b[n] == 1:
             return
+        s.origin = s.pos
         s.pos = n
         cost = 2 if s.quiet else 1
         if s.battery <= cost:
-            lose()
+            s.origin = s.pos
+            lose("BATTERY EXHAUSTED")
             return
         s.battery -= cost
         if s.pos == 14:
             s.key = 1
         if s.pos == 54 and s.key:
+            s.origin = s.pos
             win()
             return
         s.alert = distance(s.pos, s.guard) < (2 if s.quiet else 5)
-        animate(5)
+        sound(0)
+        animate(2)
+        s.origin = s.pos
         if s.alert:
             a = (
                 1
@@ -45,17 +56,24 @@ def act():
                     else (3 if s.guard % 8 > s.pos % 8 else 4)
                 )
             )
+            s.guard_facing = a
             n = move(s.guard, a, 8, 8)
         else:
             if s.guard == 49:
                 s.direction = 4
             if s.guard == 54:
                 s.direction = 3
+            s.guard_facing = s.direction
             n = move(s.guard, s.direction, 8, 8)
         if b[n] != 1:
+            s.guard_origin = s.guard
             s.guard = n
+            sound(0)
+            animate(2)
+            s.guard_origin = s.guard
         if s.pos == s.guard:
-            lose()
+            impact(s.pos % 8 * 2, 3 + s.pos // 8 * 2)
+            lose("CAUGHT BY THE GUARD")
         sound(0)
 
 
@@ -64,19 +82,19 @@ def tick():
 
 
 def draw():
+    face(2, s.facing)
+    face(5, s.guard_facing)
     x = 0
     y = 3
     for i in range(64):
         kind = 0 if i == 14 and s.key else b[i]
-        if i == s.guard:
-            kind = 5
-        if i == s.pos:
-            kind = 2
         tile(x, y, kind)
         x += 2
         if x == 16:
             x = 0
             y += 2
+    mover(s.guard, s.guard_origin, 5, 0)
+    mover(s.pos, s.origin, 2, 0)
     number(24, 5, s.battery)
     number(24, 10, s.quiet)
     number(24, 15, s.key)

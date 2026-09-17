@@ -382,7 +382,12 @@ NATIVE = {
     "seed-merge": {7: "frame"},
     "orbit-draft": {7: "frame"},
     "five-forge": {0: "floor-grid", 2: "token-black", 5: "token-cross"},
-    "corner-crown": {0: "floor-grid", 2: "token-white", 5: "token-black"},
+    "corner-crown": {
+        0: "floor-grid",
+        2: "token-white",
+        5: "token-black",
+        6: "token-white",
+    },
     "stone-balance": {4: "stone"},
     "memory-mosaic": {4: "card-back", 7: "card"},
     "twenty-one": {7: "card"},

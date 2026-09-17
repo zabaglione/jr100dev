@@ -16,12 +16,16 @@ def act():
             s.guarded = 1
             sound(1)
             if s.enemy == 0:
+                vanish(24, 14 - s.attack * 3)
                 win()
+            else:
+                impact(24, 14 - s.attack * 3)
         else:
             s.hp -= 1
             sound(3)
+            impact(5, 14 - s.stance * 3)
             if s.hp == 0:
-                lose()
+                lose("WRONG GUARD OR TIMING")
 
 
 def tick():
@@ -33,8 +37,10 @@ def tick():
         if not s.guarded:
             s.hp -= 1
             sound(3)
+            impact(5, 14 - s.stance * 3)
             if s.hp == 0:
-                lose()
+                lose("MISSED THE PARRY WINDOW")
+                return
         s.phase = 2
         s.age = 0
     elif s.phase == 2 and s.age >= 3:
