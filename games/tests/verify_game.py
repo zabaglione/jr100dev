@@ -41,4 +41,8 @@ if metadata.get("rankedCampaign"):
         [sys.executable, str(game.parent / "native/password_checks.py"), game.name],
         check=True,
     )
+if metadata["id"] == "fuse-box":
+    subprocess.run(
+        [sys.executable, str(game.parent / "tests/check_fuse_box.py")], check=True
+    )
 print("PASS: standard 16KB layout and 32 PCG slots")

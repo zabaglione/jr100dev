@@ -4,6 +4,7 @@ import argparse
 import itertools
 import json
 from collections import Counter, deque
+from functools import cache
 from pathlib import Path
 
 from checks import ROOT, Model, action, assert_state, begin, lib, solve_lights, tick
@@ -145,6 +146,69 @@ def walk_plan(player, path):
         if player.s.mode != 1:
             break
         player.press(a)
+
+
+def fuse_plan(rows, cols):
+    """Work from the largest visible totals, trying each line's centre first."""
+    choices = [
+        [mask for mask in range(32) if mask.bit_count() == count] for count in rows
+    ]
+
+    def possible(filled):
+        masks = [
+            sum(1 << col for col in range(5) if row * 5 + col in filled)
+            for row in range(5)
+        ]
+        options = [
+            [mask for mask in choices[row] if mask & masks[row] == masks[row]]
+            for row in range(5)
+        ]
+        order = sorted(range(5), key=lambda row: len(options[row]))
+
+        @cache
+        def complete(index, left):
+            if index == 5:
+                return not any(left)
+            for mask in options[order[index]]:
+                remaining = tuple(left[col] - ((mask >> col) & 1) for col in range(5))
+                if all(0 <= count <= 4 - index for count in remaining) and complete(
+                    index + 1, remaining
+                ):
+                    return True
+            return False
+
+        return complete(0, tuple(cols))
+
+    placed = set()
+    plan = []
+    remaining = [list(rows), list(cols)]
+    assert possible(placed), "Inconsistent fuse totals"
+    while any(remaining[0]):
+        axis, line = max(
+            (
+                (axis, line)
+                for axis in range(2)
+                for line in range(5)
+                if remaining[axis][line]
+            ),
+            key=lambda item: (remaining[item[0]][item[1]], -abs(item[1] - 2), -item[0]),
+        )
+        while remaining[axis][line]:
+            for offset in (2, 1, 3, 0, 4):
+                row, col = (line, offset) if axis == 0 else (offset, line)
+                cell = row * 5 + col
+                if cell in placed or not remaining[0][row] or not remaining[1][col]:
+                    continue
+                if possible(placed | {cell}):
+                    placed.add(cell)
+                    plan.append(cell)
+                    remaining[0][row] -= 1
+                    remaining[1][col] -= 1
+                    break
+            else:
+                raise AssertionError("No valid central fuse placement")
+    assert not any(remaining[1])
+    return plan
 
 
 def solve_stage(p):
@@ -306,28 +370,10 @@ def solve_stage(p):
             )
         return
     if name == "fuse_box":
-        # Construct one valid matrix from the displayed row/column totals.
+        # Use only visible totals, never the hidden reference arrangement.
         rows = [sum(r.d[i * 5 : i * 5 + 5]) for i in range(5)]
         cols = [sum(r.d[i + 5 * j] for j in range(5)) for i in range(5)]
-
-        def arrange(row, left, placed):
-            if row == 5:
-                return placed if not any(left) else None
-            for selected in itertools.combinations(range(5), rows[row]):
-                if all(left[i] > 0 for i in selected):
-                    new = left[:]
-                    for i in selected:
-                        new[i] -= 1
-                    result = arrange(
-                        row + 1, new, placed + [row * 5 + i for i in selected]
-                    )
-                    if result is not None:
-                        return result
-            return None
-
-        result = arrange(0, cols, [])
-        assert result
-        for i in result:
+        for i in fuse_plan(rows, cols):
             p.go(i, 5)
             p.press(5)
         return

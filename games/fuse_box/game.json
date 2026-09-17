@@ -1,7 +1,7 @@
 {
   "id": "fuse-box",
   "title": "FUSE BOX",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -31,6 +31,7 @@
     "MATCH THE COUNT IN EVERY ROW",
     "AND THE COUNT IN EVERY COLUMN.",
     "ANY MATCHING WIRING IS VALID.",
+    "MATCHED COUNTS ARE INVERTED.",
     "SPACE : CLEAR THE PANEL"
   ],
   "footer": "WASD MOVE  RET USE  SPACE RETRY"

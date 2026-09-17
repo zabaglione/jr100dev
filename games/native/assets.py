@@ -8,7 +8,9 @@ from artwork import put, title
 from depth_panels import decorate
 from directional import assets as actor_assets
 from disc_animation import frames as disc_frames
+from fonts import glyph
 from relief import native_bank
+from switch_animation import frames as switch_frames
 
 
 def theme(info):
@@ -123,6 +125,13 @@ def generate(output, metadata, directory):
     if info["id"] == "corner-crown":
         poses = disc_frames()
         bank[192:224] = poses[0]
+        face_assets += emit("FLIP_FRAMES", [byte for pose in poses for byte in pose])
+    if info["id"] == "fuse-box":
+        poses = switch_frames()
+        bank[192:224] = poses[0]
+        bank[80:128] = [
+            byte ^ 255 for digit in "012345" for byte in glyph(digit, "panel")
+        ]
         face_assets += emit("FLIP_FRAMES", [byte for pose in poses for byte in pose])
     text = face_assets + (
         emit("TITLE_PCG", pcg) + emit("TITLE_SCREEN", screen) + emit("GAME_PCG", bank)
