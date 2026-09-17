@@ -1,0 +1,84 @@
+{
+  "id": "gravity-well",
+  "recording": "automated keyboard replay",
+  "boot": "owned BASIC ROM and PRG autostart",
+  "clock_hz": 894000,
+  "fps": 30,
+  "source_seconds": 30.0,
+  "video_seconds": 30.0,
+  "playback_speed": 1,
+  "edited": false,
+  "source_segments": [
+    [
+      0,
+      30.0
+    ]
+  ],
+  "clear_time": 25.2488,
+  "outcome": "first stage cleared",
+  "host_state_writes": 0,
+  "prg_sha256": "395cd3934e50d3571a9157a7894c9ab44dd5cd9e36c584cbdc7d448eb1837391",
+  "images": [
+    "demo-start.png",
+    "demo-play.png",
+    "demo-clear.png"
+  ],
+  "events": [
+    {
+      "time": 1.8,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 3.1094,
+      "kind": "stage-start"
+    },
+    {
+      "time": 7.3562,
+      "kind": "input",
+      "action": 1
+    },
+    {
+      "time": 8.5556,
+      "kind": "settled",
+      "action": 1
+    },
+    {
+      "time": 12.4093,
+      "kind": "input",
+      "action": 3
+    },
+    {
+      "time": 13.3901,
+      "kind": "settled",
+      "action": 3
+    },
+    {
+      "time": 16.5987,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 18.0284,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 22.4305,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 25.2488,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 25.2488,
+      "kind": "clear"
+    }
+  ],
+  "actions": 4,
+  "ticks": 0,
+  "final_mode": 2
+}

@@ -1,0 +1,144 @@
+{
+  "id": "ruin-lexicon",
+  "recording": "automated keyboard replay",
+  "boot": "owned BASIC ROM and PRG autostart",
+  "clock_hz": 894000,
+  "fps": 30,
+  "source_seconds": 30.0,
+  "video_seconds": 30.0,
+  "playback_speed": 1,
+  "edited": false,
+  "source_segments": [
+    [
+      0,
+      30.0
+    ]
+  ],
+  "clear_time": 24.1751,
+  "outcome": "first stage cleared",
+  "host_state_writes": 0,
+  "prg_sha256": "7bc13955b81a82688606f27bf8452ba44abf3ac8b0c36a1c5d8dd1224adf60cd",
+  "images": [
+    "demo-start.png",
+    "demo-play.png",
+    "demo-clear.png"
+  ],
+  "events": [
+    {
+      "time": 1.8001,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 3.0091,
+      "kind": "stage-start"
+    },
+    {
+      "time": 4.5511,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 4.6961,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 6.247,
+      "kind": "input",
+      "action": 1
+    },
+    {
+      "time": 6.3918,
+      "kind": "settled",
+      "action": 1
+    },
+    {
+      "time": 8.3655,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 8.5114,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 9.9853,
+      "kind": "input",
+      "action": 1
+    },
+    {
+      "time": 10.1302,
+      "kind": "settled",
+      "action": 1
+    },
+    {
+      "time": 11.7537,
+      "kind": "input",
+      "action": 1
+    },
+    {
+      "time": 12.0255,
+      "kind": "settled",
+      "action": 1
+    },
+    {
+      "time": 13.5397,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 13.6847,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 15.38,
+      "kind": "input",
+      "action": 1
+    },
+    {
+      "time": 15.5249,
+      "kind": "settled",
+      "action": 1
+    },
+    {
+      "time": 17.1757,
+      "kind": "input",
+      "action": 1
+    },
+    {
+      "time": 17.3207,
+      "kind": "settled",
+      "action": 1
+    },
+    {
+      "time": 19.17,
+      "kind": "input",
+      "action": 1
+    },
+    {
+      "time": 19.315,
+      "kind": "settled",
+      "action": 1
+    },
+    {
+      "time": 22.4201,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 24.1751,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 24.1751,
+      "kind": "clear"
+    }
+  ],
+  "actions": 10,
+  "ticks": 0,
+  "final_mode": 2
+}

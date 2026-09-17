@@ -10,6 +10,18 @@
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/potion-path/title.png)
 
+## 紹介画像とプレイ動画
+
+**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=potion-path)**
+
+1ステージのクリアまでを収録。途中を省略せず、通常の速度で収録しています。画面を確認する間を入れた自動キー入力によるプレイです。
+
+![開始時の盤面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/potion-path/demo-start.png)
+
+[![操作を進めた場面・クリックで動画](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/potion-path/demo-play.png)](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=potion-path)
+
+![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/potion-path/demo-clear.png)
+
 ## 操作と遊び方
 
 WASDで素材を選び、RETURNで加えます。灰は左2、苔は右1・下2、塩は上1、根は右3・下1です。盤外へ出る素材は加えられません。

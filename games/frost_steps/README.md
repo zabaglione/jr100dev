@@ -6,6 +6,18 @@
 
 ![タイトル](images/title.png)
 
+## 紹介画像とプレイ動画
+
+**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=frost-steps)**
+
+1ステージのクリアまでを収録。途中を省略せず、通常の速度で収録しています。画面を確認する間を入れた自動キー入力によるプレイです。
+
+![開始時の盤面](images/demo-start.png)
+
+[![操作を進めた場面・クリックで動画](images/demo-play.png)](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=frost-steps)
+
+![最初の目標を達成した場面](images/demo-clear.png)
+
 ## タイトルのデザイン
 
 右上へ続く氷の足場と結晶を描き、横長のFROSTに白い正面と網点の側面を付けています。
@@ -37,12 +49,6 @@ ICE COMPASSのCRYSTALSは残っている必須クリスタル数。下部のMOV�
 ![ゲーム開始時](images/play-01.png)
 
 ![プレイ中の場面](images/play-02.png)
-
-## 滑走とクリアの動画
-
-![1面を滑走して3つ星クリアする実画面](images/slide-clear.gif)
-
-[音付き動画を見る](https://github.com/zabaglione/jr100dev/blob/main/games/frost_steps/images/slide-clear.mp4)。1面を3つ星でクリアする動画です。GIFには音がありません。
 
 ## 手数と星評価
 

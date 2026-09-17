@@ -126,7 +126,41 @@ def player_manual(text):
     return re.sub(r"\n{3,}", "\n\n", text).rstrip() + "\n"
 
 
-home = f"# JR-100 Games\n\n標準RAM 16KB向けのオリジナルゲーム{len(games)}作品です。ジャンルから選ぶと、各作品の画面・遊び方・起動リンクを探せます。\n\n"
+def with_media(text, game, local=False):
+    report = json.loads((ROOT / game["directory"] / "images/play.json").read_text())
+    text = re.sub(
+        r"\n## 紹介画像とプレイ動画\n.*?(?=\n## |\Z)", "\n", text, flags=re.DOTALL
+    )
+    base = "images" if local else f"{IMAGES}/{game['id']}"
+    url = f"https://zabaglione.github.io/pyjr100emu/gameplay.html?game={game['id']}"
+    seconds = round(report["video_seconds"])
+    outcomes = {
+        "first stage cleared": "1ステージのクリアまで",
+        "first two stages cleared": "最初の2ステージをクリアするまで",
+        "first battle won": "最初の戦闘に勝利するまで",
+        "first two chamber seals collected": "最初の2部屋の封印を回収するまで",
+        "all five records recovered and returned to base": "5つの記録を回収し、基地へ帰還するまで",
+        "first floor completed; entered floor 2": "最初の階を踏破し、2階へ進むまで",
+    }
+    edit = (
+        "長い途中経過を省略したダイジェストです。省略箇所にはLATERを表示し、動作と音の速度は変えていません。"
+        if report["edited"]
+        else "途中を省略せず、通常の速度で収録しています。"
+    )
+    block = (
+        f"\n## 紹介画像とプレイ動画\n\n**[音付きプレイ動画を見る（約{seconds}秒）]({url})**\n\n"
+        f"{outcomes[report['outcome']]}を収録。{edit}画面を確認する間を入れた自動キー入力によるプレイです。\n\n"
+        f"![開始時の盤面]({base}/demo-start.png)\n\n"
+        f"[![操作を進めた場面・クリックで動画]({base}/demo-play.png)]({url})\n\n"
+        f"![最初の目標を達成した場面]({base}/demo-clear.png)\n"
+    )
+    position = text.find("\n## ")
+    if position < 0:
+        position = len(text.rstrip())
+    return text[:position].rstrip() + "\n" + block + "\n" + text[position:].lstrip()
+
+
+home = f"# JR-100 Games\n\n標準RAM 16KB向けのオリジナルゲーム{len(games)}作品です。ジャンルから選ぶと、各作品の画面・遊び方・起動リンクを探せます。\n\n各作品に3枚以上の紹介画像と約30秒の音付きプレイ動画を掲載しています。[全51作品の動画ギャラリー](https://zabaglione.github.io/pyjr100emu/gameplay.html)からも選べます。\n\n"
 home += "| ジャンル | 作品数 | 内容 |\n| --- | ---: | --- |\n"
 for gid, genre in genres.items():
     subset = [g for g in games if g["genre"] == gid]
@@ -233,7 +267,7 @@ for g in games:
         text = re.sub(
             r"[\d,]+ bytes(?!のスタック)", f"{layout['code_bytes']:,} bytes", text
         )
-        path.write_text(player_manual(text))
+        path.write_text(with_media(player_manual(text), g))
         readme_path = directory / "README.md"
         readme_text = update_visual_section(readme_path.read_text(), g)
         readme_text = re.sub(
@@ -244,7 +278,7 @@ for g in games:
             f"{layout['code_bytes']:,} bytes",
             readme_text,
         )
-        readme_path.write_text(readme_text)
+        readme_path.write_text(with_media(readme_text, g, local=True))
         continue
     objective, controls, hud = manuals[g["directory"]]
     layout = json.loads((directory / "build/layout.json").read_text())
@@ -261,8 +295,6 @@ for g in games:
     if g["id"] in MOTION:
         body += MOTION[g["id"]] + "演出が終わってから次のキーを押してください。\n\n"
     body += f"{hud}\n\n![ゲーム開始時]({IMAGES}/{g['id']}/play-01.png)\n\n![プレイ中の場面]({IMAGES}/{g['id']}/play-02.png)\n\n"
-    if g["id"] == "frost-steps":
-        body += f"## 滑走とクリアの動画\n\n![1面を滑走して3つ星クリアする実画面]({IMAGES}/frost-steps/slide-clear.gif)\n\n[音付き動画を見る]({BASE}/blob/main/games/frost_steps/images/slide-clear.mp4)。1面を3つ星でクリアする動画です。GIFには音がありません。\n\n"
     if g["id"] == "brick-pulse":
         body += f"![落下アイテム]({IMAGES}/brick-pulse/items.png)\n\n![後半のドローンと装甲ブロック]({IMAGES}/brick-pulse/drone.png)\n\n![やり直し確認]({IMAGES}/brick-pulse/reset.png)\n\n"
     if meta.get("rankedCampaign"):
@@ -290,10 +322,12 @@ for g in games:
     body += f"```sh\n.venv/bin/python games/native/replay.py {g['directory']} --rom /path/to/owned-rom.prg --capture --keyboard\n```\n\n"
     body += "タイトルには長めの単音曲、プレイ中には効果音を付けています。"
     body += f"ソース・画像・曲は[MIT License]({BASE}/blob/main/games/LICENSE)。`art/`にはPCG Workbench用の画面データもあります。\n"
-    (WIKI / (g["id"].upper() + ".md")).write_text(player_manual(prefix + body))
+    (WIKI / (g["id"].upper() + ".md")).write_text(
+        with_media(player_manual(prefix + body), g)
+    )
     readme = f"# {g['title']}\n\n[Wiki]({BASE}/wiki/{g['id'].upper()}) · [プレイ]({PLAY}{g['id']})\n\n"
     readme += body.replace(f"{IMAGES}/{g['id']}/", "images/")
-    (directory / "README.md").write_text(readme)
+    (directory / "README.md").write_text(with_media(readme, g, local=True))
 readme = f"# JR-100 Games\n\n標準RAM 16KB向けの独立したオリジナルゲーム{len(games)}作品です。教材用の `samples/` とは分けて管理します。\n\n"
 readme += f"[Wikiのジャンル別一覧]({BASE}/wiki) · [共通操作]({BASE}/wiki/Controls)\n\n"
 for gid, genre in genres.items():

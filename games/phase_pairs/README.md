@@ -6,6 +6,18 @@
 
 ![タイトル](images/title.png)
 
+## 紹介画像とプレイ動画
+
+**[音付きプレイ動画を見る（約33秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=phase-pairs)**
+
+1ステージのクリアまでを収録。途中を省略せず、通常の速度で収録しています。画面を確認する間を入れた自動キー入力によるプレイです。
+
+![開始時の盤面](images/demo-start.png)
+
+[![操作を進めた場面・クリックで動画](images/demo-play.png)](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=phase-pairs)
+
+![最初の目標を達成した場面](images/demo-clear.png)
+
 ## タイトルのデザイン
 
 4と6、3と7が10へつながる数字の組を描き、切り口を付けたロゴで計算の鋭さを表します。

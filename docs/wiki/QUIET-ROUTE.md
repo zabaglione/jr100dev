@@ -10,6 +10,18 @@
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/quiet-route/title.png)
 
+## 紹介画像とプレイ動画
+
+**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=quiet-route)**
+
+1ステージのクリアまでを収録。途中を省略せず、通常の速度で収録しています。画面を確認する間を入れた自動キー入力によるプレイです。
+
+![開始時の盤面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/quiet-route/demo-start.png)
+
+[![操作を進めた場面・クリックで動画](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/quiet-route/demo-play.png)](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=quiet-route)
+
+![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/quiet-route/demo-clear.png)
+
 ## 操作と遊び方
 
 WASDで移動、RETURNで静音歩行を切り替えます。静音中は移動に電池を2消費しますが、聞きつけられる距離が短くなります。

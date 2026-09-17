@@ -10,6 +10,18 @@
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/tidal-nets/title.png)
 
+## 紹介画像とプレイ動画
+
+**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=tidal-nets)**
+
+1ステージのクリアまでを収録。途中を省略せず、通常の速度で収録しています。画面を確認する間を入れた自動キー入力によるプレイです。
+
+![開始時の盤面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/tidal-nets/demo-start.png)
+
+[![操作を進めた場面・クリックで動画](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/tidal-nets/demo-play.png)](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=tidal-nets)
+
+![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/tidal-nets/demo-clear.png)
+
 ## 操作と遊び方
 
 A/Dで網を置く列を選び、RETURNで投網します。端から流された魚は反対側へ回ります。

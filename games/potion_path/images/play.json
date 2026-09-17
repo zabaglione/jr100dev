@@ -1,0 +1,74 @@
+{
+  "id": "potion-path",
+  "recording": "automated keyboard replay",
+  "boot": "owned BASIC ROM and PRG autostart",
+  "clock_hz": 894000,
+  "fps": 30,
+  "source_seconds": 30.0,
+  "video_seconds": 30.0,
+  "playback_speed": 1,
+  "edited": false,
+  "source_segments": [
+    [
+      0,
+      30.0
+    ]
+  ],
+  "clear_time": 22.5157,
+  "outcome": "first stage cleared",
+  "host_state_writes": 0,
+  "prg_sha256": "988ad687504110bbfeef5edb234570529910e92ca9c06b2dafbe55edc23055b7",
+  "images": [
+    "demo-start.png",
+    "demo-play.png",
+    "demo-clear.png"
+  ],
+  "events": [
+    {
+      "time": 1.8004,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 3.0615,
+      "kind": "stage-start"
+    },
+    {
+      "time": 7.1168,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 7.3069,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 12.1784,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 12.3686,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 20.6306,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 22.5157,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 22.5157,
+      "kind": "clear"
+    }
+  ],
+  "actions": 3,
+  "ticks": 0,
+  "final_mode": 2
+}

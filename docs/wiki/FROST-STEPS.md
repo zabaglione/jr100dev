@@ -10,6 +10,18 @@
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/frost-steps/title.png)
 
+## 紹介画像とプレイ動画
+
+**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=frost-steps)**
+
+1ステージのクリアまでを収録。途中を省略せず、通常の速度で収録しています。画面を確認する間を入れた自動キー入力によるプレイです。
+
+![開始時の盤面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/frost-steps/demo-start.png)
+
+[![操作を進めた場面・クリックで動画](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/frost-steps/demo-play.png)](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=frost-steps)
+
+![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/frost-steps/demo-clear.png)
+
 ## 操作と遊び方
 
 WASDで滑走方向を選びます。実際に滑れた1回を1手と数え、途中で通過したクリスタルとルーンを回収します。壁に向かって動かなかった入力は手数に含みません。最後の必須クリスタルを取った滑走が終わるとクリアになるため、ルーンを狙うときは回収順に注意してください。
@@ -23,12 +35,6 @@ ICE COMPASSのCRYSTALSは残っている必須クリスタル数。下部のMOV�
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/frost-steps/play-01.png)
 
 ![プレイ中の場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/frost-steps/play-02.png)
-
-## 滑走とクリアの動画
-
-![1面を滑走して3つ星クリアする実画面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/frost-steps/slide-clear.gif)
-
-[音付き動画を見る](https://github.com/zabaglione/jr100dev/blob/main/games/frost_steps/images/slide-clear.mp4)。1面を3つ星でクリアする動画です。GIFには音がありません。
 
 ## 手数と星評価
 

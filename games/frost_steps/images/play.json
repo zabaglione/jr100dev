@@ -1,0 +1,74 @@
+{
+  "id": "frost-steps",
+  "recording": "automated keyboard replay",
+  "boot": "owned BASIC ROM and PRG autostart",
+  "clock_hz": 894000,
+  "fps": 30,
+  "source_seconds": 30.0,
+  "video_seconds": 30.0,
+  "playback_speed": 1,
+  "edited": false,
+  "source_segments": [
+    [
+      0,
+      30.0
+    ]
+  ],
+  "clear_time": 21.2957,
+  "outcome": "first stage cleared",
+  "host_state_writes": 0,
+  "prg_sha256": "618e1cfc47cf8ff222f0885e89cf77dfc4261574b57770bb2bcdab44c14c8233",
+  "images": [
+    "demo-start.png",
+    "demo-play.png",
+    "demo-clear.png"
+  ],
+  "events": [
+    {
+      "time": 1.8008,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 4.1093,
+      "kind": "stage-start"
+    },
+    {
+      "time": 9.0994,
+      "kind": "input",
+      "action": 3
+    },
+    {
+      "time": 9.7039,
+      "kind": "settled",
+      "action": 3
+    },
+    {
+      "time": 13.3394,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 14.5728,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 18.4369,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 21.2957,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 21.2957,
+      "kind": "clear"
+    }
+  ],
+  "actions": 3,
+  "ticks": 0,
+  "final_mode": 2
+}

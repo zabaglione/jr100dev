@@ -10,6 +10,18 @@
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/magnet-vault/title.png)
 
+## 紹介画像とプレイ動画
+
+**[音付きプレイ動画を見る（約31秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=magnet-vault)**
+
+1ステージのクリアまでを収録。途中を省略せず、通常の速度で収録しています。画面を確認する間を入れた自動キー入力によるプレイです。
+
+![開始時の盤面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/magnet-vault/demo-start.png)
+
+[![操作を進めた場面・クリックで動画](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/magnet-vault/demo-play.png)](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=magnet-vault)
+
+![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/magnet-vault/demo-clear.png)
+
 ## 操作と遊び方
 
 WASDで歩行と向きを変え、RETURNで正面の箱を1マス引きます。引くと自分は1マス後退します。歩行・向きの変更・成功した引き寄せをそれぞれ1手と数えます。壁や箱に向いてその場で向きだけを変える操作も1手です。向きも位置も変わらない入力、失敗した引き寄せは数えません。箱ではルーンを回収できません。

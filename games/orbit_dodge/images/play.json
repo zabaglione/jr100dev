@@ -1,0 +1,94 @@
+{
+  "id": "orbit-dodge",
+  "recording": "automated keyboard replay",
+  "boot": "owned BASIC ROM and PRG autostart",
+  "clock_hz": 894000,
+  "fps": 30,
+  "source_seconds": 30.0,
+  "video_seconds": 30.0,
+  "playback_speed": 1,
+  "edited": false,
+  "source_segments": [
+    [
+      0,
+      30.0
+    ]
+  ],
+  "clear_time": 25.4528,
+  "outcome": "first stage cleared",
+  "host_state_writes": 0,
+  "prg_sha256": "d7c314bddf0980ab51386b0319429c9d9cccec6d262c19f4a3f415816ded822f",
+  "images": [
+    "demo-start.png",
+    "demo-play.png",
+    "demo-clear.png"
+  ],
+  "events": [
+    {
+      "time": 1.8001,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 3.8821,
+      "kind": "stage-start"
+    },
+    {
+      "time": 10.8997,
+      "kind": "input",
+      "action": 3
+    },
+    {
+      "time": 11.0233,
+      "kind": "settled",
+      "action": 3
+    },
+    {
+      "time": 15.8694,
+      "kind": "input",
+      "action": 3
+    },
+    {
+      "time": 15.9935,
+      "kind": "settled",
+      "action": 3
+    },
+    {
+      "time": 16.8661,
+      "kind": "input",
+      "action": 3
+    },
+    {
+      "time": 16.9904,
+      "kind": "settled",
+      "action": 3
+    },
+    {
+      "time": 21.8401,
+      "kind": "input",
+      "action": 3
+    },
+    {
+      "time": 21.9645,
+      "kind": "settled",
+      "action": 3
+    },
+    {
+      "time": 22.838,
+      "kind": "input",
+      "action": 3
+    },
+    {
+      "time": 22.9623,
+      "kind": "settled",
+      "action": 3
+    },
+    {
+      "time": 25.4528,
+      "kind": "clear"
+    }
+  ],
+  "actions": 5,
+  "ticks": 80,
+  "final_mode": 2
+}

@@ -6,6 +6,18 @@
 
 ![タイトル](images/title.png)
 
+## 紹介画像とプレイ動画
+
+**[音付きプレイ動画を見る（約33秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=stone-balance)**
+
+1ステージのクリアまでを収録。途中を省略せず、通常の速度で収録しています。画面を確認する間を入れた自動キー入力によるプレイです。
+
+![開始時の盤面](images/demo-start.png)
+
+[![操作を進めた場面・クリックで動画](images/demo-play.png)](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=stone-balance)
+
+![最初の目標を達成した場面](images/demo-clear.png)
+
 ## タイトルのデザイン
 
 大きさも数も違う石が釣り合う天秤を中央に置き、石の刻印風の文字で上下を囲みます。

@@ -1,0 +1,112 @@
+{
+  "id": "word-foundry",
+  "recording": "automated keyboard replay",
+  "boot": "owned BASIC ROM and PRG autostart",
+  "clock_hz": 894000,
+  "fps": 30,
+  "source_seconds": 36.2,
+  "video_seconds": 30.0,
+  "playback_speed": 1,
+  "edited": true,
+  "source_segments": [
+    [
+      0,
+      12
+    ],
+    [
+      15.1,
+      23.1
+    ],
+    [
+      26.2,
+      36.2
+    ]
+  ],
+  "clear_time": 33.2003,
+  "outcome": "first stage cleared",
+  "host_state_writes": 0,
+  "prg_sha256": "5025e7d74f05afc21526644018556e6a0d4accb06ad804e4eea1cac1d372d12d",
+  "images": [
+    "demo-start.png",
+    "demo-play.png",
+    "demo-clear.png"
+  ],
+  "events": [
+    {
+      "time": 1.8006,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 3.0427,
+      "kind": "stage-start"
+    },
+    {
+      "time": 6.4521,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 6.644,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 11.2713,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 11.4653,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 15.0007,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 15.1926,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 21.0977,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 21.2925,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 24.7715,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 24.9634,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 31.3958,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 33.2003,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 33.2003,
+      "kind": "clear"
+    }
+  ],
+  "actions": 6,
+  "ticks": 0,
+  "final_mode": 2
+}

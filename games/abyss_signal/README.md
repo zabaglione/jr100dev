@@ -4,6 +4,18 @@
 
 ![Title](images/title.png)
 
+## 紹介画像とプレイ動画
+
+**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=abyss-signal)**
+
+5つの記録を回収し、基地へ帰還するまでを収録。長い途中経過を省略したダイジェストです。省略箇所にはLATERを表示し、動作と音の速度は変えていません。画面を確認する間を入れた自動キー入力によるプレイです。
+
+![開始時の盤面](images/demo-start.png)
+
+[![操作を進めた場面・クリックで動画](images/demo-play.png)](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=abyss-signal)
+
+![最初の目標を達成した場面](images/demo-clear.png)
+
 ## タイトルのデザイン
 
 横に広いABYSSと深い海底のシルエットで、潜水艇の小ささと探索の不安を表します。
@@ -19,6 +31,7 @@
 ## 動きとクリア演出
 
 クリア時は完成した盤面・結果を残し、約1.6秒のジングルと余韻を挟みます。失敗時も原因を表示し、ジングルの後に短い間を置きます。その後、キーを押し直して次の操作に進みます。直前から押し続けたキーや、演出中に押したキーで結果を飛ばすことはありません。
+
 
 ## 操作
 

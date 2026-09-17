@@ -1,0 +1,374 @@
+{
+  "id": "tidal-nets",
+  "recording": "automated keyboard replay",
+  "boot": "owned BASIC ROM and PRG autostart",
+  "clock_hz": 894000,
+  "fps": 30,
+  "source_seconds": 30.0,
+  "video_seconds": 30.0,
+  "playback_speed": 1,
+  "edited": false,
+  "source_segments": [
+    [
+      0,
+      30.0
+    ]
+  ],
+  "clear_time": 26.567,
+  "outcome": "first stage cleared",
+  "host_state_writes": 0,
+  "prg_sha256": "c7373e5173ac4ec14fbc6f8e5a022c6d6eb40c5549f32d96c99886033a225936",
+  "images": [
+    "demo-start.png",
+    "demo-play.png",
+    "demo-clear.png"
+  ],
+  "events": [
+    {
+      "time": 1.8001,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 2.9858,
+      "kind": "stage-start"
+    },
+    {
+      "time": 3.3998,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 3.5336,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 3.9829,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 4.1159,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 4.5331,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 4.667,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 5.0563,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 5.1902,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 5.928,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 6.0635,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 6.5152,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 6.649,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 7.4558,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 7.6174,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 8.1527,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 8.2866,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 9.0293,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 9.1649,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 9.6084,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 9.7413,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 10.1996,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 10.3326,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 10.7285,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 10.8624,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 11.2796,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 11.4126,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 11.7897,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 11.9235,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 12.658,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 12.7943,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 13.273,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 13.406,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 13.7978,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 13.9308,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 14.3112,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 14.445,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 14.8959,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 15.0289,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 15.483,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 15.616,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 16.08,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 16.213,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 16.5811,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 16.7149,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 17.4576,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 17.5932,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 18.0342,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 18.1672,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 18.6861,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 18.82,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 19.2126,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 19.3457,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 20.2179,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 20.3535,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 20.7592,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 20.9546,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 21.3399,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 21.4729,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 21.9615,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 22.0954,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 23.0971,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 23.2335,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 23.6844,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 23.8174,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 24.8217,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 26.567,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 26.567,
+      "kind": "clear"
+    }
+  ],
+  "actions": 33,
+  "ticks": 0,
+  "final_mode": 2
+}

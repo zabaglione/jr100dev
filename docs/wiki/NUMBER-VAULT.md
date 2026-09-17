@@ -10,6 +10,18 @@
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/number-vault/title.png)
 
+## 紹介画像とプレイ動画
+
+**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=number-vault)**
+
+1ステージのクリアまでを収録。途中を省略せず、通常の速度で収録しています。画面を確認する間を入れた自動キー入力によるプレイです。
+
+![開始時の盤面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/number-vault/demo-start.png)
+
+[![操作を進めた場面・クリックで動画](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/number-vault/demo-play.png)](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=number-vault)
+
+![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/number-vault/demo-clear.png)
+
 ## 操作と遊び方
 
 A/Dで桁を選び、W/Sで数を変え、RETURNで試します。EXACTは数も位置も一致、NEARは数だけ一致した個数です。同じ数を重複して数えません。

@@ -10,6 +10,18 @@
 
 ![Title](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/loop-ten/title.png)
 
+## 紹介画像とプレイ動画
+
+**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=loop-ten)**
+
+最初の2部屋の封印を回収するまでを収録。途中を省略せず、通常の速度で収録しています。画面を確認する間を入れた自動キー入力によるプレイです。
+
+![開始時の盤面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/loop-ten/demo-start.png)
+
+[![操作を進めた場面・クリックで動画](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/loop-ten/demo-play.png)](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=loop-ten)
+
+![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/loop-ten/demo-clear.png)
+
 ## 操作とルール
 
 | 操作 | キーボード | 1ボタンパッド |

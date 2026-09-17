@@ -10,6 +10,18 @@
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/orchard-days/title.png)
 
+## 紹介画像とプレイ動画
+
+**[音付きプレイ動画を見る（約34秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=orchard-days)**
+
+1ステージのクリアまでを収録。途中を省略せず、通常の速度で収録しています。画面を確認する間を入れた自動キー入力によるプレイです。
+
+![開始時の盤面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/orchard-days/demo-start.png)
+
+[![操作を進めた場面・クリックで動画](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/orchard-days/demo-play.png)](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=orchard-days)
+
+![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/orchard-days/demo-clear.png)
+
 ## 操作と遊び方
 
 WASDで畑を選び、RETURNで作業します。空いた畑は種まき、育成中は水やり、実った木は収穫です。収穫すると種が2個戻ります。

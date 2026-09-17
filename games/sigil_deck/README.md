@@ -6,6 +6,18 @@
 
 ![SIGIL DECK title](images/title.png)
 
+## 紹介画像とプレイ動画
+
+**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=sigil-deck)**
+
+最初の戦闘に勝利するまでを収録。途中を省略せず、通常の速度で収録しています。画面を確認する間を入れた自動キー入力によるプレイです。
+
+![開始時の盤面](images/demo-start.png)
+
+[![操作を進めた場面・クリックで動画](images/demo-play.png)](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=sigil-deck)
+
+![最初の目標を達成した場面](images/demo-clear.png)
+
 ## タイトルのデザイン
 
 縦長のDECKロゴと重なったカードを左右に分け、魔法陣でカードの儀式を表しています。
@@ -21,6 +33,7 @@
 ## 動きとクリア演出
 
 クリア時は完成した盤面・結果を残し、約1.6秒のジングルと余韻を挟みます。失敗時も原因を表示し、ジングルの後に短い間を置きます。その後、キーを押し直して次の操作に進みます。直前から押し続けたキーや、演出中に押したキーで結果を飛ばすことはありません。
+
 
 ## 操作
 

@@ -10,6 +10,18 @@
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/brick-pulse/title.png)
 
+## 紹介画像とプレイ動画
+
+**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=brick-pulse)**
+
+1ステージのクリアまでを収録。長い途中経過を省略したダイジェストです。省略箇所にはLATERを表示し、動作と音の速度は変えていません。画面を確認する間を入れた自動キー入力によるプレイです。
+
+![開始時の盤面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/brick-pulse/demo-start.png)
+
+[![操作を進めた場面・クリックで動画](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/brick-pulse/demo-play.png)](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=brick-pulse)
+
+![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/brick-pulse/demo-clear.png)
+
 ## 操作と遊び方
 
 A/Dまたはパッドの左右を押し続けると連続移動し、短押しでは2文字分ずつ動き、離すと止まります。中央で受けると急な角度、端で受けると浅い角度になります。ブロックを3個壊すごとにW・S・Gのいずれかが落下します。Wは一定時間パドル拡大、Sは一定時間ボール減速、Gは落球または爆弾を1回防ぎます。ドローン撃破でもGが落ちます。同時に出るアイテムは1個です。爆弾を受けるとパドルが一定時間短くなります。Wを取ると解除できます。

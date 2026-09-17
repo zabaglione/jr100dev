@@ -1,0 +1,84 @@
+{
+  "id": "circuit-works",
+  "recording": "automated keyboard replay",
+  "boot": "owned BASIC ROM and PRG autostart",
+  "clock_hz": 894000,
+  "fps": 30,
+  "source_seconds": 30.0,
+  "video_seconds": 30.0,
+  "playback_speed": 1,
+  "edited": false,
+  "source_segments": [
+    [
+      0,
+      30.0
+    ]
+  ],
+  "clear_time": 25.0804,
+  "outcome": "first stage cleared",
+  "host_state_writes": 0,
+  "prg_sha256": "5b336757bb26bb830ade9b5739fd8ee8d966c26feeb2f44968dacf630daf3580",
+  "images": [
+    "demo-start.png",
+    "demo-play.png",
+    "demo-clear.png"
+  ],
+  "events": [
+    {
+      "time": 1.8004,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 3.0197,
+      "kind": "stage-start"
+    },
+    {
+      "time": 6.8562,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 7.0022,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 10.6093,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 10.7553,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 14.3631,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 14.5094,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 23.3189,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 25.0804,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 25.0804,
+      "kind": "clear"
+    }
+  ],
+  "actions": 4,
+  "ticks": 0,
+  "final_mode": 2
+}

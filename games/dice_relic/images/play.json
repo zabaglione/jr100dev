@@ -1,0 +1,158 @@
+{
+  "id": "dice-relic",
+  "recording": "automated keyboard replay",
+  "boot": "owned BASIC ROM and PRG autostart",
+  "clock_hz": 894000,
+  "fps": 30,
+  "source_seconds": 30.0,
+  "video_seconds": 30.0,
+  "playback_speed": 1,
+  "edited": false,
+  "source_segments": [
+    [
+      0,
+      30.0
+    ]
+  ],
+  "clear_time": 16.42,
+  "outcome": "first battle won",
+  "host_state_writes": 0,
+  "prg_sha256": "6e2d508dc949f54fce17bacbf7389dd09756e78886279ee3fba6176c1a75df0b",
+  "images": [
+    "demo-start.png",
+    "demo-play.png",
+    "demo-clear.png"
+  ],
+  "events": [
+    {
+      "time": 2.4834,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 3.6769,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 4.4871,
+      "kind": "stage-start"
+    },
+    {
+      "time": 5.2605,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 5.392,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 5.9512,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 6.0828,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 6.6626,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 6.7939,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 7.5447,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 7.6762,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 8.2842,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 8.4483,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 9.9674,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 10.0995,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 10.7683,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 10.9006,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 11.4814,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 11.613,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 12.3196,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 12.8543,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 13.509,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 14.0436,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 14.6437,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 16.4192,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 16.42,
+      "kind": "clear"
+    }
+  ],
+  "actions": 12,
+  "final_mode": 2
+}

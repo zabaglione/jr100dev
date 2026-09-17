@@ -1,0 +1,242 @@
+{
+  "id": "metro-weave",
+  "recording": "automated keyboard replay",
+  "boot": "owned BASIC ROM and PRG autostart",
+  "clock_hz": 894000,
+  "fps": 30,
+  "source_seconds": 37.333,
+  "video_seconds": 30.0,
+  "playback_speed": 1,
+  "edited": true,
+  "source_segments": [
+    [
+      0,
+      12
+    ],
+    [
+      15.6667,
+      23.6667
+    ],
+    [
+      27.3333,
+      37.3333
+    ]
+  ],
+  "clear_time": 34.3483,
+  "outcome": "first stage cleared",
+  "host_state_writes": 0,
+  "prg_sha256": "5e1f38686bab281b85c803e956207708e056be863f0265f0aee6ce99184d5ee2",
+  "images": [
+    "demo-start.png",
+    "demo-play.png",
+    "demo-clear.png"
+  ],
+  "events": [
+    {
+      "time": 1.8003,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 2.9865,
+      "kind": "stage-start"
+    },
+    {
+      "time": 2.9865,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 3.1212,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 3.1212,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 3.2546,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 3.2546,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 3.5206,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 7.9121,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 8.0454,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 8.0454,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 8.1802,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 12.844,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 12.9781,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 12.9781,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 13.1124,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 13.1124,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 13.3781,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 15.3843,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 15.5184,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 17.791,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 17.9244,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 17.9244,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 18.0592,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 18.0592,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 18.3242,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 18.3242,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 18.4591,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 22.8584,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 22.9918,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 22.9918,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 23.1266,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 27.7908,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 27.9249,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 27.9249,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 28.0593,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 28.0593,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 28.3249,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 30.3316,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 30.4657,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 34.3483,
+      "kind": "clear"
+    }
+  ],
+  "actions": 19,
+  "ticks": 104,
+  "final_mode": 2
+}

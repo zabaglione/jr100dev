@@ -10,6 +10,18 @@
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/gravity-well/title.png)
 
+## 紹介画像とプレイ動画
+
+**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=gravity-well)**
+
+1ステージのクリアまでを収録。途中を省略せず、通常の速度で収録しています。画面を確認する間を入れた自動キー入力によるプレイです。
+
+![開始時の盤面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/gravity-well/demo-start.png)
+
+[![操作を進めた場面・クリックで動画](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/gravity-well/demo-play.png)](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=gravity-well)
+
+![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/gravity-well/demo-clear.png)
+
 ## 操作と遊び方
 
 WASDで部屋を傾けます。少なくとも1つの球が動いた傾き1回を1手と数えます。球は壁か他方の球で止まり、通過したルーンを回収します。両方がソケットに入った傾きの終了時にクリアします。球がまったく動かない入力は手数に含みません。

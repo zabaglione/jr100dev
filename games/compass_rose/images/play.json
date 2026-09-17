@@ -1,0 +1,74 @@
+{
+  "id": "compass-rose",
+  "recording": "automated keyboard replay",
+  "boot": "owned BASIC ROM and PRG autostart",
+  "clock_hz": 894000,
+  "fps": 30,
+  "source_seconds": 30.0,
+  "video_seconds": 30.0,
+  "playback_speed": 1,
+  "edited": false,
+  "source_segments": [
+    [
+      0,
+      30.0
+    ]
+  ],
+  "clear_time": 22.8648,
+  "outcome": "first stage cleared",
+  "host_state_writes": 0,
+  "prg_sha256": "0b76d6b4ccc664743324e12b8517e4563bd551b7bcf36d281a56eb3e07975aac",
+  "images": [
+    "demo-start.png",
+    "demo-play.png",
+    "demo-clear.png"
+  ],
+  "events": [
+    {
+      "time": 1.8,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 4.2686,
+      "kind": "stage-start"
+    },
+    {
+      "time": 8.0756,
+      "kind": "input",
+      "action": 1
+    },
+    {
+      "time": 8.4924,
+      "kind": "settled",
+      "action": 1
+    },
+    {
+      "time": 12.8536,
+      "kind": "input",
+      "action": 1
+    },
+    {
+      "time": 13.2656,
+      "kind": "settled",
+      "action": 1
+    },
+    {
+      "time": 21.0515,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 22.8648,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 22.8648,
+      "kind": "clear"
+    }
+  ],
+  "actions": 3,
+  "ticks": 0,
+  "final_mode": 2
+}
