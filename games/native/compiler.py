@@ -161,7 +161,16 @@ class Compiler:
             assert 0 <= slot < 8
             self.load(n.args[1])
             self.emit(f"    LDAB #{slot}\n    LDX #FACE_{slot}_FRAMES\n    JSR N_FACE")
-        elif name in ("tile", "number", "letter", "sound", "impact", "vanish", "mover"):
+        elif name in (
+            "tile",
+            "stamp",
+            "number",
+            "letter",
+            "sound",
+            "impact",
+            "vanish",
+            "mover",
+        ):
             for i, arg in enumerate(n.args):
                 self.load(arg)
                 self.emit(f"    STAA N_ARG{i}")

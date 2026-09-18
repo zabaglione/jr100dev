@@ -35,6 +35,7 @@ class Model:
             "c": self.c,
             "d": self.d,
             "tile": lambda *a: None,
+            "stamp": lambda *a: None,
             "text": lambda *a: None,
             "letter": lambda *a: None,
             "number": lambda *a: None,
@@ -142,6 +143,7 @@ def render_bounds(model):
     model.env.update(
         {
             "tile": lambda x, y, g: check(x, y, 2, 2),
+            "stamp": lambda x, y, g: check(x, y, 2, 2),
             "mover": lambda dest, start, g, left: check(
                 left + dest % 8 + start % 8, 3 + dest // 8 + start // 8, 2, 2
             ),
@@ -159,17 +161,17 @@ def assert_state(machine, model):
     for key, label in slots.items():
         if key.startswith("s."):
             field = key[2:]
-            assert machine.get(label) == getattr(
-                model.s, field
-            ), f"{machine.directory.name} {field}: native={machine.get(label)}, model={getattr(model.s, field)}"
+            assert machine.get(label) == getattr(model.s, field), (
+                f"{machine.directory.name} {field}: native={machine.get(label)}, model={getattr(model.s, field)}"
+            )
     for name in ("b", "c", "d"):
         assert machine.read(name.upper() + "_ARRAY", 128) == bytes(
             getattr(model, name)
         ), f"{machine.directory.name} {name} array differs"
     if machine.metadata.get("rankedCampaign"):
-        assert machine.read("BEST", len(model.best)) == bytes(
-            model.best
-        ), "Best ratings differ"
+        assert machine.read("BEST", len(model.best)) == bytes(model.best), (
+            "Best ratings differ"
+        )
     assert lib.min_sp(machine.p) >= 0x3E00, "Stack exceeded reserved 512 bytes"
     assert machine.read(0x300, len(machine.code)) == machine.code, "Code/data changed"
 

@@ -217,7 +217,9 @@ def choose_segments(duration, clear_time, full_length=False):
 def encode(rec, destination, clear_time, outcome, extra):
     duration = rec.frames // 2 / FPS
     segments = choose_segments(
-        duration, clear_time, full_length=rec.m.metadata["id"] == "peg-garden"
+        duration,
+        clear_time,
+        full_length=rec.m.metadata["id"] in ("peg-garden", "seed-merge"),
     )
     filters = []
     for i, (start, end) in enumerate(segments):

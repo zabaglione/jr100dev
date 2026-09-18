@@ -98,6 +98,8 @@ def free_slots(metadata):
         return [], CUSTOM_FREE[gid][1]
     if gid == "phase-pairs":
         return [], []  # Tall numerals, card frames and four live fusion glyphs.
+    if gid == "prism-trace":
+        return [], list(range(21, 32))  # Shared optical glyphs occupy 0..20.
     if gid == "brick-pulse":
         return [], list(range(16, 32))
     tiles = set(NATIVE[gid])

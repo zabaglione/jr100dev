@@ -122,6 +122,15 @@ def generate(output, metadata, directory):
         ]
         put(hud, 1, 21, "BEST       F MAP  NOW")
     face_assets = actor_assets(info["id"], bank)
+    if info["id"] == "prism-trace":
+        from prism_trace.graphics import atlas
+
+        bank, stamps = atlas()
+        assert metadata["dataTables"]["optics"] == stamps
+    if info["id"] == "tide-bridge":
+        from tide_bridge.presentation import prepare
+
+        face_assets += prepare(bank)
     if info["id"] == "phase-pairs":
         from phase_pairs.presentation import prepare
 

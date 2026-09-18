@@ -368,8 +368,15 @@ NATIVE = {
         4: "crate",
     },
     "frost-steps": {0: "floor-ice", 1: "wall-ice", 2: "person", 3: "gem"},
-    "prism-trace": {0: "floor", 3: "socket", 4: "mirror-up", 5: "mirror-down"},
-    "tide-bridge": {0: "floor-water", 2: "person", 3: "bridge", 6: "door"},
+    "prism-trace": {},  # A deduplicated atlas combines mirrors and light paths.
+    "tide-bridge": {
+        0: "floor-water",
+        1: "floor-water",
+        2: "person",
+        3: "bridge",
+        4: "bridge",
+        6: "door",
+    },
     "glyph-shift": {
         0: "floor",
         1: "wall-stone",

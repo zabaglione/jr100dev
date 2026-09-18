@@ -3,13 +3,22 @@
 def trace():
     for i in range(49):
         c[i] = 0
+        d[i] = 0
     p = 21
     direction = 4
     for i in range(64):
-        c[p] = 1
-        if s.turns:
-            animate(2)
+        incoming = (
+            2
+            if direction == 1
+            else (1 if direction == 2 else (8 if direction == 3 else 4))
+        )
+        if d[p] & incoming:
+            return
+        d[p] = d[p] | incoming
         if p == 6:
+            c[p] = incoming
+            if s.turns:
+                animate(4)
             win()
             return
         if b[p] == 1:
@@ -24,6 +33,14 @@ def trace():
                 if direction == 1
                 else (4 if direction == 2 else (1 if direction == 3 else 2))
             )
+        outgoing = 1 << (direction - 1)
+        c[p] = c[p] | incoming | outgoing
+        if s.turns:
+            if b[p]:
+                sound(0)
+                animate(4)
+            else:
+                animate(1)
         n = move(p, direction, 7, 7)
         if n == p:
             return
@@ -58,15 +75,23 @@ def draw():
     x = 2
     y = 4
     for i in range(49):
-        tile(x, y, 0)
-        if c[i]:
-            letter(x, y, 46)
-        if b[i]:
-            tile(x, y, 4 if b[i] == 1 else 5)
+        shape = b[i] * 4
+        if c[i] == 15:
+            shape += 3
+        elif c[i] == 3 or c[i] == 5 or c[i] == 6:
+            shape += 1
+        elif c[i]:
+            shape += 2
+        if i == 6:
+            shape = 13 if c[i] else 12
+        stamp(x, y, shape)
         x += 2
         if x == 16:
             x = 2
             y += 2
-    tile(14, 4, 3)
-    letter(1 + s.cursor % 7 * 2, 4 + s.cursor // 7 * 2, 62)
+    stamp(0, 10, 2)
+    text(0, 9, "IN")
+    # Keep the cursor outside the optical cells so it never cuts the beam.
+    letter(2 + s.cursor % 7 * 2, 2, 86)
+    letter(17, 4 + s.cursor // 7 * 2, 60)
     number(24, 9, s.turns)

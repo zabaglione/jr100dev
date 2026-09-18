@@ -49,4 +49,9 @@ if metadata["id"] == "phase-pairs":
     subprocess.run(
         [sys.executable, str(game.parent / "tests/check_phase_pairs.py")], check=True
     )
+if metadata["id"] in ("prism-trace", "tide-bridge"):
+    subprocess.run(
+        [sys.executable, str(game.parent / "tests" / f"check_{game.name}.py")],
+        check=True,
+    )
 print("PASS: standard 16KB layout and 32 PCG slots")

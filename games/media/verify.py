@@ -37,7 +37,7 @@ def verify(name):
     )
     seconds = float(probe["format"]["duration"])
     assert seconds >= 25 and abs(seconds - report["video_seconds"]) < 0.1
-    if report["id"] == "peg-garden":
+    if report["id"] in ("peg-garden", "seed-merge"):
         assert not report["edited"]
         assert len(report["source_segments"]) == 1
         start, end = report["source_segments"][0]

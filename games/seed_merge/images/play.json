@@ -5,20 +5,12 @@
   "clock_hz": 894000,
   "fps": 30,
   "source_seconds": 55.6,
-  "video_seconds": 30.0,
+  "video_seconds": 55.6,
   "playback_speed": 1,
-  "edited": true,
+  "edited": false,
   "source_segments": [
     [
       0,
-      12
-    ],
-    [
-      24.8,
-      32.8
-    ],
-    [
-      45.6,
       55.6
     ]
   ],
@@ -448,5 +440,6 @@
   ],
   "actions": 40,
   "ticks": 0,
-  "final_mode": 2
+  "final_mode": 2,
+  "stages_cleared": 1
 }
