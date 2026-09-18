@@ -746,36 +746,31 @@ def solve_merge(p):
 
 
 def solve_board_match(p):
+    if p.name == "five_forge":
+        # Start in the centre and build an open diagonal in both directions.
+        # Both ends remain threats, so the final stone completes five.
+        for target in (27, 20, 13, 34, 41):
+            p.go(target, 8)
+            p.press(5)
+        return
     sim = Model(p.name)
     turns = 0
-    import random
-
-    rng = random.Random(0)
     while p.s.mode == 1:
         restore(sim, snapshot(p.r))
         best = None
         for i in range(64):
             if sim.b[i]:
                 continue
-            if p.name == "corner_crown":
-                gain = sim.env["flips"](i, 1, 0)
-                if not gain:
-                    continue
-                value = gain + (
-                    80
-                    if i in (0, 7, 56, 63)
-                    else (8 if i // 8 in (0, 7) or i % 8 in (0, 7) else 0)
-                )
-                if i in (1, 6, 8, 9, 14, 15, 48, 49, 54, 55, 57, 62):
-                    value -= 35
-            else:
-                offense = sim.env["line"](i, 1)
-                defense = sim.env["line"](i, 2)
-                value = offense * 6 + defense * 4 + rng.random() * 8
-                if defense >= 5:
-                    value = 1000 + rng.random()
-                if offense >= 5:
-                    value = 2000 + rng.random()
+            gain = sim.env["flips"](i, 1, 0)
+            if not gain:
+                continue
+            value = gain + (
+                80
+                if i in (0, 7, 56, 63)
+                else (8 if i // 8 in (0, 7) or i % 8 in (0, 7) else 0)
+            )
+            if i in (1, 6, 8, 9, 14, 15, 48, 49, 54, 55, 57, 62):
+                value -= 35
             if best is None or value > best[0]:
                 best = (value, i)
         target = best[1] if best else p.s.cursor

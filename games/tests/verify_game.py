@@ -49,7 +49,13 @@ if metadata["id"] == "phase-pairs":
     subprocess.run(
         [sys.executable, str(game.parent / "tests/check_phase_pairs.py")], check=True
     )
-if metadata["id"] in ("prism-trace", "tide-bridge", "chain-suit"):
+if metadata["id"] in (
+    "prism-trace",
+    "tide-bridge",
+    "chain-suit",
+    "five-forge",
+    "orbit-draft",
+):
     subprocess.run(
         [sys.executable, str(game.parent / "tests" / f"check_{game.name}.py")],
         check=True,

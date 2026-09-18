@@ -135,6 +135,14 @@ def generate(output, metadata, directory):
         from tide_bridge.presentation import prepare
 
         face_assets += prepare(bank)
+    if info["id"] == "five-forge":
+        from five_forge.presentation import prepare
+
+        face_assets += prepare(bank, hud)
+    if info["id"] == "orbit-draft":
+        from orbit_draft.presentation import prepare
+
+        face_assets += prepare(bank, hud)
     if info["id"] == "phase-pairs":
         from phase_pairs.presentation import prepare
 

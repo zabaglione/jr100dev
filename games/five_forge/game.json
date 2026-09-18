@@ -1,25 +1,14 @@
 {
   "id": "five-forge",
   "title": "FIVE FORGE",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
   "levels": 1,
   "rate": 255,
-  "hud": [
-    [
-      3,
-      19,
-      "FIVE FORGE"
-    ],
-    [
-      7,
-      20,
-      "STONES"
-    ]
-  ],
+  "hud": [],
   "help": [
     "WASD / PAD : SELECT A CELL",
     "BUTTON : PLACE YOUR STONE",

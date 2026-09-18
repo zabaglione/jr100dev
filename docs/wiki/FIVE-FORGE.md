@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/five-forge/demo-clear.png)
 
-**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=five-forge)**
+**[音付きプレイ動画を見る（約35秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=five-forge)**
 
 1ステージのクリアまでを収録。
 
@@ -28,9 +28,9 @@ WASDで位置を選び、RETURNで石を置きます。自分はO、相手はX�
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-自分と相手が石を置く様子を一手ずつ表示します。着手音と短い間で、相手が置いた位置を確認できます。演出が終わってから次のキーを押してください。
+石が落下し、着地してつぶれ、元の形に戻る四段階の動きとSEを付けました。自分と相手の着手を一手ずつ表示し、五連の石だけを3回点滅させてから結果を表示します。演出が終わってから次のキーを押してください。
 
-石数と自分・相手の記号を盤の右に表示します。
+右側に自分と相手の石数を表示します。CELLは現在選んでいる位置で、着手中は石を置いている位置に変わります。五連ができると該当する石だけが3回点滅し、その後で結果メッセージとジングルが流れます。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/five-forge/play-01.png)
 

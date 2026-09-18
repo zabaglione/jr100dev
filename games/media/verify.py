@@ -46,8 +46,9 @@ def verify(name):
         assert report["outcome"] == "first stage cleared" and report["final_mode"] == 2
     else:
         assert seconds <= 35
-    if report["id"] == "dice-relic":
+    if report["id"] in ("dice-relic", "five-forge", "orbit-draft"):
         assert not report["edited"]
+    if report["id"] == "dice-relic":
         assert {e["effect"] for e in report["events"] if e["kind"] == "combat"} >= set(
             range(1, 10)
         )

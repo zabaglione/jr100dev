@@ -52,7 +52,6 @@ def decorate(screen, game):
         "frost-steps",
         "glyph-shift",
         "gravity-well",
-        "five-forge",
         "corner-crown",
         "ribbon-snake",
         "compass-rose",
@@ -73,7 +72,6 @@ def decorate(screen, game):
             "frost-steps": (10, 18),
             "glyph-shift": (7, 11),
             "gravity-well": (9, 18),
-            "five-forge": (10,),
             "corner-crown": (10,),
             "ribbon-snake": (10,),
             "compass-rose": (10, 15),
@@ -95,13 +93,12 @@ def decorate(screen, game):
         for y in (3, 19):
             text(1, y, "~   ~    ~    ~")
         instruments()
-    elif game == "phase-pairs":
+    elif game in ("phase-pairs", "five-forge", "orbit-draft"):
         pass  # The authored numeral-card presentation supplies its surround.
     elif game in (
         "seed-merge",
         "memory-mosaic",
         "orchard-days",
-        "orbit-draft",
     ):
         width = 21 if game == "seed-merge" else 16
         board(1, 4, width, 15 if game == "orchard-days" else 14)

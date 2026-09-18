@@ -227,7 +227,8 @@ def encode(rec, destination, clear_time, outcome, extra):
     segments = choose_segments(
         duration,
         clear_time,
-        full_length=rec.m.metadata["id"] in ("peg-garden", "seed-merge", "dice-relic"),
+        full_length=rec.m.metadata["id"]
+        in ("peg-garden", "seed-merge", "dice-relic", "five-forge", "orbit-draft"),
     )
     filters = []
     for i, (start, end) in enumerate(segments):
