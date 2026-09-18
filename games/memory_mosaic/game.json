@@ -1,7 +1,7 @@
 {
   "id": "memory-mosaic",
   "title": "MEMORY MOSAIC",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -26,13 +26,14 @@
     ]
   ],
   "help": [
-    "WASD : SELECT A CARD",
-    "BUTTON : TURN THE CARD",
-    "FIND ALL EIGHT MATCHING PAIRS.",
-    "BUTTON CLOSES UNMATCHED CARDS.",
-    "TWELVE MISMATCHES LOSE.",
-    "CARDS ARE SHUFFLED EACH START."
+    "WASD : CHOOSE / BUTTON : TURN",
+    "FIND EIGHT MATCHING PAIRS.",
+    "BUTTON CLOSES UNMATCHED PAIRS.",
+    "MATCH PAIRS TO BUILD A CHAIN.",
+    "THE DECK CHANGES EVERY GAME.",
+    "LATER TABLES: FEWER MISSES."
   ],
   "seededDeck": true,
-  "fullDemo": true
+  "fullDemo": true,
+  "secondReview": true
 }

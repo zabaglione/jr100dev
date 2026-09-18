@@ -22,7 +22,15 @@ def act():
             return
         s.phase = 1
         sound(0)
-        flight(2 + s.choice * 8, 19, 5, 12, 3)
+        flight(
+            2 + s.choice * 8,
+            19,
+            5,
+            12,
+            4
+            if s.choice == 0
+            else (1 if s.choice == 1 else (3 if s.choice == 2 else 6)),
+        )
         if s.choice == 0:
             s.wood = min(30, s.wood + 7)
         elif s.choice == 1:
@@ -37,7 +45,9 @@ def act():
         animate(18)
         s.phase = 2
         cost = weather[s.level * 12 + s.day] - s.insulation
-        animate(15)
+        for frame in range(3):
+            s.fire_frame = frame % 2
+            animate(5)
         if s.food < 2:
             lose("NO FOOD LEFT FOR THE NIGHT")
             return
@@ -62,6 +72,7 @@ def tick():
 
 
 def draw():
+    face(3, 1 + s.fire_frame)
     for i in range(s.heat // 2):
         tile(3 + i % 4 * 2, 16 - i // 4 * 2, 3)
     text(14, 4, "FOOD")
@@ -82,7 +93,9 @@ def draw():
     elif s.notice == 2:
         text(1, 21, "WALL: FOUR WOOD, MAX TWO")
     elif s.phase == 1:
-        text(1, 21, "WORK DONE - RESOURCES ADDED")
+        text(1, 21, "WORK COMPLETE")
     elif s.phase == 2:
-        text(1, 21, "NIGHT: EAT 2, THEN LOSE HEAT")
+        text(1, 21, "NIGHTFALL")
+        for x in range(5):
+            letter(3 + x * 2, 6 + (x + s.fire_frame) % 3, 42)
     effect_draw()

@@ -2,8 +2,8 @@
 # s, b, c, d and drawing functions are supplied by the native compiler.
 def food():
     for k in range(64):
-        p = (s.eaten * 13 + k * 7 + 26) % 64
-        found = 0
+        p = (s.eaten * 13 + k * 7 + 26 + s.level * 9) % 64
+        found = d[p]
         for j in range(s.length):
             if b[j] == p:
                 found = 1
@@ -18,10 +18,19 @@ def init():
     b[1] = 0
     b[2] = 1
     s.dir = 2
+    s.brakes = 3
+    s.goal = 8 + s.level
+    for i in range(2 + s.level):
+        pos = 18 + (i * 11 + s.level * 3) % 30
+        d[pos] = 1
     food()
 
 
 def act():
+    if s.action == 5 and s.brakes and not s.slow:
+        s.brakes -= 1
+        s.slow = 8
+        sound(2)
     if s.action < 5:
         opposite = 2 if s.dir == 1 else (1 if s.dir == 2 else (4 if s.dir == 3 else 3))
         if s.action != opposite:
@@ -29,10 +38,18 @@ def act():
 
 
 def tick():
+    if s.slow:
+        s.slow -= 1
+        if s.slow % 2 == 0:
+            return
     p = move(b[0], s.dir, 8, 8)
     if p == b[0]:
         impact(1 + b[0] % 8 * 2, 3 + b[0] // 8 * 2)
         lose("THE HEAD HIT THE EDGE")
+        return
+    if d[p]:
+        impact(1 + p % 8 * 2, 3 + p // 8 * 2)
+        lose("THE HEAD HIT A ROCK")
         return
     eating = p == s.food
     for i in range(s.length - 1 + eating):
@@ -56,14 +73,14 @@ def tick():
         s.eaten += 1
         food()
         sound(1)
-        if s.eaten == 12:
+        if s.eaten == s.goal:
             win()
 
 
 def draw():
     face(2, s.dir)
     for i in range(64):
-        tile(1 + i % 8 * 2, 3 + i // 8 * 2, 0)
+        tile(1 + i % 8 * 2, 3 + i // 8 * 2, 1 if d[i] else 0)
     for i in range(s.length):
         if s.sliding:
             mover(b[i], c[i], 4 if i else 2, 1)
@@ -72,4 +89,10 @@ def draw():
     tile(1 + s.food % 8 * 2, 3 + s.food // 8 * 2, 3)
     digits(24, 7, s.length)
     digits(24, 14, s.eaten)
+    text(20, 17, "BRAKES")
+    letter(28, 17, 48 + s.brakes)
+    if s.slow:
+        text(20, 18, "SLOW")
+    text(2, 20, "GOAL")
+    digits(8, 20, s.goal)
     effect_draw()

@@ -52,6 +52,11 @@ if metadata.get("rankedCampaign"):
         [sys.executable, str(game.parent / "native/password_checks.py"), game.name],
         check=True,
     )
+if metadata.get("secondReview"):
+    subprocess.run(
+        [sys.executable, str(game.parent / "tests/check_second_review.py"), game.name],
+        check=True,
+    )
 if metadata["id"] == "fuse-box":
     subprocess.run(
         [sys.executable, str(game.parent / "tests/check_fuse_box.py")], check=True

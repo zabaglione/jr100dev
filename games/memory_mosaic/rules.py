@@ -15,6 +15,7 @@ def init():
     s.second = 255
     s.turning = 255
     s.left = 8
+    s.limit = 12 - s.level // 3
 
 
 def turn(pos, reveal):
@@ -46,19 +47,22 @@ def act():
                 s.second = s.cursor
                 if b[s.first] == b[s.second]:
                     s.left -= 1
+                    s.chain += 1
+                    s.best = max(s.best, s.chain)
                     s.notice = 1
                     sound(1)
                     sparkle(2 + s.first % 4 * 4, 4 + s.first // 4 * 4)
                     sparkle(2 + s.second % 4 * 4, 4 + s.second // 4 * 4)
                 else:
                     s.errors += 1
+                    s.chain = 0
                     s.notice = 2
                     sound(3)
                     animate(18)
                 if not s.left:
                     win()
-                elif s.errors >= 12:
-                    lose("TWELVE PAIRS DID NOT MATCH")
+                elif s.errors >= s.limit:
+                    lose("TOO MANY PAIRS DID NOT MATCH")
 
 
 def tick():
@@ -76,7 +80,11 @@ def draw():
             letter(x, y, 160 + b[i])
     letter(1 + s.cursor % 4 * 4, 4 + s.cursor // 4 * 4, 62)
     digits(24, 7, 8 - s.left)
-    digits(24, 14, s.errors)
+    digits(23, 14, s.errors)
+    letter(25, 14, 47)
+    digits(26, 14, s.limit)
+    text(20, 17, "CHAIN")
+    letter(27, 17, 48 + s.chain)
     if s.mode == 2:
         text(1, 20, "ALL EIGHT PAIRS FOUND")
     elif s.notice == 1:

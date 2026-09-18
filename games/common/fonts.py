@@ -116,6 +116,7 @@ def free_slots(metadata):
     if gid == "seed-merge":
         tiles.clear()  # The relief version uses ROM linework instead of tile 7.
     occupied = {t * 4 + q for t in tiles for q in range(4)}
+    occupied.update(metadata.get("artSlots", []))
     if gid == "fuse-box":
         occupied.update(range(10, 16))  # Inverted row/column hints, digits 0..5.
     if gid == "metro-weave":

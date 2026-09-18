@@ -1,36 +1,29 @@
 {
   "id": "orbit-dodge",
   "title": "ORBIT DODGE",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
-  "levels": 1,
+  "levels": 6,
   "rate": 14,
-  "hud": [
-    [
-      6,
-      13,
-      "HULL"
-    ],
-    [
-      10,
-      13,
-      "WAVES"
-    ],
-    [
-      14,
-      13,
-      "IMPACT"
-    ]
-  ],
+  "hud": [],
   "help": [
-    "A/D OR W/S : ROTATE IN ORBIT",
-    "AVOID THE MARKED RADIAL LANE.",
-    "THE ATTACK HITS AT COUNT ZERO.",
-    "SURVIVE TWENTY WAVES.",
-    "THREE HITS DESTROY THE SHIP."
+    "A/D OR W/S : MOVE AROUND ORBIT",
+    "BUTTON : CHANGE INNER / OUTER",
+    "FLASHING TARGETS WILL BE HIT.",
+    "COLLECT GEMS AT IMPACT TIME.",
+    "CONSECUTIVE GEMS PAY UP TO +3.",
+    "ENERGY >= WAVES EARNS GOLD.",
+    "SIX SECTORS / THREE HULL EACH."
   ],
-  "fullDemo": true
+  "fullDemo": true,
+  "secondReview": true,
+  "artSlots": [
+    4,
+    5,
+    6,
+    7
+  ]
 }

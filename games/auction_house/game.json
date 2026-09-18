@@ -1,12 +1,12 @@
 {
   "id": "auction-house",
   "title": "AUCTION HOUSE",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
-  "levels": 1,
+  "levels": 3,
   "rate": 255,
   "hud": [
     [
@@ -28,20 +28,17 @@
       17,
       18,
       "WON"
-    ],
-    [
-      19,
-      6,
-      "BID +2       PASS"
     ]
   ],
   "help": [
-    "WASD : BID OR PASS",
-    "BUTTON : CONFIRM THE CHOICE",
-    "APPRAISAL IS A VALUE RANGE.",
-    "A RIVAL CAN BID ABOVE VALUE.",
+    "A/D : CHOICE / BUTTON : CONFIRM",
+    "BID +2 OR JUMP BID +6.",
+    "JUMP BIDS PRESSURE THE RIVAL.",
+    "INSPECT COSTS ONE COIN.",
+    "INSPECTION REVEALS EXACT VALUE.",
     "PASS BEFORE YOU OVERPAY.",
-    "FINISH SIX LOTS WITH 62 COINS."
+    "VALUES CHANGE EACH AUCTION.",
+    "SIX LOTS / THREE MARKETS."
   ],
   "dataTables": {
     "lots": [
@@ -77,5 +74,7 @@
       8
     ]
   },
-  "fullDemo": true
+  "fullDemo": true,
+  "seededDeck": true,
+  "secondReview": true
 }

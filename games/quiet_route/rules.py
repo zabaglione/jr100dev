@@ -5,15 +5,16 @@ def init():
     box()
     s.pos = 9
     s.origin = s.pos
-    s.guard = 49
+    s.guard = 49 + s.level
     s.guard_origin = s.guard
     s.guard_facing = 4
     s.direction = 4
-    s.battery = 50
+    s.battery = 42 - s.level * 2
+    s.cache = 33 + s.level % 6
     for i in range(6):
-        b[24 + i + 1] = 1 if i != 1 else 0
+        b[24 + i + 1] = 1 if i != (1 + s.level * 2) % 6 else 0
     for i in range(6):
-        b[40 + i + 1] = 1 if i != 4 else 0
+        b[40 + i + 1] = 1 if i != (4 + s.level) % 6 else 0
     b[14] = 3
     b[54] = 6
 
@@ -41,6 +42,12 @@ def act():
             sound(1)
             sparkle(12, 5)
             sparkle(12, 15)
+        if s.pos == s.cache:
+            s.cache = 255
+            s.intel = 1
+            s.battery = min(50, s.battery + 6)
+            sound(1)
+            sparkle(s.pos % 8 * 2, 3 + s.pos // 8 * 2)
         if s.pos == 54 and s.key:
             s.origin = s.pos
             win()
@@ -96,6 +103,8 @@ def draw():
         if x == 16:
             x = 0
             y += 2
+    if s.cache != 255:
+        tile(s.cache % 8 * 2, 3 + s.cache // 8 * 2, 4)
     mover(s.guard, s.guard_origin, 5, 0)
     mover(s.pos, s.origin, 2, 0)
     digits(24, 5, s.battery)
@@ -108,14 +117,20 @@ def draw():
     else:
         text(20, 15, "GET FILE")
     if s.mode == 2:
-        text(19, 18, "ESCAPED")
+        if s.intel:
+            text(19, 18, "ALL INTEL")
+        else:
+            text(19, 18, "ESCAPED")
     elif s.alert:
         text(19, 18, "DETECTED")
         letter(s.guard % 8 * 2 + 1, 3 + s.guard // 8 * 2, 33)
-    text(1, 21, "NOISE REACH")
-    letter(13, 21, 50 if s.quiet else 53)
-    if s.key:
-        text(16, 21, "EXIT IS OPEN")
-    else:
-        text(16, 21, "EXIT NEEDS FILE")
+    if s.action < 5 and s.action > 0 and s.mode == 1:
+        radius = 1 if s.quiet else 4
+        for pos in range(64):
+            if b[pos] == 0 and pos != s.pos and distance(pos, s.pos) == radius:
+                letter(pos % 8 * 2, 3 + pos // 8 * 2, 46)
+    text(1, 20, "NOISE REACH")
+    letter(13, 20, 50 if s.quiet else 53)
+    text(18, 20, "INTEL")
+    letter(25, 20, 48 + s.intel)
     effect_draw()

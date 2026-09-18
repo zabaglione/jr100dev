@@ -13,6 +13,8 @@
 
 [動きと音の紹介](Presentation)
 
-[今回の改善内容](Quality-Review)
+[25作品の個別改修](Second-Review)
+
+[これまでの改善内容](Quality-Review)
 
 [操作・起動方法](Controls)

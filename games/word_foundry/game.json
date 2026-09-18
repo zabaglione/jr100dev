@@ -1,12 +1,12 @@
 {
   "id": "word-foundry",
   "title": "WORD FOUNDRY",
-  "version": "1.6.1",
+  "version": "2.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
-  "levels": 5,
+  "levels": 16,
   "rate": 255,
   "hud": [
     [
@@ -20,24 +20,19 @@
       "TARGET"
     ],
     [
-      6,
-      2,
-      "THE WORD FOUNDRY"
-    ],
-    [
       20,
       18,
       "STEPS"
     ]
   ],
   "help": [
-    "WASD / PAD : CHOOSE A WORD",
-    "BUTTON : REPLACE CURRENT WORD",
+    "WASD : WORD / BUTTON : REPLACE",
     "CHANGE EXACTLY ONE LETTER.",
-    "REACH THE TARGET IN 8 STEPS.",
-    "ONLY THE SIXTEEN WORDS COUNT.",
-    "SPACE : RESTART THE LADDER",
-    "* MARKS POSSIBLE NEXT WORDS."
+    "REACH VIA BEFORE THE TARGET.",
+    "* MARKS POSSIBLE NEXT WORDS.",
+    "PAR + TWO STEPS IS THE LIMIT.",
+    "PLAN BOTH HALVES OF THE LADDER.",
+    "SIXTEEN DIFFERENT WORD ROUTES."
   ],
   "dataTables": {
     "words": [
@@ -92,18 +87,77 @@
     ],
     "starts": [
       0,
-      6,
+      1,
+      3,
+      5,
+      9,
+      11,
+      13,
+      15,
+      7,
+      2,
       8,
       10,
-      14
+      4,
+      12,
+      14,
+      6
     ],
     "goals": [
-      3,
+      12,
+      2,
+      14,
+      10,
+      1,
+      14,
       11,
-      15,
+      4,
       0,
+      9,
+      13,
+      13,
+      1,
+      13,
+      13,
       8
+    ],
+    "via": [
+      1,
+      11,
+      6,
+      1,
+      12,
+      7,
+      4,
+      10,
+      13,
+      13,
+      4,
+      1,
+      13,
+      1,
+      2,
+      2
+    ],
+    "pars": [
+      5,
+      5,
+      5,
+      5,
+      6,
+      6,
+      6,
+      6,
+      7,
+      7,
+      7,
+      7,
+      8,
+      8,
+      8,
+      5
     ]
   },
-  "fullDemo": true
+  "fullDemo": true,
+  "secondReview": true
 }

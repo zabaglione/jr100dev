@@ -88,99 +88,144 @@
       "directory": "quiet_route",
       "plan": "潜行・警戒・資料取得・脱出の意味を画面とSEで伝える。",
       "status": "verified",
-      "changes": "探索者と警備員が向きを変えて中間位置を通ります。静音・通常歩行と音の届く距離を明記し、機密取得と出口の解放を光と音で示します。",
+      "changes": "主人公と警備員が向きを変えて中間位置を通り、足音の届く外周を点で示します。補給・機密・門を描き分け、発見された場面と原因を残して停止します。",
       "evidence": {
-        "video_seconds": 30.0,
-        "prg_sha256": "cd7a5116be7ad406c507f42eee963f8fd2eadc10616eb2e483ac93333bdd1409",
+        "video_seconds": 30.3,
+        "prg_sha256": "bfc3f67e27da723a83808cebe91fd5a6d80d6dc8996c8533eff42614a63a21a0",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "2.0.0",
+        "gameplay": "警備員をかわして機密を取り、門から脱出する全6経路。寄り道の補給箱は追加情報と電池6を得られますが、巡回路に近づく必要があります。",
+        "status": "verified"
       }
     },
     {
       "directory": "circuit_works",
       "plan": "3入力8行の真理値表へ発展。信号が各ゲートを通る順に試験する。",
       "status": "verified",
-      "changes": "3入力・8行の真理値表を使う22問です。各入力の信号が3段のゲートを通る過程を順番に見せ、正解した行数を表示します。",
+      "changes": "ゲートをつなぐ配線とソケットを加え、信号の0/1が3段のゲートを通る途中の位置を見せます。各行の照合結果を音と印で残します。",
       "evidence": {
-        "video_seconds": 30.0,
-        "prg_sha256": "3ead1cfe2dbcf040e961e352f9f9fb8c75266818020d5d685ca1c743dc39c70f",
+        "video_seconds": 30.033,
+        "prg_sha256": "7da0f6b2ad7cfc55a90cacd9ec15a686f88f363b587175feea5354205a99c4a8",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "2.1.0",
+        "gameplay": "3段の論理ゲートを組み替え、3入力A・B・Cの8通りすべてで目標Wを満たす全22問です。G1はAとB、G2はG1とC、G3はG2とAを計算します。",
+        "status": "verified"
       }
     },
     {
       "directory": "hearth_zero",
       "plan": "天候予告と段階的な資源消費・炉の反応を加える。",
       "status": "verified",
-      "changes": "3種類の寒波を、それぞれ12日間生き延びます。今夜と続く2夜の寒さを予告し、作業、食事、暖かさの消費を音と間を挟んで順に見せます。",
+      "changes": "採集物・薪・火・壁に別の絵を使い、選んだ仕事の品が暖炉へ移ります。火の揺れと雪を加え、作業、食事、熱の消費をSEと短い停止で順番に示します。",
       "evidence": {
-        "video_seconds": 46.1,
-        "prg_sha256": "662d221b6546a6e8a82a240c0249f21879752da610c7addca47057cd88050ac1",
+        "video_seconds": 51.333,
+        "prg_sha256": "31d5f591da388f1ed1ad0311b36285f0776429c99947ef6d1c89f933258132b2",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "2.1.0",
+        "gameplay": "食料・薪・暖かさを管理し、3種類の寒波をそれぞれ12日間生き延びます。今夜から3夜の予報を読み、採集と暖房の備えを選びます。",
+        "status": "verified"
       }
     },
     {
       "directory": "night_swarm",
       "plan": "移動・射程・再使用待ち・敵の接近を見える形にする。",
       "status": "verified",
-      "changes": "主人公と敵の中間移動、広がるパルス、再使用可能の表示を追加しました。装甲のある敵は2回の命中が必要で、被弾点滅と撃破時の破片を区別します。",
+      "changes": "次の出現口を二重の輪で示し、自動射撃の弾、敵の中間移動、広がるパルスを表示します。装甲への命中は点滅、撃破は光から破片へ変わり、補給の回収音と被弾音を区別します。",
       "evidence": {
-        "video_seconds": 60.2,
-        "prg_sha256": "d4b2bab5a66632e2475ae1d07d0ab91c23a4574ee83e40cd0cd69f6534f81acd",
+        "video_seconds": 53.633,
+        "prg_sha256": "40cb9ca4ff0580b2d32bd557edcb3123401e824dfedffd724dfde1a210746502",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "3.0.0",
+        "gameplay": "迫る群れを8方向へかわし、近距離の自動射撃と範囲パルスで生き延びる全6面。目標は12体から22体へ増え、後半は出現間隔も短くなります。装甲敵には2回の命中が必要です。",
+        "status": "verified"
       }
     },
     {
       "directory": "lumen_cross",
       "plan": "十字に波及する点灯・消灯と、複数の盤面に段階的な難度を付ける。",
       "status": "verified",
-      "changes": "18種類の盤面で、操作した中心から周囲へ点灯・消灯が波及します。一灯ずつの反応を音と光で確認できます。",
+      "changes": "各明かりが細くなり、側面を経て逆の面へ開く5段階の反転を行います。中心から周囲へ音と動きが波及し、影響する十字全体を予告します。",
       "evidence": {
-        "video_seconds": 32.0,
-        "prg_sha256": "9ee6f1b2cf0ac567bba26a971cff1a41d037d5d950455d118abb669f2c07606d",
+        "video_seconds": 31.267,
+        "prg_sha256": "b5c5873483fa02743f976f79bd95279eabb1ba74bf04b08451c6e167e508a355",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "2.0.0",
+        "gameplay": "選んだ場所と上下左右の明かりを反転し、すべて消灯する全18面。クリアだけでなく、最短回数PARでのPERFECT CIRCUITを目指せます。",
+        "status": "verified"
       }
     },
     {
       "directory": "stone_balance",
       "plan": "自分と相手が取る石を一つずつ動かし、手番と取った数を残す。",
       "status": "verified",
-      "changes": "自分と相手が取った石を、一つずつ盤面から移動させます。相手の応答を確認する間があり、最後の石を取った側が勝ちます。",
+      "changes": "厚みのある棚に石を並べ、選んだ石が1個ずつ盤外へ飛びます。自分と相手の手を別の間と音で示し、最後の石を確認してから結果を出します。",
       "evidence": {
         "video_seconds": 31.967,
-        "prg_sha256": "40eecb476ed78514aed4c9ac3500fa2253cb263e5186285c8eb352d42e1b21dd",
+        "prg_sha256": "db29f7342001fdec8448b8046e0473cc4fc53dbd166b0d29b4a58deb94d6b61a",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "2.0.0",
+        "gameplay": "3つの山から1〜3個ずつ取り合う全10局です。前半5局は最後の石を取った側が勝ち、後半5局は取った側が負けになります。",
+        "status": "verified"
       }
     },
     {
       "directory": "memory_mosaic",
       "plan": "規則配置をシャッフルへ変更し、札の反転・一致・不一致を順に見せる。",
       "status": "verified",
-      "changes": "配札を開始時にシャッフルします。札は幅が細くなり側面を経て表裏が入れ替わります。一致は光と音、不一致は2枚を覚える間で示します。",
+      "changes": "札ごとの枠と厚みを加え、表面が細くなり、側面を経て反対側が開く5段階の反転を使います。一致・不一致の音と確認の間があり、連続一致を数えます。",
       "evidence": {
-        "video_seconds": 82.033,
-        "prg_sha256": "e41ef2f8af3fb49599cbb4680329e2be9c435fac96f833f051cbdb4e28074b46",
+        "video_seconds": 86.333,
+        "prg_sha256": "ffa2808c825ff6c14970453e2a93afb7e13254be4f8e7c3f22fbbdfef492678a",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "3.0.0",
+        "gameplay": "16枚の札から8組を見つける、毎回配札が変わる全10面の神経衰弱です。許される不一致は序盤12回、終盤9回。続けて組を当てるとCHAINが伸びます。",
+        "status": "verified"
       }
     },
     {
       "directory": "twenty_one",
       "plan": "個々の札を配り、引く・止める・ディーラーの応答・収支を表示する。",
       "status": "verified",
-      "changes": "個々のカードと合計を表示します。配札と追加カードが山から移動し、ディーラーも一枚ずつ引きます。勝ち・バスト・負け・引き分けと収支を残してから次の手へ進みます。",
+      "changes": "カードの枠内に数字・絵札とスートを並べ、伏せ札を区別します。配る途中の移動、相手の追加ドロー、勝敗と持ち金の増減を順番に見せ、各勝負の確認時間を設けます。",
       "evidence": {
-        "video_seconds": 48.1,
-        "prg_sha256": "2a767318be054a5b06dd977c6fadc59504f6b78a5d6f4e2a7ebc3545c48c5b3e",
+        "video_seconds": 58.933,
+        "prg_sha256": "04e5edaaaec9f240f0e5c41aa78a7eaa9b7345f6ae2e8442e30aeb4475c0c4f7",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "2.0.0",
+        "gameplay": "52枚の山札で遊ぶブラックジャック。7回の勝負を終えて、持ち金を10から12以上へ増やせばクリアです。同じ山札の途中でカードは重複せず、使い切ると切り直します。",
+        "status": "verified"
       }
     },
     {
       "directory": "orbit_dodge",
       "plan": "攻撃予告から軌道へ伸びる線と回避の経過を描き、攻撃の組合せを増やす。",
       "status": "verified",
-      "changes": "機体が軌道上の中間位置を通り、予告地点へ攻撃の線が伸びます。6回の回避後から2地点への攻撃が加わります。",
+      "changes": "セミグラフィックスで2本の軌道を描き、移動の軌跡、照準から伸びる光線、回収の光とSEを加えました。小さな軌道点・照準・エネルギーは別の形です。",
       "evidence": {
-        "video_seconds": 44.8,
-        "prg_sha256": "dd4c2e787ea7858c7a0a8a4b8f4e7956df2923baa8bdb3059c67ab3adb8a9dcf",
+        "video_seconds": 48.633,
+        "prg_sha256": "fce07e92125abad909d0b76691c5e8b743cf336de883111c386a0a0de63198a2",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "3.0.0",
+        "gameplay": "外周と内周の2軌道を渡り、照準からの光線を避ける全6面です。12波から22波へ増え、後半は両軌道への同時照射と短い予告時間に挑みます。",
+        "status": "verified"
       }
     },
     {
@@ -198,143 +243,208 @@
       "directory": "star_lance",
       "plan": "自弾の飛翔と装甲への命中、敵の編隊移動を描く。",
       "status": "verified",
-      "changes": "発射した弾が敵へ飛び、編隊も中間位置を通って移動します。装甲列は2発必要で、一撃目の点滅と撃破時の四段階の消滅を区別します。",
+      "changes": "星の遠景、飛ぶ通常弾と太い重弾、敵の弾を表示します。装甲が剥がれる点滅と、撃破時の発光・破片を別にし、過熱と被弾も音で知らせます。",
       "evidence": {
-        "video_seconds": 55.5,
-        "prg_sha256": "1373d30f44fbe3093216022d2f633c175b914f3945a95191b31f2e50e0c671f8",
+        "video_seconds": 52.267,
+        "prg_sha256": "28c94c9cad22fd2a8c126d7680a8aa6c24966d8ec62f780be6dd32410739ce72",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "3.0.0",
+        "gameplay": "移動する18機の編隊を倒す全6波のシューティング。装甲機は耐久力2、後半は装甲列が増え、自機を狙う弾も増えます。",
+        "status": "verified"
       }
     },
     {
       "directory": "ribbon_snake",
       "plan": "頭と胴の中間移動、採餌、衝突位置と原因を示す。",
       "status": "verified",
-      "changes": "頭だけでなく胴体もマスの中間を通ります。食べると光と音が出て体が伸び、画面端と自分の体への衝突をそれぞれ説明します。",
+      "changes": "頭の向きと胴体を描き分け、マスの中間を通って全身が滑ります。ブレーキ中の表示、餌の回収音と光、衝突箇所での停止を加えました。",
       "evidence": {
-        "video_seconds": 57.667,
-        "prg_sha256": "8f3f6446ca36827d291dac73fc84b81363ad2c5990779ef4da661f70ada355fb",
+        "video_seconds": 39.9,
+        "prg_sha256": "8a9da74f8ddcc83e8bfc5447e0db63911baa7706dc39ed28f420d8e7b884afc8",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "2.0.0",
+        "gameplay": "餌を食べて伸びる蛇を操作する全6庭。目標は8個から13個へ増え、岩も増えて通路が狭まります。頭を端・岩・胴体へ当てると失敗です。",
+        "status": "verified"
       }
     },
     {
       "directory": "lunar_touchdown",
       "plan": "噴射・着地・機体の安定を描き、着陸条件を読みやすくする。",
       "status": "verified",
-      "changes": "降下の中間位置と噴射炎を描きます。着陸台の上へ速度0〜2で降りると、機体の停止を確認する間と着陸音を挟んでクリアします。",
+      "changes": "月の地形と遠景をセミグラフィックスで描き、降下の中間位置と噴射炎を表示します。速度超過・着陸場の外を区別して停止し、着陸には光とジングルを合わせます。",
       "evidence": {
         "video_seconds": 30.0,
-        "prg_sha256": "b05ef0abeb1666e94fa233f4b4626c6947c809f43abc269a94f5a09bc1142392",
+        "prg_sha256": "5144bf8b1ef6e8c161c39e89c522c6ae8d638a01da2c01e2e4cc3ba73f294821",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "2.0.0",
+        "gameplay": "燃料を使って降下速度を抑え、月面へ着陸する全6地点です。幅広い着陸場のほか、星印の狭い着陸場では10点の追加点を得られます。後半は横風が反転します。",
+        "status": "verified"
       }
     },
     {
       "directory": "echo_parry",
       "plan": "敵の踏込み、盾の応答、反撃と耐久力の変化を描く。",
       "status": "verified",
-      "changes": "敵の攻撃、盾での受け止め、反撃の飛翔、命中を順に描きます。攻撃の高さは単純な交互から8手のパターンへ変えました。",
+      "changes": "立体的な決闘場を描き、攻撃の飛来、後退、反撃、装甲の点滅、撃破の破片を表示します。予告・フェイント・攻撃・反撃・回復時間を音と姿勢で追えます。",
       "evidence": {
-        "video_seconds": 42.267,
-        "prg_sha256": "a8aec28637f8f9246b12ef55d33fcb59514caee69a61ab105e9a1827c76ae4f9",
+        "video_seconds": 30.0,
+        "prg_sha256": "8629cf3b5b913667e2e97c0f70042fa03393efef84316c603d2369fa62f77e04",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "2.0.0",
+        "gameplay": "上段・下段の攻撃を見て受け流す全6戦。相手の体力は6から11へ増え、3戦目からは構えを途中で変えるフェイントが加わります。",
+        "status": "verified"
       }
     },
     {
       "directory": "pendulum_port",
       "plan": "跳躍の弧と着地を描き、足場の狙いと失敗理由を示す。",
       "status": "verified",
-      "changes": "振り子を離れた主人公が弧を描いて足場へ着地し、着地の光と音を確認してから次の足場へ進みます。",
+      "changes": "岸壁と波をセミグラフィックスで描き、振り子、放物線の跳躍、着地と落下の途中の位置を表示します。中央への着地は光と音で区別します。",
       "evidence": {
-        "video_seconds": 39.2,
-        "prg_sha256": "8850b5019796c5d9f86985580e2f40f1ebfba67c77e8bb2e3531c47a16670dd4",
+        "video_seconds": 30.2,
+        "prg_sha256": "3319d05a1fcef531db4a2277fa3dc8ff884ed31bc9bec1d175158757c30b948c",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "2.0.0",
+        "gameplay": "振り子から手を離し、足場へ飛び移る全6区間。6回から11回の着地を続けます。足場の中央は2点、端は1点で、後半には中央しか着地できない足場も現れます。",
+        "status": "verified"
       }
     },
     {
       "directory": "ruin_lexicon",
       "plan": "値の順列と不等式を使う解読課題へ発展。照合を碑文ごとに示す。",
       "status": "verified",
-      "changes": "1〜4を一度ずつ使う20問です。隣り合う文字の合計と不等式を手掛かりに解読し、確定時は4文字を順に照合します。",
+      "changes": "碑文を石板の枠に収め、回す数字に途中の形とSEを加えました。条件を一つずつ照合し、正誤をその場に残します。",
       "evidence": {
         "video_seconds": 30.0,
-        "prg_sha256": "cd338ac94a7fcbe7dc15d6de1bd229c4362a90372f1b6070e3184fb20f7428f9",
+        "prg_sha256": "18b4047ab33328275c6791fe7112f67d1cb3edd97fae3122998065da789ae7b5",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "2.1.0",
+        "gameplay": "4つの碑文と大小関係から、A〜Dへ1〜4を一度ずつ割り当てる全20問です。各問題の答えは一意です。",
+        "status": "verified"
       }
     },
     {
       "directory": "shadow_archive",
       "plan": "証拠と容疑者の特徴を対応させ、ファイル閲覧・告発の途中を見せる。",
       "status": "verified",
-      "changes": "帽子・眼鏡・ネクタイが異なる6人から、3つの資料で容疑者を絞る12事件です。資料を開く途中を描き、証拠と合わない人物にはXを付けます。",
+      "changes": "容疑者の枠と調書の区切りを整え、紙が開く途中の形と音を加えました。選択先を明示し、告発した相手と結果を残して停止します。",
       "evidence": {
-        "video_seconds": 34.033,
-        "prg_sha256": "73c0ca68a900b2c6a80df1c7e12ae6e0d57fb45e99b1e6b80b944f7a2999dfae",
+        "video_seconds": 32.5,
+        "prg_sha256": "79dc901f5db03e50196986ca143f1bd788f461219795b76be159cef4143b7a27",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "2.1.0",
+        "gameplay": "帽子・眼鏡・ネクタイの特徴から6人の容疑者を絞る全12事件。必要な調書を選び、2件以下の閲覧で解決するとGOLD DETECTIVEになります。",
+        "status": "verified"
       }
     },
     {
       "directory": "compass_rose",
       "plan": "調査の探索範囲と掘削・発見を見せ、地形による経路判断を加える。",
       "status": "verified",
-      "changes": "岩を避けて方角を読みながら進みます。未探索の地面と岩を描き分け、掘る途中の動作と、発見の光・音を加えました。",
+      "changes": "測定では輪が3段階に広がり、歩行は途中の位置を通ります。掘る動きと穴、発見時の光と音を表示し、過去の測定地点を残します。",
       "evidence": {
         "video_seconds": 30.0,
-        "prg_sha256": "c62f8ee194bbaf9b303d2aa2177c2a93d2c0e977faaeff909844c0373d7a1948",
+        "prg_sha256": "d8005041e4e39afbf7fe39dd494386afd7560a3d3c98f2085b194ebdb15a5dff",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "3.0.0",
+        "gameplay": "最後に測った方角と距離帯から、埋まった遺物を探す全10地点。位置が変わっても測定結果は自動では変わりません。測る場所を選び、候補を絞ります。",
+        "status": "verified"
       }
     },
     {
       "directory": "mirror_relic",
       "plan": "鏡移動を段階表示し、遺物の回収と門の開放を強調する。",
       "status": "verified",
-      "changes": "6つの遺物配置を用意しました。鏡で移る位置まで主人公が移動する過程を描き、回収と出口の解放を光とメッセージで示します。",
+      "changes": "陰影のある壁と遺物の位相文字を描き分け、歩行と鏡移動に途中の位置、SE、回収の光を使います。回転前の予告で到着位置を確認できます。",
       "evidence": {
-        "video_seconds": 33.5,
-        "prg_sha256": "da07ba82c29abc4ce1904bbe8e24c0fc50b2507d04a21c276d49a6f095ab1175",
+        "video_seconds": 31.733,
+        "prg_sha256": "057112eec7e77be156d38cfa841b663660a1f997dd91fb8b528739e6788108f5",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "3.0.0",
+        "gameplay": "移動と90度の鏡回転で3つの遺物を集め、門へ着く全6面です。遺物のA〜Dは必要な位相で、同じ位相のときに踏むと回収できます。",
+        "status": "verified"
       }
     },
     {
       "directory": "orchard_days",
       "plan": "芽・成長・成熟を異なる絵で示し、水やり・雨・収穫を動かす。",
       "status": "verified",
-      "changes": "種・芽・木・果実を別の絵で示します。種まき、水やり、成長、収穫物の移動を順に描き、次の雨までの日数を表示します。",
+      "changes": "畑の囲いと計器を整え、種・水滴が飛び、雨や水やりで対象の作物が1段ずつ育つ様子を表示します。収穫物が得点へ移る動きとSEも加えました。",
       "evidence": {
-        "video_seconds": 39.667,
-        "prg_sha256": "57061865d77bf38772d474e079d25ee30cb156d4bf747be00e7e76af7ca6fdb6",
+        "video_seconds": 33.4,
+        "prg_sha256": "848fad3a1a41436919a99cf2a9c3a34428c426cab20bc3c46f41e78581cc3a15",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "2.0.0",
+        "gameplay": "4×4の畑で作物を育てる全3季。28日以内に18・24・30点の収穫を目指します。早いベリーは2回育てて3点、遅いリンゴは4回育てて7点です。",
+        "status": "verified"
       }
     },
     {
       "directory": "tidal_nets",
       "plan": "複数の流れを読み、網の投入・魚の移動・引き揚げを描く。",
       "status": "verified",
-      "changes": "浅い魚群と2倍流される深い魚群を、隣接2列を覆う網で狙います。9回で30匹が目標です。投入、魚の移動、網の引き揚げ、加点を順に描きます。",
+      "changes": "水面の波、沈む網、潮に流れる2群、釣果を引き上げる動きを別々に表示し、投網・獲得・空振りの音を分けます。",
       "evidence": {
-        "video_seconds": 46.2,
-        "prg_sha256": "61dedd7e7a81dcb6b6b6baca2824f4d92f063b7f2ef82253c834a7b2c832126d",
+        "video_seconds": 37.7,
+        "prg_sha256": "506986c60e3420ec161fc25b60b97c26082eb1dd7a6f115f6db869aa81b794bd",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "3.0.0",
+        "gameplay": "潮流を読んで網を投げる全3漁場。浅い魚は2点、深い魚は4点。ロープ12本・最大9回の投網で、30・33・36点を目指します。",
+        "status": "verified"
       }
     },
     {
       "directory": "potion_path",
       "plan": "素材を投入してフラスコが移動する途中と、注文達成を描く。",
       "status": "verified",
-      "changes": "異なる20の注文を用意しました。素材を投入し、フラスコが途中の位置を通って移動します。注文に到達すると光と音が出ます。",
+      "changes": "毒の着地点を枠付きのXで示し、材料が容器から飛び、薬が次の位置へ移る過程を表示します。在庫切れと毒への着地を異なる短い原因表示で知らせます。",
       "evidence": {
-        "video_seconds": 34.733,
-        "prg_sha256": "4849fbf41630a51552c5b4be248bf4a57bc13184cad14bd5a423ae0166700caa",
+        "video_seconds": 34.667,
+        "prg_sha256": "a58d8175df2783a19a9bdab51158439ef0eb0edc173ed388379973a520a315d5",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "3.0.0",
+        "gameplay": "4種の材料で薬を移動させ、菱形の調合点へ届ける全20問です。材料は各4回まで、合計12回まで。毒のX印へ着地できないため、材料の残数と順序を考えます。",
+        "status": "verified"
       }
     },
     {
       "directory": "auction_house",
       "plan": "相手の入札と相場リスクを加え、落札と損益を確認できるようにする。",
       "status": "verified",
-      "changes": "鑑定額を範囲で示し、相手は高値まで競ることもあります。自分の入札、相手の上乗せ、落札と売却額を順に表示します。6品終了時に62コインが目標です。",
+      "changes": "競売卓と計器の区切りを加え、自分の入札、相手の応答、鑑定結果、3段階の落札ハンマーを順に表示します。売買後の収支を残してから次の品へ進みます。",
       "evidence": {
-        "video_seconds": 35.9,
-        "prg_sha256": "f2cd54677ac6622a5195a4cd971e566a92ae379278eddc938946103a040d0a9e",
+        "video_seconds": 35.767,
+        "prg_sha256": "d38164c9f670e5b8e0cd5813b670491277091c96c38829a277a5e31d2dda0e2e",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "3.0.0",
+        "gameplay": "鑑定額と相手の入札を読み、6品の競りで持ち金40を増やす全3市場です。目標は58、60、61。品物の価値は開始ごとに変わります。",
+        "status": "verified"
       }
     },
     {
@@ -352,22 +462,32 @@
       "directory": "cargo_balance",
       "plan": "積荷の落下、船体の傾き、次の荷と危険度を描く。",
       "status": "verified",
-      "changes": "次の2つの荷重を予告します。積荷が船倉へ落下し、重い側へ船体が傾きます。左右の重さに加え、危険な偏りまでの距離を目盛で示します。",
+      "changes": "クレーンから荷物が落下し、船体と積み荷が一緒に傾いて揺れます。積載音、転覆の原因表示、出航ジングルで結果を確認できます。",
       "evidence": {
-        "video_seconds": 35.567,
-        "prg_sha256": "b6ac7b90dae70aac8ca672fd6650ef4d59c24861ff1890c565e6a88242a09ee0",
+        "video_seconds": 41.567,
+        "prg_sha256": "72eaaf966346212c9b722dfa058f21999e825351e88b5c0c20e378384e8c63fa",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "2.0.0",
+        "gameplay": "12個の荷物を4つの船倉へ積む全6航海。外側は運賃が2倍になる一方、船を傾ける力は内側の3倍です。次の2個の重さを読み、風と許容差に備えます。",
+        "status": "verified"
       }
     },
     {
       "directory": "number_vault",
       "plan": "ダイヤルの回転と照合、過去の推測履歴を表示し、暗号を変える。",
       "status": "verified",
-      "changes": "暗号を開始時に変えます。ダイヤルを回す途中と4桁の照合を描き、直近6回の入力と位置一致・数字一致の数を残します。",
+      "changes": "4つのダイヤルが回り、判定が1桁ずつ進みます。全桁一致では扉が幅を変える3段階の開閉を行い、開錠音と光からジングルへ続きます。",
       "evidence": {
         "video_seconds": 30.0,
-        "prg_sha256": "22606cbb7f08717ed9bdb3559f9b78f84841d593286738cf88b9883df36a3788",
+        "prg_sha256": "f892fb2e8fb35b59e17ecf05680e7ac27c96be7fff2412074f229697a6c10316",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "2.1.0",
+        "gameplay": "1〜4の数字を4桁並べ、金庫の暗証番号を10回以内に推理する全10問。数字は重複することがあり、開始ごとに暗証番号が変わります。",
+        "status": "verified"
       }
     },
     {
@@ -385,11 +505,16 @@
       "directory": "word_foundry",
       "plan": "置換する文字の移動と経路履歴、選択可能な語を示す。",
       "status": "verified",
-      "changes": "一文字だけ置き換えられる候補すべてに印を付けます。変更する文字の移動と、ここまでの単語の経路を表示します。",
+      "changes": "単語を厚みのある札に並べ、差し替わる文字が浮いて移る様子を表示します。中継点の到達音と光、経路の履歴で進行を追えます。",
       "evidence": {
-        "video_seconds": 35.6,
-        "prg_sha256": "8ad1a7f21fcabb0615580b617d4b9e101fc1068f10bf68de489b521aa34658a3",
+        "video_seconds": 33.067,
+        "prg_sha256": "dfc2170bff1ccc14f12cc7b0678e5b8f4cc7076a944e8f345a13cf24c1e5f8e7",
         "host_state_writes": 0
+      },
+      "second_review": {
+        "version": "2.0.0",
+        "gameplay": "3文字の単語を1文字ずつ変え、VIAの中継単語を通ってTARGETへ到達する全16問です。最短5〜9手の経路に、2手の余裕があります。",
+        "status": "verified"
       }
     },
     {

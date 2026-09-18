@@ -155,7 +155,7 @@ class DemoPlayer(Player):
         self.rng = random.Random(name)
         self.rec = Recorder(self.m, recorder) if recorder else None
         if self.rec or self.m.metadata.get("seededDeck"):
-            idle(self.m, 1.8)
+            idle(self.m, 2.0 if name == "twenty_one" else 1.8)
         if self.rec:
             self.rec.mark("input", action=5)
         self.m.action(5)

@@ -1,12 +1,12 @@
 {
   "id": "pendulum-port",
   "title": "PENDULUM PORT",
-  "version": "1.6.1",
+  "version": "2.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
-  "levels": 1,
+  "levels": 6,
   "rate": 6,
   "hud": [
     [
@@ -21,11 +21,20 @@
     ]
   ],
   "help": [
+    "A/D : SHORTEN / LENGTHEN ROPE",
     "BUTTON : RELEASE THE SWING",
-    "LAND WITHIN ONE MARK OF TARGET",
-    "THE DIAMOND IS THE NEXT PORT.",
-    "TIME EIGHT SUCCESSFUL RELEASES.",
-    "THREE FALLS END THE CROSSING."
+    "MOMENTUM CARRIES THE JUMP.",
+    "THE V MARK PREDICTS LANDING.",
+    "HIT THE CENTRE FOR TWO POINTS.",
+    "LATER PORTS HAVE SMALLER DECKS.",
+    "SIX ROUTES / THREE ROPES EACH."
   ],
-  "fullDemo": true
+  "fullDemo": true,
+  "secondReview": true,
+  "artSlots": [
+    16,
+    17,
+    18,
+    19
+  ]
 }

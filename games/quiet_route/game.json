@@ -1,12 +1,12 @@
 {
   "id": "quiet-route",
   "title": "QUIET ROUTE",
-  "version": "1.6.1",
+  "version": "2.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
-  "levels": 1,
+  "levels": 6,
   "rate": 255,
   "hud": [
     [
@@ -33,10 +33,18 @@
   "help": [
     "WASD / PAD : MOVE",
     "BUTTON : TOGGLE QUIET WALK",
-    "QUIET COSTS TWO BATTERY UNITS.",
-    "NORMAL MOVES ARE HEARD FARTHER.",
-    "GET THE TOP RIGHT FILE FIRST.",
-    "REACH THE LOWER RIGHT EXIT."
+    "QUIET COSTS 2 BATTERY PER STEP.",
+    "NORMAL IS CHEAPER BUT LOUDER.",
+    "GET THE FILE, THEN FIND EXIT.",
+    "OPTIONAL CACHE: INTEL +6 POWER.",
+    "SIX ROUTES / SMALLER BATTERIES."
   ],
-  "fullDemo": true
+  "fullDemo": true,
+  "secondReview": true,
+  "artSlots": [
+    16,
+    17,
+    18,
+    19
+  ]
 }

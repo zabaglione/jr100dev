@@ -9,7 +9,7 @@
 | ゲーム | 内容 |
 | --- | --- |
 | [TRACE BLADE](trace_blade/) | 一筆の経路を計画して連続撃破する |
-| [LUMEN CROSS](lumen_cross/) | 十字の反転で光の格子を消す |
+| [LUMEN CROSS](lumen_cross/) | 反転範囲を読み、最短回数を狙う18面の消灯パズル |
 | [MAGNET VAULT](magnet_vault/) | 押せない金属塊を磁力で引いて収納する。40面・規定手数と任意ルーンによる3段階評価・パスワード対応。 |
 | [FROST STEPS](frost_steps/) | 氷上を止まれず滑り、全結晶を拾う。40面・規定手数と任意ルーンによる3段階評価・パスワード対応。 |
 | [PRISM TRACE](prism_trace/) | 鏡の向きを変えて光を受光器へ導く |
@@ -18,10 +18,10 @@
 | [GRAVITY WELL](gravity_well/) | 盤面を傾けて複数の球を同時に収める。40面・規定手数と任意ルーンによる3段階評価・パスワード対応。 |
 | [SEED MERGE](seed_merge/) | 同じ芽を合成して大樹を育てる |
 | [PEG GARDEN](peg_garden/) | 飛び越しで石を取り除く庭園パズル |
-| [NUMBER VAULT](number_vault/) | 一致数の手掛かりから暗証番号を解く |
+| [NUMBER VAULT](number_vault/) | 推理の履歴を読み、動く扉を開く暗証番号パズル |
 | [PHASE PAIRS](phase_pairs/) | 隣り合う数を10にして盤面を消す |
 | [FUSE BOX](fuse_box/) | 行と列の個数を読んで配線図を復元する |
-| [WORD FOUNDRY](word_foundry/) | 一文字ずつ置き換えて指定の単語へ至る |
+| [WORD FOUNDRY](word_foundry/) | 中継単語を経由して辿る16の単語迷路 |
 
 ## カード・ボード
 
@@ -33,9 +33,9 @@
 | [ORBIT DRAFT](orbit_draft/) | 4×4・5種類の天体を、候補2枚と次の3枚を読んで揃える。回転と落下連鎖で得点を伸ばすエンドレスパズル |
 | [FIVE FORGE](five_forge/) | 妨害と四連の脅威を読む五目対戦 |
 | [CORNER CROWN](corner_crown/) | 挟み取りと角の支配を競う盤面対戦 |
-| [STONE BALANCE](stone_balance/) | 三つの山の取り方を読み切る石取り |
-| [MEMORY MOSAIC](memory_mosaic/) | 失敗回数を抑えて模様の対を探す |
-| [TWENTY ONE](twenty_one/) | 追加・停止を判断する21点カード勝負 |
+| [STONE BALANCE](stone_balance/) | 最後の石が勝ちから負けへ変わる10局の取り合い |
+| [MEMORY MOSAIC](memory_mosaic/) | 札の厚みと5段階の反転で遊ぶ10面の神経衰弱 |
+| [TWENTY ONE](twenty_one/) | 52枚の山札とダブルを使い7勝負の収支を競う |
 
 ## 戦術・自動化
 
@@ -43,7 +43,7 @@
 | --- | --- |
 | [CHRONO BREACH](chrono_breach/) | 弾道を読んで突破する20面の時間停止戦術 |
 | [IRON SCRIPT](iron_script/) | 射撃・スイッチ・繰り返しの命令で24の工場を攻略 |
-| [CIRCUIT WORKS](circuit_works/) | 3入力の真理値表に合わせて論理ゲートを組む |
+| [CIRCUIT WORKS](circuit_works/) | 配線を流れる0/1を見ながら組む22の論理回路 |
 | [METRO WEAVE](metro_weave/) | 分岐と信号で複数列車をさばき、混雑を読んで急行を増発する |
 | [SAND RESCUE](sand_rescue/) | 限られた水を6つの畑へ配分し、安全な収穫と追加の実りを選ぶ |
 
@@ -51,15 +51,15 @@
 
 | ゲーム | 内容 |
 | --- | --- |
-| [NIGHT SWARM](night_swarm/) | 迫る群れを誘導し射線を開いて生還する |
-| [ORBIT DODGE](orbit_dodge/) | 円軌道を移動して放射状の攻撃を避ける |
+| [NIGHT SWARM](night_swarm/) | 補給へ踏み込む判断と装甲戦を加えた6夜の生存戦 |
+| [ORBIT DODGE](orbit_dodge/) | 2軌道を渡り、同時光線と連続回収に挑む6面 |
 | [GATE RUNNER](gate_runner/) | 横位置を細かく調整し、壁・全幅の穴・低い梁を越える疑似3Dランニング |
 | [BRICK PULSE](brick_pulse/) | 装甲ブロック・アイテム・ドローンに挑む12面のブロック崩し |
-| [STAR LANCE](star_lance/) | 隊列の隙間を抜いて迎撃する |
-| [RIBBON SNAKE](ribbon_snake/) | 伸びる軌跡を制御して食料を回収する |
-| [LUNAR TOUCHDOWN](lunar_touchdown/) | 燃料と降下速度を調整する着陸挑戦 |
-| [ECHO PARRY](echo_parry/) | 敵の予備動作を読んで反撃する |
-| [PENDULUM PORT](pendulum_port/) | 振り子の頂点で次の足場へ跳ぶ |
+| [STAR LANCE](star_lance/) | 装甲・追尾射撃・熱管理に挑む6波の宇宙戦 |
+| [RIBBON SNAKE](ribbon_snake/) | 岩の庭で逃げ道を作り、3回のブレーキを使う |
+| [LUNAR TOUCHDOWN](lunar_touchdown/) | 横風と燃料を読み、狭い着陸場の追加点を狙う |
+| [ECHO PARRY](echo_parry/) | フェイントを見抜き、後退と遅い受け流しを使い分ける |
+| [PENDULUM PORT](pendulum_port/) | ロープ長と振りを合わせ、中央着地を狙う6区間 |
 
 ## 探索・アドベンチャー
 
@@ -67,23 +67,23 @@
 | --- | --- |
 | [ABYSS SIGNAL](abyss_signal/) | ソナーと酸素計を頼りに海底遺構を観測 |
 | [LOOP TEN](loop_ten/) | 10秒の巻き戻しを越えて12の封印を解く |
-| [QUIET ROUTE](quiet_route/) | 巡回の向きと足音を読んで機密を運ぶ |
-| [RUIN LEXICON](ruin_lexicon/) | 碑文の対応から失われた記号を解読する |
-| [SHADOW ARCHIVE](shadow_archive/) | 証言と記録を照合して容疑者を特定する |
-| [COMPASS ROSE](compass_rose/) | 方位の手掛かりを頼りに隠れた宝を探す |
-| [MIRROR RELIC](mirror_relic/) | 四つの視点を回して遺物の通路を開く |
+| [QUIET ROUTE](quiet_route/) | 静音歩行の電池を配分し、危険な寄り道で情報を取る |
+| [RUIN LEXICON](ruin_lexicon/) | 石板を回し、条件の一致を確かめる20の碑文 |
+| [SHADOW ARCHIVE](shadow_archive/) | 必要な調書を選び、少ない閲覧で解決する12事件 |
+| [COMPASS ROSE](compass_rose/) | 測定する場所を選び、方角と距離帯から探し当てる |
+| [MIRROR RELIC](mirror_relic/) | 左右の鏡回転と位相を合わせる6つの遺跡 |
 | [RELIC DIVE](relic_dive/) | 64×32マスの迷宮で食料・装備・魔法を使い、最深部の遺物を探す |
 
 ## 経営・サバイバル
 
 | ゲーム | 内容 |
 | --- | --- |
-| [HEARTH ZERO](hearth_zero/) | 食料・薪・熱を配分して寒波を越える |
-| [ORCHARD DAYS](orchard_days/) | 種まきと水やりを配分して果樹園を育てる |
-| [TIDAL NETS](tidal_nets/) | 潮の流れに網を置き魚群を捕らえる |
-| [POTION PATH](potion_path/) | 素材の移動量を組み合わせ注文を調合する |
-| [AUCTION HOUSE](auction_house/) | 相場と残金を読んで競売に参加する |
-| [CARGO BALANCE](cargo_balance/) | 積荷の位置を選び船の傾きを抑える |
+| [HEARTH ZERO](hearth_zero/) | 3夜の予報を読んで食料・薪・暖房を備える |
+| [ORCHARD DAYS](orchard_days/) | 雨と井戸を読み、早いベリーと高価なリンゴを育てる |
+| [TIDAL NETS](tidal_nets/) | 深浅の流れを読み、細い網と広い網を使い分ける |
+| [POTION PATH](potion_path/) | 毒の着地点と限られた4材料を使う20の調合 |
+| [AUCTION HOUSE](auction_house/) | 大口入札・有料鑑定・見送りを使う3市場の競り |
+| [CARGO BALANCE](cargo_balance/) | 先の荷物を読み、外側の高運賃と転覆を考える6航海 |
 
 ## ビルド
 

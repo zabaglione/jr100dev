@@ -68,15 +68,9 @@ def check():
         traits.add(r.b[r.s.culprit])
     assert len(cases) == 12 and len(traits) == 6
 
-    # The old "always bid" policy now loses. The displayed appraisal allows a win.
-    for careful in (False, True):
-        r = Model("auction_house")
-        for _ in range(100):
-            if r.s.mode != 1:
-                break
-            r.s.choice = int(careful and r.s.bid + 2 > r.s.low - 2)
-            r.action(5)
-        assert r.s.mode == (2 if careful else 3), (careful, vars(r.s))
+    from check_second_review import auction_house
+
+    auction_house()
 
     # A hit on armour removes one health point; the enemy remains until the next.
     r = Model("star_lance")

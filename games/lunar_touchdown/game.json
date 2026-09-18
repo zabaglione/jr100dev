@@ -1,37 +1,23 @@
 {
   "id": "lunar-touchdown",
   "title": "LUNAR TOUCHDOWN",
-  "version": "1.6.1",
+  "version": "2.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
-  "levels": 5,
+  "levels": 6,
   "rate": 15,
-  "hud": [
-    [
-      2,
-      23,
-      "FUEL"
-    ],
-    [
-      6,
-      23,
-      "SPEED"
-    ],
-    [
-      10,
-      23,
-      "ALT"
-    ]
-  ],
+  "hud": [],
   "help": [
     "A/D : HORIZONTAL CONTROL",
-    "W / BUTTON : THRUST",
-    "THRUST REDUCES SPEED BY TWO.",
-    "LAND ON THE MARKED PLATFORM.",
-    "SAFE LANDING SPEED IS 0 TO 2.",
-    "FUEL IS LIMITED TO 24 BURNS."
+    "W / BUTTON : THRUST (-2 SPEED)",
+    "LAND WITH A SPEED OF 0 TO 2.",
+    "WIDE PAD: SAFE / * PAD: +10",
+    "KEEP FUEL FOR A HIGHER SCORE.",
+    "LATER SITES HAVE CROSSWINDS.",
+    "WATCH THE WIND ARROW CHANGE."
   ],
-  "fullDemo": true
+  "fullDemo": true,
+  "secondReview": true
 }

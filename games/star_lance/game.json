@@ -1,12 +1,12 @@
 {
   "id": "star-lance",
   "title": "STAR LANCE",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
-  "levels": 1,
+  "levels": 6,
   "rate": 10,
   "hud": [
     [
@@ -22,12 +22,13 @@
   ],
   "help": [
     "A/D : MOVE THE INTERCEPTOR",
-    "BUTTON : FIRE VERTICAL LANCE",
-    "THE FORMATION SHIFTS SIDEWAYS.",
-    "DODGE THE FALLING MISSILES.",
-    "DESTROY ALL EIGHTEEN SHIPS.",
-    "TIME LIMIT: 220 FLIGHT TICKS.",
-    "ARMOURED TOP ROW NEEDS 2 SHOTS."
+    "BUTTON : FIRE / W : HEAVY SHOT",
+    "NORMAL +2 HEAT / HEAVY +4",
+    "HEAVY SHOTS BREAK TWO ARMOUR.",
+    "HEAT COOLS AS TIME PASSES.",
+    "DODGE THE AIMED SHOTS.",
+    "SIX FLEETS / THREE HULL EACH."
   ],
-  "fullDemo": true
+  "fullDemo": true,
+  "secondReview": true
 }

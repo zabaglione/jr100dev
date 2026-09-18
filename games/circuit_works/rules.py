@@ -50,7 +50,9 @@ def act():
                 )
                 s.signal = gate(s.signal, operand, c[stage])
                 sound(0)
-                animate(3)
+                for pulse in range(3):
+                    s.pulse = pulse
+                    animate(2)
             b[i] = s.signal
             s.tested += 1
             if b[i] == d[i]:
@@ -79,9 +81,13 @@ def draw():
         else:
             text(8, 5 + i * 4, "XOR")
         letter(7, 6 + i * 4, 66 if i == 0 else (67 if i == 1 else 65))
+        for wire in range(3):
+            letter(5, 7 + i * 4 + wire, 145)
+        letter(7, 5 + i * 4, 62)
         if s.running == i:
             letter(12, 5 + i * 4, 48 + s.signal)
             letter(3, 5 + i * 4, 42)
+            letter(5, 7 + i * 4 + s.pulse, 48 + s.signal)
     letter(1, 5 + s.cursor * 4, 62)
     for i in range(8):
         letter(17, 4 + i * 2, 48 + i // 4)
@@ -90,6 +96,7 @@ def draw():
         letter(25, 4 + i * 2, 48 + d[i])
         if i < s.tested:
             letter(29, 4 + i * 2, 48 + b[i])
+            letter(31, 4 + i * 2, 42 if b[i] == d[i] else 88)
         if s.probe == i:
             letter(16, 4 + i * 2, 62)
     digits(9, 20, s.tests)

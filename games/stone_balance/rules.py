@@ -1,12 +1,15 @@
 # ruff: noqa: F821
 # s, b, c, d and drawing functions are supplied by the native compiler.
 def init():
-    b[0] = 2 + s.level % 5
-    b[1] = 3 + (s.level // 5) * 2
-    b[2] = 7
-    if ((b[0] % 4) ^ (b[1] % 4) ^ (b[2] % 4)) == 0:
-        b[2] = 6
+    s.misere = s.level >= 5
+    for i in range(3):
+        b[i] = heaps[s.level * 3 + i]
     s.take = 1
+
+
+def has_win():
+    value = reverse[b[0] * 8 + b[1]] if s.misere else normal[b[0] * 8 + b[1]]
+    return value & (1 << b[2])
 
 
 def remove(pile, count):
@@ -30,7 +33,10 @@ def act():
         s.turn = 1
         remove(s.pile, s.take)
         if b[0] + b[1] + b[2] == 0:
-            win()
+            if s.misere:
+                lose("YOU TOOK THE LAST STONE")
+            else:
+                win()
             return
         found = 0
         for i in range(3):
@@ -38,7 +44,7 @@ def act():
                 if not found and b[i] >= j + 1:
                     value = b[i]
                     b[i] -= j + 1
-                    nim = (b[0] % 4) ^ (b[1] % 4) ^ (b[2] % 4)
+                    nim = has_win()
                     b[i] = value
                     if nim == 0:
                         s.enemy_pile = i
@@ -53,7 +59,10 @@ def act():
         remove(s.enemy_pile, s.enemy_take)
         sound(1)
         if b[0] + b[1] + b[2] == 0:
-            lose("THE RIVAL TOOK THE LAST STONE")
+            if s.misere:
+                win()
+            else:
+                lose("THE RIVAL TOOK THE LAST STONE")
 
 
 def tick():
@@ -64,8 +73,14 @@ def draw():
     for i in range(3):
         for j in range(b[i]):
             tile(2 + j * 3, 4 + i * 5, 4)
+            if i == s.pile and j + s.take >= b[i]:
+                letter(2 + j * 3, 6 + i * 5, 94)
         if i == s.pile:
             letter(0, 4 + i * 5, 62)
+    if s.misere:
+        text(8, 2, "LAST STONE LOSES")
+    else:
+        text(8, 2, "LAST STONE WINS")
     text(2, 19, "TAKE")
     digits(8, 19, s.take)
     text(15, 19, "RIVAL TOOK")

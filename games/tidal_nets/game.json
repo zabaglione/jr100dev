@@ -1,19 +1,14 @@
 {
   "id": "tidal-nets",
   "title": "TIDAL NETS",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
-  "levels": 1,
+  "levels": 3,
   "rate": 255,
   "hud": [
-    [
-      2,
-      1,
-      "TARGET 30"
-    ],
     [
       19,
       1,
@@ -26,12 +21,15 @@
     ]
   ],
   "help": [
-    "A/D : PLACE A TWO-COLUMN NET",
+    "A/D : PLACE NET / W/S : WIDTH",
     "BUTTON : CAST THROUGH THE TIDE",
-    "SHOAL DRIFTS AT CURRENT SPEED.",
+    "FINE NET: ONE COLUMN, ONE ROPE",
+    "WIDE NET: TWO COLUMNS, TWO ROPE",
     "DEEP FISH DRIFT TWICE AS FAR.",
-    "SHOAL +2 / DEEP +3 / BOTH +5",
-    "CATCH 30 FISH IN NINE CASTS."
+    "SHOAL +2 / DEEP +4 / BOTH +6",
+    "NINE CASTS AND TWELVE ROPE.",
+    "THREE TRIPS HAVE HIGHER QUOTAS."
   ],
-  "fullDemo": true
+  "fullDemo": true,
+  "secondReview": true
 }

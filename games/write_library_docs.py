@@ -184,7 +184,7 @@ def with_media(text, game, local=False):
     return text[:position].rstrip() + "\n" + block + "\n" + text[position:].lstrip()
 
 
-home = f"# JR-100 Games\n\n標準RAM 16KB向けのオリジナルゲーム{len(games)}作品です。ジャンルから選ぶと、各作品の画面・遊び方・起動リンクを探せます。\n\n各作品に3枚以上の紹介画像と約30秒の音付きプレイ動画を掲載しています。[全51作品の動画ギャラリー](https://zabaglione.github.io/pyjr100emu/gameplay.html)からも選べます。\n\n"
+home = f"# JR-100 Games\n\n標準RAM 16KB向けのオリジナルゲーム{len(games)}作品です。ジャンルから選ぶと、各作品の画面・遊び方・起動リンクを探せます。\n\n各作品に3枚以上の紹介画像と、最初の目標達成までの音付きプレイ動画を掲載しています。[全51作品の動画ギャラリー](https://zabaglione.github.io/pyjr100emu/gameplay.html)からも選べます。\n\n"
 home += "| ジャンル | 作品数 | 内容 |\n| --- | ---: | --- |\n"
 for gid, genre in genres.items():
     subset = [g for g in games if g["genre"] == gid]
@@ -195,7 +195,7 @@ home += (
 )
 home += "\n\n基本の方向キーは **W/A/S/D**、8方向の作品は **QWE／AD／ZXC** です。作品ごとの操作は各ページに掲載しています。\n\nエミュレーターで確認済みです。実機での動作・音声は未確認です。\n\n"
 home += f"[ビルド可能なソースと開発手順]({BASE}/tree/main/games)\n"
-home += "\n**2026年9月18日更新：** 全51作品の操作説明をタイトル・ヘルプへまとめ、本編の表示を整理しました。METRO WEAVEは複数列車・駅の混雑・急行の増発を組み合わせる運行ゲームへ更新しています。SAND RESCUEは6つの畑への水の配分、GATE RUNNERは自由な横移動とジャンプを使う疑似3Dランニングへ作り直しました。[改善内容](Quality-Review)／[動きと音の紹介](Presentation)。\n"
+home += "\n**2026年9月18日更新：** さらに25作品を個別に改修しました。2軌道を渡るORBIT DODGE、熱を管理するSTAR LANCE、2種類の作物を育てるORCHARD DAYSなど、見た目と音に加えて攻略の選択肢を増やしています。[25作品の変更点](Second-Review)／[これまでの改善](Quality-Review)／[動きと音の紹介](Presentation)。\n"
 home += "\n## タイトル画面ギャラリー\n\n"
 for gid, genre in genres.items():
     home += f"### [{genre['title']}]({page(gid)})\n\n| タイトル画面 | ゲーム・概要 |\n| --- | --- |\n"
@@ -209,7 +209,7 @@ for gid, genre in genres.items():
 sidebar = "[JR-100 Games](Home)\n\n"
 for gid, genre in genres.items():
     sidebar += f"- [{genre['title']}]({page(gid)})\n"
-sidebar += "\n[全作品をタイトル順に探す](All-Games)\n\n[タイトル画面ギャラリー](Home#タイトル画面ギャラリー)\n\n[動きと音の紹介](Presentation)\n\n[今回の改善内容](Quality-Review)\n\n[操作・起動方法](Controls)\n"
+sidebar += "\n[全作品をタイトル順に探す](All-Games)\n\n[タイトル画面ギャラリー](Home#タイトル画面ギャラリー)\n\n[動きと音の紹介](Presentation)\n\n[25作品の個別改修](Second-Review)\n\n[これまでの改善内容](Quality-Review)\n\n[操作・起動方法](Controls)\n"
 (WIKI / "_Sidebar.md").write_text(sidebar)
 all_games = "# 全作品・タイトル順\n\n[ホーム](Home) · [ジャンルから探す](Home)\n\n| タイトル | ジャンル | ゲーム・概要 | 起動 |\n| --- | --- | --- | --- |\n"
 for g in sorted(games, key=lambda g: g["title"]):
@@ -233,7 +233,7 @@ for gid, genre in genres.items():
   A S D
 ```
 
-W＝上、A＝左、S＝下、D＝右です。決定・主操作はRETURN。作品によりFの補助操作があります。CHRONO BREACHとABYSS SIGNALの待機はXです。
+W＝上、A＝左、S＝下、D＝右です。決定・主操作はRETURN。作品によりFやXの補助操作があります。CHRONO BREACHとABYSS SIGNALの待機はXです。
 
 ## 8方向
 
@@ -384,5 +384,8 @@ readme += "\n`native/` は新作44本のコンパイラー、画面構成、共�
 (ROOT / "README.md").write_text(readme)
 (WIKI / "Quality-Review.md").write_text(
     (ROOT.parent / "docs/game-quality-review.md").read_text()
+)
+(WIKI / "Second-Review.md").write_text(
+    (ROOT.parent / "docs/game-second-review.md").read_text()
 )
 print(f"Generated {len(games)} game manuals and {len(genres)} genre navigation pages")

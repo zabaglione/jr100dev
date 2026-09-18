@@ -6,7 +6,7 @@
 
 同じブラウザーで自分のBASIC ROMを事前に設定してください。登録済みなら「プレイ」からタイトルまで自動起動します。音は最初のキー入力または画面クリックで有効になります。
 
-開始時にシャッフルされた16枚の札から、同じ絵柄の8組を見つけます。不一致12回で終了します。
+16枚の札から8組を見つける、毎回配札が変わる全10面の神経衰弱です。許される不一致は序盤12回、終盤9回。続けて組を当てるとCHAINが伸びます。
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/memory-mosaic/title.png)
 
@@ -18,17 +18,19 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/memory-mosaic/demo-clear.png)
 
-**[音付きプレイ動画を見る（約82秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=memory-mosaic)**
+**[音付きプレイ動画を見る（約86秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=memory-mosaic)**
 
 1ステージのクリアまでを収録。
 
 ## 操作と遊び方
 
-WASDでタイルを選び、RETURNでめくります。不一致の2枚を確認したら、もう一度RETURNで伏せます。
+WASDで札を選び、RETURNでめくります。2枚を確認した後はRETURNでもう一度進めます。不一致の札は裏へ戻り、一致した札は表のまま残ります。
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-配札を開始時にシャッフルします。札は幅が細くなり側面を経て表裏が入れ替わります。一致は光と音、不一致は2枚を覚える間で示します。
+札ごとの枠と厚みを加え、表面が細くなり、側面を経て反対側が開く5段階の反転を使います。一致・不一致の音と確認の間があり、連続一致を数えます。演出が終わってから次のキーを押してください。
+
+PAIRSは揃った組、MISSESは不一致の回数と上限、CHAINは連続で当てた組の数です。開いた絵柄と位置を覚え、見覚えのある組から確定していきます。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/memory-mosaic/play-01.png)
 

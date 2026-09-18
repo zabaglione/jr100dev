@@ -1,7 +1,7 @@
 {
   "id": "number-vault",
   "title": "NUMBER VAULT",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -18,5 +18,12 @@
     "OPEN THE VAULT IN TEN TRIES."
   ],
   "seededDeck": true,
-  "fullDemo": true
+  "fullDemo": true,
+  "secondReview": true,
+  "artSlots": [
+    24,
+    25,
+    26,
+    27
+  ]
 }

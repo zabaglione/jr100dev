@@ -6,7 +6,7 @@
 
 同じブラウザーで自分のBASIC ROMを事前に設定してください。登録済みなら「プレイ」からタイトルまで自動起動します。音は最初のキー入力または画面クリックで有効になります。
 
-相手の予備動作を読み、攻撃に合わせて8回の反撃を成功させます。3回のミスで決闘に敗れます。
+上段・下段の攻撃を見て受け流す全6戦。相手の体力は6から11へ増え、3戦目からは構えを途中で変えるフェイントが加わります。
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/echo-parry/title.png)
 
@@ -18,17 +18,19 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/echo-parry/demo-clear.png)
 
-**[音付きプレイ動画を見る（約42秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=echo-parry)**
+**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=echo-parry)**
 
 1ステージのクリアまでを収録。
 
 ## 操作と遊び方
 
-Wで上段、Sで下段の構えを選び、攻撃中にRETURNで受け流します。予備動作と立て直しの間は待ちます。
+W/Sで構えを選び、ATTACK中にRETURNで受け流します。攻撃の後半、COUNTER!の表示中なら2ダメージ。3連続の受け流しも2ダメージです。Aで後退すると、反撃を捨ててその攻撃を安全に避けられます。
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-敵の攻撃、盾での受け止め、反撃の飛翔、命中を順に描きます。攻撃の高さは単純な交互から8手のパターンへ変えました。
+立体的な決闘場を描き、攻撃の飛来、後退、反撃、装甲の点滅、撃破の破片を表示します。予告・フェイント・攻撃・反撃・回復時間を音と姿勢で追えます。演出が終わってから次のキーを押してください。
+
+HEARTSは自分の体力、ARMORは相手の残り体力、CHAINは連続成功です。READY中や違う高さで受け流すと被弾。フェイントの後も攻撃の高さを見直します。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/echo-parry/play-01.png)
 

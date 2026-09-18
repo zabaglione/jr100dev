@@ -11,6 +11,11 @@ def act():
         s.cursor = (s.cursor + 3) % 4
     if s.action == 4:
         s.cursor = (s.cursor + 1) % 4
+    if s.action == 1 or s.action == 2:
+        s.turning = 1
+        sound(0)
+        animate(4)
+        s.turning = 0
     if s.action == 1:
         b[s.cursor] = b[s.cursor] % 4 + 1
     if s.action == 2:
@@ -44,13 +49,15 @@ def draw():
         letter(7, 5 + i * 4, 66 + i)
         letter(9, 5 + i * 4, 61)
         digits(11, 5 + i * 4, d[i] + d[i + 1])
+        if s.errors:
+            letter(15, 5 + i * 4, 42 if b[i] + b[i + 1] == d[i] + d[i + 1] else 88)
     text(3, 17, "A   D")
     letter(5, 17, 60 if d[0] < d[3] else 62)
     text(20, 20, "TRIES")
     digits(27, 20, 5 - s.errors)
     for i in range(4):
         letter(21, 4 + i * 4, 65 + i)
-        letter(25, 4 + i * 4, 48 + b[i])
+        letter(25, 4 + i * 4, 45 if s.turning and i == s.cursor else 48 + b[i])
     letter(19, 4 + s.cursor * 4, 62)
 
     if s.check:

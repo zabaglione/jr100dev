@@ -56,6 +56,10 @@ def act():
         s.tries += 1
         sound(1)
         if s.exact == 4:
+            sound(1)
+            for frame in range(3):
+                s.opening = frame + 1
+                animate(10)
             sparkle(14, 3)
             win()
         elif s.tries >= 10:
@@ -85,4 +89,8 @@ def draw():
             letter(27, 10 + row * 2, 48 + c[37 + row * 6])
     text(2, 22, "TRIES LEFT")
     digits(14, 22, 10 - s.tries)
+    if s.opening:
+        face(6, s.opening)
+        tile(14, 4, 6)
+        text(11, 6, "VAULT OPEN")
     effect_draw()

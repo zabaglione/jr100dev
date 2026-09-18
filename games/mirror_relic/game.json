@@ -1,7 +1,7 @@
 {
   "id": "mirror-relic",
   "title": "MIRROR RELIC",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -26,12 +26,14 @@
     ]
   ],
   "help": [
-    "WASD / PAD : WALK",
-    "BUTTON : QUARTER TURN YOURSELF",
-    "THE WALLS REMAIN IN PLACE.",
-    "TURNING INTO A WALL IS BLOCKED.",
-    "COLLECT THREE RELICS THEN EXIT.",
-    "TWENTY TURNS AT MOST."
+    "WASD : WALK",
+    "BUTTON : TURN CLOCKWISE",
+    "X : TURN COUNTERCLOCKWISE",
+    "TURNING ALSO CHANGES PHASE A-D.",
+    "A RELIC NEEDS ITS LETTER PHASE.",
+    "THE ARROW SHOWS CLOCKWISE EXIT.",
+    "GET THREE RELICS AND LEAVE.",
+    "TWENTY TURNS / SIX HALLS."
   ],
   "dataTables": {
     "relics": [
@@ -53,7 +55,14 @@
       16,
       7,
       48
+    ],
+    "passages": [
+      19,
+      43,
+      26,
+      29
     ]
   },
-  "fullDemo": true
+  "fullDemo": true,
+  "secondReview": true
 }

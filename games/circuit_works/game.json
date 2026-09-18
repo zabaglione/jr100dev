@@ -1,7 +1,7 @@
 {
   "id": "circuit-works",
   "title": "CIRCUIT WORKS",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -113,5 +113,6 @@
       2
     ]
   },
-  "fullDemo": true
+  "fullDemo": true,
+  "secondReview": true
 }

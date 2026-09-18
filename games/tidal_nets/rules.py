@@ -1,13 +1,15 @@
 # ruff: noqa: F821
-def init():
-    s.fish = 3
-    s.deep = 1
-    current()
-
-
 def current():
-    s.tide = 1 if s.casts % 3 == 0 else 7
-    s.force = 1 + s.casts % 2
+    s.tide = 1 if (s.casts + s.level) % 3 == 0 else 7
+    s.force = 1 + (s.casts + s.level) % 2
+
+
+def init():
+    s.fish = (3 + s.level * 2) % 8
+    s.deep = (1 + s.level * 3) % 8
+    s.rope = 12
+    s.quota = 30 + s.level * 3
+    current()
 
 
 def act():
@@ -15,7 +17,16 @@ def act():
         s.cursor = (s.cursor + 7) % 8
     if s.action == 4:
         s.cursor = (s.cursor + 1) % 8
+    if s.action == 1 or s.action == 2:
+        s.wide ^= 1
+        sound(0)
     if s.action == 5:
+        cost = 2 if s.wide else 1
+        if s.rope < cost:
+            s.notice = 7
+            sound(3)
+            return
+        s.rope -= cost
         s.notice = 0
         s.casting = 1
         sound(0)
@@ -31,10 +42,10 @@ def act():
         s.deep = below
         s.swimming = 0
         gain = 0
-        if s.cursor == landing or (s.cursor + 1) % 8 == landing:
+        if s.cursor == landing or s.wide and (s.cursor + 1) % 8 == landing:
             gain += 2
-        if s.cursor == below or (s.cursor + 1) % 8 == below:
-            gain += 3
+        if s.cursor == below or s.wide and (s.cursor + 1) % 8 == below:
+            gain += 4
         if gain:
             s.notice = gain
             sound(1)
@@ -42,15 +53,15 @@ def act():
             s.catch += gain
         else:
             sound(3)
-        animate(20)
+        animate(16)
         s.casts += 1
-        s.fish = (s.fish * 3 + 5) % 8
-        s.deep = (s.deep * 5 + 3) % 8
+        s.fish = (s.fish * 3 + 5 + s.level) % 8
+        s.deep = (s.deep * 5 + 3 + s.level) % 8
         current()
-        if s.catch >= 30:
+        if s.catch >= s.quota:
             win()
-        elif s.casts == 9:
-            lose("NINE CASTS ENDED BELOW 30 FISH")
+        elif s.casts == 9 or s.rope == 0:
+            lose("THE FISHING TRIP MISSED QUOTA")
 
 
 def tick():
@@ -67,15 +78,26 @@ def draw():
         tile(s.deep * 4, 10, 3)
     if not s.casting:
         tile(s.cursor * 4, 14, 4)
-    letter(((s.cursor + 1) % 8) * 4, 15, 94)
+        if s.wide:
+            tile(((s.cursor + 1) % 8) * 4, 14, 4)
+    text(1, 2, "QUOTA")
+    digits(7, 2, s.quota)
+    text(18, 2, "ROPE")
+    digits(24, 2, s.rope)
     text(1, 4, "TIDE")
     letter(6, 4, 62 if s.tide == 1 else 60)
     letter(8, 4, 48 + s.force)
+    if s.wide:
+        text(19, 4, "WIDE NET")
+    else:
+        text(19, 4, "FINE NET")
     text(1, 6, "SHOAL +2")
-    text(1, 9, "DEEP +3")
+    text(1, 9, "DEEP +4")
     digits(12, 19, s.catch)
     digits(28, 19, 9 - s.casts)
-    if s.notice:
-        text(19, 2, "CAUGHT +")
-        letter(27, 2, 48 + s.notice)
+    if s.notice == 7:
+        text(1, 20, "NOT ENOUGH ROPE")
+    elif s.notice:
+        text(1, 20, "CAUGHT +")
+        letter(9, 20, 48 + s.notice)
     effect_draw()

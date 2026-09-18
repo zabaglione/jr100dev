@@ -41,7 +41,7 @@ class Player:
 
     def press(self, a):
         assert self.s.mode == 1, (self.name, self.s.mode, a)
-        action(self.m, self.r, a, self.pad)
+        action(self.m, self.r, a, self.pad and a not in (7, 8))
         self.actions += 1
         if self.capture and self.actions == (
             6 if self.m.metadata.get("levels", 10) == 1 else 30
@@ -317,6 +317,11 @@ def solve_orbit(p):
 
 
 def solve_stage(p):
+    if p.r.metadata.get("secondReview"):
+        from quality.strategies import solve
+
+        if solve(p):
+            return
     if p.name == "sand_rescue":
         sand_irrigate(p, extra=3 if p.s.level == 0 else 0)
         return
@@ -814,7 +819,7 @@ def solve_search(p):
             p.press(5)
 
 
-def snake_route(body, food):
+def snake_route(body, food, blocked=()):
     """Approach the visible food while accounting for the moving tail."""
     body = tuple(body)
     todo = deque([(body, [])])
@@ -824,7 +829,7 @@ def snake_route(body, food):
         for direction in range(1, 5):
             target = step(occupied[0], direction)
             retained = len(occupied) - (target != food)
-            if target is None or target in occupied[:retained]:
+            if target is None or target in blocked or target in occupied[:retained]:
                 continue
             route = path + [direction]
             if target == food:

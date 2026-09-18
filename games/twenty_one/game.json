@@ -1,7 +1,7 @@
 {
   "id": "twenty-one",
   "title": "TWENTY ONE",
-  "version": "1.6.1",
+  "version": "2.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -37,16 +37,26 @@
     [
       18,
       22,
-      "HAND  /5"
+      "HAND  /7"
     ]
   ],
   "help": [
-    "WASD : HIT OR STAND",
-    "BUTTON : CONFIRM",
-    "CARDS ARE VALUED TWO TO TEN.",
-    "DEALER DRAWS TO SEVENTEEN.",
-    "HIGHER TOTAL WINS TWO COINS.",
-    "KEEP EIGHT COINS AFTER 5 HANDS."
+    "A/D : HIT / STAND / DOUBLE",
+    "BUTTON : CONFIRM THE CHOICE",
+    "ACE IS 1 OR 11 / FACES ARE 10.",
+    "DEALER KEEPS ONE CARD HIDDEN.",
+    "DOUBLE: BET 4, DRAW ONE, STAND.",
+    "NATURAL 21 PAYS THREE COINS.",
+    "FINISH SEVEN HANDS WITH 12.",
+    "A SHUFFLED 52-CARD DECK."
   ],
-  "fullDemo": true
+  "fullDemo": true,
+  "seededDeck": true,
+  "secondReview": true,
+  "artSlots": [
+    0,
+    1,
+    2,
+    3
+  ]
 }

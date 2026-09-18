@@ -4,11 +4,13 @@ def init():
     s.facing = 2
     for i in range(64):
         b[i] = 1 if i % 8 == 3 or i // 8 == 3 else 0
+    for i in range(4):
+        b[passages[i]] = 0
     s.pos = 54
     s.origin = s.pos
-    c[relics[s.level * 3]] = 1
-    c[relics[s.level * 3 + 1]] = 1
-    c[relics[s.level * 3 + 2]] = 1
+    c[relics[s.level * 3]] = 1 + (s.level + 1) % 4
+    c[relics[s.level * 3 + 1]] = 1 + (s.level + 2) % 4
+    c[relics[s.level * 3 + 2]] = 1 + (s.level + 3) % 4
     s.left = 3
     b[53] = 6
 
@@ -25,8 +27,12 @@ def act():
                 sound(0)
                 animate(2)
                 s.origin = s.pos
-    if s.action == 5:
-        n = (s.pos % 8) * 8 + 7 - s.pos // 8
+    if s.action == 5 or s.action == 7:
+        n = (
+            (s.pos % 8) * 8 + 7 - s.pos // 8
+            if s.action == 5
+            else (7 - s.pos % 8) * 8 + s.pos // 8
+        )
         if b[n] != 1:
             s.rotating = 1
             sound(2)
@@ -35,8 +41,9 @@ def act():
             s.pos = n
             s.origin = s.pos
             s.turns += 1
+            s.phase = (s.phase + (1 if s.action == 5 else 3)) % 4
             sound(1)
-    if c[s.pos]:
+    if c[s.pos] == s.phase + 1:
         c[s.pos] = 0
         s.left -= 1
         sound(1)
@@ -57,12 +64,18 @@ def draw():
     for i in range(64):
         if c[i]:
             tile(i % 8 * 2, 3 + i // 8 * 2, 3)
+            letter(i % 8 * 2, 3 + i // 8 * 2, 64 + c[i])
     if not s.rotating:
         mover(s.pos, s.origin, 2, 0)
     digits(24, 7, s.left)
     digits(24, 14, s.turns)
+    text(19, 17, "PHASE")
+    letter(26, 17, 65 + s.phase)
+    n = s.pos % 8 * 8 + 7 - s.pos // 8
+    if b[n] != 1 and not c[n] and n != s.pos:
+        letter(n % 8 * 2, 3 + n // 8 * 2, 62)
     if s.rotating:
-        text(1, 21, "QUARTER TURN AROUND THE CENTRE")
+        text(1, 20, "MIRROR TURN")
     elif s.left == 0:
-        text(1, 21, "ALL RELICS FOUND - EXIT IS OPEN")
+        text(1, 20, "EXIT OPEN")
     effect_draw()

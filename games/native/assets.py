@@ -176,6 +176,9 @@ def generate(output, metadata, directory):
     from quality.scene_art import prepare
 
     prepare(bank, hud, info["id"])
+    from quality.individual_art import prepare as prepare_individual
+
+    face_assets += prepare_individual(bank, hud, metadata)
     if info["id"] == "iron-script":
         from iron_script.presentation import prepare as prepare_iron
 

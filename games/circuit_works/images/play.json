@@ -4,20 +4,20 @@
   "boot": "owned BASIC ROM and PRG autostart",
   "clock_hz": 894000,
   "fps": 30,
-  "source_seconds": 30.0,
-  "video_seconds": 30.0,
+  "source_seconds": 30.033,
+  "video_seconds": 30.033,
   "playback_speed": 1,
   "edited": false,
   "source_segments": [
     [
       0,
-      30.0
+      30.0333
     ]
   ],
-  "clear_time": 25.7749,
+  "clear_time": 27.0611,
   "outcome": "first stage cleared",
   "host_state_writes": 0,
-  "prg_sha256": "3ead1cfe2dbcf040e961e352f9f9fb8c75266818020d5d685ca1c743dc39c70f",
+  "prg_sha256": "7da0f6b2ad7cfc55a90cacd9ec15a686f88f363b587175feea5354205a99c4a8",
   "images": [
     "demo-start.png",
     "demo-play.png",
@@ -30,41 +30,41 @@
       "action": 5
     },
     {
-      "time": 3.0253,
+      "time": 3.0391,
       "kind": "stage-start"
     },
     {
-      "time": 6.8035,
+      "time": 4.6933,
       "kind": "input",
       "action": 2
     },
     {
-      "time": 6.9495,
+      "time": 4.8521,
       "kind": "settled",
       "action": 2
     },
     {
-      "time": 10.5023,
+      "time": 6.408,
       "kind": "input",
       "action": 2
     },
     {
-      "time": 10.6484,
+      "time": 6.5668,
       "kind": "settled",
       "action": 2
     },
     {
-      "time": 17.3099,
+      "time": 9.4841,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 25.7749,
+      "time": 27.0611,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 25.7749,
+      "time": 27.0611,
       "kind": "clear"
     }
   ],

@@ -1,7 +1,7 @@
 {
   "id": "shadow-archive",
   "title": "SHADOW ARCHIVE",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -16,12 +16,13 @@
     ]
   ],
   "help": [
-    "A/D : SELECT SUSPECT OR FILE",
-    "W/S : READ OR ACCUSE MODE",
-    "BUTTON : OPEN FILE OR ACCUSE",
-    "Y/N = HAT, GLASSES, TIE",
-    "READ THREE FILES TO ELIMINATE.",
-    "ONE FALSE ACCUSATION LOSES."
+    "W/S : FILES OR ACCUSE MODE",
+    "A/D : SELECT FILE OR SUSPECT",
+    "BUTTON : OPEN OR ACCUSE",
+    "CLUES: HAT, GLASSES, TIE.",
+    "X MARKS A CONTRADICTED SUSPECT.",
+    "SOLVE WITH TWO FILES FOR GOLD.",
+    "WRONG SUSPECT: CASE FAILED."
   ],
   "fullDemo": true,
   "dataTables": {
@@ -113,5 +114,6 @@
       5,
       5
     ]
-  }
+  },
+  "secondReview": true
 }

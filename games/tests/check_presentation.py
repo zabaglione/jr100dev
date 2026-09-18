@@ -73,7 +73,7 @@ def impact_and_loss(rom=None, capture=None):
     m.until("DISPATCH")
     m.until("SCENE_IMPACT_FLASH")
     began = lib.clocks(m.p)
-    assert m.get(slots["s.hp"]) == 2
+    assert m.get(slots["s.hp"]) == 3
     contact = m.read(0xC100, 768)
     m.until("PACE_WAIT_LOOP")
     changed = {
@@ -85,17 +85,22 @@ def impact_and_loss(rom=None, capture=None):
     m.until("FRAME_READY")
     seconds = (lib.clocks(m.p) - began) / 894886.25
     assert 0.2 < seconds < 0.6, seconds
-    assert m.get(slots["s.hp"]) == 2 and m.get("MODE") == 1
+    assert m.get(slots["s.hp"]) == 3 and m.get("MODE") == 1
     assert m.read(0xC000, 256) == bank, "Flash changed every actor sharing PCG"
     lib.key(m.p, *KEYS[5], 0)
     m.until("INPUT_DONE")
-    m.action(5)
+    for hit in range(3):
+        while m.get(slots["s.guarded"]) or m.get(slots["s.phase"]) != 0:
+            m.until("FN_TICK")
+            m.until("FRAME_READY")
+        if hit < 2:
+            m.action(5)
     lib.key(m.p, *KEYS[5], 1)
     m.until("DISPATCH")
     m.until("RESULT_LISTEN")
     assert m.get("MODE") == 3
     screen = m.read(0xC100, 768)
-    why = bytes(ord(c) - 32 if c != " " else 64 for c in "WRONG GUARD OR TIMING")
+    why = bytes(ord(c) - 32 if c != " " else 64 for c in "WRONG GUARD OR EARLY PARRY")
     assert why in screen
     if capture:
         m.capture(capture / "failure.png")

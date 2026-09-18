@@ -1,7 +1,7 @@
 {
   "id": "compass-rose",
   "title": "COMPASS ROSE",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -26,12 +26,13 @@
     ]
   ],
   "help": [
-    "WASD : WALK AROUND THE ROCKS",
-    "BUTTON : DIG AT YOUR POSITION",
-    "THE COMPASS POINTS TO TREASURE.",
-    "HERE MEANS YOU HAVE ARRIVED.",
-    "THREE DIGS / 32 TRAVEL UNITS",
-    "WALLS AND EDGES SPEND NO FUEL."
+    "WASD : MOVE / BUTTON : DIG",
+    "X : SURVEY AGAIN, COSTS 2 FOOD",
+    "BEARING STAYS AT LAST SURVEY.",
+    "NEAR 0-2 / MID 3-5 / FAR 6+",
+    "COMPARE READINGS TO FIND GOLD.",
+    "FOUR SURVEYS AND THREE DIGS.",
+    "ROCKS BLOCK TRAVEL."
   ],
   "fullDemo": true,
   "dataTables": {
@@ -47,5 +48,6 @@
       58,
       52
     ]
-  }
+  },
+  "secondReview": true
 }

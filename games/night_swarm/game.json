@@ -1,12 +1,12 @@
 {
   "id": "night-swarm",
   "title": "NIGHT SWARM",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
-  "levels": 1,
+  "levels": 6,
   "rate": 10,
   "hud": [
     [
@@ -33,12 +33,27 @@
   "help": [
     "QWE / AD / ZXC : EIGHT WAYS",
     "BUTTON : AREA PULSE WHEN READY",
-    "CLOSE ENEMIES ARE AUTO FIRED.",
-    "DODGE THE SWARM BETWEEN PULSES.",
-    "DEFEAT EIGHTEEN CREATURES.",
-    "FOUR CONTACTS END THE MISSION.",
-    "ARMOURED CREATURES NEED 2 HITS."
+    "AUTO FIRE HITS ONE NEARBY FOE.",
+    "PORTALS SHOW THE NEXT ARRIVAL.",
+    "ARMOURED FOES TAKE TWO HITS.",
+    "SALVAGE: HEAL + READY PULSE",
+    "SIX WAVES GROW MORE CROWDED."
   ],
   "directions": 8,
-  "fullDemo": true
+  "fullDemo": true,
+  "secondReview": true,
+  "artSlots": [
+    12,
+    13,
+    14,
+    15,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31
+  ]
 }

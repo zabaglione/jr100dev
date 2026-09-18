@@ -8,7 +8,9 @@ def toggle(pos):
     if s.ready:
         s.flash = pos + 1
         sound(0)
-        animate(5)
+        for frame in range(5):
+            s.pose = frame + 1 if b[pos] else 5 - frame
+            animate(2)
         s.flash = 0
 
 
@@ -58,12 +60,31 @@ def tick():
 
 
 def draw():
+    if s.flash:
+        flip(s.pose)
     for i in range(25):
-        tile(1 + i % 5 * 3, 4 + i // 5 * 3, 3 if b[i] else 0)
+        tile(
+            1 + i % 5 * 3, 4 + i // 5 * 3, 6 if s.flash == i + 1 else (3 if b[i] else 0)
+        )
     letter(s.cursor % 5 * 3, 4 + s.cursor // 5 * 3, 62)
     digits(23, 7, s.moves)
     digits(23, 13, 60 - s.moves)
 
-    if s.flash:
-        pos = s.flash - 1
-        letter(2 + pos % 5 * 3, 5 + pos // 5 * 3, 42)
+    text(19, 16, "PAR")
+    digits(24, 17, pars[s.level])
+    if s.mode == 1:
+        for pos in range(25):
+            dx = (
+                pos % 5 - s.cursor % 5
+                if pos % 5 >= s.cursor % 5
+                else s.cursor % 5 - pos % 5
+            )
+            dy = (
+                pos // 5 - s.cursor // 5
+                if pos // 5 >= s.cursor // 5
+                else s.cursor // 5 - pos // 5
+            )
+            if dx + dy <= 1:
+                letter(2 + pos % 5 * 3, 6 + pos // 5 * 3, 94)
+    elif s.mode == 2 and s.moves <= pars[s.level]:
+        text(2, 20, "PERFECT CIRCUIT")

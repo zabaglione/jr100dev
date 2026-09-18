@@ -1,7 +1,7 @@
 {
   "id": "lumen-cross",
   "title": "LUMEN CROSS",
-  "version": "1.6.1",
+  "version": "2.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -33,5 +33,34 @@
     "SPACE : RESTART THIS PANEL",
     "CTRL+C : RETURN TO BASIC"
   ],
-  "fullDemo": true
+  "fullDemo": true,
+  "dataTables": {
+    "pars": [
+      4,
+      4,
+      4,
+      5,
+      5,
+      5,
+      6,
+      6,
+      6,
+      7,
+      7,
+      7,
+      8,
+      8,
+      8,
+      9,
+      9,
+      9
+    ]
+  },
+  "secondReview": true,
+  "artSlots": [
+    24,
+    25,
+    26,
+    27
+  ]
 }

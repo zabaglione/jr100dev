@@ -9,7 +9,7 @@
   A S D
 ```
 
-W＝上、A＝左、S＝下、D＝右です。決定・主操作はRETURN。作品によりFの補助操作があります。CHRONO BREACHとABYSS SIGNALの待機はXです。
+W＝上、A＝左、S＝下、D＝右です。決定・主操作はRETURN。作品によりFやXの補助操作があります。CHRONO BREACHとABYSS SIGNALの待機はXです。
 
 ## 8方向
 

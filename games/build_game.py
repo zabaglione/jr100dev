@@ -148,6 +148,21 @@ def build(directory):
             from packed_levels import loader
 
             module_source = loader(module_source, metadata["packedLevelTail"])
+        if path.name == "runtime.asm" and metadata.get("secondReview"):
+            module_source = module_source.replace(
+                "N_STATUS:\n    STX TEXT_PTR\n",
+                """N_STATUS:
+    STX TEXT_PTR
+    LDX #FRAMEBUFFER + 21 * 32
+    LDAA #64
+    LDAB #32
+N_STATUS_ERASE:
+    STAA 0,X
+    INX
+    DECB
+    BNE N_STATUS_ERASE
+""",
+            )
         if path.name == "scene_fx.asm" and metadata["id"] == "loop-ten":
             # This game promises ten wall-clock seconds, including movement.
             module_source = (

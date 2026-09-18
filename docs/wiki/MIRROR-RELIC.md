@@ -6,7 +6,7 @@
 
 同じブラウザーで自分のBASIC ROMを事前に設定してください。登録済みなら「プレイ」からタイトルまで自動起動します。音は最初のキー入力または画面クリックで有効になります。
 
-壁を避け、鏡による90度の位置変換で3つの遺物を集めて出口へ進みます。6つの配置があり、回転は20回までです。
+移動と90度の鏡回転で3つの遺物を集め、門へ着く全6面です。遺物のA〜Dは必要な位相で、同じ位相のときに踏むと回収できます。
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/mirror-relic/title.png)
 
@@ -18,17 +18,19 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/mirror-relic/demo-clear.png)
 
-**[音付きプレイ動画を見る（約34秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=mirror-relic)**
+**[音付きプレイ動画を見る（約32秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=mirror-relic)**
 
 1ステージのクリアまでを収録。
 
 ## 操作と遊び方
 
-WASDで歩き、RETURNで自分の位置を90度回転します。回転先が壁なら動けません。回転は20回までです。
+WASDで歩き、RETURNで時計回り、Xで反時計回りに位置を回転させます。回転するとPHASEも1段進むか戻ります。時計回りの移動先は矢印で予告され、壁の位置へは回転できません。
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-6つの遺物配置を用意しました。鏡で移る位置まで主人公が移動する過程を描き、回収と出口の解放を光とメッセージで示します。
+陰影のある壁と遺物の位相文字を描き分け、歩行と鏡移動に途中の位置、SE、回収の光を使います。回転前の予告で到着位置を確認できます。演出が終わってから次のキーを押してください。
+
+RELICSは残る遺物、ROTATIONSは回転回数、PHASEは現在の位相。回転は20回まで。通路で回転後の位置関係を変え、遺物の位相に合わせて回収します。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/mirror-relic/play-01.png)
 
