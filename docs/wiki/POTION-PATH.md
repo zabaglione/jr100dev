@@ -6,7 +6,7 @@
 
 同じブラウザーで自分のBASIC ROMを事前に設定してください。登録済みなら「プレイ」からタイトルまで自動起動します。音は最初のキー入力または画面クリックで有効になります。
 
-素材ごとの移動量を組み合わせ、調合の位置を注文のダイヤへ合わせます。6件の注文に各12回以内の投入で応えます。
+素材ごとの移動量を組み合わせ、調合の位置を注文のダイヤへ合わせます。20件の注文に各12回以内の投入で応えます。
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/potion-path/title.png)
 
@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/potion-path/demo-clear.png)
 
-**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=potion-path)**
+**[音付きプレイ動画を見る（約35秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=potion-path)**
 
 1ステージのクリアまでを収録。
 
@@ -28,7 +28,7 @@ WASDで素材を選び、RETURNで加えます。灰は左2、苔は右1・下2�
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-調合位置、注文、素材の移動量、投入数を表示します。
+異なる20の注文を用意しました。素材を投入し、フラスコが途中の位置を通って移動します。注文に到達すると光と音が出ます。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/potion-path/play-01.png)
 

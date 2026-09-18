@@ -48,6 +48,7 @@ class Model:
             "sound": lambda *a: None,
             "animate": lambda *a: None,
             "hold": lambda *a: None,
+            "glide": lambda *a: None,
             "face": lambda *a: None,
             "flip": lambda *a: None,
             "impact": lambda *a: None,

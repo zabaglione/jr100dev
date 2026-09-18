@@ -34,6 +34,10 @@ parts.append("CODE_END:\n")
 source = "\n".join(parts)
 # BRA and JMP have identical flag/register effects. Relax only proven in-range
 # internal jumps; this reclaims bytes without changing maps, text or RAM layout.
+# A tail call followed immediately by RTS has the same registers/flags as JMP.
+source = re.sub(
+    r"^    JSR ([A-Z][A-Z_0-9]*)\n    RTS$", r"    JMP \1", source, flags=re.MULTILINE
+)
 jumps = []
 
 

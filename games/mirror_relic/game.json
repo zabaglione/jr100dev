@@ -1,12 +1,12 @@
 {
   "id": "mirror-relic",
   "title": "MIRROR RELIC",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
-  "levels": 1,
+  "levels": 6,
   "rate": 255,
   "hud": [
     [
@@ -33,5 +33,28 @@
     "COLLECT THREE RELICS THEN EXIT.",
     "TWENTY TURNS AT MOST."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  "footer": "WASD MOVE  RET USE  SPACE RETRY",
+  "dataTables": {
+    "relics": [
+      10,
+      21,
+      42,
+      0,
+      14,
+      49,
+      17,
+      6,
+      61,
+      8,
+      23,
+      40,
+      2,
+      13,
+      57,
+      16,
+      7,
+      48
+    ]
+  },
+  "fullDemo": true
 }

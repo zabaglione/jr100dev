@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/sand-rescue/demo-clear.png)
 
-**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=sand-rescue)**
+**[音付きプレイ動画を見る（約43秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=sand-rescue)**
 
 1ステージのクリアまでを収録。
 
@@ -28,7 +28,7 @@ A/Dで堰を選び、RETURNでその堰だけを開けます。古い水が通�
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-流れる水、堰、水源、3つの作物の給水数を表示します。
+水がマスの中間を通り、堰が途中の形を経て開きます。作物が必要な水を受け取ると光と音で示します。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/sand-rescue/play-01.png)
 

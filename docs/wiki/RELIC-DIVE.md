@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/relic-dive/demo-clear.png)
 
-**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=relic-dive)**
+**[音付きプレイ動画を見る（約63秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=relic-dive)**
 
 最初の階を踏破し、2階へ進むまでを収録。
 

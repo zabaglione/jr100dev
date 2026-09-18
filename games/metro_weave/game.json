@@ -1,7 +1,7 @@
 {
   "id": "metro-weave",
   "title": "METRO WEAVE",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -17,7 +17,7 @@
     [
       18,
       10,
-      "NEXT"
+      "DEST"
     ],
     [
       18,
@@ -33,5 +33,6 @@
     "SET THE ROUTE BEFORE TICK3.",
     "DELIVER TWELVE TRAINS."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  "footer": "WASD MOVE  RET USE  SPACE RETRY",
+  "fullDemo": true
 }

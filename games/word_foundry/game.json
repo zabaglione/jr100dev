@@ -1,7 +1,7 @@
 {
   "id": "word-foundry",
   "title": "WORD FOUNDRY",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -104,5 +104,6 @@
       0,
       8
     ]
-  }
+  },
+  "fullDemo": true
 }

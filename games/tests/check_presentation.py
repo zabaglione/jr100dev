@@ -165,7 +165,7 @@ def defeat_animation(rom=None, capture=None):
     changed = {i for i, (a, b) in enumerate(zip(frames[0], frames[-1])) if a != b}
     assert changed == {9 * 32 + 13, 9 * 32 + 14, 10 * 32 + 13, 10 * 32 + 14}
     m.until("FRAME_READY")
-    assert sum(m.read("B_ARRAY", 24)) == 17
+    assert sum(bool(hp) for hp in m.read("B_ARRAY", 24)) == 17
     assert m.get("MODE") == 1 and not m.get("KEY_PENDING")
     assert lib.audio_peak(m.p) > 0
     print("PASS: four local destruction frames, SE, unchanged shared enemy PCG")

@@ -1,6 +1,7 @@
 """Verify the public game layout and run its rule checks and input replay."""
 
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -8,6 +9,16 @@ from pathlib import Path
 game = Path(sys.argv[1]).resolve()
 metadata = json.loads((game / "game.json").read_text())
 symbols = json.loads((game / "build/symbols.json").read_text())
+calls = re.findall(
+    r"^    (?:JSR|JMP) ([A-Z][A-Z_0-9]*)$",
+    (game / "build/game.asm").read_text(),
+    re.MULTILINE,
+)
+assert not (set(calls) - symbols.keys()), (
+    game.name,
+    "Undefined code labels",
+    set(calls) - symbols.keys(),
+)
 assert metadata["ramKiB"] == 16 and metadata["entry"] == 0x300
 assert symbols["CODE_END"] <= symbols["FRAMEBUFFER"] == 0x3000
 assert symbols["STATE_END"] <= symbols["SAVE_PCG"]

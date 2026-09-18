@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/stone-balance/demo-clear.png)
 
-**[音付きプレイ動画を見る（約33秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=stone-balance)**
+**[音付きプレイ動画を見る（約32秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=stone-balance)**
 
 1ステージのクリアまでを収録。
 
@@ -28,7 +28,7 @@ W/Sで山を選び、A/Dで取る数を変え、RETURNで確定します。
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-3つの山、選んだ数、相手が直前に取った数を表示します。
+自分と相手が取った石を、一つずつ盤面から移動させます。相手の応答を確認する間があり、最後の石を取った側が勝ちます。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/stone-balance/play-01.png)
 

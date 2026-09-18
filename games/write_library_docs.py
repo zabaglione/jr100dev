@@ -49,10 +49,22 @@ MOTION = {
 }
 
 
+quality = json.loads((ROOT / "quality/review.json").read_text())
+MOTION.update(
+    {
+        item["directory"].replace("_", "-"): item["changes"]
+        for item in quality["remaining"]
+    }
+)
+
+
 def feedback_section(game):
     text = "## 動きとクリア演出\n\n"
     if game["id"] in MOTION:
-        text += MOTION[game["id"]] + "演出中の追加入力は受け付けません。\n\n"
+        text += (
+            MOTION[game["id"]]
+            + "被弾や結果を確認する間は、追加入力で表示を飛ばせません。\n\n"
+        )
     duration = "約1.9秒" if game["id"] == "relic-dive" else "約1.6秒"
     text += f"クリア時は完成した盤面・結果を残し、{duration}のジングルと余韻を挟みます。失敗時も原因を表示し、ジングルの後に短い間を置きます。その後、キーを押し直して次の操作に進みます。直前から押し続けたキーや、演出中に押したキーで結果を飛ばすことはありません。\n\n"
     return text
@@ -177,7 +189,7 @@ home += (
 )
 home += "\n\n基本の方向キーは **W/A/S/D**、8方向の作品は **QWE／AD／ZXC** です。作品ごとの操作は各ページに掲載しています。\n\nエミュレーターで確認済みです。実機での動作・音声は未確認です。\n\n"
 home += f"[ビルド可能なソースと開発手順]({BASE}/tree/main/games)\n"
-home += "\n**2026年9月18日更新：** タイトルの立体表現、開始・被弾・結果の音と間を更新しました。石返し、大きな駒の移動、敵の消滅にも途中の動きを加えています。[動きと音を動画で見る](Presentation)。\n"
+home += "\n**2026年9月18日更新：** 残る35作品の本編画面、途中のアニメーション、SEを改善しました。推理・配札・天候・競りなど、判断する内容も増やしています。[指摘の要点と35作品の変更内容](Quality-Review)／[動きと音の紹介](Presentation)。\n"
 home += "\n## タイトル画面ギャラリー\n\n"
 for gid, genre in genres.items():
     home += f"### [{genre['title']}]({page(gid)})\n\n| タイトル画面 | ゲーム・概要 |\n| --- | --- |\n"
@@ -191,7 +203,7 @@ for gid, genre in genres.items():
 sidebar = "[JR-100 Games](Home)\n\n"
 for gid, genre in genres.items():
     sidebar += f"- [{genre['title']}]({page(gid)})\n"
-sidebar += "\n[全作品をタイトル順に探す](All-Games)\n\n[タイトル画面ギャラリー](Home#タイトル画面ギャラリー)\n\n[動きと音の紹介](Presentation)\n\n[操作・起動方法](Controls)\n"
+sidebar += "\n[全作品をタイトル順に探す](All-Games)\n\n[タイトル画面ギャラリー](Home#タイトル画面ギャラリー)\n\n[動きと音の紹介](Presentation)\n\n[今回の改善内容](Quality-Review)\n\n[操作・起動方法](Controls)\n"
 (WIKI / "_Sidebar.md").write_text(sidebar)
 all_games = "# 全作品・タイトル順\n\n[ホーム](Home) · [ジャンルから探す](Home)\n\n| タイトル | ジャンル | ゲーム・概要 | 起動 |\n| --- | --- | --- | --- |\n"
 for g in sorted(games, key=lambda g: g["title"]):
@@ -243,7 +255,7 @@ FROST STEPS、MAGNET VAULT、GLYPH SHIFT、GRAVITY WELLは40面と星評価に�
 
 開始時はSEと画面中央のGAME STARTを挟みます。作品によっては地形、目標、自分、敵の順に画面が現れます。表示が終わってから操作してください。開始演出中は制限時間を消費しません。
 
-移動や石返しの途中、被弾・撃破・クリア直後は、次の操作まで少し間があります。被弾時は対象が点滅し、失敗時は原因を表示してジングルを流します。演出と音が終わってからキーを押し直してください。演出中の入力は次の手に持ち越しません。
+移動や石返しの途中、被弾・撃破・クリア直後は、次の操作まで少し間があります。被弾時は対象が点滅し、失敗時は原因を表示してジングルを流します。被弾や結果表示が終わってからキーを押し直してください。列車や敵などが自動で動く間は、方向や切替の入力を受け付ける作品もあります。
 
 [動きと音の紹介](Presentation)で、石返しや撃破の様子を確認できます。
 
@@ -300,7 +312,7 @@ for g in games:
         else "SPACEでこの面のやり直し確認を開きます。"
     )
     body += "やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。\n\n"
-    if g["id"] in MOTION:
+    if g["id"] in MOTION and MOTION[g["id"]] != hud:
         body += MOTION[g["id"]] + "演出が終わってから次のキーを押してください。\n\n"
     body += f"{hud}\n\n![ゲーム開始時]({IMAGES}/{g['id']}/play-01.png)\n\n![プレイ中の場面]({IMAGES}/{g['id']}/play-02.png)\n\n"
     if g["id"] == "brick-pulse":
@@ -358,4 +370,7 @@ readme = readme.replace(
 )
 readme += "\n`native/` は新作44本のコンパイラー、画面構成、共通実行処理、ルール検査と全編リプレイを収めます。作品固有のルールと地形は各作品のディレクトリにあります。4方向はWASD、8方向はQWE／AD／ZXCです。\n"
 (ROOT / "README.md").write_text(readme)
+(WIKI / "Quality-Review.md").write_text(
+    (ROOT.parent / "docs/game-quality-review.md").read_text()
+)
 print(f"Generated {len(games)} game manuals and {len(genres)} genre navigation pages")

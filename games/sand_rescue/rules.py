@@ -22,6 +22,12 @@ def act():
         p = 26 + s.gate * 2
         for i in range(3):
             b[26 + i * 2] = 1
+        s.opening = p
+        for frame in range(3):
+            s.gate_phase = frame
+            sound(0)
+            animate(4)
+        s.opening = 0
         b[p] = 0
         sound(0)
 
@@ -29,6 +35,7 @@ def act():
 def tick():
     for i in range(64):
         d[i] = 0
+        d[64 + i] = 255
     for k in range(64):
         i = 63 - k
         if c[i]:
@@ -41,6 +48,12 @@ def tick():
                 if i == 54:
                     s.crop2 += 1
                 sound(1)
+                if (
+                    (i == 50 and s.crop0 == 4)
+                    or (i == 52 and s.crop1 == 4)
+                    or (i == 54 and s.crop2 == 4)
+                ):
+                    sparkle(i % 8 * 2, 3 + i // 8 * 2)
             else:
                 p = move(i, 2, 8, 8)
                 if b[p] == 1 or d[p]:
@@ -48,6 +61,10 @@ def tick():
                 if b[p] == 1 or d[p]:
                     p = i
                 d[p] = 1
+                d[64 + i] = p
+    s.flowing = 1
+    glide(3)
+    s.flowing = 0
     for i in range(64):
         c[i] = d[i]
     s.time += 1
@@ -61,17 +78,25 @@ def tick():
     if s.crop0 >= 4 and s.crop1 >= 4 and s.crop2 >= 4:
         win()
     elif s.spill >= 6 or s.released >= 30:
-        lose()
+        lose("WATER SPILLED OR RAN OUT TOO SOON")
 
 
 def draw():
     grid(8, 8, 0, 3)
     for i in range(64):
         if c[i]:
-            tile(i % 8 * 2, 3 + i // 8 * 2, 4)
+            if s.flowing and d[64 + i] != 255:
+                mover(d[64 + i], i, 4, 0)
+            else:
+                tile(i % 8 * 2, 3 + i // 8 * 2, 4)
     letter(4 + s.gate * 4, 8, 86)
-    number(23, 5, s.crop0)
-    number(23, 7, s.crop1)
-    number(23, 9, s.crop2)
-    number(24, 11, s.spill)
-    number(24, 16, s.released)
+    digits(23, 5, s.crop0)
+    digits(23, 7, s.crop1)
+    digits(23, 9, s.crop2)
+    digits(24, 11, s.spill)
+    digits(24, 16, s.released)
+    if s.opening:
+        letter(
+            s.opening % 8 * 2, 3 + s.opening // 8 * 2, 45 if s.gate_phase == 1 else 91
+        )
+    effect_draw()

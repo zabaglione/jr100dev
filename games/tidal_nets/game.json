@@ -1,7 +1,7 @@
 {
   "id": "tidal-nets",
   "title": "TIDAL NETS",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -11,8 +11,8 @@
   "hud": [
     [
       2,
-      2,
-      "READ THE TIDE BEFORE CASTING"
+      1,
+      "TARGET 30"
     ],
     [
       19,
@@ -26,12 +26,13 @@
     ]
   ],
   "help": [
-    "A/D : PLACE YOUR NET",
+    "A/D : PLACE A TWO-COLUMN NET",
     "BUTTON : CAST THROUGH THE TIDE",
-    "FISH DRIFT ONE CELL WITH TIDE.",
-    "EACH CATCH ADDS TWO FISH.",
-    "CATCH 16 FISH IN 12 CASTS.",
-    "THE CURRENT WRAPS AT AN EDGE."
+    "SHOAL DRIFTS AT CURRENT SPEED.",
+    "DEEP FISH DRIFT TWICE AS FAR.",
+    "SHOAL +2 / DEEP +3 / BOTH +5",
+    "CATCH 30 FISH IN NINE CASTS."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  "footer": "WASD MOVE  RET USE  SPACE RETRY",
+  "fullDemo": true
 }

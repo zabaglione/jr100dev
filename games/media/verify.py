@@ -37,13 +37,18 @@ def verify(name):
     )
     seconds = float(probe["format"]["duration"])
     assert seconds >= 25 and abs(seconds - report["video_seconds"]) < 0.1
-    if report["id"] in ("peg-garden", "seed-merge"):
+    if json.loads((directory / "game.json").read_text()).get("fullDemo") or report[
+        "id"
+    ] in ("peg-garden", "seed-merge"):
         assert not report["edited"]
         assert len(report["source_segments"]) == 1
         start, end = report["source_segments"][0]
         assert start == 0 and abs(end - report["source_seconds"]) < 0.001
         assert abs(seconds - report["source_seconds"]) < 0.1
-        assert report["outcome"] == "first stage cleared" and report["final_mode"] == 2
+        if report["id"] in ("peg-garden", "seed-merge"):
+            assert (
+                report["outcome"] == "first stage cleared" and report["final_mode"] == 2
+            )
     else:
         assert seconds <= 35
     if report["id"] in ("dice-relic", "five-forge", "orbit-draft"):

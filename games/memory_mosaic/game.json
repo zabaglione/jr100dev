@@ -1,7 +1,7 @@
 {
   "id": "memory-mosaic",
   "title": "MEMORY MOSAIC",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -26,12 +26,14 @@
     ]
   ],
   "help": [
-    "WASD / PAD : CHOOSE A TILE",
-    "BUTTON : REVEAL A TILE",
-    "FIND EIGHT MATCHING PAIRS.",
-    "BUTTON AGAIN HIDES A MISS.",
-    "TWELVE MISSES END THE ROUND.",
-    "SPACE : RESTART THIS MOSAIC"
+    "WASD : SELECT A CARD",
+    "BUTTON : TURN THE CARD",
+    "FIND ALL EIGHT MATCHING PAIRS.",
+    "BUTTON CLOSES UNMATCHED CARDS.",
+    "TWELVE MISMATCHES LOSE.",
+    "CARDS ARE SHUFFLED EACH START."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  "footer": "WASD MOVE  RET USE  SPACE RETRY",
+  "seededDeck": true,
+  "fullDemo": true
 }

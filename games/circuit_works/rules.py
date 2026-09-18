@@ -1,5 +1,5 @@
 # ruff: noqa: F821
-# s, b, c, d and drawing functions are supplied by the native compiler.
+# The native compiler supplies state, arrays and drawing functions.
 def gate(a, b, kind):
     if kind == 0:
         return a & b
@@ -8,15 +8,24 @@ def gate(a, b, kind):
     return a ^ b
 
 
-def output(a, b, p, q, r):
+def output(a, b, c, p, q, r):
     first = gate(a, b, p)
-    second = gate(first, a, q)
-    return gate(second, b, r)
+    second = gate(first, c, q)
+    return gate(second, a, r)
 
 
 def init():
-    for i in range(4):
-        d[i] = output(i // 2, i % 2, s.level % 3, (s.level // 3) % 3, (s.level + 1) % 3)
+    for i in range(8):
+        d[i] = output(
+            i // 4,
+            i // 2 % 2,
+            i % 2,
+            targets[s.level * 3],
+            targets[s.level * 3 + 1],
+            targets[s.level * 3 + 2],
+        )
+    s.probe = 255
+    s.running = 255
 
 
 def act():
@@ -29,14 +38,30 @@ def act():
     if s.action == 4:
         c[s.cursor] = (c[s.cursor] + 1) % 3
     if s.action == 5:
-        correct = 0
-        for i in range(4):
-            b[i] = output(i // 2, i % 2, c[0], c[1], c[2])
+        s.correct = 0
+        s.tested = 0
+        for i in range(8):
+            s.probe = i
+            s.signal = i // 4
+            for stage in range(3):
+                s.running = stage
+                operand = (
+                    i // 2 % 2 if stage == 0 else (i % 2 if stage == 1 else i // 4)
+                )
+                s.signal = gate(s.signal, operand, c[stage])
+                sound(0)
+                animate(3)
+            b[i] = s.signal
+            s.tested += 1
             if b[i] == d[i]:
-                correct += 1
-        s.tests += 1
-        sound(1)
-        if correct == 4:
+                s.correct += 1
+            animate(4)
+        s.running = 255
+        s.probe = 255
+        s.tests = min(s.tests + 1, 99)
+        sound(1 if s.correct == 8 else 3)
+        animate(12)
+        if s.correct == 8:
             win()
 
 
@@ -46,12 +71,26 @@ def tick():
 
 def draw():
     for i in range(3):
-        tile(5, 5 + i * 4, 6)
-        letter(9, 5 + i * 4, 65 + c[i])
-    letter(3, 5 + s.cursor * 4, 62)
-    for i in range(4):
-        letter(19, 6 + i * 3, 48 + i // 2)
-        letter(21, 6 + i * 3, 48 + i % 2)
-        letter(25, 6 + i * 3, 48 + d[i])
-        letter(29, 6 + i * 3, 48 + b[i])
-    number(26, 19, s.tests)
+        tile(4, 5 + i * 4, 6)
+        if c[i] == 0:
+            text(8, 5 + i * 4, "AND")
+        elif c[i] == 1:
+            text(8, 5 + i * 4, "OR ")
+        else:
+            text(8, 5 + i * 4, "XOR")
+        letter(7, 6 + i * 4, 66 if i == 0 else (67 if i == 1 else 65))
+        if s.running == i:
+            letter(12, 5 + i * 4, 48 + s.signal)
+            letter(3, 5 + i * 4, 42)
+    letter(1, 5 + s.cursor * 4, 62)
+    for i in range(8):
+        letter(17, 4 + i * 2, 48 + i // 4)
+        letter(19, 4 + i * 2, 48 + i // 2 % 2)
+        letter(21, 4 + i * 2, 48 + i % 2)
+        letter(25, 4 + i * 2, 48 + d[i])
+        if i < s.tested:
+            letter(29, 4 + i * 2, 48 + b[i])
+        if s.probe == i:
+            letter(16, 4 + i * 2, 62)
+    digits(9, 20, s.tests)
+    digits(25, 20, s.correct)

@@ -23,7 +23,7 @@
 
 [ビルド可能なソースと開発手順](https://github.com/zabaglione/jr100dev/tree/main/games)
 
-**2026年9月18日更新：** タイトルの立体表現、開始・被弾・結果の音と間を更新しました。石返し、大きな駒の移動、敵の消滅にも途中の動きを加えています。[動きと音を動画で見る](Presentation)。
+**2026年9月18日更新：** 残る35作品の本編画面、途中のアニメーション、SEを改善しました。推理・配札・天候・競りなど、判断する内容も増やしています。[指摘の要点と35作品の変更内容](Quality-Review)／[動きと音の紹介](Presentation)。
 
 ## タイトル画面ギャラリー
 
@@ -65,7 +65,7 @@
 | タイトル画面 | ゲーム・概要 |
 | --- | --- |
 | [<img src="https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/chrono-breach/title.png" width="300" alt="CHRONO BREACH">](CHRONO-BREACH) | **[CHRONO BREACH](CHRONO-BREACH)**<br>弾道を読んで突破する20面の時間停止戦術<br>[プレイ](https://zabaglione.github.io/pyjr100emu/?game=chrono-breach) · [遊び方を見る](CHRONO-BREACH) |
-| [<img src="https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/circuit-works/title.png" width="300" alt="CIRCUIT WORKS">](CIRCUIT-WORKS) | **[CIRCUIT WORKS](CIRCUIT-WORKS)**<br>導線を接続し順序回路を完成させる<br>[プレイ](https://zabaglione.github.io/pyjr100emu/?game=circuit-works) · [遊び方を見る](CIRCUIT-WORKS) |
+| [<img src="https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/circuit-works/title.png" width="300" alt="CIRCUIT WORKS">](CIRCUIT-WORKS) | **[CIRCUIT WORKS](CIRCUIT-WORKS)**<br>3入力の真理値表に合わせて論理ゲートを組む<br>[プレイ](https://zabaglione.github.io/pyjr100emu/?game=circuit-works) · [遊び方を見る](CIRCUIT-WORKS) |
 | [<img src="https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/iron-script/title.png" width="300" alt="IRON SCRIPT">](IRON-SCRIPT) | **[IRON SCRIPT](IRON-SCRIPT)**<br>命令列を組んでロボットをゴールへ導く<br>[プレイ](https://zabaglione.github.io/pyjr100emu/?game=iron-script) · [遊び方を見る](IRON-SCRIPT) |
 | [<img src="https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/metro-weave/title.png" width="300" alt="METRO WEAVE">](METRO-WEAVE) | **[METRO WEAVE](METRO-WEAVE)**<br>分岐と信号を操作して乗客を運ぶ<br>[プレイ](https://zabaglione.github.io/pyjr100emu/?game=metro-weave) · [遊び方を見る](METRO-WEAVE) |
 | [<img src="https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/sand-rescue/title.png" width="300" alt="SAND RESCUE">](SAND-RESCUE) | **[SAND RESCUE](SAND-RESCUE)**<br>堰を開閉して水を作物へ導く<br>[プレイ](https://zabaglione.github.io/pyjr100emu/?game=sand-rescue) · [遊び方を見る](SAND-RESCUE) |

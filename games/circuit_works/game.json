@@ -1,42 +1,118 @@
 {
   "id": "circuit-works",
   "title": "CIRCUIT WORKS",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
-  "levels": 10,
+  "levels": 22,
   "rate": 255,
   "hud": [
     [
       2,
+      1,
+      "3-INPUT LOGIC"
+    ],
+    [
       2,
-      "LOGIC WORKBENCH"
-    ],
-    [
-      3,
-      18,
-      "IN   WANT NOW"
+      17,
+      "A B C   W   NOW"
     ],
     [
       18,
-      2,
-      "A AND  B OR  C XOR"
+      1,
+      "G1>G2>G3"
     ],
     [
-      19,
-      18,
+      20,
+      1,
       "TESTS"
+    ],
+    [
+      20,
+      16,
+      "MATCHED    /8"
     ]
   ],
   "help": [
-    "W/S : SELECT A GATE",
-    "A/D : AND / OR / XOR",
-    "BUTTON : RUN THE TRUTH TABLE",
-    "G1=A OP B / G2=G1 OP A",
-    "G3=G2 OP B : MATCH ALL OUTPUTS",
-    "A AND / B OR / C XOR"
+    "W/S : SELECT A LOGIC GATE",
+    "A/D : CHOOSE AND, OR OR XOR",
+    "G1=A OP B / G2=G1 OP C",
+    "G3=G2 OP A / W=WANTED OUTPUT",
+    "BUTTON : TEST ALL EIGHT INPUTS",
+    "MATCH EVERY OUTPUT TO WIN."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  "footer": "WASD MOVE  RET USE  SPACE RETRY",
+  "dataTables": {
+    "targets": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      2,
+      0,
+      1,
+      0,
+      0,
+      1,
+      1,
+      0,
+      1,
+      2,
+      0,
+      2,
+      0,
+      0,
+      2,
+      2,
+      1,
+      0,
+      0,
+      1,
+      0,
+      1,
+      1,
+      0,
+      2,
+      1,
+      1,
+      1,
+      1,
+      1,
+      2,
+      1,
+      2,
+      0,
+      1,
+      2,
+      1,
+      1,
+      2,
+      2,
+      2,
+      0,
+      0,
+      2,
+      0,
+      2,
+      2,
+      1,
+      0,
+      2,
+      1,
+      2,
+      2,
+      2,
+      0,
+      2,
+      2,
+      2
+    ]
+  },
+  "fullDemo": true
 }

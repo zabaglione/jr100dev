@@ -255,18 +255,37 @@ def solve_stage(p):
         memory = {}
         matched = set()
         while s.mode == 1:
-            first = next(i for i in range(16) if i not in memory and i not in matched)
-            p.go(first, 4)
-            p.press(5)
-            memory[first] = r.b[first]
-            second = next(
+            known_pair = next(
                 (
-                    i
-                    for i, v in memory.items()
-                    if i != first and i not in matched and v == memory[first]
+                    (i, j)
+                    for i in memory
+                    for j in memory
+                    if i < j
+                    and i not in matched
+                    and j not in matched
+                    and memory[i] == memory[j]
                 ),
                 None,
             )
+            if known_pair:
+                first, second = known_pair
+            else:
+                first = next(
+                    i for i in range(16) if i not in memory and i not in matched
+                )
+                second = None
+            p.go(first, 4)
+            p.press(5)
+            memory[first] = r.b[first]
+            if second is None:
+                second = next(
+                    (
+                        i
+                        for i, value in memory.items()
+                        if i != first and i not in matched and value == memory[first]
+                    ),
+                    None,
+                )
             if second is None:
                 second = next(
                     i for i in range(16) if i not in memory and i not in matched
@@ -302,10 +321,46 @@ def solve_stage(p):
             p.press(5)
         return
     if name == "hearth_zero":
-        for c in [3, 1, 2, 0, 3, 2, 1, 0]:
-            p.choice("choice", c)
+        weather = r.env["weather"][s.level * 12 : (s.level + 1) * 12]
+        dead = set()
+
+        def survive(st):
+            day, food, wood, heat, wall = st
+            if day == 12:
+                return []
+            if st in dead:
+                return None
+            # Prepare insulation early; burn only when useful and keep food ahead.
+            for job in (3, 2, 1, 0):
+                f, w, h, ins = food, wood, heat, wall
+                if job == 0:
+                    w = min(30, w + 7)
+                elif job == 1:
+                    f = min(30, f + 7)
+                elif job == 2:
+                    if w < 3:
+                        continue
+                    w -= 3
+                    h = min(24, h + 9)
+                else:
+                    if w < 4 or ins == 2:
+                        continue
+                    w -= 4
+                    ins += 1
+                cost = weather[day] - ins
+                if f < 2 or h <= cost:
+                    continue
+                tail = survive((day + 1, f - 2, w, h - cost, ins))
+                if tail is not None:
+                    return [job] + tail
+            dead.add(st)
+            return None
+
+        route = survive((0, 10, 8, 12, 0))
+        assert route is not None, (name, s.level)
+        for job in route:
+            p.choice("choice", job)
             p.press(5)
-        assert (s.food, s.wood, s.heat, s.insulation) == (8, 8, 8, 2)
         return
     if name == "orchard_days":
         for i in range(8):
@@ -332,15 +387,23 @@ def solve_stage(p):
         return
     if name == "tidal_nets":
         while s.mode == 1:
-            p.choice("cursor", (s.fish + s.tide) % 8)
+            near = (s.fish + s.tide * s.force) % 8
+            deep = (s.deep + s.tide * s.force * 2) % 8
+            target = max(
+                range(8),
+                key=lambda i: (
+                    2 * (near in (i, (i + 1) % 8)) + 3 * (deep in (i, (i + 1) % 8))
+                ),
+            )
+            p.choice("cursor", target)
             p.press(5)
         return
     if name == "auction_house":
-        for _ in range(100):
-            if s.mode != 1:
-                return
+        while s.mode == 1:
+            # A cautious bidder uses the public lower appraisal, never the rival limit.
+            p.choice("choice", int(s.bid + 2 > s.low - 2))
             p.press(5)
-        raise AssertionError("Auction did not finish")
+        return
     if name == "potion_path":
         start = (s.x, s.y)
         target = (s.tx, s.ty)
@@ -397,12 +460,12 @@ def solve_stage(p):
             for combo in itertools.product(range(3), repeat=3)
             if all(
                 gate(
-                    gate(gate(i // 2, i % 2, combo[0]), i // 2, combo[1]),
-                    i % 2,
+                    gate(gate(i // 4, i // 2 % 2, combo[0]), i % 2, combo[1]),
+                    i // 4,
                     combo[2],
                 )
                 == r.d[i]
-                for i in range(4)
+                for i in range(8)
             )
         )
         for i, v in enumerate(gates):
@@ -417,23 +480,27 @@ def solve_stage(p):
     if name in ("twenty_one", "chain_suit"):
         return solve_cards(p)
     if name == "compass_rose":
-        while s.pos != s.target:
-            a = (
-                1
-                if s.target // 8 < s.pos // 8
-                else (
-                    2
-                    if s.target // 8 > s.pos // 8
-                    else (3 if s.target % 8 < s.pos % 8 else 4)
-                )
-            )
-            p.press(a)
+
+        def transitions(pos):
+            for a in range(1, 5):
+                n = step(pos, a)
+                if n != pos and not r.c[n]:
+                    yield a, n
+
+        route = search(s.pos, transitions, lambda pos: pos == s.target)
+        assert route is not None and len(route) < s.fuel
+        walk_plan(p, route)
         p.press(5)
         return
     if name == "ruin_lexicon":
-        known = [r.d[0]]
-        for i in range(3):
-            known.append(r.d[i] + r.d[i + 1] - known[-1])
+        sums = [r.d[i] + r.d[i + 1] for i in range(3)]
+        before = r.d[0] < r.d[3]
+        known = next(
+            values
+            for values in itertools.permutations(range(1, 5))
+            if all(values[i] + values[i + 1] == sums[i] for i in range(3))
+            and (values[0] < values[3]) == before
+        )
         for i, v in enumerate(known):
             p.choice("cursor", i)
             while r.b[i] != v:
@@ -441,10 +508,15 @@ def solve_stage(p):
         p.press(5)
         return
     if name == "shadow_archive":
-        p.press(5)
-        p.press(4)
-        p.press(5)
-        answer = (s.culprit // 3) * 3 + s.culprit % 3
+        for clue in range(3):
+            p.choice("choice", clue)
+            p.press(5)
+        notes = [bool(r.b[s.culprit] & (1 << bit)) for bit in range(3)]
+        answer = next(
+            i
+            for i in range(6)
+            if [bool(r.b[i] & (1 << bit)) for bit in range(3)] == notes
+        )
         p.choice("choice", answer)
         p.press(2)
         p.press(5)
@@ -644,28 +716,50 @@ def solve_search(p):
             p.press(5)
 
 
+def snake_route(body, food):
+    """Approach the visible food while accounting for the moving tail."""
+    body = tuple(body)
+    todo = deque([(body, [])])
+    seen = {body}
+    while todo and len(seen) < 20000:
+        occupied, path = todo.popleft()
+        for direction in range(1, 5):
+            target = step(occupied[0], direction)
+            retained = len(occupied) - (target != food)
+            if target is None or target in occupied[:retained]:
+                continue
+            route = path + [direction]
+            if target == food:
+                return deque(route)
+            moved = (target,) + occupied[:retained]
+            if moved not in seen:
+                seen.add(moved)
+                todo.append((moved, route))
+    raise AssertionError("No safe route to the visible food")
+
+
 def solve_realtime(p):
     s = p.s
     r = p.r
     name = p.name
-    snake_cycle = []
-    if name == "ribbon_snake":
-        snake_cycle = [i * 8 for i in range(8)]
-        for x in range(1, 8):
-            snake_cycle += [
-                y * 8 + x for y in (range(7, 0, -1) if x % 2 else range(1, 8))
-            ]
-        snake_cycle += list(range(7, 0, -1))
-        assert len(set(snake_cycle)) == 64
+    snake_path = deque()
     while s.mode == 1:
         if name == "orbit_dodge":
-            if s.pos == s.target:
-                p.press(3)
+            danger = {s.target}
+            if s.waves >= 6:
+                danger.add((s.target + 3 + s.waves % 3) % 8)
+            if s.pos in danger:
+                p.press(3 if (s.pos + 7) % 8 not in danger else 4)
         elif name == "gate_runner":
             if s.kind == 1 and s.lane == s.obstacle and s.age == 4:
                 p.press(5)
-            elif s.kind == 0 and s.lane == s.obstacle:
-                p.press(3 if s.lane else 4)
+            else:
+                blocked = {s.obstacle}
+                if s.gates >= 6:
+                    blocked.add((s.obstacle + 1) % 3)
+                if s.lane in blocked:
+                    safe = next(i for i in range(3) if i not in blocked)
+                    p.press(3 if s.lane > safe else 4)
         elif name == "echo_parry":
             if s.stance != s.attack:
                 p.press(1 if s.attack == 0 else 2)
@@ -717,9 +811,9 @@ def solve_realtime(p):
             if s.mode == 1 and s.bullet >= 6 and s.bullet != 255 and s.ship == s.bx:
                 p.press(4)
         elif name == "ribbon_snake":
-            current = r.b[0]
-            target = snake_cycle[(snake_cycle.index(current) + 1) % 64]
-            desired = next(a for a in range(1, 5) if step(current, a) == target)
+            if not snake_path:
+                snake_path = snake_route(r.b[: s.length], s.food)
+            desired = snake_path.popleft()
             if s.dir != desired:
                 p.press(desired)
         elif name == "brick_pulse":

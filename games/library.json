@@ -110,7 +110,7 @@
       "id": "circuit-works",
       "title": "CIRCUIT WORKS",
       "genre": "tactics",
-      "summary": "導線を接続し順序回路を完成させる",
+      "summary": "3入力の真理値表に合わせて論理ゲートを組む",
       "motif": "factory"
     },
     {

@@ -3,21 +3,32 @@
 """Toggle a five-cell cross; extinguish every light on the five by five panel."""
 
 
-def cross(pos):
+def toggle(pos):
     b[pos] ^= 1
+    if s.ready:
+        s.flash = pos + 1
+        sound(0)
+        animate(5)
+        s.flash = 0
+
+
+def cross(pos):
+    toggle(pos)
     if pos >= 5:
-        b[pos - 5] ^= 1
+        toggle(pos - 5)
     if pos < 20:
-        b[pos + 5] ^= 1
+        toggle(pos + 5)
     if pos % 5 > 0:
-        b[pos - 1] ^= 1
+        toggle(pos - 1)
     if pos % 5 < 4:
-        b[pos + 1] ^= 1
+        toggle(pos + 1)
 
 
 def init():
-    for i in range(7):
+    for i in range(4 + s.level // 3):
         cross((s.level * 7 + i * 11 + 3) % 25)
+
+    s.ready = 1
 
 
 def act():
@@ -39,7 +50,7 @@ def act():
         if count == 0:
             win()
         elif s.moves >= 60:
-            lose()
+            lose("SIXTY SWITCHES WERE NOT ENOUGH")
 
 
 def tick():
@@ -50,5 +61,9 @@ def draw():
     for i in range(25):
         tile(1 + i % 5 * 3, 4 + i // 5 * 3, 3 if b[i] else 0)
     letter(s.cursor % 5 * 3, 4 + s.cursor // 5 * 3, 62)
-    number(23, 7, s.moves)
-    number(23, 13, 60 - s.moves)
+    digits(23, 7, s.moves)
+    digits(23, 13, 60 - s.moves)
+
+    if s.flash:
+        pos = s.flash - 1
+        letter(2 + pos % 5 * 3, 5 + pos // 5 * 3, 42)

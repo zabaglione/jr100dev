@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/gate-runner/demo-clear.png)
 
-**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=gate-runner)**
+**[音付きプレイ動画を見る（約45秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=gate-runner)**
 
 1ステージのクリアまでを収録。
 
@@ -28,7 +28,7 @@ A/Dで走路を変更、WまたはRETURNでジャンプします。
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-迫る障害物、ジャンプ状態、残りの耐久力、突破数を表示します。
+左右移動とジャンプの途中を示します。6つの障害を越えると2車線に障害が現れ、安全な車線へ移るか穴を跳び越えるかを判断します。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/gate-runner/play-01.png)
 

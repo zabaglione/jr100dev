@@ -17,7 +17,9 @@ def package(destination):
         report = json.loads((directory / "play.json").read_text())
         assert report["host_state_writes"] == 0 and report["playback_speed"] == 1
         assert report["video_seconds"] >= 25
-        if game["id"] in ("peg-garden", "seed-merge"):
+        if json.loads((ROOT / game["directory"] / "game.json").read_text()).get(
+            "fullDemo"
+        ) or game["id"] in ("peg-garden", "seed-merge"):
             assert not report["edited"]
         else:
             assert report["video_seconds"] <= 35

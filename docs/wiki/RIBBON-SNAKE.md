@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/ribbon-snake/demo-clear.png)
 
-**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=ribbon-snake)**
+**[音付きプレイ動画を見る（約59秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=ribbon-snake)**
 
 1ステージのクリアまでを収録。
 
@@ -28,9 +28,7 @@ WASDで進む向きを変更します。真後ろへの反転は受け付けま�
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-蛇の頭が進行方向を向きます。伸びた胴体と区別しながら、次に進む方向を確認できます。演出が終わってから次のキーを押してください。
-
-頭と伸びた体、食料、成長数を表示します。
+頭だけでなく胴体もマスの中間を通ります。食べると光と音が出て体が伸び、画面端と自分の体への衝突をそれぞれ説明します。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/ribbon-snake/play-01.png)
 

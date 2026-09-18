@@ -1,7 +1,7 @@
 {
   "id": "twenty-one",
   "title": "TWENTY ONE",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -10,29 +10,34 @@
   "rate": 255,
   "hud": [
     [
-      3,
-      4,
+      2,
+      2,
       "PLAYER"
     ],
     [
-      3,
+      2,
       21,
       "DEALER"
     ],
     [
-      13,
-      12,
+      16,
+      0,
+      "TOTAL"
+    ],
+    [
+      16,
+      19,
+      "TOTAL"
+    ],
+    [
+      18,
+      0,
       "COINS"
     ],
     [
-      17,
       18,
-      "HANDS"
-    ],
-    [
-      19,
-      6,
-      "HIT            STAND"
+      22,
+      "HAND  /5"
     ]
   ],
   "help": [
@@ -43,5 +48,6 @@
     "HIGHER TOTAL WINS TWO COINS.",
     "KEEP EIGHT COINS AFTER 5 HANDS."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  "footer": "WASD HIT/STAND  RET CONFIRM",
+  "fullDemo": true
 }

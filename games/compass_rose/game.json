@@ -1,7 +1,7 @@
 {
   "id": "compass-rose",
   "title": "COMPASS ROSE",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -26,12 +26,27 @@
     ]
   ],
   "help": [
-    "WASD / PAD : EXPLORE",
-    "READ NORTH/SOUTH/EAST/WEST.",
+    "WASD : WALK AROUND THE ROCKS",
     "BUTTON : DIG AT YOUR POSITION",
-    "THE COMPASS SAYS HERE AT GOAL.",
-    "THREE DIGS AND 32 STEPS.",
-    "FIND TEN SEPARATE CACHES."
+    "THE COMPASS POINTS TO TREASURE.",
+    "HERE MEANS YOU HAVE ARRIVED.",
+    "THREE DIGS / 32 TRAVEL UNITS",
+    "WALLS AND EDGES SPEND NO FUEL."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  "footer": "WASD MOVE  RET USE  SPACE RETRY",
+  "fullDemo": true,
+  "dataTables": {
+    "goals": [
+      13,
+      63,
+      60,
+      59,
+      61,
+      3,
+      57,
+      50,
+      58,
+      52
+    ]
+  }
 }

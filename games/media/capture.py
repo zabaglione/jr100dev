@@ -228,7 +228,8 @@ def encode(rec, destination, clear_time, outcome, extra):
     segments = choose_segments(
         duration,
         clear_time,
-        full_length=rec.m.metadata["id"]
+        full_length=rec.m.metadata.get("fullDemo", False)
+        or rec.m.metadata["id"]
         in ("peg-garden", "seed-merge", "dice-relic", "five-forge", "orbit-draft"),
     )
     filters = []
@@ -403,17 +404,7 @@ def record_native(name, rom, work):
     )
     p = DemoPlayer(name, rom, work, pacing)
     try:
-        if name == "pendulum_port":
-            # Watch a swing before releasing each load, as a player would.
-            last_drop = p.rec.time
-            while p.s.mode == 1:
-                if abs(p.s.swing - p.s.target) <= 1 and p.rec.time - last_drop >= 2.5:
-                    p.press(5)
-                    last_drop = p.rec.time
-                if p.s.mode == 1:
-                    p.wait()
-        else:
-            solve_stage(p)
+        solve_stage(p)
         stages = 1
         if name == "lunar_touchdown" and p.rec.time < 20:
             p.rec.mark("clear")

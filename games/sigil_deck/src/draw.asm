@@ -513,3 +513,36 @@ ORNAMENT_VERTICAL:
     STAA FRAMEBUFFER + 32 * 21 + 3
     STAA FRAMEBUFFER + 32 * 21 + 28
     RTS
+
+; Resolve one visible card effect before proceeding to the next one.
+SIGIL_SCENE:
+    PSHA
+    PSHB
+    STX FX_REGX
+    LDX #$3340
+SIGIL_SAVE:
+    LDAA 0,X
+    PSHA
+    INX
+    CPX #$3390
+    BNE SIGIL_SAVE
+    LDAA TICK
+    STAA FX_CLOCK
+    INC PACE_ACTIVE
+    JSR DRAW_BATTLE
+    LDAA #16
+    JSR PACE_WAIT
+    CLR PACE_ACTIVE
+    LDAA FX_CLOCK
+    STAA TICK
+    LDX #$3390
+SIGIL_RESTORE:
+    DEX
+    PULA
+    STAA 0,X
+    CPX #$3340
+    BNE SIGIL_RESTORE
+    LDX FX_REGX
+    PULB
+    PULA
+    RTS

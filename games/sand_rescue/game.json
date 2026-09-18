@@ -1,13 +1,13 @@
 {
   "id": "sand-rescue",
   "title": "SAND RESCUE",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
   "levels": 1,
-  "rate": 14,
+  "rate": 24,
   "hud": [
     [
       3,
@@ -33,5 +33,6 @@
     "SIX SOURCE SPILLS LOSE.",
     "RESERVOIR LIMIT: THIRTY UNITS."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  "footer": "WASD MOVE  RET USE  SPACE RETRY",
+  "fullDemo": true
 }

@@ -23,6 +23,7 @@ POSES = {
 
 ACTORS = {
     "iron-script": {2: "robot"},
+    "night-swarm": {2: "robot"},
     "quiet-route": {2: "explorer", 5: "guard"},
     "magnet-vault": {2: "robot"},
     "frost-steps": {2: "explorer"},

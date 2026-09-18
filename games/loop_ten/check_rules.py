@@ -31,7 +31,7 @@ for busy in (False, True):
 m = Machine("loop_ten")
 m.action(5)
 lib.key(m.p, 2, 1, 1)
-lib.ticks(m.p, 500_000)
+lib.ticks(m.p, 750_000)
 lib.key(m.p, 2, 1, 0)
 m.until("INPUT_DONE")
 assert m.get("PLAYER_Y") == 1

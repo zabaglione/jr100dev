@@ -1,7 +1,7 @@
 {
   "id": "orchard-days",
   "title": "ORCHARD DAYS",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -38,5 +38,6 @@
     "HARVEST 18 FRUIT IN 28 DAYS.",
     "PICKING RETURNS TWO SEEDS."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  "footer": "WASD MOVE  RET USE  SPACE RETRY",
+  "fullDemo": true
 }

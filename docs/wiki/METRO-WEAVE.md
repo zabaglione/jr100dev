@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/metro-weave/demo-clear.png)
 
-**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=metro-weave)**
+**[音付きプレイ動画を見る（約69秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=metro-weave)**
 
 1ステージのクリアまでを収録。
 
@@ -28,7 +28,7 @@ W/Sで分岐を選び、A/DまたはRETURNで切り替えます。列車のカ�
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-路線、分岐状態、目的駅、列車の進行、輸送結果を表示します。
+列車が途中の位置を通って線路を分岐し、到着すると光と音で乗降を示します。誤ったホームでは原因を表示して停止します。続く列車の行先も予告します。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/metro-weave/play-01.png)
 

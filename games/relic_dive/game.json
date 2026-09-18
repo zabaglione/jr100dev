@@ -1,7 +1,7 @@
 {
   "id": "relic-dive",
   "title": "RELIC DIVE",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "ramKiB": 16,
   "entry": 768,
   "directions": 8,
@@ -13,5 +13,6 @@
       "size": 8,
       "frames": 120
     }
-  }
+  },
+  "fullDemo": true
 }

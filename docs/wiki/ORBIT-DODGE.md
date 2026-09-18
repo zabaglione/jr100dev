@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/orbit-dodge/demo-clear.png)
 
-**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=orbit-dodge)**
+**[音付きプレイ動画を見る（約45秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=orbit-dodge)**
 
 1ステージのクリアまでを収録。
 
@@ -28,7 +28,7 @@ A/Wで反時計回り、D/Sで時計回りへ移動します。
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-軌道上の危険位置と中央の耐久力・回避数・攻撃までのカウントを表示します。
+機体が軌道上の中間位置を通り、予告地点へ攻撃の線が伸びます。6回の回避後から2地点への攻撃が加わります。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/orbit-dodge/play-01.png)
 

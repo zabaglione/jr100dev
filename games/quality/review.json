@@ -1,0 +1,414 @@
+{
+  "reviewed": [
+    "frost_steps",
+    "fuse_box",
+    "peg_garden",
+    "phase_pairs",
+    "prism_trace",
+    "seed_merge",
+    "tide_bridge",
+    "chain_suit",
+    "dice_relic",
+    "five_forge",
+    "orbit_draft",
+    "magnet_vault",
+    "glyph_shift",
+    "gravity_well",
+    "brick_pulse",
+    "corner_crown"
+  ],
+  "remaining": [
+    {
+      "directory": "chrono_breach",
+      "plan": "弾の通過、敵の被弾と撃破を段階表示し、行動と結果を追えるようにする。",
+      "status": "verified",
+      "changes": "移動の中間位置と発射後の線を表示し、倒した敵は発光・破片・細かな粒の順に消えます。",
+      "evidence": {
+        "video_seconds": 31.5,
+        "prg_sha256": "3a8fb4b7b6df543c40beeb7a06d9508f84e01d00ce2597cd34c1e9268d62da6a",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "sigil_deck",
+      "plan": "札の使用、攻撃・防御・回復、敵の反撃を別々に見せる。",
+      "status": "verified",
+      "changes": "使用した札の発光、攻撃によるHP変化、防御値の増加、回復、敵の応答を順に表示します。補充される手札も一枚ずつ確認できます。",
+      "evidence": {
+        "video_seconds": 30.0,
+        "prg_sha256": "b298e95420aa8b7a893c2d4eb928f1ba9dabe84d3d5d0757fd4e9290cb9f83b3",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "abyss_signal",
+      "plan": "移動、ソナー照射、観測完了を途中の形とSEで示す。",
+      "status": "verified",
+      "changes": "潜水艇はマスの中間を通って移動します。ソナーを使うと、観測範囲を横切る走査線と音で探査を示します。",
+      "evidence": {
+        "video_seconds": 102.6,
+        "prg_sha256": "694034a1e64f88983a2847a330f551e76866ad6614c7d87f8facc46686e5bc1b",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "trace_blade",
+      "plan": "計画した経路の移動と一体ずつの撃破を見せる。",
+      "status": "verified",
+      "changes": "剣士が計画した経路を中間位置を通って進み、標的を一体ずつ、光・破片・粒に変えて斬ります。",
+      "evidence": {
+        "video_seconds": 31.6,
+        "prg_sha256": "fc3ab584ec7d90dc0492ab69ae2892e11d957fe7b96e487f64354a78ebced464",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "loop_ten",
+      "plan": "移動・巻き戻し・封印の反応を、実時間を壊さず示す。",
+      "status": "verified",
+      "changes": "移動の中間位置、封印の反応、危険地形への接触、手動巻き戻しに途中の絵と音があります。移動演出の時間も10秒の制限に含まれます。",
+      "evidence": {
+        "video_seconds": 30.0,
+        "prg_sha256": "9ef5c7a46dd4df91d9a87c490fe0c2d4deeb681588cff007c8367758aa03aade",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "iron_script",
+      "plan": "実行中の命令と衝突を強調し、到達と未到達を区別する。",
+      "status": "verified",
+      "changes": "実行している命令を矢印で示し、ロボットの向きと中間移動を表示します。壁に当たると接触地点が点滅し、未到達で命令を使い切った場合は編集を促します。",
+      "evidence": {
+        "video_seconds": 31.933,
+        "prg_sha256": "8ece6f84a8463fa8169d82384a2d35d3d80f4a0613985c89b6cdcee9bc388d3e",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "quiet_route",
+      "plan": "潜行・警戒・資料取得・脱出の意味を画面とSEで伝える。",
+      "status": "verified",
+      "changes": "探索者と警備員が向きを変えて中間位置を通ります。静音・通常歩行と音の届く距離を明記し、機密取得と出口の解放を光と音で示します。",
+      "evidence": {
+        "video_seconds": 30.0,
+        "prg_sha256": "f4fecfb7aa3256cc1e43985f8539006a21558b14131d2fa382afa78c8a187c7b",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "circuit_works",
+      "plan": "3入力8行の真理値表へ発展。信号が各ゲートを通る順に試験する。",
+      "status": "verified",
+      "changes": "3入力・8行の真理値表を使う22問です。各入力の信号が3段のゲートを通る過程を順番に見せ、正解した行数を表示します。",
+      "evidence": {
+        "video_seconds": 30.0,
+        "prg_sha256": "014de4783acbe8f0329f99f1cc6d44c44a62c0767286cfe2d9902182e9f9c149",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "hearth_zero",
+      "plan": "天候予告と段階的な資源消費・炉の反応を加える。",
+      "status": "verified",
+      "changes": "3種類の寒波を、それぞれ12日間生き延びます。今夜と続く2夜の寒さを予告し、作業、食事、暖かさの消費を音と間を挟んで順に見せます。",
+      "evidence": {
+        "video_seconds": 47.0,
+        "prg_sha256": "79bb552d4eeca97fbdace3372c0164623d57283ff8efd88c78987e2871d622f1",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "night_swarm",
+      "plan": "移動・射程・再使用待ち・敵の接近を見える形にする。",
+      "status": "verified",
+      "changes": "主人公と敵の中間移動、広がるパルス、再使用可能の表示を追加しました。装甲のある敵は2回の命中が必要で、被弾点滅と撃破時の破片を区別します。",
+      "evidence": {
+        "video_seconds": 61.333,
+        "prg_sha256": "5430814dd9f2ef3702511880fa1006b5ed66729f122a65ef11c3ddbf0923b944",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "lumen_cross",
+      "plan": "十字に波及する点灯・消灯と、複数の盤面に段階的な難度を付ける。",
+      "status": "verified",
+      "changes": "18種類の盤面で、操作した中心から周囲へ点灯・消灯が波及します。一灯ずつの反応を音と光で確認できます。",
+      "evidence": {
+        "video_seconds": 32.033,
+        "prg_sha256": "84c6fc23bdb151a10719221f718f263c55479ccd16199d79c97dace863643ed8",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "stone_balance",
+      "plan": "自分と相手が取る石を一つずつ動かし、手番と取った数を残す。",
+      "status": "verified",
+      "changes": "自分と相手が取った石を、一つずつ盤面から移動させます。相手の応答を確認する間があり、最後の石を取った側が勝ちます。",
+      "evidence": {
+        "video_seconds": 31.9,
+        "prg_sha256": "ebbcbeec72089b339a3655ba6f6ad8bd18e76dd5b85e57dae34785aa4abd9ca8",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "memory_mosaic",
+      "plan": "規則配置をシャッフルへ変更し、札の反転・一致・不一致を順に見せる。",
+      "status": "verified",
+      "changes": "配札を開始時にシャッフルします。札は幅が細くなり側面を経て表裏が入れ替わります。一致は光と音、不一致は2枚を覚える間で示します。",
+      "evidence": {
+        "video_seconds": 84.533,
+        "prg_sha256": "f48e0b9fa7a5def2c3f70ac0fe74a0486e02c4c369cf29ebee8c6e24868087f9",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "twenty_one",
+      "plan": "個々の札を配り、引く・止める・ディーラーの応答・収支を表示する。",
+      "status": "verified",
+      "changes": "個々のカードと合計を表示します。配札と追加カードが山から移動し、ディーラーも一枚ずつ引きます。勝ち・バスト・負け・引き分けと収支を残してから次の手へ進みます。",
+      "evidence": {
+        "video_seconds": 48.633,
+        "prg_sha256": "fd38f62d7ff406fe236d48617dfd1b911c38dbf03c48819d1043c7abbf9eaeed",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "orbit_dodge",
+      "plan": "攻撃予告から軌道へ伸びる線と回避の経過を描き、攻撃の組合せを増やす。",
+      "status": "verified",
+      "changes": "機体が軌道上の中間位置を通り、予告地点へ攻撃の線が伸びます。6回の回避後から2地点への攻撃が加わります。",
+      "evidence": {
+        "video_seconds": 45.133,
+        "prg_sha256": "b5fe187909f6bbef3c85914efbb6e6a8826ca0ca565445e2fad6c73b0e505449",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "gate_runner",
+      "plan": "左右移動とジャンプの途中を描き、障壁と穴の連続配置に変化を付ける。",
+      "status": "verified",
+      "changes": "左右移動とジャンプの途中を示します。6つの障害を越えると2車線に障害が現れ、安全な車線へ移るか穴を跳び越えるかを判断します。",
+      "evidence": {
+        "video_seconds": 45.4,
+        "prg_sha256": "cc4e91ab84370d193c4cf29c64cb07a7a54352d9f0e216d7df42d2a238afffa8",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "star_lance",
+      "plan": "自弾の飛翔と装甲への命中、敵の編隊移動を描く。",
+      "status": "verified",
+      "changes": "発射した弾が敵へ飛び、編隊も中間位置を通って移動します。装甲列は2発必要で、一撃目の点滅と撃破時の四段階の消滅を区別します。",
+      "evidence": {
+        "video_seconds": 56.8,
+        "prg_sha256": "94c1b2e77cd021bbd4d3d45a0f7779e4bd86409a9ce8d85bd63c73f8213551fd",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "ribbon_snake",
+      "plan": "頭と胴の中間移動、採餌、衝突位置と原因を示す。",
+      "status": "verified",
+      "changes": "頭だけでなく胴体もマスの中間を通ります。食べると光と音が出て体が伸び、画面端と自分の体への衝突をそれぞれ説明します。",
+      "evidence": {
+        "video_seconds": 58.533,
+        "prg_sha256": "18141e7f32292d481eeba6f1945596496e38748706d5139e1816b27ef73f525f",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "lunar_touchdown",
+      "plan": "噴射・着地・機体の安定を描き、着陸条件を読みやすくする。",
+      "status": "verified",
+      "changes": "降下の中間位置と噴射炎を描きます。着陸台の上へ速度0〜2で降りると、機体の停止を確認する間と着陸音を挟んでクリアします。",
+      "evidence": {
+        "video_seconds": 30.0,
+        "prg_sha256": "33a1e95c2d162aa4028a267f65b8673cbb38998b9df247877789f069fcd34c62",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "echo_parry",
+      "plan": "敵の踏込み、盾の応答、反撃と耐久力の変化を描く。",
+      "status": "verified",
+      "changes": "敵の攻撃、盾での受け止め、反撃の飛翔、命中を順に描きます。攻撃の高さは単純な交互から8手のパターンへ変えました。",
+      "evidence": {
+        "video_seconds": 42.867,
+        "prg_sha256": "d655c73d75fbcae85c1ca7720c82f225cda7b9de7c24b0a88aeccfad686f6340",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "pendulum_port",
+      "plan": "跳躍の弧と着地を描き、足場の狙いと失敗理由を示す。",
+      "status": "verified",
+      "changes": "振り子を離れた主人公が弧を描いて足場へ着地し、着地の光と音を確認してから次の足場へ進みます。",
+      "evidence": {
+        "video_seconds": 40.2,
+        "prg_sha256": "c3b43834a2a42588b549d7b42a512a76a28091b77600dec37062108d6fc51a76",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "ruin_lexicon",
+      "plan": "値の順列と不等式を使う解読課題へ発展。照合を碑文ごとに示す。",
+      "status": "verified",
+      "changes": "1〜4を一度ずつ使う20問です。隣り合う文字の合計と不等式を手掛かりに解読し、確定時は4文字を順に照合します。",
+      "evidence": {
+        "video_seconds": 30.0,
+        "prg_sha256": "3a3b2742215a268b5390370b7423816409e32ec99ecc0d3a7b6b061d7b793944",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "shadow_archive",
+      "plan": "証拠と容疑者の特徴を対応させ、ファイル閲覧・告発の途中を見せる。",
+      "status": "verified",
+      "changes": "帽子・眼鏡・ネクタイが異なる6人から、3つの資料で容疑者を絞る12事件です。資料を開く途中を描き、証拠と合わない人物にはXを付けます。",
+      "evidence": {
+        "video_seconds": 34.067,
+        "prg_sha256": "493344b4f3171089c1273e90bc0fed15f96701f117f77c5c5494ac544e3e4b28",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "compass_rose",
+      "plan": "調査の探索範囲と掘削・発見を見せ、地形による経路判断を加える。",
+      "status": "verified",
+      "changes": "岩を避けて方角を読みながら進みます。未探索の地面と岩を描き分け、掘る途中の動作と、発見の光・音を加えました。",
+      "evidence": {
+        "video_seconds": 30.0,
+        "prg_sha256": "4179d5e61bd73784cfd784482ffa860f0cd5e09014f4d78fffb2dae8db5d24b4",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "mirror_relic",
+      "plan": "鏡移動を段階表示し、遺物の回収と門の開放を強調する。",
+      "status": "verified",
+      "changes": "6つの遺物配置を用意しました。鏡で移る位置まで主人公が移動する過程を描き、回収と出口の解放を光とメッセージで示します。",
+      "evidence": {
+        "video_seconds": 33.5,
+        "prg_sha256": "5624fe711f6ee447c5d2bd7a36936197a8b690ca644c1f0e8752fa6ee253cba3",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "orchard_days",
+      "plan": "芽・成長・成熟を異なる絵で示し、水やり・雨・収穫を動かす。",
+      "status": "verified",
+      "changes": "種・芽・木・果実を別の絵で示します。種まき、水やり、成長、収穫物の移動を順に描き、次の雨までの日数を表示します。",
+      "evidence": {
+        "video_seconds": 39.767,
+        "prg_sha256": "5f8e9d1d8cb6028e79e4e92171d459c731f37b47f4a9fd97773f026f73091c8c",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "tidal_nets",
+      "plan": "複数の流れを読み、網の投入・魚の移動・引き揚げを描く。",
+      "status": "verified",
+      "changes": "浅い魚群と2倍流される深い魚群を、隣接2列を覆う網で狙います。9回で30匹が目標です。投入、魚の移動、網の引き揚げ、加点を順に描きます。",
+      "evidence": {
+        "video_seconds": 47.767,
+        "prg_sha256": "3cd98184f9b8ce8b6578ce5a9f75869dc07f553943ea5074cdbee9934c18e828",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "potion_path",
+      "plan": "素材を投入してフラスコが移動する途中と、注文達成を描く。",
+      "status": "verified",
+      "changes": "異なる20の注文を用意しました。素材を投入し、フラスコが途中の位置を通って移動します。注文に到達すると光と音が出ます。",
+      "evidence": {
+        "video_seconds": 34.733,
+        "prg_sha256": "a083907c46662276aa7fea8fc9ea240ef75070741ce301a14006f4904806c9fb",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "auction_house",
+      "plan": "相手の入札と相場リスクを加え、落札と損益を確認できるようにする。",
+      "status": "verified",
+      "changes": "鑑定額を範囲で示し、相手は高値まで競ることもあります。自分の入札、相手の上乗せ、落札と売却額を順に表示します。6品終了時に62コインが目標です。",
+      "evidence": {
+        "video_seconds": 36.1,
+        "prg_sha256": "0928461dd5441d5237969baabb9d8719d72b03092512afc831d792c73b0d155b",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "metro_weave",
+      "plan": "分岐へ進む列車・切替・到着・誤配を示し、次の行先も予告する。",
+      "status": "verified",
+      "changes": "列車が途中の位置を通って線路を分岐し、到着すると光と音で乗降を示します。誤ったホームでは原因を表示して停止します。続く列車の行先も予告します。",
+      "evidence": {
+        "video_seconds": 68.867,
+        "prg_sha256": "55210c1782210e911de8aa7dcada7cf00dbec67014a2c0d1b710c96c76ce681a",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "cargo_balance",
+      "plan": "積荷の落下、船体の傾き、次の荷と危険度を描く。",
+      "status": "verified",
+      "changes": "次の2つの荷重を予告します。積荷が船倉へ落下し、重い側へ船体が傾きます。左右の重さに加え、危険な偏りまでの距離を目盛で示します。",
+      "evidence": {
+        "video_seconds": 35.8,
+        "prg_sha256": "ca135b5494ae964593272bbbbfec932ddbb0e465ee3ca360f5254c0c479d7d10",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "number_vault",
+      "plan": "ダイヤルの回転と照合、過去の推測履歴を表示し、暗号を変える。",
+      "status": "verified",
+      "changes": "暗号を開始時に変えます。ダイヤルを回す途中と4桁の照合を描き、直近6回の入力と位置一致・数字一致の数を残します。",
+      "evidence": {
+        "video_seconds": 30.0,
+        "prg_sha256": "6ab6eea9ce6a0a87b0d891b09c989021fb99c4aaf814afe770c2068576553081",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "sand_rescue",
+      "plan": "水の中間移動と作物の給水、堰の開閉を描く。",
+      "status": "verified",
+      "changes": "水がマスの中間を通り、堰が途中の形を経て開きます。作物が必要な水を受け取ると光と音で示します。",
+      "evidence": {
+        "video_seconds": 43.0,
+        "prg_sha256": "d533965bff709d39eb3913086e1949289cab5b99547f622f4bc72a588b5f4e9c",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "word_foundry",
+      "plan": "置換する文字の移動と経路履歴、選択可能な語を示す。",
+      "status": "verified",
+      "changes": "一文字だけ置き換えられる候補すべてに印を付けます。変更する文字の移動と、ここまでの単語の経路を表示します。",
+      "evidence": {
+        "video_seconds": 35.6,
+        "prg_sha256": "b8fab643d5c82553e8f8c1b08c1f965a406794bc149ba8dabc8241d8c6d12986",
+        "host_state_writes": 0
+      }
+    },
+    {
+      "directory": "relic_dive",
+      "plan": "既存の冒険を保ち、攻撃命中・撃破・回復のフィードバックを加える。",
+      "status": "verified",
+      "changes": "敵を攻撃すると、命中した一文字だけが打撃・破片・粒の三段階に変わり、音を鳴らします。他の同種の敵には影響しません。既存の被弾音と結果のジングルも維持しています。",
+      "evidence": {
+        "video_seconds": 63.033,
+        "prg_sha256": "e560dd59bdd8ca2964c1d33516a34c4e8507e710b923e98b0c3345ce8c0d8915",
+        "host_state_writes": 0
+      }
+    }
+  ],
+  "verification": {
+    "date": "2026-09-18",
+    "built_and_checked_games": 51,
+    "source_unit_tests": 47,
+    "quality_checks": "64 shuffled decks; 22 truth tables; 20 unique deductions; 12 witness cases; auction alternatives; two-hit armour; 5059 intermediate frames within screen bounds",
+    "physical_hardware": "not tested"
+  }
+}

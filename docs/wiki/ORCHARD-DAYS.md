@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/orchard-days/demo-clear.png)
 
-**[音付きプレイ動画を見る（約34秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=orchard-days)**
+**[音付きプレイ動画を見る（約40秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=orchard-days)**
 
 1ステージのクリアまでを収録。
 
@@ -28,7 +28,7 @@ WASDで畑を選び、RETURNで作業します。空いた畑は種まき、育�
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-畑の成長段階、日数、種、収穫数を表示します。
+種・芽・木・果実を別の絵で示します。種まき、水やり、成長、収穫物の移動を順に描き、次の雨までの日数を表示します。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/orchard-days/play-01.png)
 

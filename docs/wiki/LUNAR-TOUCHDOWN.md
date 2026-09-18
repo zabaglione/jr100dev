@@ -18,9 +18,9 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/lunar-touchdown/demo-clear.png)
 
-**[音付きプレイ動画を見る（約32秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=lunar-touchdown)**
+**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=lunar-touchdown)**
 
-最初の2ステージをクリアするまでを収録。
+1ステージのクリアまでを収録。
 
 ## 操作と遊び方
 
@@ -28,7 +28,7 @@ A/Dで横移動、WまたはRETURNで噴射します。1回の噴射は速度を
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-噴射炎、着陸台、燃料、降下速度、高度を表示します。
+降下の中間位置と噴射炎を描きます。着陸台の上へ速度0〜2で降りると、機体の停止を確認する間と着陸音を挟んでクリアします。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/lunar-touchdown/play-01.png)
 

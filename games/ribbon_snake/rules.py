@@ -31,19 +31,28 @@ def act():
 def tick():
     p = move(b[0], s.dir, 8, 8)
     if p == b[0]:
-        lose()
+        impact(1 + b[0] % 8 * 2, 3 + b[0] // 8 * 2)
+        lose("THE HEAD HIT THE EDGE")
         return
     eating = p == s.food
     for i in range(s.length - 1 + eating):
         if b[i] == p:
-            lose()
+            impact(1 + p % 8 * 2, 3 + p // 8 * 2)
+            lose("THE HEAD HIT ITS OWN BODY")
             return
+    for i in range(s.length):
+        c[i] = b[i]
+    c[s.length] = b[s.length - 1]
     for k in range(s.length):
         i = s.length - k
         b[i] = b[i - 1]
     b[0] = p
+    s.sliding = 1
+    glide(3)
+    s.sliding = 0
     if eating:
         s.length += 1
+        sparkle(1 + p % 8 * 2, 3 + p // 8 * 2)
         s.eaten += 1
         food()
         sound(1)
@@ -56,7 +65,11 @@ def draw():
     for i in range(64):
         tile(1 + i % 8 * 2, 3 + i // 8 * 2, 0)
     for i in range(s.length):
-        tile(1 + b[i] % 8 * 2, 3 + b[i] // 8 * 2, 4 if i else 2)
+        if s.sliding:
+            mover(b[i], c[i], 4 if i else 2, 1)
+        else:
+            tile(1 + b[i] % 8 * 2, 3 + b[i] // 8 * 2, 4 if i else 2)
     tile(1 + s.food % 8 * 2, 3 + s.food // 8 * 2, 3)
-    number(24, 7, s.length)
-    number(24, 14, s.eaten)
+    digits(24, 7, s.length)
+    digits(24, 14, s.eaten)
+    effect_draw()

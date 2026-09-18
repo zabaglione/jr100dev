@@ -4,20 +4,20 @@
   "boot": "owned BASIC ROM and PRG autostart",
   "clock_hz": 894000,
   "fps": 30,
-  "source_seconds": 30.0,
-  "video_seconds": 30.0,
+  "source_seconds": 45.133,
+  "video_seconds": 45.133,
   "playback_speed": 1,
   "edited": false,
   "source_segments": [
     [
       0,
-      30.0
+      45.1333
     ]
   ],
-  "clear_time": 25.4528,
+  "clear_time": 42.1343,
   "outcome": "first stage cleared",
   "host_state_writes": 0,
-  "prg_sha256": "d7c314bddf0980ab51386b0319429c9d9cccec6d262c19f4a3f415816ded822f",
+  "prg_sha256": "b5fe187909f6bbef3c85914efbb6e6a8826ca0ca565445e2fad6c73b0e505449",
   "images": [
     "demo-start.png",
     "demo-play.png",
@@ -30,65 +30,66 @@
       "action": 5
     },
     {
-      "time": 3.8821,
+      "time": 3.8825,
       "kind": "stage-start"
     },
     {
-      "time": 10.8997,
+      "time": 15.1398,
       "kind": "input",
       "action": 3
     },
     {
-      "time": 11.0233,
+      "time": 16.0799,
       "kind": "settled",
       "action": 3
     },
     {
-      "time": 15.8694,
+      "time": 24.1421,
       "kind": "input",
       "action": 3
     },
     {
-      "time": 15.9935,
+      "time": 25.091,
       "kind": "settled",
       "action": 3
     },
     {
-      "time": 16.8661,
+      "time": 26.6136,
       "kind": "input",
       "action": 3
     },
     {
-      "time": 16.9904,
+      "time": 27.5606,
       "kind": "settled",
       "action": 3
     },
     {
-      "time": 21.8401,
+      "time": 35.5991,
       "kind": "input",
       "action": 3
     },
     {
-      "time": 21.9645,
+      "time": 36.5455,
       "kind": "settled",
       "action": 3
     },
     {
-      "time": 22.838,
+      "time": 38.0646,
       "kind": "input",
       "action": 3
     },
     {
-      "time": 22.9623,
+      "time": 39.0138,
       "kind": "settled",
       "action": 3
     },
     {
-      "time": 25.4528,
+      "time": 42.1343,
       "kind": "clear"
     }
   ],
   "actions": 5,
   "ticks": 80,
-  "final_mode": 2
+  "final_mode": 2,
+  "stages_cleared": 1
 }

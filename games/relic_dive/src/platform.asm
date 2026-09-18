@@ -460,3 +460,36 @@ PRESENT_UNCHANGED:
 PRESENT_RESTORE:
     LDS TEXT_SRC
     RTS
+
+; Hit -> splinters -> dust at the contacted map cell. Only that VRAM byte changes.
+STRIKE_SCENE:
+    JSR TILE_DESTINATION
+    LDAA DRAW
+    ADDA #$91
+    STAA DRAW
+    LDX DRAW
+    LDAA 0,X
+    PSHA
+    CLR STRIKE_PHASE
+STRIKE_FRAME:
+    LDX #STRIKE_GLYPHS
+    LDAB STRIKE_PHASE
+    STAB INDEX_OFFSET + 1
+    ADX INDEX_OFFSET
+    LDAA 0,X
+    LDX DRAW
+    STAA 0,X
+    LDX #STRIKE_NOTE
+    JSR PLAY_PHRASE
+    INC STRIKE_PHASE
+    LDAA STRIKE_PHASE
+    CMPA #3
+    BCS STRIKE_FRAME
+    LDX DRAW
+    PULA
+    STAA 0,X
+    RTS
+STRIKE_GLYPHS:
+    .byte $4E,$6E,$0E
+STRIKE_NOTE:
+    .byte $06,$AB,1, 0,0,0

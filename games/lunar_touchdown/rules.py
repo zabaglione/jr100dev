@@ -16,6 +16,7 @@ def act():
         s.fuel -= 1
         s.flame = 2
         sound(0)
+        animate(3)
 
 
 def tick():
@@ -24,10 +25,19 @@ def tick():
         s.flame -= 1
     if s.time % 3 == 0:
         s.speed = min(5, s.speed + 1)
-    s.height += s.speed
+    old = s.height
+    s.height = min(30, s.height + s.speed)
+    s.middle = (old + s.height) // 2
+    s.descending = 1
+    glide(2)
+    s.descending = 0
     if s.height >= 30:
         s.height = 30
         if s.x >= s.target and s.x <= s.target + 3 and s.speed <= 2:
+            s.landed = 1
+            sound(1)
+            sparkle(s.x, 18)
+            animate(30)
             win()
         else:
             impact(s.x, 18)
@@ -38,10 +48,15 @@ def tick():
 
 
 def draw():
-    tile(s.x, 3 + s.height // 2, 2)
+    height = s.middle if s.descending else s.height
+    tile(s.x, 3 + height // 2, 2)
     if s.flame:
-        letter(s.x, 5 + s.height // 2, 86)
+        letter(s.x, 5 + height // 2, 86 if s.flame == 1 else 42)
     text(s.target, 20, "=====")
-    number(26, 4, s.fuel)
-    number(26, 8, s.speed)
-    number(26, 12, 30 - s.height)
+    digits(26, 4, s.fuel)
+    digits(26, 8, s.speed)
+    digits(26, 12, 30 - s.height)
+    if s.landed:
+        text(3, 15, "TOUCHDOWN! ENGINES OFF")
+    text(1, 22, "LAND ON PAD WITH SPEED 0-2")
+    effect_draw()

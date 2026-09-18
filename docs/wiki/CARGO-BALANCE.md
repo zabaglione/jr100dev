@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/cargo-balance/demo-clear.png)
 
-**[音付きプレイ動画を見る（約33秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=cargo-balance)**
+**[音付きプレイ動画を見る（約36秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=cargo-balance)**
 
 1ステージのクリアまでを収録。
 
@@ -28,7 +28,7 @@ A/Dでクレーンを動かし、RETURNで次の荷を落とします。外側�
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-積荷、次の重さ、左右の負荷、積載数を表示します。
+次の2つの荷重を予告します。積荷が船倉へ落下し、重い側へ船体が傾きます。左右の重さに加え、危険な偏りまでの距離を目盛で示します。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/cargo-balance/play-01.png)
 

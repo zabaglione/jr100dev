@@ -147,6 +147,8 @@ SONAR:
     LDX #SFX_SONAR
     JSR PLAY_SFX
     JSR WORLD_STEP
+    JSR DRAW_NAV
+    JSR SONAR_SCAN
     JMP REDRAW
 RECORD_SITE:
     LDAA #1
@@ -248,3 +250,35 @@ REQUEST_TITLE:
     TSTA
     BEQ REDRAW
     JMP SHOW_TITLE
+
+; The scanner crosses only the viewport, leaving the instruments readable.
+SONAR_SCAN:
+    LDX #$C140
+    JSR FX_BEGIN
+    CLR FX_PHASE
+SONAR_SWEEP:
+    JSR PRESENT_ROWS
+    LDX #$C140
+    LDAB FX_PHASE
+SONAR_COLUMN:
+    TSTB
+    BEQ SONAR_LINE
+    INX
+    DECB
+    BRA SONAR_COLUMN
+SONAR_LINE:
+    LDAB #18
+    LDAA #$71
+SONAR_LINE_CELL:
+    STAA 0,X
+    ADX #32
+    DECB
+    BNE SONAR_LINE_CELL
+    LDAA #2
+    JSR PACE_WAIT
+    INC FX_PHASE
+    INC FX_PHASE
+    LDAA FX_PHASE
+    CMPA #20
+    BCS SONAR_SWEEP
+    JMP FX_END

@@ -10,7 +10,7 @@
 | [CARGO BALANCE](CARGO-BALANCE) | [経営・サバイバル](Genre-Management) | 積荷の位置を選び船の傾きを抑える | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=cargo-balance) |
 | [CHAIN SUIT](CHAIN-SUIT) | [カード・ボード](Genre-Tabletop) | 手札交換と役の選択で得点ノルマに挑む | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=chain-suit) |
 | [CHRONO BREACH](CHRONO-BREACH) | [戦術・自動化](Genre-Tactics) | 弾道を読んで突破する20面の時間停止戦術 | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=chrono-breach) |
-| [CIRCUIT WORKS](CIRCUIT-WORKS) | [戦術・自動化](Genre-Tactics) | 導線を接続し順序回路を完成させる | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=circuit-works) |
+| [CIRCUIT WORKS](CIRCUIT-WORKS) | [戦術・自動化](Genre-Tactics) | 3入力の真理値表に合わせて論理ゲートを組む | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=circuit-works) |
 | [COMPASS ROSE](COMPASS-ROSE) | [探索・アドベンチャー](Genre-Exploration) | 方位の手掛かりを頼りに隠れた宝を探す | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=compass-rose) |
 | [CORNER CROWN](CORNER-CROWN) | [カード・ボード](Genre-Tabletop) | 挟み取りと角の支配を競う盤面対戦 | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=corner-crown) |
 | [DICE RELIC](DICE-RELIC) | [カード・ボード](Genre-Tabletop) | 出目を使い、ダイスの面そのものを鍛える | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=dice-relic) |

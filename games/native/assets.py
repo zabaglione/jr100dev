@@ -147,6 +147,12 @@ def generate(output, metadata, directory):
         from phase_pairs.presentation import prepare
 
         face_assets += prepare(bank, hud)
+    if info["id"] == "memory-mosaic":
+        from quality.card_art import frames
+
+        poses = frames()
+        bank[192:224] = poses[0]
+        face_assets += emit("FLIP_FRAMES", [byte for pose in poses for byte in pose])
     if info["id"] == "corner-crown":
         poses = disc_frames()
         bank[192:224] = poses[0]
@@ -158,6 +164,9 @@ def generate(output, metadata, directory):
             byte ^ 255 for digit in "012345" for byte in glyph(digit, "panel")
         ]
         face_assets += emit("FLIP_FRAMES", [byte for pose in poses for byte in pose])
+    from quality.scene_art import prepare
+
+    prepare(bank, hud, info["id"])
     text = face_assets + (
         emit("TITLE_PCG", pcg) + emit("TITLE_SCREEN", screen) + emit("GAME_PCG", bank)
     )

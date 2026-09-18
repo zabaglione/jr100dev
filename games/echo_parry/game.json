@@ -1,7 +1,7 @@
 {
   "id": "echo-parry",
   "title": "ECHO PARRY",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -33,5 +33,18 @@
     "COUNTER EIGHT ATTACKS TO WIN.",
     "THREE MISTAKES END THE DUEL."
   ],
-  "footer": "W HIGH  S LOW  RETURN PARRY"
+  "footer": "W HIGH  S LOW  RETURN PARRY",
+  "dataTables": {
+    "pattern": [
+      0,
+      1,
+      1,
+      0,
+      1,
+      0,
+      0,
+      1
+    ]
+  },
+  "fullDemo": true
 }

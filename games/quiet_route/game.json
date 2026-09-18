@@ -1,7 +1,7 @@
 {
   "id": "quiet-route",
   "title": "QUIET ROUTE",
-  "version": "1.4.0",
+  "version": "1.6.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -38,5 +38,6 @@
     "GET THE TOP RIGHT FILE FIRST.",
     "REACH THE LOWER RIGHT EXIT."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  "footer": "WASD MOVE  RET USE  SPACE RETRY",
+  "fullDemo": true
 }

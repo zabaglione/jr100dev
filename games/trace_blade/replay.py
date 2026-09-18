@@ -14,7 +14,7 @@ DIR = {1: (0, -1), 2: (0, 1), 3: (-1, 0), 4: (1, 0)}
 
 
 def finish(m):
-    for _ in range(1000):
+    for _ in range(3000):
         lib.frame(m.p)
         if m.get("MODE") == 4:
             m.until("IDLE")

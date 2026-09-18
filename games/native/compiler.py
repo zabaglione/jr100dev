@@ -150,7 +150,7 @@ class Compiler:
         elif name == "entropy":
             assert not n.args, "entropy() takes no arguments"
             self.emit("    LDAA TICK")
-        elif name in ("animate", "hold"):
+        elif name in ("animate", "hold", "glide"):
             assert len(n.args) == 1
             self.load(n.args[0])
             self.emit("    JSR N_" + name.upper())

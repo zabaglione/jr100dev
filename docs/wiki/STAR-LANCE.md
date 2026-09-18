@@ -6,7 +6,7 @@
 
 同じブラウザーで自分のBASIC ROMを事前に設定してください。登録済みなら「プレイ」からタイトルまで自動起動します。音は最初のキー入力または画面クリックで有効になります。
 
-左右へ動く18機の編隊を縦のランスで撃ち落とします。落下するミサイルを避け、飛行カウント220以内に全滅させます。
+左右へ動く18機の編隊を撃ち落とします。最上段の装甲機は2発必要です。ミサイルを避け、飛行カウント220以内に全滅させます。
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/star-lance/title.png)
 
@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/star-lance/demo-clear.png)
 
-**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=star-lance)**
+**[音付きプレイ動画を見る（約57秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=star-lance)**
 
 1ステージのクリアまでを収録。
 
@@ -28,9 +28,7 @@ A/Dで自機を移動、RETURNで発射します。連射には待ち時間が�
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-撃破した敵は、発光、中心の破片、外側へ散る破片を経て消えます。撃破音で命中を確認できます。演出が終わってから次のキーを押してください。
-
-自機・編隊・ミサイルに加え、耐久力、残敵数、時間を表示します。
+発射した弾が敵へ飛び、編隊も中間位置を通って移動します。装甲列は2発必要で、一撃目の点滅と撃破時の四段階の消滅を区別します。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/star-lance/play-01.png)
 

@@ -36,8 +36,11 @@ def act():
             lose("BATTERY EXHAUSTED")
             return
         s.battery -= cost
-        if s.pos == 14:
+        if s.pos == 14 and not s.key:
             s.key = 1
+            sound(1)
+            sparkle(12, 5)
+            sparkle(12, 15)
         if s.pos == 54 and s.key:
             s.origin = s.pos
             win()
@@ -95,8 +98,24 @@ def draw():
             y += 2
     mover(s.guard, s.guard_origin, 5, 0)
     mover(s.pos, s.origin, 2, 0)
-    number(24, 5, s.battery)
-    number(24, 10, s.quiet)
-    number(24, 15, s.key)
-    if s.alert:
+    digits(24, 5, s.battery)
+    if s.quiet:
+        text(20, 10, "SILENT")
+    else:
+        text(20, 10, "NORMAL")
+    if s.key:
+        text(20, 15, "TAKEN")
+    else:
+        text(20, 15, "GET FILE")
+    if s.mode == 2:
+        text(19, 18, "ESCAPED")
+    elif s.alert:
         text(19, 18, "DETECTED")
+        letter(s.guard % 8 * 2 + 1, 3 + s.guard // 8 * 2, 33)
+    text(1, 21, "NOISE REACH")
+    letter(13, 21, 50 if s.quiet else 53)
+    if s.key:
+        text(16, 21, "EXIT IS OPEN")
+    else:
+        text(16, 21, "EXIT NEEDS FILE")
+    effect_draw()

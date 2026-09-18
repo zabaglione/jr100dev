@@ -9,6 +9,14 @@ def init():
     s.take = 1
 
 
+def remove(pile, count):
+    for n in range(count):
+        b[pile] -= 1
+        sound(0)
+        flight(2 + b[pile] * 3, 4 + pile * 5, 27, 18, 4)
+    animate(12)
+
+
 def act():
     if s.action == 1:
         s.pile = (s.pile + 2) % 3
@@ -19,7 +27,8 @@ def act():
     if s.action == 4:
         s.take = 3 if s.take == 1 else s.take - 1
     if s.action == 5 and b[s.pile] >= s.take:
-        b[s.pile] -= s.take
+        s.turn = 1
+        remove(s.pile, s.take)
         if b[0] + b[1] + b[2] == 0:
             win()
             return
@@ -40,10 +49,11 @@ def act():
                 if b[i]:
                     s.enemy_pile = i
             s.enemy_take = 1
-        b[s.enemy_pile] -= s.enemy_take
+        s.turn = 2
+        remove(s.enemy_pile, s.enemy_take)
         sound(1)
         if b[0] + b[1] + b[2] == 0:
-            lose()
+            lose("THE RIVAL TOOK THE LAST STONE")
 
 
 def tick():
@@ -57,6 +67,12 @@ def draw():
         if i == s.pile:
             letter(0, 4 + i * 5, 62)
     text(2, 19, "TAKE")
-    number(8, 19, s.take)
+    digits(8, 19, s.take)
     text(15, 19, "RIVAL TOOK")
-    number(26, 19, s.enemy_take)
+    digits(26, 19, s.enemy_take)
+
+    if s.turn == 1:
+        text(2, 21, "YOU TAKE")
+    elif s.turn == 2:
+        text(2, 21, "RIVAL TOOK - YOUR TURN")
+    effect_draw()

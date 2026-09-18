@@ -27,6 +27,7 @@ def act():
         s.running = 1
         s.pc = 0
         s.error = 0
+        s.ended = 0
 
 
 def tick():
@@ -36,6 +37,10 @@ def tick():
         target = move(s.pos, c[s.pc], 8, 8)
         if b[target] == 1:
             s.error += 1
+            s.blocked = 1
+            impact(target % 8 * 2, 3 + target // 8 * 2)
+            animate(18)
+            s.blocked = 0
         else:
             s.origin = s.pos
             s.pos = target
@@ -46,18 +51,40 @@ def tick():
         s.pc += 1
         sound(0)
         if b[s.pos] == 3:
+            sparkle(s.pos % 8 * 2, 3 + s.pos // 8 * 2)
             win()
             s.running = 0
         elif s.pc >= 12:
             s.running = 0
+            s.ended = 1
+            sound(3)
+            animate(30)
 
 
 def draw():
     face(2, s.facing)
     grid(8, 8, 0, 3)
     mover(s.pos, s.origin, 2, 0)
-    number(24, 6, s.energy)
-    number(24, 10, s.error)
+    digits(24, 6, s.energy)
+    digits(24, 10, s.error)
     for i in range(12):
-        letter(19 + i % 4 * 3, 14 + i // 4 * 2, 48 + c[i])
-    letter(18 + s.cursor % 4 * 3, 14 + s.cursor // 4 * 2, 62)
+        letter(
+            19 + i % 4 * 3,
+            14 + i // 4 * 2,
+            45
+            if c[i] == 0
+            else (
+                94 if c[i] == 1 else (86 if c[i] == 2 else (60 if c[i] == 3 else 62))
+            ),
+        )
+    current = s.pc if s.running and s.pc < 12 else s.cursor
+    letter(18 + current % 4 * 3, 14 + current // 4 * 2, 62)
+    if s.blocked:
+        text(1, 21, "WALL HIT - COMMAND BLOCKED")
+    elif s.ended:
+        text(1, 21, "PROGRAM ENDED. EDIT THEN RETRY")
+    elif s.running:
+        text(1, 21, "EXECUTING THE MARKED COMMAND")
+    else:
+        text(1, 21, "EDIT ARROWS THEN RETURN TO RUN")
+    effect_draw()

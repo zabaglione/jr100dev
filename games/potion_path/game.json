@@ -1,12 +1,12 @@
 {
   "id": "potion-path",
   "title": "POTION PATH",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
-  "levels": 6,
+  "levels": 20,
   "rate": 255,
   "hud": [
     [
@@ -48,5 +48,50 @@
     "REACH THE DIAMOND ORDER.",
     "TWELVE DOSES PER POTION."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  "footer": "WASD MOVE  RET USE  SPACE RETRY",
+  "dataTables": {
+    "orders": [
+      1,
+      2,
+      3,
+      1,
+      5,
+      7,
+      7,
+      6,
+      1,
+      1,
+      3,
+      0,
+      4,
+      3,
+      6,
+      2,
+      0,
+      4,
+      1,
+      7,
+      3,
+      6,
+      5,
+      5,
+      7,
+      4,
+      1,
+      6,
+      3,
+      5,
+      5,
+      4,
+      6,
+      7,
+      0,
+      2,
+      2,
+      1,
+      4,
+      0
+    ]
+  },
+  "fullDemo": true
 }

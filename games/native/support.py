@@ -134,3 +134,65 @@ def ranked_hud():
         letter(8, 20, 43)
     number(14, 20, s.par)
     letter(25, 20, 48 + (s.runes & 1) + (s.runes >> 1))
+
+
+# Shared by the card, workshop and resource games: intermediate positions use
+# a single transient sprite. The burst uses ROM graphics, never shared PCG.
+def digits(x, y, value):
+    letter(x, y, 48 + value // 10)
+    letter(x + 1, y, 48 + value % 10)
+
+
+def flight(x, y, tx, ty, kind):
+    s.effect = 1
+    s.effect_kind = kind
+    for frame in range(5):
+        s.effect_x = x + (tx - x) * frame // 4 if tx >= x else x - (x - tx) * frame // 4
+        s.effect_y = y + (ty - y) * frame // 4 if ty >= y else y - (y - ty) * frame // 4
+        animate(3)
+    s.effect = 0
+
+
+def sparkle(x, y):
+    s.effect_x = x
+    s.effect_y = y
+    s.effect = 2
+    for frame in range(3):
+        s.effect_phase = frame
+        animate(4)
+    s.effect = 0
+
+
+def effect_draw():
+    if s.effect == 1:
+        tile(s.effect_x, s.effect_y, s.effect_kind)
+    elif s.effect == 2:
+        letter(
+            s.effect_x,
+            s.effect_y,
+            129 if s.effect_phase == 0 else (150 if s.effect_phase == 1 else 152),
+        )
+        letter(
+            s.effect_x + 1,
+            s.effect_y,
+            147 if s.effect_phase == 0 else (131 if s.effect_phase == 1 else 154),
+        )
+        letter(
+            s.effect_x,
+            s.effect_y + 1,
+            154 if s.effect_phase == 0 else (134 if s.effect_phase == 1 else 147),
+        )
+        letter(
+            s.effect_x + 1,
+            s.effect_y + 1,
+            152 if s.effect_phase == 0 else (132 if s.effect_phase == 1 else 129),
+        )
+
+
+def cruise(x, y, tx, ty, kind):
+    s.effect = 1
+    s.effect_kind = kind
+    s.effect_x = (x + tx) // 2
+    s.effect_y = (y + ty) // 2
+    glide(3)
+    s.effect = 0

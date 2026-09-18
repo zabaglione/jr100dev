@@ -1,18 +1,23 @@
 {
   "id": "hearth-zero",
   "title": "HEARTH ZERO",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
-  "levels": 1,
+  "levels": 3,
   "rate": 255,
   "hud": [
     [
       2,
       2,
       "THE LAST HEARTH"
+    ],
+    [
+      15,
+      14,
+      "COLD NOW/NEXT"
     ],
     [
       18,
@@ -23,155 +28,56 @@
       19,
       0,
       "WOOD    FOOD    FIRE    WALL"
-    ],
-    [
-      4,
-      0,
-      "+----------+"
-    ],
-    [
-      18,
-      0,
-      "+----------+"
-    ],
-    [
-      5,
-      0,
-      ":"
-    ],
-    [
-      6,
-      0,
-      ":"
-    ],
-    [
-      7,
-      0,
-      ":"
-    ],
-    [
-      8,
-      0,
-      ":"
-    ],
-    [
-      9,
-      0,
-      ":"
-    ],
-    [
-      10,
-      0,
-      ":"
-    ],
-    [
-      11,
-      0,
-      ":"
-    ],
-    [
-      12,
-      0,
-      ":"
-    ],
-    [
-      13,
-      0,
-      ":"
-    ],
-    [
-      14,
-      0,
-      ":"
-    ],
-    [
-      15,
-      0,
-      ":"
-    ],
-    [
-      16,
-      0,
-      ":"
-    ],
-    [
-      17,
-      0,
-      ":"
-    ],
-    [
-      5,
-      11,
-      ":"
-    ],
-    [
-      6,
-      11,
-      ":"
-    ],
-    [
-      7,
-      11,
-      ":"
-    ],
-    [
-      8,
-      11,
-      ":"
-    ],
-    [
-      9,
-      11,
-      ":"
-    ],
-    [
-      10,
-      11,
-      ":"
-    ],
-    [
-      11,
-      11,
-      ":"
-    ],
-    [
-      12,
-      11,
-      ":"
-    ],
-    [
-      13,
-      11,
-      ":"
-    ],
-    [
-      14,
-      11,
-      ":"
-    ],
-    [
-      15,
-      11,
-      ":"
-    ],
-    [
-      16,
-      11,
-      ":"
-    ],
-    [
-      17,
-      11,
-      ":"
     ]
   ],
   "help": [
     "WASD : SELECT A DAILY JOB",
     "BUTTON : SPEND ONE DAY",
-    "WOOD +7 / FOOD +7",
-    "FIRE COSTS 3 WOOD, HEAT +9",
-    "WALL COSTS 4 WOOD, SAVES HEAT",
-    "SURVIVE EIGHT COLD DAYS."
+    "WOOD +7 / FOOD +7 / EAT 2",
+    "FIRE: 3 WOOD GIVES 9 HEAT",
+    "WALL: 4 WOOD SAVES 1 HEAT",
+    "READ COLD, SURVIVE 12 NIGHTS."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  "footer": "WASD MOVE  RET USE  SPACE RETRY",
+  "dataTables": {
+    "weather": [
+      4,
+      5,
+      6,
+      4,
+      7,
+      5,
+      4,
+      6,
+      5,
+      7,
+      4,
+      6,
+      5,
+      4,
+      7,
+      5,
+      6,
+      4,
+      7,
+      4,
+      6,
+      5,
+      7,
+      5,
+      4,
+      6,
+      5,
+      7,
+      4,
+      6,
+      5,
+      7,
+      6,
+      4,
+      7,
+      6
+    ]
+  },
+  "fullDemo": true
 }

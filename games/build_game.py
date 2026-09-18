@@ -116,10 +116,14 @@ def build(directory):
             "feedback.asm",
         )
     ]
+    if metadata.get("sceneEffects"):
+        modules += [ROOT / "common/scene_fx.asm"]
     if metadata.get("nativeRules"):
         modules += [ROOT / "native/runtime.asm", output / "rules.inc"]
-        if "JSR N_ANIMATE" in compiled or "JSR N_HOLD" in compiled:
+        if any(f"JSR N_{name}" in compiled for name in ("ANIMATE", "HOLD", "GLIDE")):
             modules += [ROOT / "native/motion.asm"]
+        if "JSR N_GLIDE" in compiled:
+            modules += [ROOT / "native/glide.asm"]
         if "JSR N_FACE" in compiled:
             modules += [ROOT / "native/facing.asm"]
         if "JSR N_IMPACT" in compiled:
@@ -137,6 +141,13 @@ def build(directory):
         source += f"GAME_RATE: .equ {metadata.get('rate', 255)}\nGAME_LEVELS: .equ {metadata.get('levels', 10)}\n"
     for path in modules:
         module_source = path.read_text()
+        if path.name == "scene_fx.asm" and metadata["id"] == "loop-ten":
+            # This game promises ten wall-clock seconds, including movement.
+            module_source = (
+                module_source.replace("    INC PACE_ACTIVE\n", "")
+                .replace("    CLR PACE_ACTIVE\n", "")
+                .replace("    LDAA FX_CLOCK\n    STAA TICK\n", "")
+            )
         if path.name == "runtime.asm" and metadata["id"] == "orbit-draft":
             from orbit_draft.presentation import runtime_hook
 

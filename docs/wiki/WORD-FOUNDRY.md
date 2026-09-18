@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/word-foundry/demo-clear.png)
 
-**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=word-foundry)**
+**[音付きプレイ動画を見る（約36秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=word-foundry)**
 
 1ステージのクリアまでを収録。
 
@@ -28,7 +28,7 @@ WASDで単語を選び、RETURNで現在の単語と置き換えます。二文�
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-使える単語、現在の単語、目標、手数を表示します。
+一文字だけ置き換えられる候補すべてに印を付けます。変更する文字の移動と、ここまでの単語の経路を表示します。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/word-foundry/play-01.png)
 

@@ -6,7 +6,7 @@
 
 同じブラウザーで自分のBASIC ROMを事前に設定してください。登録済みなら「プレイ」からタイトルまで自動起動します。音は最初のキー入力または画面クリックで有効になります。
 
-潮で1マス流される魚群を予測して網を投げます。12回の投網で魚16匹を目指し、1回の成功で2匹増えます。
+浅い魚群と深い魚群を、隣接2列を覆う網で狙います。浅い魚群は潮の矢印と数値の通り、深い魚群はその2倍流されます。浅い群は2匹、深い群は3匹、両方なら5匹。9回で30匹が目標です。
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/tidal-nets/title.png)
 
@@ -18,17 +18,17 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/tidal-nets/demo-clear.png)
 
-**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=tidal-nets)**
+**[音付きプレイ動画を見る（約48秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=tidal-nets)**
 
 1ステージのクリアまでを収録。
 
 ## 操作と遊び方
 
-A/Dで網を置く列を選び、RETURNで投網します。端から流された魚は反対側へ回ります。
+A/Dで網の左端を選び、RETURNで投げます。8列目の隣は1列目です。両方の魚群がどこへ流れるかを予測してください。
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-潮の矢印、魚群、網、漁獲数と投網残数を表示します。
+浅い魚群と2倍流される深い魚群を、隣接2列を覆う網で狙います。9回で30匹が目標です。投入、魚の移動、網の引き揚げ、加点を順に描きます。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/tidal-nets/play-01.png)
 

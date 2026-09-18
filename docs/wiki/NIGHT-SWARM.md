@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/night-swarm/demo-clear.png)
 
-**[音付きプレイ動画を見る（約33秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=night-swarm)**
+**[音付きプレイ動画を見る（約61秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=night-swarm)**
 
 1ステージのクリアまでを収録。
 
@@ -28,9 +28,7 @@ QWE／AD／ZXCで8方向移動、RETURNで準備済みのパルスを放ちま�
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-倒した敵は、発光して破片が外側へ散る順に消えます。接触時は被弾音と点滅が入り、危険な位置を確認できます。演出が終わってから次のキーを押してください。
-
-右側に耐久力、撃破数、パルスの再使用待ちを表示します。
+主人公と敵の中間移動、広がるパルス、再使用可能の表示を追加しました。装甲のある敵は2回の命中が必要で、被弾点滅と撃破時の破片を区別します。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/night-swarm/play-01.png)
 

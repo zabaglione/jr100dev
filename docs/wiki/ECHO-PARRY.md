@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/echo-parry/demo-clear.png)
 
-**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=echo-parry)**
+**[音付きプレイ動画を見る（約43秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=echo-parry)**
 
 1ステージのクリアまでを収録。
 
@@ -28,9 +28,7 @@ Wで上段、Sで下段の構えを選び、攻撃中にRETURNで受け流しま
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-攻撃が当たると対象が点滅し、撃破時は発光して破片が散ります。防御を誤ると被弾音と短い停止が入り、失敗した方向を確認できます。演出が終わってから次のキーを押してください。
-
-相手の攻撃位置、盾の高さ、攻撃段階、成功数を表示します。
+敵の攻撃、盾での受け止め、反撃の飛翔、命中を順に描きます。攻撃の高さは単純な交互から8手のパターンへ変えました。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/echo-parry/play-01.png)
 

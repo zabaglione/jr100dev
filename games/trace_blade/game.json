@@ -1,12 +1,14 @@
 {
   "id": "trace-blade",
   "title": "TRACE BLADE",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [
     "state.inc",
     "main.asm",
     "draw.asm"
-  ]
+  ],
+  "sceneEffects": true,
+  "fullDemo": true
 }

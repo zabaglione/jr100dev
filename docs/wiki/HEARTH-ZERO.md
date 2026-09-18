@@ -6,7 +6,7 @@
 
 同じブラウザーで自分のBASIC ROMを事前に設定してください。登録済みなら「プレイ」からタイトルまで自動起動します。音は最初のキー入力または画面クリックで有効になります。
 
-食料・薪・暖かさを配分し、寒い8日間を生き延びます。毎日食料と暖かさを消費し、3日ごとに寒さが強まります。
+食料・薪・暖かさを管理し、3種類の寒波をそれぞれ12日間生き延びます。今夜から3夜の寒さを読み、食事と暖房の備えを選びます。
 
 ![タイトル](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/hearth-zero/title.png)
 
@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/hearth-zero/demo-clear.png)
 
-**[音付きプレイ動画を見る（約31秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=hearth-zero)**
+**[音付きプレイ動画を見る（約47秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=hearth-zero)**
 
 1ステージのクリアまでを収録。
 
@@ -28,7 +28,7 @@ WASDで仕事を選び、RETURNで1日を過ごします。薪と食料の採集
 
 方向キーはキーボードまたはパッド、RETURNはパッドのボタンでも操作できます。SPACEでこの面のやり直し確認を開きます。やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。
 
-炉の火と、食料・薪・暖かさ・断熱段階・日数を表示します。
+3種類の寒波を、それぞれ12日間生き延びます。今夜と続く2夜の寒さを予告し、作業、食事、暖かさの消費を音と間を挟んで順に見せます。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/hearth-zero/play-01.png)
 
