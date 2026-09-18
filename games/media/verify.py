@@ -46,6 +46,11 @@ def verify(name):
         assert report["outcome"] == "first stage cleared" and report["final_mode"] == 2
     else:
         assert seconds <= 35
+    if report["id"] == "dice-relic":
+        assert not report["edited"]
+        assert {e["effect"] for e in report["events"] if e["kind"] == "combat"} >= set(
+            range(1, 10)
+        )
     video = next(s for s in probe["streams"] if s["codec_type"] == "video")
     audio = next(s for s in probe["streams"] if s["codec_type"] == "audio")
     assert (video["codec_name"], video["pix_fmt"], video["width"], video["height"]) == (

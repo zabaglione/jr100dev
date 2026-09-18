@@ -60,6 +60,7 @@ class Recorder:
         self.events = []
         self.fusion_slot = None
         self.last_fusion = 0
+        self.last_combat = 0
         if m.metadata["id"] == "phase-pairs":
             slots = json.loads((m.directory / "build/state_slots.json").read_text())
             self.fusion_slot = m.sym[slots["s.merging"]]
@@ -118,6 +119,13 @@ class Recorder:
                     if phase == 2 and self.last_fusion != 2:
                         self.mark("fusion")
                     self.last_fusion = phase
+                if self.m.metadata["id"] == "dice-relic":
+                    effect = self.m.get("EVENT_KIND")
+                    if effect and effect != self.last_combat:
+                        self.mark(
+                            "combat", effect=effect, value=self.m.get("EVENT_VALUE")
+                        )
+                    self.last_combat = effect
             size = lib.audio_size(self.m.p)
             pcm = (C.c_int16 * size)()
             lib.audio_copy(self.m.p, pcm)
@@ -219,7 +227,7 @@ def encode(rec, destination, clear_time, outcome, extra):
     segments = choose_segments(
         duration,
         clear_time,
-        full_length=rec.m.metadata["id"] in ("peg-garden", "seed-merge"),
+        full_length=rec.m.metadata["id"] in ("peg-garden", "seed-merge", "dice-relic"),
     )
     filters = []
     for i, (start, end) in enumerate(segments):
@@ -315,6 +323,16 @@ def encode(rec, destination, clear_time, outcome, extra):
         fusions = [e["time"] for e in rec.events if e["kind"] == "fusion"]
         # The state precedes rendering; choose a frame once the ten is visible.
         middle = fusions[len(fusions) // 2] + 0.25
+    if rec.m.metadata["id"] == "dice-relic":
+        # Keep the three assignments and absorbed damage together in the image.
+        middle = (
+            next(
+                e["time"]
+                for e in rec.events
+                if e["kind"] == "combat" and e["effect"] == 6
+            )
+            + 0.65
+        )
     subprocess.run(
         [
             "ffmpeg",
@@ -435,6 +453,8 @@ class DemoMachine(Machine):
             "dice_relic": 0.65,
             "trace_blade": 0.72,
         }.get(self.directory.name, 0.475)
+        if self.directory.name == "dice_relic" and number != 5:
+            mean = 0.28
         idle(self, mean * self.rng.uniform(0.8, 1.2))
         self.rec.mark("input", action=number)
         super().action(number, pad)
@@ -567,7 +587,21 @@ def record_custom(name, rom, work):
             for _ in range(150):
                 if state.mode != 1:
                     break
-                die, choice = replay.policy(state)
+                if state.turn == 1:
+                    # Start with a small guard die, then attack with the others.
+                    # The first retaliation demonstrates shield absorption.
+                    die = (
+                        min(range(3), key=lambda i: state.dice[i])
+                        if not state.used
+                        else next(i for i in range(3) if not state.used >> i & 1)
+                    )
+                    choice = 1 if not state.used else 0
+                elif state.hp < 42 and not state.used:
+                    # Recover visible damage before committing the next attack.
+                    die = min(range(3), key=lambda i: state.dice[i])
+                    choice = 2
+                else:
+                    die, choice = replay.policy(state)
                 replay.choose(m, die, choice, False)
                 state.use(die, choice)
                 replay.compare(m, state)

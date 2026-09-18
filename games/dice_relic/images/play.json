@@ -4,20 +4,20 @@
   "boot": "owned BASIC ROM and PRG autostart",
   "clock_hz": 894000,
   "fps": 30,
-  "source_seconds": 30.0,
-  "video_seconds": 30.0,
+  "source_seconds": 34.367,
+  "video_seconds": 34.367,
   "playback_speed": 1,
   "edited": false,
   "source_segments": [
     [
       0,
-      30.0
+      34.3667
     ]
   ],
-  "clear_time": 16.42,
+  "clear_time": 31.3828,
   "outcome": "first battle won",
   "host_state_writes": 0,
-  "prg_sha256": "6e2d508dc949f54fce17bacbf7389dd09756e78886279ee3fba6176c1a75df0b",
+  "prg_sha256": "586ee896961c0d811ace35a846832e176bf06c022e7e860a64c92de942b2c87f",
   "images": [
     "demo-start.png",
     "demo-play.png",
@@ -30,129 +30,296 @@
       "action": 5
     },
     {
-      "time": 3.6769,
+      "time": 3.7151,
       "kind": "settled",
-      "action": 5
+      "action": 5,
+      "mode": 7
     },
     {
-      "time": 4.4871,
+      "time": 4.6204,
       "kind": "stage-start"
     },
     {
-      "time": 5.2605,
+      "time": 4.9542,
       "kind": "input",
       "action": 4
     },
     {
-      "time": 5.392,
+      "time": 5.1025,
       "kind": "settled",
-      "action": 4
+      "action": 4,
+      "mode": 1
     },
     {
-      "time": 5.9512,
+      "time": 5.3439,
       "kind": "input",
       "action": 2
     },
     {
-      "time": 6.0828,
+      "time": 5.4919,
       "kind": "settled",
-      "action": 2
+      "action": 2,
+      "mode": 1
     },
     {
-      "time": 6.6626,
-      "kind": "input",
-      "action": 2
-    },
-    {
-      "time": 6.7939,
-      "kind": "settled",
-      "action": 2
-    },
-    {
-      "time": 7.5447,
-      "kind": "input",
-      "action": 2
-    },
-    {
-      "time": 7.6762,
-      "kind": "settled",
-      "action": 2
-    },
-    {
-      "time": 8.2842,
+      "time": 6.0716,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 8.4483,
-      "kind": "settled",
-      "action": 5
+      "time": 6.1,
+      "kind": "combat",
+      "effect": 3,
+      "value": 1
     },
     {
-      "time": 9.9674,
+      "time": 7.339,
+      "kind": "settled",
+      "action": 5,
+      "mode": 1
+    },
+    {
+      "time": 7.6635,
       "kind": "input",
       "action": 4
     },
     {
-      "time": 10.0995,
+      "time": 7.8124,
       "kind": "settled",
-      "action": 4
+      "action": 4,
+      "mode": 1
     },
     {
-      "time": 10.7683,
-      "kind": "input",
-      "action": 4
-    },
-    {
-      "time": 10.9006,
-      "kind": "settled",
-      "action": 4
-    },
-    {
-      "time": 11.4814,
+      "time": 8.0745,
       "kind": "input",
       "action": 2
     },
     {
-      "time": 11.613,
+      "time": 8.2239,
       "kind": "settled",
+      "action": 2,
+      "mode": 1
+    },
+    {
+      "time": 8.5491,
+      "kind": "input",
       "action": 2
     },
     {
-      "time": 12.3196,
+      "time": 8.6979,
+      "kind": "settled",
+      "action": 2,
+      "mode": 1
+    },
+    {
+      "time": 8.9859,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 9.1343,
+      "kind": "settled",
+      "action": 2,
+      "mode": 1
+    },
+    {
+      "time": 9.7146,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 12.8543,
-      "kind": "settled",
-      "action": 5
+      "time": 9.7333,
+      "kind": "combat",
+      "effect": 1,
+      "value": 4
     },
     {
-      "time": 13.509,
+      "time": 10.8667,
+      "kind": "combat",
+      "effect": 2,
+      "value": 4
+    },
+    {
+      "time": 12.1119,
+      "kind": "settled",
+      "action": 5,
+      "mode": 1
+    },
+    {
+      "time": 12.8192,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 14.0436,
-      "kind": "settled",
-      "action": 5
+      "time": 12.8333,
+      "kind": "combat",
+      "effect": 1,
+      "value": 6
     },
     {
-      "time": 14.6437,
+      "time": 13.9667,
+      "kind": "combat",
+      "effect": 2,
+      "value": 6
+    },
+    {
+      "time": 15.1,
+      "kind": "combat",
+      "effect": 5,
+      "value": 3
+    },
+    {
+      "time": 16.2,
+      "kind": "combat",
+      "effect": 6,
+      "value": 1
+    },
+    {
+      "time": 17.3333,
+      "kind": "combat",
+      "effect": 7,
+      "value": 2
+    },
+    {
+      "time": 18.6211,
+      "kind": "settled",
+      "action": 5,
+      "mode": 7
+    },
+    {
+      "time": 19.7607,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 19.9089,
+      "kind": "settled",
+      "action": 4,
+      "mode": 1
+    },
+    {
+      "time": 20.1673,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 20.3155,
+      "kind": "settled",
+      "action": 4,
+      "mode": 1
+    },
+    {
+      "time": 20.5579,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 20.7058,
+      "kind": "settled",
+      "action": 2,
+      "mode": 1
+    },
+    {
+      "time": 20.9322,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 21.08,
+      "kind": "settled",
+      "action": 2,
+      "mode": 1
+    },
+    {
+      "time": 21.8016,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 16.4192,
+      "time": 21.8333,
+      "kind": "combat",
+      "effect": 4,
+      "value": 2
+    },
+    {
+      "time": 23.07,
       "kind": "settled",
+      "action": 5,
+      "mode": 1
+    },
+    {
+      "time": 23.3201,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 23.4687,
+      "kind": "settled",
+      "action": 4,
+      "mode": 1
+    },
+    {
+      "time": 23.756,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 23.9048,
+      "kind": "settled",
+      "action": 2,
+      "mode": 1
+    },
+    {
+      "time": 24.2098,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 24.3584,
+      "kind": "settled",
+      "action": 2,
+      "mode": 1
+    },
+    {
+      "time": 25.1189,
+      "kind": "input",
       "action": 5
     },
     {
-      "time": 16.42,
+      "time": 25.1333,
+      "kind": "combat",
+      "effect": 1,
+      "value": 5
+    },
+    {
+      "time": 26.2667,
+      "kind": "combat",
+      "effect": 2,
+      "value": 4
+    },
+    {
+      "time": 27.3667,
+      "kind": "combat",
+      "effect": 8,
+      "value": 4
+    },
+    {
+      "time": 28.5,
+      "kind": "combat",
+      "effect": 9,
+      "value": 4
+    },
+    {
+      "time": 31.382,
+      "kind": "settled",
+      "action": 5,
+      "mode": 2
+    },
+    {
+      "time": 31.3828,
       "kind": "clear"
     }
   ],
-  "actions": 12,
+  "actions": 19,
   "final_mode": 2
 }

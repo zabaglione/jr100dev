@@ -54,4 +54,6 @@ if metadata["id"] in ("prism-trace", "tide-bridge", "chain-suit"):
         [sys.executable, str(game.parent / "tests" / f"check_{game.name}.py")],
         check=True,
     )
+if metadata["id"] == "dice-relic":
+    subprocess.run([sys.executable, str(game / "check_effects.py")], check=True)
 print("PASS: standard 16KB layout and 32 PCG slots")

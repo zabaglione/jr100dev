@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/dice-relic/demo-clear.png)
 
-**[音付きプレイ動画を見る（約30秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=dice-relic)**
+**[音付きプレイ動画を見る（約34秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=dice-relic)**
 
 最初の戦闘に勝利するまでを収録。
 
@@ -33,7 +33,9 @@
 | 工房のサービスを選択 | A/D | 左右 |
 | BASICへ戻る | CTRL+C | キーボードを使用 |
 
-ATTACKは出目の値だけ攻撃、GUARDは同じ値の防御、HEALは同じ値のHP回復です。各ダイスは1ターンに1回使え、使用済みには×が付きます。REROLLは未使用のダイスを1ターンに1回だけ振り直します。
+ATTACKは出目の値だけ攻撃、GUARDは同じ値の防御、HEALは同じ値のHP回復です。選択中のダイスの下には「>ATTACK」のように割当先の候補を表示し、RETURNで使うと「*ATTACK」「*GUARD」「*HEAL」に変わります。使用後も出目と割当先を残すので、どのダイスを何に使ったか確認できます。各ダイスは1ターンに1回だけ使えます。REROLLは未使用のダイスを1ターンに1回だけ振り直します。
+
+画面右のYOUが主人公です。攻撃では踏み込みと光弾、命中では敵の点滅、防御では盾の展開、被弾では主人公の点滅と後ずさり、回復では上昇する光が入ります。下段のBEFORE → AFTERはHPまたは防御値の変化です。BLOCKEDでは、防いだ量とATTACK → DAMAGE（敵の攻撃値から実際に受けるダメージへの変化）を表示します。3個目の使用、防御、被弾、次のダイスの順に進みます。演出が終わってから次のキーを押してください。
 
 3個すべてを使うと敵が攻撃します。防御で軽減した残りがHPへ入り、防御は消えます。敵は4ターンごとに攻撃が2増えます。NEXTには今回の攻撃値を表示します。HP上限は42。敵を倒せばそのターンの反撃を受けません。
 

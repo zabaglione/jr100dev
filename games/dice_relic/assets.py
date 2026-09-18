@@ -93,11 +93,39 @@ def generate(output):
     )
     for i in range(9):
         text += emit(f"ENEMY_{i}", enemy(i))
+    hero = Pixels(contact_shadow=False)
+    hero.ellipse(7, 4, 3, 3, True)
+    hero.dot(6, 4, 0)
+    hero.dot(8, 4, 0)
+    hero.rect(5, 8, 6, 5, True)
+    hero.line(4, 8, 2, 11)
+    hero.line(11, 8, 13, 11)
+    hero.line(6, 12, 4, 15)
+    hero.line(9, 12, 11, 15)
+    text += emit("HERO_PICTURE", quads(hero.p))
     enemies = json.loads((ROOT / "enemies.json").read_text())
     text += emit(
         "ENEMY_STATS", [v for e in enemies for v in (e["hp"], e["attack"])]
     ) + strings("ENEMY_NAMES", [e["name"] for e in enemies])
     text += strings("CHOICE_NAMES", ["ATTACK", "GUARD", "HEAL", "REROLL"])
+    text += strings("ROLE_NAMES", ["READY", "*ATTACK", "*GUARD", "*HEAL"])
+    text += strings("PREVIEW_NAMES", [">ATTACK", ">GUARD", ">HEAL", ">REROLL"])
+    text += strings(
+        "EVENT_NAMES",
+        [
+            "",
+            "YOUR ATTACK",
+            "HIT! ENEMY HP -",
+            "GUARD UP +",
+            "HEAL HP +",
+            "ENEMY ATTACK",
+            "BLOCKED",
+            "YOU TAKE DAMAGE -",
+            "ENEMY DEFEATED",
+            "VICTORY: +2 HP  +3 GOLD",
+            "YOU FELL",
+        ],
+    )
     tables = {
         "TITLE_TEXT": [
             (1, 5, "CARVE YOUR OWN FORTUNE"),
@@ -113,7 +141,8 @@ def generate(output):
             (1, 23, "TURN"),
             (3, 1, "ENEMY"),
             (6, 1, "NEXT"),
-            (8, 22, "REROLL"),
+            (2, 24, "YOU"),
+            (23, 21, "REROLL"),
             (11, 1, "DIE 1"),
             (11, 11, "DIE 2"),
             (11, 21, "DIE 3"),
@@ -170,12 +199,15 @@ def generate(output):
             (20, 17, "NEXT"),
             (20, 25, "BACK"),
         ],
+        "CHANGE_TEXT": [(21, 1, "BEFORE"), (21, 13, "->"), (21, 18, "AFTER")],
+        "BLOCK_TEXT": [(21, 1, "ATTACK"), (21, 13, "->"), (21, 18, "DAMAGE")],
     }
     for name, rows in tables.items():
         text += text_table(name, rows)
     for label, value in {
         "ERROR_TEXT": "UNAVAILABLE / CHECK GOLD OR USE",
         "ROLLING_TEXT": "ROLLING THE RELICS",
+        "USE_DIE_TEXT": "USE DIE   ->",
     }.items():
         text += emit(label, [*value.encode(), 0])
     text += sound(
@@ -188,6 +220,7 @@ def generate(output):
             "SFX_DAMAGE": [4, 2, 12, 3, 3, 4],
             "SFX_FORGE": [3, 3, 30, 2, 35, 2, 42, 5],
             "SFX_DEATH": [5, 4, 20, 5, 15, 5, 10, 5, 3, 10],
+            "SFX_SWING": [1, 3, 10, 2, 18, 2, 28, 2],
         },
         extended_theme(5, (0, 3, 7, 8, 12, 15, 19, 20)),
     )
