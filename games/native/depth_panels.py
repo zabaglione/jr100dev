@@ -114,10 +114,11 @@ def decorate(screen, game):
             for y in (7, 11, 15):
                 hline(2, y, 12, "-")
     elif game == "chain-suit":
-        panel(0, 3, 31, 10)
-        panel(0, 14, 11, 5)
-        panel(12, 14, 10, 5)
-        panel(23, 14, 9, 5)
+        hline(0, 3, 31)
+        hline(0, 13, 31)
+        panel(0, 17, 11, 3)
+        panel(12, 17, 10, 3)
+        panel(23, 17, 9, 3)
     elif game == "twenty-one":
         panel(2, 4, 11, 7)
         panel(19, 4, 12, 7)

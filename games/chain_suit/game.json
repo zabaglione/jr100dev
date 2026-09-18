@@ -1,7 +1,7 @@
 {
   "id": "chain-suit",
   "title": "CHAIN SUIT",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -10,12 +10,7 @@
   "rate": 255,
   "hud": [
     [
-      2,
-      1,
-      "THREE HANDS / BUILD YOUR HAND"
-    ],
-    [
-      14,
+      17,
       1,
       "SCORE      GOAL       REDRAWS"
     ]
@@ -28,5 +23,5 @@
     "ALL SAME SUIT SCORES 25.",
     "MAKE 25 POINTS IN THREE HANDS."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  "footer": "A/D CARD  W SWAP  RET SCORE"
 }

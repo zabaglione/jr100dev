@@ -122,6 +122,10 @@ def generate(output, metadata, directory):
         ]
         put(hud, 1, 21, "BEST       F MAP  NOW")
     face_assets = actor_assets(info["id"], bank)
+    if info["id"] == "chain-suit":
+        from chain_suit.presentation import prepare
+
+        prepare(bank)
     if info["id"] == "prism-trace":
         from prism_trace.graphics import atlas
 

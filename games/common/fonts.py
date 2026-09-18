@@ -100,6 +100,8 @@ def free_slots(metadata):
         return [], []  # Tall numerals, card frames and four live fusion glyphs.
     if gid == "prism-trace":
         return [], list(range(21, 32))  # Shared optical glyphs occupy 0..20.
+    if gid == "chain-suit":
+        return [], list(range(22, 32))  # Four suits and six card-border glyphs.
     if gid == "brick-pulse":
         return [], list(range(16, 32))
     tiles = set(NATIVE[gid])

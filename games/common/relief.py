@@ -347,7 +347,7 @@ def sprite(kind, *, contact_shadow=True):
 # Explicit art direction per title, rather than choosing sprites by genre.
 NATIVE = {
     "iron-script": {0: "floor-metal", 1: "wall-metal", 2: "robot", 3: "socket"},
-    "chain-suit": {7: "card"},
+    "chain-suit": {},  # Authored suit symbols and reusable full-card borders.
     "quiet-route": {
         0: "floor",
         1: "wall-stone",
