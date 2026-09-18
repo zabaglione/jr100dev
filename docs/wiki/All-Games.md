@@ -18,7 +18,7 @@
 | [FIVE FORGE](FIVE-FORGE) | [カード・ボード](Genre-Tabletop) | 妨害と四連の脅威を読む五目対戦 | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=five-forge) |
 | [FROST STEPS](FROST-STEPS) | [パズル](Genre-Puzzle) | 氷上を止まれず滑り、全結晶を拾う。40面・規定手数と任意ルーンによる3段階評価・パスワード対応。 | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=frost-steps) |
 | [FUSE BOX](FUSE-BOX) | [パズル](Genre-Puzzle) | 行と列の個数を読んで配線図を復元する | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=fuse-box) |
-| [GATE RUNNER](GATE-RUNNER) | [アクション](Genre-Action) | 三本の走路で障壁と穴を突破する | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=gate-runner) |
+| [GATE RUNNER](GATE-RUNNER) | [アクション](Genre-Action) | 横位置を細かく調整し、壁・全幅の穴・低い梁を越える疑似3Dランニング | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=gate-runner) |
 | [GLYPH SHIFT](GLYPH-SHIFT) | [パズル](Genre-Puzzle) | 物体の通行ルールを書き換えて脱出する。40面・規定手数と任意ルーンによる3段階評価・パスワード対応。 | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=glyph-shift) |
 | [GRAVITY WELL](GRAVITY-WELL) | [パズル](Genre-Puzzle) | 盤面を傾けて複数の球を同時に収める。40面・規定手数と任意ルーンによる3段階評価・パスワード対応。 | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=gravity-well) |
 | [HEARTH ZERO](HEARTH-ZERO) | [経営・サバイバル](Genre-Management) | 食料・薪・熱を配分して寒波を越える | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=hearth-zero) |
@@ -44,7 +44,7 @@
 | [RELIC DIVE](RELIC-DIVE) | [探索・アドベンチャー](Genre-Exploration) | 64×32マスの迷宮で食料・装備・魔法を使い、最深部の遺物を探す | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=relic-dive) |
 | [RIBBON SNAKE](RIBBON-SNAKE) | [アクション](Genre-Action) | 伸びる軌跡を制御して食料を回収する | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=ribbon-snake) |
 | [RUIN LEXICON](RUIN-LEXICON) | [探索・アドベンチャー](Genre-Exploration) | 碑文の対応から失われた記号を解読する | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=ruin-lexicon) |
-| [SAND RESCUE](SAND-RESCUE) | [戦術・自動化](Genre-Tactics) | 堰を開閉して水を作物へ導く | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=sand-rescue) |
+| [SAND RESCUE](SAND-RESCUE) | [戦術・自動化](Genre-Tactics) | 限られた水を6つの畑へ配分し、安全な収穫と追加の実りを選ぶ | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=sand-rescue) |
 | [SEED MERGE](SEED-MERGE) | [パズル](Genre-Puzzle) | 同じ芽を合成して大樹を育てる | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=seed-merge) |
 | [SHADOW ARCHIVE](SHADOW-ARCHIVE) | [探索・アドベンチャー](Genre-Exploration) | 証言と記録を照合して容疑者を特定する | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=shadow-archive) |
 | [SIGIL DECK](SIGIL-DECK) | [カード・ボード](Genre-Tabletop) | カードを組み合わせて虚空の王を封じる | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=sigil-deck) |

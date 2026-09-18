@@ -79,6 +79,10 @@ def launch_note():
 
 
 def font_description(game):
+    if game["id"] == "gate-runner":
+        return "遠景はROMのセミグラフィックス、壁・穴・梁はPCGの陰影で描きます。主人公は4文字のPCGを走行とジャンプの形に書き換えます。説明と数値は通常フォントに揃え、描画の速さを優先しています。"
+    if game["id"] == "sand-rescue":
+        return "水路・水門・作物の成長にPCGを使い、説明と数値は通常フォントに揃えています。水の量や成長段階は各位置の文字を描き替えるため、別の作物の見た目には影響しません。"
     if game["id"] == "iron-script":
         return "方向にはJR-100のROMにある上下左右の矢印を使います。PCG32文字は8種の地形・キャラクターに割り当て、ロボットの向きと扉の開閉ではそれぞれ4文字を書き換えます。案内と数値は通常フォントで表示します。"
     if game["id"] == "tide-bridge":
@@ -191,7 +195,7 @@ home += (
 )
 home += "\n\n基本の方向キーは **W/A/S/D**、8方向の作品は **QWE／AD／ZXC** です。作品ごとの操作は各ページに掲載しています。\n\nエミュレーターで確認済みです。実機での動作・音声は未確認です。\n\n"
 home += f"[ビルド可能なソースと開発手順]({BASE}/tree/main/games)\n"
-home += "\n**2026年9月18日更新：** 全51作品の操作説明をタイトル・ヘルプへまとめ、本編の表示を整理しました。METRO WEAVEは複数列車・駅の混雑・急行の増発を組み合わせる運行ゲームへ更新しています。[改善内容](Quality-Review)／[動きと音の紹介](Presentation)。\n"
+home += "\n**2026年9月18日更新：** 全51作品の操作説明をタイトル・ヘルプへまとめ、本編の表示を整理しました。METRO WEAVEは複数列車・駅の混雑・急行の増発を組み合わせる運行ゲームへ更新しています。SAND RESCUEは6つの畑への水の配分、GATE RUNNERは自由な横移動とジャンプを使う疑似3Dランニングへ作り直しました。[改善内容](Quality-Review)／[動きと音の紹介](Presentation)。\n"
 home += "\n## タイトル画面ギャラリー\n\n"
 for gid, genre in genres.items():
     home += f"### [{genre['title']}]({page(gid)})\n\n| タイトル画面 | ゲーム・概要 |\n| --- | --- |\n"
@@ -311,6 +315,8 @@ for g in games:
     body += (
         "プレイ中のSPACEは無効です。失敗後にRETURNを押すと再挑戦の確認が開きます。"
         if meta.get("disableSpaceReset")
+        else "SPACEで全6面のやり直し確認を開き、承認すると最初の畑・108滴・0点から再開します。"
+        if meta.get("carryCampaign")
         else "SPACEで新しいゲームの確認を開き、承認すると盤面と得点をリセットします。"
         if meta.get("endless")
         else "SPACEでこの面のやり直し確認を開きます。"

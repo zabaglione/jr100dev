@@ -31,6 +31,10 @@ def check(name):
                 assert_state(m, r)
                 continue
             level = r.s.level + (1 if r.s.mode == 2 else 0)
+            if r.metadata.get("carryCampaign") and r.s.mode == 3:
+                level = 0
+            if r.metadata.get("carryCampaign") and r.s.mode == 2 and level == levels:
+                r.env["checkpoint"]()
             m.action(5)
             if m.get("CN_ACTIVE"):
                 m.answer_reset(True)

@@ -45,7 +45,7 @@
 | [IRON SCRIPT](iron_script/) | 射撃・スイッチ・繰り返しの命令で24の工場を攻略 |
 | [CIRCUIT WORKS](circuit_works/) | 3入力の真理値表に合わせて論理ゲートを組む |
 | [METRO WEAVE](metro_weave/) | 分岐と信号で複数列車をさばき、混雑を読んで急行を増発する |
-| [SAND RESCUE](sand_rescue/) | 堰を開閉して水を作物へ導く |
+| [SAND RESCUE](sand_rescue/) | 限られた水を6つの畑へ配分し、安全な収穫と追加の実りを選ぶ |
 
 ## アクション
 
@@ -53,7 +53,7 @@
 | --- | --- |
 | [NIGHT SWARM](night_swarm/) | 迫る群れを誘導し射線を開いて生還する |
 | [ORBIT DODGE](orbit_dodge/) | 円軌道を移動して放射状の攻撃を避ける |
-| [GATE RUNNER](gate_runner/) | 三本の走路で障壁と穴を突破する |
+| [GATE RUNNER](gate_runner/) | 横位置を細かく調整し、壁・全幅の穴・低い梁を越える疑似3Dランニング |
 | [BRICK PULSE](brick_pulse/) | 装甲ブロック・アイテム・ドローンに挑む12面のブロック崩し |
 | [STAR LANCE](star_lance/) | 隊列の隙間を抜いて迎撃する |
 | [RIBBON SNAKE](ribbon_snake/) | 伸びる軌跡を制御して食料を回収する |

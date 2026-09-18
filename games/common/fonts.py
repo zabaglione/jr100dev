@@ -98,6 +98,10 @@ def free_slots(metadata):
         return [], CUSTOM_FREE[gid][1]
     if gid == "phase-pairs":
         return [], []  # Tall numerals, card frames and four live fusion glyphs.
+    if gid == "sand-rescue":
+        return [], []  # Water channels, gates, crops and their growth poses.
+    if gid == "gate-runner":
+        return [], []  # Direct screen-code blitting keeps the road responsive.
     if gid == "prism-trace":
         return [], list(range(21, 32))  # Shared optical glyphs occupy 0..20.
     if gid == "orbit-draft":

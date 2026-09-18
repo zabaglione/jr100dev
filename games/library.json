@@ -254,7 +254,7 @@
       "id": "gate-runner",
       "title": "GATE RUNNER",
       "genre": "action",
-      "summary": "三本の走路で障壁と穴を突破する",
+      "summary": "横位置を細かく調整し、壁・全幅の穴・低い梁を越える疑似3Dランニング",
       "motif": "tunnel"
     },
     {
@@ -422,7 +422,7 @@
       "id": "sand-rescue",
       "title": "SAND RESCUE",
       "genre": "tactics",
-      "summary": "堰を開閉して水を作物へ導く",
+      "summary": "限られた水を6つの畑へ配分し、安全な収穫と追加の実りを選ぶ",
       "motif": "sand"
     },
     {

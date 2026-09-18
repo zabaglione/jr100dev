@@ -39,7 +39,7 @@
 | [MEMORY MOSAIC](https://github.com/zabaglione/jr100dev/wiki/MEMORY-MOSAIC) | 配札を開始時にシャッフルします。札は幅が細くなり側面を経て表裏が入れ替わります。一致は光と音、不一致は2枚を覚える間で示します。 |
 | [TWENTY ONE](https://github.com/zabaglione/jr100dev/wiki/TWENTY-ONE) | 個々のカードと合計を表示します。配札と追加カードが山から移動し、ディーラーも一枚ずつ引きます。勝ち・バスト・負け・引き分けと収支を残してから次の手へ進みます。 |
 | [ORBIT DODGE](https://github.com/zabaglione/jr100dev/wiki/ORBIT-DODGE) | 機体が軌道上の中間位置を通り、予告地点へ攻撃の線が伸びます。6回の回避後から2地点への攻撃が加わります。 |
-| [GATE RUNNER](https://github.com/zabaglione/jr100dev/wiki/GATE-RUNNER) | 左右移動とジャンプの途中を示します。6つの障害を越えると2車線に障害が現れ、安全な車線へ移るか穴を跳び越えるかを判断します。 |
+| [GATE RUNNER](https://github.com/zabaglione/jr100dev/wiki/GATE-RUNNER) | 3車線を廃止し、横27段階を1文字ずつ移動する6コースへ作り直しました。タイトルと同じセミグラフィックスの遠景に、拡大して迫る壁・穴・低い梁を描きます。各コース3か所の全幅の穴はジャンプ必須です。危険な位置の結晶を集めると評価が上がり、走行・跳躍・被弾に動きとSEがあります。 |
 | [STAR LANCE](https://github.com/zabaglione/jr100dev/wiki/STAR-LANCE) | 発射した弾が敵へ飛び、編隊も中間位置を通って移動します。装甲列は2発必要で、一撃目の点滅と撃破時の四段階の消滅を区別します。 |
 | [RIBBON SNAKE](https://github.com/zabaglione/jr100dev/wiki/RIBBON-SNAKE) | 頭だけでなく胴体もマスの中間を通ります。食べると光と音が出て体が伸び、画面端と自分の体への衝突をそれぞれ説明します。 |
 | [LUNAR TOUCHDOWN](https://github.com/zabaglione/jr100dev/wiki/LUNAR-TOUCHDOWN) | 降下の中間位置と噴射炎を描きます。着陸台の上へ速度0〜2で降りると、機体の停止を確認する間と着陸音を挟んでクリアします。 |
@@ -56,7 +56,7 @@
 | [METRO WEAVE](https://github.com/zabaglione/jr100dev/wiki/METRO-WEAVE) | 3シフトで自動配車が速まり、同時運行数が2本から3本へ増えます。毎回変わる次の3本を読み、急行を手動増発できます。急行は得点が高い一方、信号待ち・荷下ろし待ちで遅延し、HPと連続成功を失います。車体は1マスずつ動き、自動で車間を保ちます。常設の操作説明はタイトル・ヘルプへ移し、本編は列車・進路・行先・待ち時間・得点を表示します。 |
 | [CARGO BALANCE](https://github.com/zabaglione/jr100dev/wiki/CARGO-BALANCE) | 次の2つの荷重を予告します。積荷が船倉へ落下し、重い側へ船体が傾きます。左右の重さに加え、危険な偏りまでの距離を目盛で示します。 |
 | [NUMBER VAULT](https://github.com/zabaglione/jr100dev/wiki/NUMBER-VAULT) | 暗号を開始時に変えます。ダイヤルを回す途中と4桁の照合を描き、直近6回の入力と位置一致・数字一致の数を残します。 |
-| [SAND RESCUE](https://github.com/zabaglione/jr100dev/wiki/SAND-RESCUE) | 水がマスの中間を通り、堰が途中の形を経て開きます。作物が必要な水を受け取ると光と音で示します。 |
+| [SAND RESCUE](https://github.com/zabaglione/jr100dev/wiki/SAND-RESCUE) | 6つの畑で108滴の水を共有します。手前の作物は少量、奥の作物は高得点ですが、乾いた水路で水を失います。貯水と放流、最低収穫での終了と追加収穫を選び、余った水と得点を次へ持ち越します。水門、連続する水の移動、芽から実への成長、収穫、あふれに動きとSEがあります。 |
 | [WORD FOUNDRY](https://github.com/zabaglione/jr100dev/wiki/WORD-FOUNDRY) | 一文字だけ置き換えられる候補すべてに印を付けます。変更する文字の移動と、ここまでの単語の経路を表示します。 |
 | [RELIC DIVE](https://github.com/zabaglione/jr100dev/wiki/RELIC-DIVE) | 敵を攻撃すると、命中した一文字だけが打撃・破片・粒の三段階に変わり、音を鳴らします。他の同種の敵には影響しません。既存の被弾音と結果のジングルも維持しています。 |
 
@@ -77,3 +77,7 @@
 全51作品の常設キー一覧を本編から外し、タイトル・ヘルプへまとめました。選択中の項目、ゴール、予告、数値、行動結果は残しています。画像・音付き動画も新しいPRGで再収録しました。
 
 METRO WEAVEは3シフト・各8本で、通常便を待つか、高得点の急行を増発するかを選びます。駅での荷下ろしと信号待ちが急行の猶予を使います。192通りの配車試験、24本の通し運行、連続成功の加点、遅延境界、駅の待ち列、停止信号を検証しました。1シフトのクリア動画は約38秒です。
+
+## SAND RESCUE 2.0とGATE RUNNER 3.0
+
+SAND RESCUEは全6面の持ち越し、給水・消費・あふれを含む水量の保存、小量と満水での放流、追加収穫の得点と残り水、キャンペーンのやり直しを検証しました。GATE RUNNERは横27位置、ジャンプの長さ、壁・穴・梁の境界、毎コース3か所のジャンプ必須区間、1回の時計更新に移動かジャンプを1回だけ行う条件で全結晶を取れる経路を検証しました。両作とも6面を通常のキー入力で完走し、ROM起動・PCG・音声・16KB配置を確認しています。実機での動作・音声は未確認です。

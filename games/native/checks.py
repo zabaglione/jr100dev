@@ -77,12 +77,19 @@ class Model:
         self.init()
 
     def init(self, level=0):
+        retained = None
+        if self.metadata.get("carryCampaign"):
+            if level > self.s.level:
+                self.env["checkpoint"]()
+            retained = self.d[64:]
         self.s.__dict__.clear()
         self.s.mode = 1
         self.s.level = level
         self.b[:] = bytes(128)
         self.c[:] = bytes(128)
         self.d[:] = bytes(128)
+        if retained is not None:
+            self.d[64:] = retained
         levels = ROOT / self.name / "levels.json"
         if levels.exists():
             values = json.loads(levels.read_text())[level]
@@ -248,7 +255,7 @@ def action(m, r, a, pad=False, confirm=None):
         m.until("INPUT_DONE")
         m.answer_reset(confirm, pad=pad)
         if confirm:
-            r.init(r.s.level)
+            r.init(0 if r.metadata.get("carryCampaign") else r.s.level)
         r.s.action = a
         r.held = 0
         assert_state(m, r)
@@ -263,7 +270,7 @@ def action(m, r, a, pad=False, confirm=None):
         m.until("INPUT_DONE")
         m.answer_reset(confirm, pad=pad)
         if confirm:
-            r.init(r.s.level)
+            r.init(0 if r.metadata.get("carryCampaign") else r.s.level)
         r.s.action = a
         r.held = 0
         assert_state(m, r)
@@ -277,12 +284,14 @@ def action(m, r, a, pad=False, confirm=None):
         r.s.action = a
         if a == 5:
             if mode == 3:
-                r.init(r.s.level)
+                r.init(0 if r.metadata.get("carryCampaign") else r.s.level)
             elif mode == 2 and m.metadata.get("endless"):
                 r.env["advance"]()
             elif mode == 2:
                 level = r.s.level + 1
                 if level == m.metadata.get("levels", 10):
+                    if r.metadata.get("carryCampaign"):
+                        r.env["checkpoint"]()
                     r.s.mode = 4
                 else:
                     r.init(level)

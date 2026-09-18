@@ -63,7 +63,7 @@ def generate(output, metadata, directory):
         "CTRL+C: EXIT"
         if metadata.get("disableSpaceReset")
         else "SPACE: NEW GAME / CTRL+C: EXIT"
-        if metadata.get("endless")
+        if metadata.get("endless") or metadata.get("carryCampaign")
         else "SPACE: RESTART / CTRL+C: EXIT",
     )
     put(guide, 1, 23, "ANY INPUT : TITLE")
@@ -184,6 +184,14 @@ def generate(output, metadata, directory):
         from metro_weave.presentation import prepare as prepare_metro
 
         face_assets += prepare_metro(bank, hud)
+    if info["id"] == "sand-rescue":
+        from sand_rescue.presentation import prepare as prepare_sand
+
+        face_assets += prepare_sand(bank, hud)
+    if info["id"] == "gate-runner":
+        from gate_runner.presentation import prepare as prepare_runner
+
+        face_assets += prepare_runner(bank, hud)
     text = face_assets + (
         emit("TITLE_PCG", pcg) + emit("TITLE_SCREEN", screen) + emit("GAME_PCG", bank)
     )

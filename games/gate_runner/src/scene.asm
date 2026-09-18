@@ -1,0 +1,306 @@
+; Project and paint the road directly into the character framebuffer.
+; All scratch is inside the existing state reservation, not the saved screen.
+R_DEPTH: .equ $3780
+R_HALF: .equ $3781
+R_GROUND: .equ $3782
+R_HEIGHT: .equ $3783
+R_SLOT: .equ $3784
+R_OBJECT: .equ $3785
+R_KIND: .equ $3786
+R_LEFT: .equ $3787
+R_RIGHT: .equ $3788
+R_ROW: .equ $3789
+R_WIDTH: .equ $378A
+R_CODE: .equ $378B
+R_STRIPE: .equ $378C
+R_SIDE: .equ $378D
+
+RUNNER_SCENE:
+    CLR R_STRIPE
+    LDAA RUN_AGE
+    STAA R_DEPTH
+R_STRIPES:
+    JSR R_CAMERA
+    LDAA #16
+    SUBA R_HALF
+    STAA N_ARG0
+    LDAA R_GROUND
+    STAA N_ARG1
+    LDAA R_HALF
+    ASLA
+    STAA R_WIDTH
+    LDAA #$86
+    JSR R_LINE
+    LDAA R_DEPTH
+    ADDA #6
+    CMPA #18
+    BCS R_STRIPE_DEPTH
+    SUBA #18
+R_STRIPE_DEPTH:
+    STAA R_DEPTH
+    INC R_STRIPE
+    LDAA R_STRIPE
+    CMPA #3
+    BCS R_STRIPES
+    LDAA RUN_GATES
+    INCA
+    CMPA RUN_LIMIT
+    BCC R_CURRENT
+    CLR R_DEPTH
+    LDAA #16
+    STAA R_SLOT
+    JSR R_GATE
+R_CURRENT:
+    LDAA RUN_AGE
+    STAA R_DEPTH
+    CLR R_SLOT
+    JMP R_GATE
+
+R_CAMERA:
+    LDAA R_DEPTH
+    LDX #WIDTHS_ARRAY
+    JSR N_INDEX
+    LDAA 0,X
+    STAA R_HALF
+    LSRA
+    LSRA
+    INCA
+    STAA R_HEIGHT
+    LDAA R_DEPTH
+    LDX #FLOORS_ARRAY
+    JSR N_INDEX
+    LDAA 0,X
+    STAA R_GROUND
+    RTS
+
+; World columns 2..30 are projected symmetrically around column 16.
+R_PROJECT:
+    CLR R_SIDE
+    CMPA #16
+    BCC R_PROJECT_RIGHT
+    NEGA
+    ADDA #16
+    INC R_SIDE
+    BRA R_PROJECT_SCALE
+R_PROJECT_RIGHT:
+    SUBA #16
+R_PROJECT_SCALE:
+    LDAB R_HALF
+    JSR N_MUL
+    LDAB #14
+    JSR N_DIV
+    TST R_SIDE
+    BEQ R_PROJECT_ADD
+    NEGA
+R_PROJECT_ADD:
+    ADDA #16
+    RTS
+
+; Fill a horizontal span. A is a semantic screen code, N_ARG0/1 its origin.
+R_LINE:
+    STAA R_CODE
+    JSR N_XY
+    LDAB R_WIDTH
+    LDAA R_CODE
+R_LINE_LOOP:
+    STAA 0,X
+    INX
+    DECB
+    BNE R_LINE_LOOP
+    RTS
+
+R_GATE:
+    JSR R_CAMERA
+    LDAA R_SLOT
+    STAA R_OBJECT
+    JSR R_OBSTACLE
+    LDAA R_DEPTH
+    CMPA #18
+    BCC R_CRYSTAL_PASSED
+    LDAA R_SLOT
+    ADDA #3
+    STAA R_OBJECT
+    JSR R_OBSTACLE
+    LDAA R_SLOT
+    ADDA #6
+    LDX #B_ARRAY
+    JSR N_INDEX
+    LDAA 0,X
+    JSR R_PROJECT
+    STAA N_ARG0
+    LDAA R_SLOT
+    ADDA #7
+    LDX #B_ARRAY
+    JSR N_INDEX
+    LDAA 0,X
+    ASLA
+    STAA R_ROW
+    LDAA R_GROUND
+    SUBA R_ROW
+    STAA N_ARG1
+    LDAA R_DEPTH
+    CMPA #8
+    BCS R_SMALL_CRYSTAL
+    DEC N_ARG1
+    LDAA #4
+    STAA N_ARG2
+    JMP N_TILE
+R_SMALL_CRYSTAL:
+    JSR N_XY
+    LDAA #10
+    STAA 0,X
+R_CRYSTAL_PASSED:
+    RTS
+
+R_OBSTACLE:
+    LDAA R_OBJECT
+    LDX #B_ARRAY
+    JSR N_INDEX
+    LDAA 0,X
+    BNE R_HAS_OBSTACLE
+    RTS
+R_HAS_OBSTACLE:
+    STAA R_KIND
+    LDAA 1,X
+    JSR R_PROJECT
+    STAA R_LEFT
+    LDAA R_OBJECT
+    ADDA #2
+    LDX #B_ARRAY
+    JSR N_INDEX
+    LDAA 0,X
+    JSR R_PROJECT
+    CMPA R_LEFT
+    BHI R_RIGHT_VALID
+    LDAA R_LEFT
+    INCA
+R_RIGHT_VALID:
+    STAA R_RIGHT
+    SUBA R_LEFT
+    STAA R_WIDTH
+    CLR R_ROW
+R_OBSTACLE_ROWS:
+    LDAA R_LEFT
+    STAA N_ARG0
+    LDAA R_GROUND
+    SUBA R_ROW
+    STAA N_ARG1
+    LDAA R_KIND
+    CMPA #3
+    BEQ R_BEAM
+    LDAA #$84
+    LDAB R_KIND
+    CMPB #2
+    BEQ R_FACE
+    LDAA #$81
+    TST R_ROW
+    BNE R_FACE
+    DECA
+R_FACE:
+    JSR R_LINE
+    LDAA R_KIND
+    CMPA #1
+    BNE R_NEXT_ROW
+    LDAA #$82
+    STAA 0,X
+R_NEXT_ROW:
+    INC R_ROW
+    LDAA R_ROW
+    LDAB R_KIND
+    CMPB #2
+    BNE R_WALL_ROWS
+    CMPA #2
+    BCS R_OBSTACLE_ROWS
+    RTS
+R_WALL_ROWS:
+    CMPA R_HEIGHT
+    BCS R_OBSTACLE_ROWS
+    LDAA R_LEFT
+    STAA N_ARG0
+    LDAA R_GROUND
+    SUBA R_HEIGHT
+    STAA N_ARG1
+    LDAA #$83
+    JMP R_LINE
+R_BEAM:
+    LDAA R_GROUND
+    SUBA R_HEIGHT
+    STAA N_ARG1
+    LDAA #$80
+    JSR R_LINE
+R_BEAM_POLES:
+    LDAA R_GROUND
+    SUBA R_ROW
+    STAA N_ARG1
+    LDAA R_LEFT
+    DECA
+    STAA N_ARG0
+    JSR N_XY
+    LDAA #$85
+    STAA 0,X
+    LDAA R_RIGHT
+    STAA N_ARG0
+    JSR N_XY
+    LDAA #$85
+    STAA 0,X
+    INC R_ROW
+    LDAA R_ROW
+    CMPA R_HEIGHT
+    BCS R_BEAM_POLES
+    RTS
+
+R_BLOCKS: .equ $378E
+R_SCREEN_DELTA:
+    .word $9100
+R_BUFFER_DELTA:
+    .word $6F00
+
+; Decode the backdrop, polling once per eight runs instead of each tiny edge.
+R_BACKGROUND:
+    CLR R_BLOCKS
+    LDX #HUD_SCREEN
+    STX SRC
+    LDX #FRAMEBUFFER
+    STX DST
+R_BACKGROUND_NEXT:
+    LDX SRC
+    LDAB 0,X
+    BEQ R_BACKGROUND_DONE
+    LDAA 1,X
+    INX
+    INX
+    STX SRC
+    LDX DST
+R_BACKGROUND_RUN:
+    STAA 0,X
+    INX
+    DECB
+    BNE R_BACKGROUND_RUN
+    STX DST
+    INC R_BLOCKS
+    LDAA R_BLOCKS
+    ANDA #7
+    BNE R_BACKGROUND_NEXT
+    JSR CLOCK_SERVICE
+    BRA R_BACKGROUND_NEXT
+R_BACKGROUND_DONE:
+    RTS
+
+; During normal play every framebuffer byte is already a screen code.
+; Keep the shared filtered path for the staged introductory reveal.
+R_PRESENT:
+    LDX #FRAMEBUFFER
+R_PRESENT_ROW:
+    LDAB #32
+R_PRESENT_BYTE:
+    LDAA 0,X
+    ADX R_SCREEN_DELTA
+    STAA 0,X
+    ADX R_BUFFER_DELTA
+    INX
+    DECB
+    BNE R_PRESENT_BYTE
+    JSR CLOCK_SERVICE
+    CPX #FRAMEBUFFER + 768
+    BNE R_PRESENT_ROW
+    RTS

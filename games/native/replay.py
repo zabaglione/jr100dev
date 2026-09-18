@@ -116,6 +116,8 @@ class Player:
             if self.capture and self.s.level == 0:
                 self.m.capture(self.directory / "images/three-stars.png")
         last = self.s.level + 1 == self.m.metadata.get("levels", 10)
+        if last and self.m.metadata.get("carryCampaign"):
+            self.r.env["checkpoint"]()
         self.m.action(5, pad=self.pad)
         if last:
             self.s.mode = 4
@@ -181,6 +183,60 @@ def metro_dispatch(p, express=True):
         and available <= 29
         and all(x == 0 or x >= 8 for x in r.b[:3])
     ):
+        p.press(5)
+
+
+def sand_plan(r, extra=0):
+    """Compare the six visible crops: near only or near plus far on each route."""
+    plans = []
+    for choices in itertools.product(range(3), repeat=3):
+        reward = sum(
+            3 * (choice > 0) + r.b[i + 3] * 2 * (choice == 2)
+            for i, choice in enumerate(choices)
+        )
+        cost = sum(
+            r.b[i] * (choice > 0) + (r.b[i + 3] + r.b[i + 6]) * (choice == 2)
+            for i, choice in enumerate(choices)
+        )
+        if reward >= r.s.quota + extra:
+            plans.append((cost, -reward, choices))
+    return min(plans)[2]
+
+
+def sand_irrigate(p, extra=0):
+    plan = sand_plan(p.r, extra)
+    # Commit long pours first; water for a small near crop fills during travel.
+    for gate in sorted(range(3), key=lambda i: -plan[i]):
+        if plan[gate] == 0:
+            continue
+        needed = p.r.b[gate]
+        if plan[gate] == 2:
+            needed += p.r.b[gate + 3] + p.r.b[gate + 6]
+        pours = [needed]
+        if needed > 9:
+            pours = [p.r.b[gate], needed - p.r.b[gate]]
+        for amount in pours:
+            p.choice("gate", gate)
+            p.wait()  # Read the selected route before opening its gate.
+            while p.s.tank < amount:
+                p.wait()
+            p.press(5)
+            while p.s.flow:
+                p.wait()
+    for _ in range(3):
+        p.wait()
+    p.press(1)  # Bank this harvest; the player may choose to grow more instead.
+
+
+def runner_steer(p):
+    """Aim for the visible crystal, then jump just before the pit reaches us."""
+    s, r = p.s, p.r
+    target = r.b[6]
+    if s.x != target:
+        p.press(4 if s.x < target else 3)
+        return
+    remaining = (18 - s.age) * s.speed - s.pace
+    if r.b[7] and s.air == 0 and remaining <= 5:
         p.press(5)
 
 
@@ -261,6 +317,9 @@ def solve_orbit(p):
 
 
 def solve_stage(p):
+    if p.name == "sand_rescue":
+        sand_irrigate(p, extra=3 if p.s.level == 0 else 0)
+        return
     name = p.name
     s = p.s
     r = p.r
@@ -790,15 +849,7 @@ def solve_realtime(p):
             if s.pos in danger:
                 p.press(3 if (s.pos + 7) % 8 not in danger else 4)
         elif name == "gate_runner":
-            if s.kind == 1 and s.lane == s.obstacle and s.age == 4:
-                p.press(5)
-            else:
-                blocked = {s.obstacle}
-                if s.gates >= 6:
-                    blocked.add((s.obstacle + 1) % 3)
-                if s.lane in blocked:
-                    safe = next(i for i in range(3) if i not in blocked)
-                    p.press(3 if s.lane > safe else 4)
+            runner_steer(p)
         elif name == "echo_parry":
             if s.stance != s.attack:
                 p.press(1 if s.attack == 0 else 2)
@@ -822,16 +873,6 @@ def solve_realtime(p):
                 p.press(5)
         elif name == "metro_weave":
             metro_dispatch(p)
-        elif name == "sand_rescue":
-            desired = (s.released // 4) % 3
-            oldgate = next((i for i in range(3) if r.b[26 + i * 2] == 0), None)
-            if oldgate is None or (
-                oldgate != desired
-                and not r.c[10 + oldgate * 2]
-                and not r.c[18 + oldgate * 2]
-            ):
-                p.choice("gate", desired)
-                p.press(5)
         elif name == "star_lance":
             if s.cool == 0:
                 enemy = next((i for i in range(23, -1, -1) if r.b[i]), None)

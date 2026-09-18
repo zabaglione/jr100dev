@@ -77,11 +77,14 @@ def build(directory):
         from compiler import compile_file
 
         native_assets.generate(output, metadata, directory)
-        compiled, state_slots = compile_file(
-            directory / "rules.py", ("advance",) if metadata.get("endless") else ()
-        )
+        extra_entries = ("advance",) if metadata.get("endless") else ()
+        if metadata.get("carryCampaign"):
+            extra_entries += ("checkpoint",)
+        compiled, state_slots = compile_file(directory / "rules.py", extra_entries)
         if metadata["id"] == "phase-pairs":
             compiled += f"\nPHASE_FIRST: .equ {state_slots['s.first']}\n"
+        if metadata["id"] == "gate-runner":
+            compiled += f"\nRUN_AGE: .equ {state_slots['s.age']}\nRUN_GATES: .equ {state_slots['s.gates']}\nRUN_RATE: .equ {state_slots['s.rate']}\nRUN_LIMIT: .equ {state_slots['s.limit']}\n"
         if metadata.get("rankedCampaign"):
             compiled += f"\nRANK_STARS: .equ {state_slots['s.stars']}\n"
         (output / "rules.inc").write_text(compiled)
@@ -160,6 +163,23 @@ def build(directory):
             from phase_pairs.presentation import hint_hook
 
             module_source = hint_hook(module_source)
+        if path.name == "runtime.asm" and metadata["id"] == "sand-rescue":
+            from sand_rescue.presentation import runtime_hook
+
+            module_source = runtime_hook(module_source)
+        if path.name == "runtime.asm" and metadata["id"] == "gate-runner":
+            module_source = module_source.replace(
+                "    JSR FN_DRAW\n", "    JSR RUNNER_SCENE\n    JSR FN_DRAW\n"
+            )
+            before, after = module_source.split("N_RENDER:\n", 1)
+            _, after = after.split("    JSR COPY\n", 1)
+            module_source = before + "N_RENDER:\n    JSR R_BACKGROUND\n" + after
+            module_source = module_source.replace("CMPA #GAME_RATE", "CMPA RUN_RATE")
+        if path.name == "platform.asm" and metadata["id"] == "gate-runner":
+            module_source = module_source.replace(
+                "PRESENT_ROWS:\n",
+                "PRESENT_ROWS:\n    TST INTRO_PHASE\n    BEQ R_PRESENT\n",
+            )
         if path.name == "runtime.asm" and metadata.get("rankedCampaign"):
             # Use the ranked menu/loader, with the existing arithmetic and drawing ABI.
             helpers = module_source.split("N_INDEX:\n", 1)[1].split("N_WIN:\n", 1)[0]
