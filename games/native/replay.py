@@ -173,6 +173,57 @@ def fuse_plan(rows, cols):
     return plan
 
 
+def orbit_rotate(p, axis, orbit):
+    """Select a row/column through the same three-command menu as the player."""
+    if p.s.phase == 0:
+        p.press(2)
+    p.go(10 + axis, 3)
+    p.press(5)
+    while p.s.orbit != orbit:
+        p.press(2 if axis == 0 else 4)
+    p.press(5)
+
+
+def solve_orbit(p):
+    """Read the seed cards, make room for the goal, then draft nearby matches."""
+    level = p.s.level
+    if level == 0:
+        orbit_rotate(p, 0, 0)
+        goal = (2, 0, 1) * 3
+    elif level == 1:
+        orbit_rotate(p, 1, 0)
+        goal = (1, 1, 1, 0, 0, 0, 2, 2, 2)
+    else:
+        orbit_rotate(p, 0, 0)
+        orbit_rotate(p, 0, 2)
+        goal = (0, 1, 0, 1, 0, 2, 0, 2, 0)
+    p.go(9, 3)
+    p.press(5)
+    while p.s.mode == 1:
+        options = [
+            (offer, pos)
+            for offer in range(2)
+            for pos in range(9)
+            if p.r.b[pos] == 255 and goal[pos] == p.r.d[16 + offer]
+        ]
+        assert options, ("No suitable offered card", level, list(p.r.b[:9]))
+        offer, pos = min(
+            options,
+            key=lambda choice: (
+                abs(choice[1] // 3 - p.s.cell // 3)
+                + abs(choice[1] % 3 - p.s.cell % 3)
+                + (choice[0] != p.s.offer),
+                choice[1],
+            ),
+        )
+        if p.s.offer != offer:
+            p.press(4)
+        p.press(5)
+        p.go(pos, 3)
+        p.press(5)
+    assert tuple(p.r.b[:9]) == goal
+
+
 def solve_stage(p):
     name = p.name
     s = p.s
@@ -364,14 +415,7 @@ def solve_stage(p):
         p.press(5)
         return
     if name == "orbit_draft":
-        # Place the three equal cards in separate complete rows.
-        counts = [0] * 3
-        while s.mode == 1:
-            i = s.card
-            target = i * 3 + counts[i]
-            counts[i] += 1
-            p.go(target, 3)
-            p.press(5)
+        solve_orbit(p)
         return
     if name in ("twenty_one", "chain_suit"):
         return solve_cards(p)
