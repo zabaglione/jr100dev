@@ -161,7 +161,10 @@ def test_mister_downloads_are_direct_complete_and_autostart_ready(
         assert b"JR-800 Web Emulator contributors" in archive.read(
             "JR100/README-en.txt"
         )
-        assert b"have not been tested" in archive.read("JR100/README-en.txt")
+        for lang in ("en", "ja"):
+            assert archive.read(f"JR100/README-{lang}.txt") == (
+                builder.HERE / "download-readme" / f"{lang}.txt"
+            ).read_bytes()
     assert (
         "JR-800 Web Emulator contributors" in (tmp_path / "relic-dive.html").read_text()
     )
