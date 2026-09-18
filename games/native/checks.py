@@ -56,6 +56,7 @@ class Model:
             "mover": lambda *a: None,
             "held": lambda: self.held,
             "entropy": lambda: self.entropy(),
+            "reschedule": lambda: None,
             "win": self.win,
             "lose": lambda *a: setattr(self.s, "mode", 3),
         }

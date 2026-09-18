@@ -141,6 +141,10 @@ def build(directory):
         source += f"GAME_RATE: .equ {metadata.get('rate', 255)}\nGAME_LEVELS: .equ {metadata.get('levels', 10)}\n"
     for path in modules:
         module_source = path.read_text()
+        if path.name == "runtime.asm" and metadata.get("packedLevelTail"):
+            from packed_levels import loader
+
+            module_source = loader(module_source, metadata["packedLevelTail"])
         if path.name == "scene_fx.asm" and metadata["id"] == "loop-ten":
             # This game promises ten wall-clock seconds, including movement.
             module_source = (

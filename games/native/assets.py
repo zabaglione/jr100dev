@@ -167,6 +167,10 @@ def generate(output, metadata, directory):
     from quality.scene_art import prepare
 
     prepare(bank, hud, info["id"])
+    if info["id"] == "iron-script":
+        from iron_script.presentation import prepare as prepare_iron
+
+        face_assets += prepare_iron(bank, hud)
     text = face_assets + (
         emit("TITLE_PCG", pcg) + emit("TITLE_SCREEN", screen) + emit("GAME_PCG", bank)
     )
@@ -244,8 +248,11 @@ def generate(output, metadata, directory):
         )
         for i, values in enumerate(levels):
             assert len(values) <= 128
-            if ranked:
-                assert len(values) == 70 and all(0 <= v < 16 for v in values[:64])
+            if ranked or metadata.get("packedLevelTail"):
+                tail = 6 if ranked else metadata["packedLevelTail"]
+                assert len(values) == 64 + tail and all(
+                    0 <= v < 16 for v in values[:64]
+                )
                 packed = [values[j] * 16 + values[j + 1] for j in range(0, 64, 2)]
                 text += emit(f"N_LEVEL_{i}", packed + values[64:])
             else:

@@ -172,7 +172,11 @@ class DemoPlayer(Player):
                 idle(self.m, FUSE_READ_SECONDS)
 
     def press(self, a):
-        if self.rec and self.m.metadata.get("rate", 255) == 255:
+        if self.rec and (
+            self.m.metadata.get("rate", 255) == 255
+            or self.name == "iron_script"
+            and not self.s.running
+        ):
             # Cursor travel stays brisk; selecting/committing gets thinking time.
             weight = 1.5 if a == 5 else 0.8
             idle(self.m, self.pacing * weight * self.rng.uniform(0.8, 1.2))
@@ -193,6 +197,13 @@ class DemoPlayer(Player):
                         "row-complete", row=row + 1, remaining_columns=remaining
                     )
                     idle(self.m, FUSE_ROW_SECONDS)
+
+    def wait(self):
+        super().wait()
+        if self.rec and self.name == "iron_script":
+            self.rec.mark(
+                "command", step=self.s.steps, pc=self.s.pc, notice=self.s.notice
+            )
 
 
 def probe_native(name, rom):
@@ -335,6 +346,15 @@ def encode(rec, destination, clear_time, outcome, extra):
                 if e["kind"] == "combat" and e["effect"] == 6
             )
             + 0.65
+        )
+    if rec.m.metadata["id"] == "iron-script":
+        middle = (
+            next(
+                e["time"]
+                for e in rec.events
+                if e["kind"] == "command" and e["notice"] == 12
+            )
+            + 0.1
         )
     subprocess.run(
         [

@@ -42,7 +42,7 @@
 | ゲーム | 内容 |
 | --- | --- |
 | [CHRONO BREACH](chrono_breach/) | 弾道を読んで突破する20面の時間停止戦術 |
-| [IRON SCRIPT](iron_script/) | 命令列を組んでロボットをゴールへ導く |
+| [IRON SCRIPT](iron_script/) | 射撃・スイッチ・繰り返しの命令で24の工場を攻略 |
 | [CIRCUIT WORKS](circuit_works/) | 3入力の真理値表に合わせて論理ゲートを組む |
 | [METRO WEAVE](metro_weave/) | 分岐と信号を操作して乗客を運ぶ |
 | [SAND RESCUE](sand_rescue/) | 堰を開閉して水を作物へ導く |

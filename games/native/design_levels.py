@@ -54,21 +54,6 @@ def gravity_move(b, balls, action):
     return tuple(sorted(occupied))
 
 
-def create_iron(rng):
-    while True:
-        b = walls(rng, 9)
-        route = search(
-            9,
-            lambda p, board=b: (
-                (a, step(p, a)) for a in range(1, 5) if board[step(p, a)] != 1
-            ),
-            lambda p: p == 54,
-        )
-        if route and 10 <= len(route) <= 12:
-            b[54] = 3
-            return b, route
-
-
 def create_pairs(rng):
     remaining = set(range(16))
     pairs = []
@@ -97,7 +82,6 @@ def create_pairs(rng):
 def main():
     rng = random.Random(1002026)
     for name, factory, count in [
-        ("iron_script", create_iron, 20),
         ("phase_pairs", create_pairs, 10),
     ]:
         boards = []

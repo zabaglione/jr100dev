@@ -27,7 +27,7 @@
 | [ABYSS SIGNAL](https://github.com/zabaglione/jr100dev/wiki/ABYSS-SIGNAL) | 潜水艇はマスの中間を通って移動します。ソナーを使うと、観測範囲を横切る走査線と音で探査を示します。 |
 | [TRACE BLADE](https://github.com/zabaglione/jr100dev/wiki/TRACE-BLADE) | 剣士が計画した経路を中間位置を通って進み、標的を一体ずつ、光・破片・粒に変えて斬ります。 |
 | [LOOP TEN](https://github.com/zabaglione/jr100dev/wiki/LOOP-TEN) | 移動の中間位置、封印の反応、危険地形への接触、手動巻き戻しに途中の絵と音があります。移動演出の時間も10秒の制限に含まれます。 |
-| [IRON SCRIPT](https://github.com/zabaglione/jr100dev/wiki/IRON-SCRIPT) | 実行している命令を矢印で示し、ロボットの向きと中間移動を表示します。壁に当たると接触地点が点滅し、未到達で命令を使い切った場合は編集を促します。 |
+| [IRON SCRIPT](https://github.com/zabaglione/jr100dev/wiki/IRON-SCRIPT) | 射撃・スイッチ操作・直前2命令の繰り返しを追加し、通常／装甲敵、開閉扉、周期レーザーを組み合わせた24面へ刷新しました。ROM矢印、扉の開閉、命中点滅、4段階の撃破、原因を残す再編集に対応します。 |
 | [QUIET ROUTE](https://github.com/zabaglione/jr100dev/wiki/QUIET-ROUTE) | 探索者と警備員が向きを変えて中間位置を通ります。静音・通常歩行と音の届く距離を明記し、機密取得と出口の解放を光と音で示します。 |
 | [CIRCUIT WORKS](https://github.com/zabaglione/jr100dev/wiki/CIRCUIT-WORKS) | 3入力・8行の真理値表を使う22問です。各入力の信号が3段のゲートを通る過程を順番に見せ、正解した行数を表示します。 |
 | [HEARTH ZERO](https://github.com/zabaglione/jr100dev/wiki/HEARTH-ZERO) | 3種類の寒波を、それぞれ12日間生き延びます。今夜と続く2夜の寒さを予告し、作業、食事、暖かさの消費を音と間を挟んで順に見せます。 |
@@ -65,3 +65,7 @@
 - 所有するBASIC ROMで今回の35作品を起動し、画像と音付き動画を更新しました。開始・進行・最初の目標達成の3枚を並べた後に、動画へのリンクを置いています。
 - 35本の動画は最初の目標達成までを収録しました。約30秒を目安とし、長いゲームは途中を省略せず収録しています。
 - 実機での動作・音声は未確認です。
+
+## IRON SCRIPT 2.0の追加確認
+
+24面を独立した経路探索と入力リプレイで検証しました。すべての面で移動以外の命令、または枠数を節約する繰り返しが必要です。9種類の停止・再実行、ROM矢印、扉が開く3段階、撃破の4段階、装甲への2回命中、レーザー周期を確認しています。紹介画像と約31秒の1面クリア動画も更新しました。

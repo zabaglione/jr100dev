@@ -22,7 +22,7 @@
 | [GLYPH SHIFT](GLYPH-SHIFT) | [パズル](Genre-Puzzle) | 物体の通行ルールを書き換えて脱出する。40面・規定手数と任意ルーンによる3段階評価・パスワード対応。 | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=glyph-shift) |
 | [GRAVITY WELL](GRAVITY-WELL) | [パズル](Genre-Puzzle) | 盤面を傾けて複数の球を同時に収める。40面・規定手数と任意ルーンによる3段階評価・パスワード対応。 | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=gravity-well) |
 | [HEARTH ZERO](HEARTH-ZERO) | [経営・サバイバル](Genre-Management) | 食料・薪・熱を配分して寒波を越える | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=hearth-zero) |
-| [IRON SCRIPT](IRON-SCRIPT) | [戦術・自動化](Genre-Tactics) | 命令列を組んでロボットをゴールへ導く | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=iron-script) |
+| [IRON SCRIPT](IRON-SCRIPT) | [戦術・自動化](Genre-Tactics) | 射撃・スイッチ・繰り返しの命令で24の工場を攻略 | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=iron-script) |
 | [LOOP TEN](LOOP-TEN) | [探索・アドベンチャー](Genre-Exploration) | 10秒の巻き戻しを越えて12の封印を解く | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=loop-ten) |
 | [LUMEN CROSS](LUMEN-CROSS) | [パズル](Genre-Puzzle) | 十字の反転で光の格子を消す | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=lumen-cross) |
 | [LUNAR TOUCHDOWN](LUNAR-TOUCHDOWN) | [アクション](Genre-Action) | 燃料と降下速度を調整する着陸挑戦 | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=lunar-touchdown) |

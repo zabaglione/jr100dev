@@ -54,6 +54,13 @@ class Player:
         self.ticks += 1
         if self.capture and self.ticks == 30:
             self.m.capture(self.directory / "images/play-02.png")
+        if (
+            self.capture
+            and self.name == "iron_script"
+            and self.s.level == 23
+            and self.s.steps == 8
+        ):
+            self.m.capture(self.directory / "images/play-02.png")
         if self.capture and self.name == "brick_pulse":
             if (
                 self.s.item
@@ -234,7 +241,7 @@ def solve_stage(p):
         for i, a in enumerate(route):
             p.choice("cursor", i)
             while r.c[i] != a:
-                p.press(1)
+                p.press(1 if (a - r.c[i]) % 8 <= 4 else 2)
         p.press(5)
         while s.mode == 1 and s.running:
             p.wait()

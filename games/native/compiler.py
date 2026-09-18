@@ -150,6 +150,10 @@ class Compiler:
         elif name == "entropy":
             assert not n.args, "entropy() takes no arguments"
             self.emit("    LDAA TICK")
+        elif name == "reschedule":
+            assert not n.args, "reschedule() takes no arguments"
+            # Begin a timed sequence with one complete input/observation interval.
+            self.emit("    LDAA TICK\n    STAA N_LAST")
         elif name in ("animate", "hold", "glide"):
             assert len(n.args) == 1
             self.load(n.args[0])

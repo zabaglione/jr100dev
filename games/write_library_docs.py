@@ -79,6 +79,8 @@ def launch_note():
 
 
 def font_description(game):
+    if game["id"] == "iron-script":
+        return "方向にはJR-100のROMにある上下左右の矢印を使います。PCG32文字は8種の地形・キャラクターに割り当て、ロボットの向きと扉の開閉ではそれぞれ4文字を書き換えます。案内と数値は通常フォントで表示します。"
     if game["id"] == "tide-bridge":
         return "行・列の反転表示に8文字、主人公に4文字のPCGを使います。主人公の4文字は歩く向きと喜びのポーズに合わせて書き換えます。案内と数字には通常フォントを使っています。"
     if game["id"] == "phase-pairs":
@@ -338,6 +340,8 @@ for g in games:
     body += "出力はゲームの `build/` ディレクトリに作られます。`rules.py` はビルド時にMB8861Hの機械語へ変換されます。JR-100上でPythonを実行する方式ではありません。\n\n"
     if meta.get("rankedCampaign"):
         body += "盤面はビルド時に2マスを1バイトへ圧縮します。`levels.json` が編集用の面データ、`challenges.json` がクリア経路とルーン回収経路、`solutions.json` が全40面の3つ星リプレイです。`native/campaign_levels.py` で再生成でき、`native/campaign_checks.py` は全盤面の解探索、評価条件、再挑戦、面選択、最高評価の保持、手数カウンターの上限を検査します。回転・鏡映だけの地形の重複は除外しています。`native/password_checks.py` はパスワードの圧縮・展開、誤入力の検出、別作品のコード拒否と、再起動後のキー／パッド入力による記録復元を検証します。\n\n"
+    if g["id"] == "iron-script":
+        body += "`campaign.py` が24面の設計と独立した経路探索、`levels.json` が生成した盤面、`solutions.json` が入力リプレイです。`.venv/bin/python games/iron_script/campaign.py` で再生成できます。盤面はビルド時に2マスを1バイトへ圧縮します。`tests/check_iron_script.py` は全24面の独立検証、失敗後の命令保持、ROM矢印、開閉と撃破の途中フレーム、装甲とレーザー周期を検査します。\n\n"
     body += (
         "キー入力による8ラウンドの継続クリア、"
         if meta.get("endless")
