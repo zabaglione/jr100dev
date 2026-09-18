@@ -1,6 +1,6 @@
 # IRON SCRIPT
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/iron-script.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/iron-script.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/iron-script.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [戦術・自動化](Genre-Tactics) → IRON SCRIPT
 

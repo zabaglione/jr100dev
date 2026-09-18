@@ -1,6 +1,6 @@
 # SEED MERGE
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/seed-merge.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/seed-merge.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/seed-merge.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [パズル](Genre-Puzzle) → SEED MERGE
 

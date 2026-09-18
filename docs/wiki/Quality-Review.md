@@ -1,6 +1,6 @@
 # 公開ゲームの品質改善基準
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/) · [All 51 games ZIP / 全51作品](https://zabaglione.github.io/pyjr100emu/guide/downloads/jr100-games-mister.zip) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 初回の共通改修では、これまでの指摘を8項目に整理し、個別改修済みの16作品に続いて、残る35作品を改善しました。全51作品をビルド・検証しています。
 
@@ -70,7 +70,7 @@
 - 新しい配札64例、真理値表22問、碑文20問、容疑者の12事件、競りの選択肢、装甲への2回命中を検証しました。演出中の5,059フレームについて画面範囲を確認しました。
 - 所有するBASIC ROMで今回の35作品を起動し、画像と音付き動画を更新しました。開始・進行・最初の目標達成の3枚を並べた後に、動画へのリンクを置いています。
 - 35本の動画は最初の目標達成までを収録しました。約30秒を目安とし、長いゲームは途中を省略せず収録しています。
-- 実機での動作・音声は未確認です。
+- SS1実機での作品別の確認範囲は[MiSTerガイド](https://zabaglione.github.io/pyjr100emu/guide/mister.html)に掲載しています。オリジナルのJR-100実機は未確認です。
 
 ## IRON SCRIPT 2.0の追加確認
 
@@ -84,4 +84,4 @@ METRO WEAVEは3シフト・各8本で、通常便を待つか、高得点の急�
 
 ## SAND RESCUE 2.0とGATE RUNNER 3.0
 
-SAND RESCUEは全6面の持ち越し、給水・消費・あふれを含む水量の保存、小量と満水での放流、追加収穫の得点と残り水、キャンペーンのやり直しを検証しました。GATE RUNNERは横27位置、ジャンプの長さ、壁・穴・梁の境界、毎コース3か所のジャンプ必須区間、1回の時計更新に移動かジャンプを1回だけ行う条件で全結晶を取れる経路を検証しました。両作とも6面を通常のキー入力で完走し、ROM起動・PCG・音声・16KB配置を確認しています。実機での動作・音声は未確認です。
+SAND RESCUEは全6面の持ち越し、給水・消費・あふれを含む水量の保存、小量と満水での放流、追加収穫の得点と残り水、キャンペーンのやり直しを検証しました。GATE RUNNERは横27位置、ジャンプの長さ、壁・穴・梁の境界、毎コース3か所のジャンプ必須区間、1回の時計更新に移動かジャンプを1回だけ行う条件で全結晶を取れる経路を検証しました。両作とも6面を通常のキー入力で完走し、ROM起動・PCG・音声・16KB配置を確認しています。SS1実機での作品別の確認範囲は[MiSTerガイド](https://zabaglione.github.io/pyjr100emu/guide/mister.html)に掲載しています。オリジナルのJR-100実機は未確認です。

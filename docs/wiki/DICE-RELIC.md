@@ -1,6 +1,6 @@
 # DICE RELIC
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/dice-relic.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/dice-relic.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/dice-relic.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [カード・ボード](Genre-Tabletop) → DICE RELIC
 

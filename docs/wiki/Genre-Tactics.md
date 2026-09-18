@@ -1,6 +1,6 @@
 # 戦術・自動化
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/) · [All 51 games ZIP / 全51作品](https://zabaglione.github.io/pyjr100emu/guide/downloads/jr100-games-mister.zip) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → 戦術・自動化
 

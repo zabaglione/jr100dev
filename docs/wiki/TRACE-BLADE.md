@@ -1,6 +1,6 @@
 # TRACE BLADE
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/trace-blade.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/trace-blade.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/trace-blade.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [パズル](Genre-Puzzle) → TRACE BLADE
 

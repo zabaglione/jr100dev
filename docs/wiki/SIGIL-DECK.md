@@ -1,6 +1,6 @@
 # SIGIL DECK
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/sigil-deck.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/sigil-deck.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/sigil-deck.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [カード・ボード](Genre-Tabletop) → SIGIL DECK
 

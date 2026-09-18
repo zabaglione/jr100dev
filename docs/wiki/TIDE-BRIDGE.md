@@ -1,6 +1,6 @@
 # TIDE BRIDGE
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/tide-bridge.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/tide-bridge.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/tide-bridge.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [パズル](Genre-Puzzle) → TIDE BRIDGE
 

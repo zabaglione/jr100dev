@@ -1,6 +1,6 @@
 # ECHO PARRY
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/echo-parry.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/echo-parry.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/echo-parry.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [アクション](Genre-Action) → ECHO PARRY
 

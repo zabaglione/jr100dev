@@ -1,6 +1,6 @@
 # RELIC DIVE
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/relic-dive.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/relic-dive.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/relic-dive.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [探索・アドベンチャー](Genre-Exploration) → RELIC DIVE
 

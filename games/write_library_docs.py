@@ -196,7 +196,7 @@ home += (
     "\n[タイトル順の全作品](All-Games) · [タイトル画面ギャラリー](#タイトル画面ギャラリー) · [共通操作と起動方法](Controls)\n\n"
     + launch_note()
 )
-home += "\n\n基本の方向キーは **W/A/S/D**、8方向の作品は **QWE／AD／ZXC** です。作品ごとの操作は各ページに掲載しています。\n\nエミュレーターで確認済みです。実機での動作・音声は未確認です。\n\n"
+home += "\n\n基本の方向キーは **W/A/S/D**、8方向の作品は **QWE／AD／ZXC** です。作品ごとの操作は各ページに掲載しています。\n\nエミュレーターで確認済みです。SS1実機での作品別の確認範囲は[MiSTerガイド](https://zabaglione.github.io/pyjr100emu/guide/mister.html)に掲載しています。オリジナルのJR-100実機は未確認です。\n\n"
 home += f"[ビルド可能なソースと開発手順]({BASE}/tree/main/games)\n"
 home += "\n**2026年9月18日更新：** さらに25作品を個別に改修しました。2軌道を渡るORBIT DODGE、熱を管理するSTAR LANCE、2種類の作物を育てるORCHARD DAYSなど、見た目と音に加えて攻略の選択肢を増やしています。[25作品の変更点](Second-Review)／[これまでの改善](Quality-Review)／[動きと音の紹介](Presentation)。\n"
 home += "\n## タイトル画面ギャラリー\n\n"
@@ -358,7 +358,7 @@ for g in games:
         if meta.get("endless")
         else "キー入力による全ステージのクリア、"
     )
-    body += "失敗を含む入力試験、画面範囲、RAM配置、スタック、PCM出力をエミュレーターで検査しています。掲載画像は所有するBASIC ROMからPRGを起動した実フレームです。実機での動作・音声は未確認です。\n\n"
+    body += "失敗を含む入力試験、画面範囲、RAM配置、スタック、PCM出力をエミュレーターで検査しています。掲載画像は所有するBASIC ROMからPRGを起動した実フレームです。SS1実機での作品別の確認範囲は[MiSTerガイド](https://zabaglione.github.io/pyjr100emu/guide/mister.html)に掲載しています。オリジナルのJR-100実機は未確認です。\n\n"
     body += f"```sh\n.venv/bin/python games/native/replay.py {g['directory']} --rom /path/to/owned-rom.prg --capture --keyboard\n```\n\n"
     body += "タイトルには長めの単音曲、プレイ中には効果音を付けています。"
     body += f"ソース・画像・曲は[MIT License]({BASE}/blob/main/games/LICENSE)。`art/`にはPCG Workbench用の画面データもあります。\n"

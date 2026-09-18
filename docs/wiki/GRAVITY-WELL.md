@@ -1,6 +1,6 @@
 # GRAVITY WELL
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/gravity-well.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/gravity-well.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/gravity-well.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [パズル](Genre-Puzzle) → GRAVITY WELL
 

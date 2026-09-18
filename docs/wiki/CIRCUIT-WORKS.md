@@ -1,6 +1,6 @@
 # CIRCUIT WORKS
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/circuit-works.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/circuit-works.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/circuit-works.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [戦術・自動化](Genre-Tactics) → CIRCUIT WORKS
 

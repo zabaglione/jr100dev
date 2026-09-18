@@ -1,6 +1,6 @@
 # 日英ゲームガイド
 
-公開先は https://zabaglione.github.io/pyjr100emu/guide/ です。51作品と共通操作を静的HTMLへ生成します。画像・動画は既存の公開素材を参照し、ゲーム本体を変更しません。
+公開先は https://zabaglione.github.io/pyjr100emu/guide/ です。51作品・共通操作・MiSTer起動手順を静的HTMLへ生成します。画像・動画は既存の公開素材を参照します。MiSTer用PRGは公開カタログのPRGから生成し、機械語データを保持してCMNTセクションに自動起動ヒントを付けます。
 
 初回はブラウザーの優先言語が `ja` / `ja-*` なら日本語、それ以外は英語です。`?lang=en` / `?lang=ja` による指定を最優先し、手動選択を `jr100-guide-language` に保存します。保存できない場合もガイド内のリンクへ言語を引き継ぎます。JavaScriptが無効なら英語を表示します。
 
@@ -18,7 +18,11 @@ uv pip install --python .venv/bin/python -r docs/guide/requirements.txt
 node --test docs/guide/tests/language.test.cjs
 ```
 
-生成先は専用の `guide/` ディレクトリを指定します。生成した53ページ、CSS、JavaScript、ライセンスだけを `manifest.json` に登録し、Web版の配布ビルドはこの一覧とハッシュを検証してコピーします。
+生成先は専用の `guide/` ディレクトリを指定します。同じ階層の `games/catalog.json` と配布PRGが必要です。別の場所にある場合は `--games /path/to/published/games` を指定します。公開カタログの全51作品・版・パス・SHA-256・RAM・開始位置を検査してから処理します。
+
+生成した54ページ、CSS、JavaScript、ライセンス、`downloads/` 内の51本のPRG・ZIP・日英READMEだけを `manifest.json` に登録します。ZIPには `JR100/` 以下にゲーム・日英README・MITライセンスを収め、ROMやコア本体は含めません。Web版の配布ビルドはファイル一覧・ハッシュ・元PRGとの対応・ZIPの内容を検証してコピーします。
+
+MiSTerの案内原稿は `en/mister.md` と `ja/mister.md`、オフライン説明は `download-readme/` です。MiSTer側のメニュー名と自動起動仕様は [JR100_MiSTer](https://github.com/MiSTer-devel/JR100_MiSTer) に合わせています。`Autostart loaded program = Yes` と `Load PRG` を使い、必要時は `A=USR($0300)` で起動します。SS1で確認した4作品の基本動作と、実機所有者が確認したSTAR LANCEの音声・物理パッド操作を区別し、全51作品の実機確認済みとは記載しません。RELIC DIVEの共同著作者表示をガイド・ZIP・LICENSEに残します。
 
 翻訳を照合した後の記録更新例（対象だけ指定）：
 

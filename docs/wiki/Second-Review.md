@@ -1,6 +1,6 @@
 # 未個別改修作品の再点検
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/) · [All 51 games ZIP / 全51作品](https://zabaglione.github.io/pyjr100emu/guide/downloads/jr100-games-mister.zip) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 共通演出を加えたことと、個々の遊びを十分に磨いたことを区別する。既に個別改修した20作品は今回の変更対象から外し、残る31作品を再点検する。
 
@@ -60,4 +60,4 @@ CHRONO BREACHの20面、SIGIL DECKのカード構築と連戦、ABYSS SIGNALの�
 - 所有BASIC ROMから起動したエミュレーターで全25作品を通しプレイし、画面を確認しました。反転・移動・被弾の中間表示、局所的なPCG書換え、開始と結果の入力抑止、SEとジングルも確認しています。
 - 25作品の開始・進行・クリアの3画像と動画を更新しました。動画は30〜86秒。最初の目標達成までを省略せず、通常速度で収録しています。音声はエミュレーターのPCMです。
 - 公開動画の全51本をデコードし、153画像、音声、クリアイベント、PRGとのSHA-256一致を検査しました。
-- 実機での動作・音声は未確認です。
+- SS1実機での作品別の確認範囲は[MiSTerガイド](https://zabaglione.github.io/pyjr100emu/guide/mister.html)に掲載しています。オリジナルのJR-100実機は未確認です。

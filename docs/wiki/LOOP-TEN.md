@@ -1,6 +1,6 @@
 # LOOP TEN
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/loop-ten.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/loop-ten.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/loop-ten.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [探索・アドベンチャー](Genre-Exploration) → LOOP TEN
 

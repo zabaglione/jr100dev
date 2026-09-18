@@ -6,6 +6,8 @@ import html
 import json
 import re
 import shutil
+import struct
+import zipfile
 from pathlib import Path
 
 from markdown_it import MarkdownIt
@@ -18,6 +20,7 @@ WIKI_BASE = BASE + "/wiki/"
 IMAGE_BASE = "https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images"
 PUBLIC = "https://zabaglione.github.io/pyjr100emu/guide/"
 LANGUAGES = ("en", "ja")
+BUNDLE = "downloads/jr100-games-mister.zip"
 md = MarkdownIt("commonmark", {"html": False}).enable("table")
 
 
@@ -30,6 +33,133 @@ def bilingual(values):
         f'<span lang="{lang}" data-language="{lang}">{html.escape(values[lang])}</span>'
         for lang in LANGUAGES
     )
+
+
+def autostart_program(data, entry):
+    """Preserve PROG v2 sections and add the MiSTer CMNT launch hint."""
+    if data[:8] != b"PROG\x02\x00\x00\x00" or entry != 0x0300:
+        raise ValueError("MiSTer downloads require PROG v2 with entry $0300")
+    result, comments, offset = bytearray(data[:8]), [], 8
+    while offset < len(data):
+        if offset + 8 > len(data):
+            raise ValueError("Truncated PROG section")
+        tag = data[offset : offset + 4]
+        size = struct.unpack_from("<I", data, offset + 4)[0]
+        end = offset + 8 + size
+        if end > len(data):
+            raise ValueError("Truncated PROG payload")
+        payload = data[offset + 8 : end]
+        if tag == b"CMNT":
+            if (
+                len(payload) < 4
+                or struct.unpack_from("<I", payload)[0] != len(payload) - 4
+            ):
+                raise ValueError("Invalid PROG comment")
+            comments.append(
+                re.sub(r"USR=\$[0-9A-Fa-f]{4}", "", payload[4:].decode("utf-8")).strip()
+            )
+        else:
+            result.extend(data[offset:end])
+        offset = end
+    note = " ".join([f"USR=${entry:04X}", *(text for text in comments if text)]).encode(
+        "utf-8"
+    )
+    payload = struct.pack("<I", len(note)) + note
+    return bytes(result) + b"CMNT" + struct.pack("<I", len(payload)) + payload
+
+
+def published_programs(folder, ids):
+    catalog = json.loads((folder / "catalog.json").read_text())
+    entries = catalog.get("games", [])
+    if (
+        catalog.get("schemaVersion") != 1
+        or len(entries) != len(ids)
+        or {g["id"] for g in entries} != ids
+    ):
+        raise ValueError("Published game catalog must cover every guide exactly once")
+    result = {}
+    for game in entries:
+        gid, version = game["id"], game["version"]
+        expected = f"games/{gid}/{version}/{gid}.prg"
+        if (
+            not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", version)
+            or game["path"] != expected
+            or game["ramKiB"] != 16
+        ):
+            raise ValueError("Invalid published program path or RAM")
+        source = folder.parent / expected
+        if not source.resolve().is_relative_to(folder.resolve()) or source.is_symlink():
+            raise ValueError("Program must stay inside the published games directory")
+        data = source.read_bytes()
+        if hashlib.sha256(data).hexdigest() != game["sha256"]:
+            raise ValueError("Published program hash mismatch")
+        result[gid] = game | {"data": autostart_program(data, game["entry"])}
+    return result
+
+
+def launch_steps():
+    return [
+        pair(
+            "Copy the .prg into games/JR100/ on your SD card.",
+            ".prgをSDカードのgames/JR100/へコピーします。",
+        ),
+        pair(
+            "In the JR-100 core menu, set Autostart loaded program to Yes.",
+            "JR-100コアのメニューでAutostart loaded programをYesにします。",
+        ),
+        pair(
+            "Choose Load PRG, select the game, then press RETURN at its title.",
+            "Load PRGでゲームを選び、タイトル画面でRETURNを押します。",
+        ),
+    ]
+
+
+def quickstart(collapsed=False):
+    steps = "".join(f"<li>{bilingual(step)}</li>" for step in launch_steps())
+    content = f"""<section class="quickstart" aria-labelledby="mister-start">
+      <h2 id="mister-start">{bilingual(pair("Start on MiSTer", "MiSTerで起動"))}</h2>
+      <ol>{steps}</ol>
+      <p class="note">{bilingual(pair("Still at READY? Type", "READYで止まる場合は"))} <code>A=USR($0300)</code> {bilingual(pair("and press RETURN.", "を入力してRETURN。"))}
+      <a data-guide-link href="mister.html">{bilingual(pair("First-time setup / SuperStation One", "初回設定・SuperStation Oneの手順"))}</a></p>
+    </section>"""
+    if collapsed:
+        heading = bilingual(
+            pair("Start on MiSTer in 3 steps", "MiSTerで起動する3ステップ")
+        )
+        return f'<details class="quickstart-fold"><summary>{heading}</summary>{content}</details>'
+    return content
+
+
+def download_link(gid, label=None):
+    return f'<a class="button primary" href="downloads/{gid}.prg" download="{gid}.prg">{bilingual(label or pair("Download .prg (MiSTer)", "MiSTer用 .prgを保存"))}</a>'
+
+
+def bundle_link():
+    return f'<a class="button primary" href="{BUNDLE}" download="jr100-games-mister.zip">{bilingual(pair("Download all 51 games (.zip)", "全51作品をまとめて保存（ZIP）"))}</a>'
+
+
+def write_downloads(destination, programs):
+    folder = destination / "downloads"
+    folder.mkdir(exist_ok=True)
+    files = {}
+    for gid, game in sorted(programs.items()):
+        files[f"{gid}.prg"] = game["data"]
+    for lang in LANGUAGES:
+        files[f"README-{lang}.txt"] = (
+            HERE / "download-readme" / f"{lang}.txt"
+        ).read_bytes()
+    for name, data in files.items():
+        (folder / name).write_bytes(data)
+    files["LICENSE.txt"] = (ROOT / "games/LICENSE").read_bytes()
+    with zipfile.ZipFile(
+        destination / BUNDLE, "w", compression=zipfile.ZIP_DEFLATED
+    ) as archive:
+        for name, data in sorted(files.items()):
+            info = zipfile.ZipInfo("JR100/" + name, date_time=(2026, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.external_attr = 0o100644 << 16
+            archive.writestr(info, data)
+    return [BUNDLE, *("downloads/" + name for name in files if name != "LICENSE.txt")]
 
 
 def japanese_manual(game):
@@ -146,10 +276,14 @@ def render(text, game_ids):
 
 
 def shell(name, titles, content, descriptions):
+    stylesheet_version = hashlib.sha256(
+        (HERE / "assets/style.css").read_bytes()
+    ).hexdigest()[:12]
     nav = (
         '<a data-guide-link href="index.html">'
         + bilingual(pair("All games", "全作品"))
         + "</a>"
+        '<a data-guide-link href="mister.html">MiSTer FPGA</a>'
         '<a data-guide-link href="controls.html">'
         + bilingual(pair("Getting started", "操作と起動方法"))
         + "</a>"
@@ -160,8 +294,8 @@ def shell(name, titles, content, descriptions):
     )
     footer = bilingual(
         pair(
-            "Made for the JR-100 with standard 16 KB RAM. Emulator-tested; real hardware is unverified.",
-            "標準RAM 16KBのJR-100向け。エミュレーターで検証済みです。実機での動作・音声は未確認です。",
+            "Made for the JR-100 with standard 16 KB RAM. See MiSTer FPGA for hardware test coverage.",
+            "標準RAM 16KBのJR-100向け。SS1実機での確認範囲はMiSTer FPGAのページに掲載しています。",
         )
     )
     return f'''<!doctype html>
@@ -180,7 +314,7 @@ def shell(name, titles, content, descriptions):
   <link rel="alternate" hreflang="ja" href="{PUBLIC}{name}?lang=ja">
   <link rel="alternate" hreflang="x-default" href="{PUBLIC}{name}">
   <script src="language.js"></script>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v={stylesheet_version}">
   <script src="guide.js" defer></script>
 </head>
 <body>
@@ -194,13 +328,13 @@ def shell(name, titles, content, descriptions):
   </header>
   <div class="wrap"><nav class="utility">{nav}</nav></div>
   <main class="wrap" id="main">{content}</main>
-  <footer class="wrap"><p>{footer}</p><a href="{BASE}/wiki">Wiki</a> · <a href="{BASE}/tree/main/games">Source / MIT License</a></footer>
+  <footer class="wrap"><p>{footer} <a data-guide-link href="mister.html">MiSTer FPGA</a></p><p>{bilingual(pair("RELIC DIVE co-developed with JR-800 Web Emulator contributors.", "RELIC DIVEはJR-800 Web Emulator contributorsとの共同制作です。"))}</p><a href="{BASE}/wiki">Wiki</a> · <a href="LICENSE.txt">MIT License</a> · <a href="{BASE}/tree/main/games">Source</a></footer>
 </body>
 </html>
 '''
 
 
-def game_page(game, english, metadata, game_ids):
+def game_page(game, english, metadata, game_ids, program):
     gid = game["id"]
     title = html.escape(game["title"])
     texts = {"en": english_extras(game, english), "ja": japanese_manual(game)}
@@ -241,17 +375,17 @@ def game_page(game, english, metadata, game_ids):
             "Highlights; omitted sections are marked LATER.",
             "ダイジェスト。省略箇所にはLATERを表示します。",
         )
-    body = f'''<section class="hero">
+    body = f"""<section class="hero">
       <p class="breadcrumbs"><a data-guide-link href="index.html">{bilingual(pair("All games", "全作品"))}</a> / {bilingual(pair(metadata["genres"][game["genre"]], metadata["genres_ja"][game["genre"]]))}</p>
       <h1>{title}</h1>{intro}
-      <nav class="actions"><a class="button primary" href="../?game={gid}">{bilingual(pair("Play this game", "このゲームをプレイ"))}</a><a href="{BASE}/tree/main/games/{game["directory"]}">{bilingual(pair("Source", "ソース"))}</a></nav>
-      <p class="note">{bilingual(pair("To play, set up your own BASIC ROM in the emulator once. Screenshots and videos need no ROM.", "プレイにはエミュレーターで自分のBASIC ROMを一度設定してください。画像と動画の閲覧にはROMは不要です。"))} <a data-guide-link href="controls.html">{bilingual(pair("Setup and controls", "設定と共通操作"))}</a></p>
-    </section>
+      <nav class="actions">{download_link(gid)}<a class="button" href="../?game={gid}">{bilingual(pair("Play in browser", "ブラウザーで遊ぶ"))}</a></nav>
+      <p class="note"><code>{gid}.prg</code> · v{program["version"]} · {len(program["data"]) / 1024:.1f} KiB · 16 KB RAM · {bilingual(pair("Autostart ready", "自動起動対応"))}</p>
+    </section>{quickstart()}
     <section class="media" aria-label="Screenshots and video">
       <div class="shots">{shots}</div>
       <p class="video-link"><a class="button" href="../gameplay.html?game={gid}#video">{video}</a></p>
       <p class="note">{bilingual(video_note)}</p>
-    </section>{contents}'''
+    </section>{contents}"""
     return shell(
         gid + ".html",
         pair(game["title"], game["title"]),
@@ -263,8 +397,8 @@ def game_page(game, english, metadata, game_ids):
 def index_page(games, metadata):
     title = pair("Find your next game", "次に遊ぶゲームを探す")
     intro = pair(
-        f"{len(games)} original games for the JR-100. Browse the screenshots, read the rules, and play in your browser.",
-        f"JR-100のオリジナルゲーム{len(games)}作品。画面と遊び方を見て、ブラウザーからすぐに遊べます。",
+        f"{len(games)} games for the JR-100. Find a game, download its .prg for MiSTer FPGA, or try it in your browser.",
+        f"JR-100のゲーム{len(games)}作品。遊びたい作品の.prgをMiSTer FPGA用に保存したり、ブラウザーで試したりできます。",
     )
     options = (
         '<option value="" data-en="All genres" data-ja="全ジャンル">All genres</option>'
@@ -281,9 +415,12 @@ def index_page(games, metadata):
           <div class="card-body"><span class="genre">{bilingual(pair(metadata["genres"][game["genre"]], metadata["genres_ja"][game["genre"]]))}</span>
           <h2><a data-guide-link href="{gid}.html">{html.escape(game["title"])}</a></h2>
           <p>{bilingual(pair(metadata["summaries"][gid], game["summary"]))}</p>
-          <a data-guide-link href="{gid}.html">{bilingual(pair("How to play", "遊び方を見る"))}</a></div>
+          <nav class="card-actions">{download_link(gid)}<a href="../?game={gid}">{bilingual(pair("Play in browser", "ブラウザーで遊ぶ"))}</a><a data-guide-link href="{gid}.html">{bilingual(pair("How to play", "遊び方を見る"))}</a></nav></div>
         </article>''')
-    body = f"""<section class="hero"><p class="eyebrow">51 GAMES / 16 KB</p><h1>{bilingual(title)}</h1><p class="intro">{bilingual(intro)}</p></section>
+    body = f"""<section class="hero library-hero"><p class="eyebrow">51 GAMES / 16 KB</p><h1>{bilingual(title)}</h1><p class="intro">{bilingual(intro)}</p>
+      <nav class="actions">{bundle_link()}<a data-guide-link href="mister.html">{bilingual(pair("How to start on MiSTer", "MiSTerでの起動方法"))}</a></nav>
+      <p class="note">{bilingual(pair("Unzip, then copy the JR100 folder into games/ on your SD card. Includes launch instructions and license.", "ZIPを展開し、JR100フォルダーをSDカードのgames/へコピー。起動手順とライセンスも同梱しています。"))}</p></section>
+      {quickstart(collapsed=True)}
       <div class="filters"><div class="search-field"><label for="search">{bilingual(pair("Find a game", "タイトル・内容から探す"))}</label><input type="search" id="search" autocomplete="off"></div>
       <div><label for="genre">{bilingual(pair("Genre", "ジャンル"))}</label><select id="genre">{options}</select></div>
       <button type="button" id="clear-search">{bilingual(pair("Clear filters", "絞り込みを解除"))}</button></div>
@@ -293,7 +430,7 @@ def index_page(games, metadata):
     return shell("index.html", title, body, intro)
 
 
-def build(destination):
+def build(destination, games_folder=None):
     library = json.loads((ROOT / "games/library.json").read_text())
     games = library["games"]
     metadata = json.loads((HERE / "en/catalog.json").read_text())
@@ -301,6 +438,7 @@ def build(destination):
     ids = {g["id"] for g in games}
     if set(metadata["summaries"]) != ids:
         raise ValueError("English catalogue must cover every published game")
+    programs = published_programs(games_folder or destination.parent / "games", ids)
     source_hashes = json.loads((HERE / "translation-sources.json").read_text())
     destination.mkdir(parents=True, exist_ok=True)
     pages = {"index.html": index_page(games, metadata)}
@@ -314,7 +452,7 @@ def build(destination):
         english = (HERE / "en" / (gid + ".md")).read_text()
         if re.search(r"[\u3040-\u30ff\u3400-\u9fff]", english):
             raise ValueError(f"Untranslated Japanese in English guide: {gid}")
-        pages[gid + ".html"] = game_page(game, english, metadata, ids)
+        pages[gid + ".html"] = game_page(game, english, metadata, ids, programs[gid])
     controls_ja = japanese_controls()
     if (
         source_hashes.get("controls")
@@ -338,19 +476,51 @@ def build(destination):
         + controls_body,
         title,
     )
+    mister_body = "".join(
+        f'<article class="manual" data-language="{lang}" lang="{lang}">{render((HERE / lang / "mister.md").read_text(), ids)}</article>'
+        for lang in LANGUAGES
+    )
+    title = pair("Play on MiSTer FPGA", "MiSTer FPGAで遊ぶ")
+    pages["mister.html"] = shell(
+        "mister.html",
+        title,
+        '<section class="hero"><h1>'
+        + bilingual(title)
+        + '</h1><nav class="actions">'
+        + bundle_link()
+        + "</nav></section>"
+        + quickstart()
+        + mister_body,
+        title,
+    )
     for name, content in pages.items():
         (destination / name).write_text(content)
     for name in ("language.js", "guide.js", "style.css"):
         shutil.copyfile(HERE / "assets" / name, destination / name)
     shutil.copyfile(ROOT / "games/LICENSE", destination / "LICENSE.txt")
+    downloads = write_downloads(destination, programs)
     files = {
         name: hashlib.sha256((destination / name).read_bytes()).hexdigest()
         for name in sorted(
-            [*pages, "language.js", "guide.js", "style.css", "LICENSE.txt"]
+            [*pages, *downloads, "language.js", "guide.js", "style.css", "LICENSE.txt"]
         )
     }
     (destination / "manifest.json").write_text(
-        json.dumps({"schemaVersion": 1, "games": sorted(ids), "files": files}, indent=2)
+        json.dumps(
+            {
+                "schemaVersion": 1,
+                "games": sorted(ids),
+                "files": files,
+                "sourcePrograms": [
+                    {
+                        k: programs[gid][k]
+                        for k in ("id", "path", "version", "entry", "sha256")
+                    }
+                    for gid in sorted(ids)
+                ],
+            },
+            indent=2,
+        )
         + "\n"
     )
     print(f"Built {len(games)} bilingual game guides and getting-started pages")
@@ -359,4 +529,10 @@ def build(destination):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("destination", type=Path)
-    build(parser.parse_args().destination)
+    parser.add_argument(
+        "--games",
+        type=Path,
+        help="Published games directory; defaults to ../games next to the guide",
+    )
+    args = parser.parse_args()
+    build(args.destination, args.games)

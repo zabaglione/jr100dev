@@ -1,6 +1,6 @@
 # 動きと音の紹介
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/) · [All 51 games ZIP / 全51作品](https://zabaglione.github.io/pyjr100emu/guide/downloads/jr100-games-mister.zip) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) · [操作・起動方法](Controls)
 
@@ -33,4 +33,4 @@
 
 開始演出が終わってから操作を受け付けます。被弾した場所や失敗した理由を確認できるよう、音と短い停止を挟みます。成功・失敗の結果はジングルが終わるまで表示し、その後にキーを押し直すと進めます。
 
-同じブラウザーに自分のBASIC ROMを登録してから、各作品の「プレイ」を押してください。音が出ない場合はゲーム画面をクリックするか、キーを押してください。ROMは配布物に含みません。実機での動作・音声は未確認です。
+同じブラウザーに自分のBASIC ROMを登録してから、各作品の「プレイ」を押してください。音が出ない場合はゲーム画面をクリックするか、キーを押してください。ROMは配布物に含みません。SS1実機での作品別の確認範囲は[MiSTerガイド](https://zabaglione.github.io/pyjr100emu/guide/mister.html)に掲載しています。オリジナルのJR-100実機は未確認です。

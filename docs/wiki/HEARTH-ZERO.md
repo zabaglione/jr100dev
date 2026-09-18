@@ -1,6 +1,6 @@
 # HEARTH ZERO
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/hearth-zero.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/hearth-zero.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/hearth-zero.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [経営・サバイバル](Genre-Management) → HEARTH ZERO
 

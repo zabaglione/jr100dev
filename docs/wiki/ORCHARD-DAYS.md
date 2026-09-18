@@ -1,6 +1,6 @@
 # ORCHARD DAYS
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/orchard-days.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/orchard-days.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/orchard-days.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [経営・サバイバル](Genre-Management) → ORCHARD DAYS
 

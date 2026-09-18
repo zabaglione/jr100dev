@@ -1,6 +1,6 @@
 # BRICK PULSE
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/brick-pulse.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/brick-pulse.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/brick-pulse.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [アクション](Genre-Action) → BRICK PULSE
 

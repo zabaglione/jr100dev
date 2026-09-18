@@ -1,6 +1,6 @@
 # GATE RUNNER
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/gate-runner.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/gate-runner.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/gate-runner.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [アクション](Genre-Action) → GATE RUNNER
 

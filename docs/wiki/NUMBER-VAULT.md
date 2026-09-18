@@ -1,6 +1,6 @@
 # NUMBER VAULT
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/number-vault.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/number-vault.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/number-vault.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [パズル](Genre-Puzzle) → NUMBER VAULT
 

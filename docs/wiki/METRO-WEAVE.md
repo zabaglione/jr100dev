@@ -1,6 +1,6 @@
 # METRO WEAVE
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/metro-weave.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/metro-weave.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/metro-weave.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [戦術・自動化](Genre-Tactics) → METRO WEAVE
 

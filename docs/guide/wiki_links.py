@@ -16,6 +16,11 @@ def update_wiki_links():
         slug = path.stem.lower()
         target = slug + ".html" if slug in games or slug == "controls" else ""
         link = f"> [Read this guide in English / 日本語のゲームガイド]({BASE}{target})"
+        if slug in games:
+            link += f" · [MiSTer .prg]({BASE}downloads/{slug}.prg)"
+        else:
+            link += f" · [All 51 games ZIP / 全51作品]({BASE}downloads/jr100-games-mister.zip)"
+        link += f" · [MiSTer setup / 起動方法]({BASE}mister.html)"
         text = re.sub(
             r"^> \[Read this guide[^\n]*\n\n?", "", path.read_text(), flags=re.MULTILINE
         )

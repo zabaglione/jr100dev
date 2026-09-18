@@ -17,4 +17,4 @@
 
 作品名を指定すれば、その作品だけ再録画できます。`--reencode` は保存済みの実フレーム・PCM・入力記録から再編集します。必要なツールはC++20コンパイラ、JR-100エミュレーターのC++ソース、Pillow、ffmpeg、ffprobeです。
 
-公開先は[動画ギャラリー](https://zabaglione.github.io/pyjr100emu/gameplay.html)、[日英ゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)、各作品のWikiです。ガイドの生成は `docs/guide/README.md` を参照してください。動画はROMなしで見られます。実機での動作・音声は未確認です。
+公開先は[動画ギャラリー](https://zabaglione.github.io/pyjr100emu/gameplay.html)、[日英ゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)、各作品のWikiです。ガイドの生成は `docs/guide/README.md` を参照してください。動画はROMなしで見られます。SS1実機での作品別の確認範囲は[MiSTerガイド](https://zabaglione.github.io/pyjr100emu/guide/mister.html)に掲載しています。オリジナルのJR-100実機は未確認です。

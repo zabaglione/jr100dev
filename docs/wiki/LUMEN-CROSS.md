@@ -1,6 +1,6 @@
 # LUMEN CROSS
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/lumen-cross.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/lumen-cross.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/lumen-cross.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [パズル](Genre-Puzzle) → LUMEN CROSS
 

@@ -1,6 +1,6 @@
 # RUIN LEXICON
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/ruin-lexicon.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/ruin-lexicon.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/ruin-lexicon.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [探索・アドベンチャー](Genre-Exploration) → RUIN LEXICON
 

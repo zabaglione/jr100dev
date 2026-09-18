@@ -1,6 +1,6 @@
 # STAR LANCE
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/star-lance.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/star-lance.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/star-lance.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [アクション](Genre-Action) → STAR LANCE
 

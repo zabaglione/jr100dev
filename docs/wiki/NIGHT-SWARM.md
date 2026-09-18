@@ -1,6 +1,6 @@
 # NIGHT SWARM
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/night-swarm.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/night-swarm.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/night-swarm.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [アクション](Genre-Action) → NIGHT SWARM
 

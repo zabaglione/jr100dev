@@ -1,6 +1,6 @@
 # RIBBON SNAKE
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/ribbon-snake.html)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/ribbon-snake.html) · [MiSTer .prg](https://zabaglione.github.io/pyjr100emu/guide/downloads/ribbon-snake.prg) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 [ホーム](Home) → [アクション](Genre-Action) → RIBBON SNAKE
 

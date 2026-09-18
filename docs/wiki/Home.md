@@ -1,6 +1,6 @@
 # JR-100 Games
 
-> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/) · [All 51 games ZIP / 全51作品](https://zabaglione.github.io/pyjr100emu/guide/downloads/jr100-games-mister.zip) · [MiSTer setup / 起動方法](https://zabaglione.github.io/pyjr100emu/guide/mister.html)
 
 標準RAM 16KB向けのオリジナルゲーム51作品です。ジャンルから選ぶと、各作品の画面・遊び方・起動リンクを探せます。
 
@@ -21,7 +21,7 @@
 
 基本の方向キーは **W/A/S/D**、8方向の作品は **QWE／AD／ZXC** です。作品ごとの操作は各ページに掲載しています。
 
-エミュレーターで確認済みです。実機での動作・音声は未確認です。
+エミュレーターで確認済みです。SS1実機での作品別の確認範囲は[MiSTerガイド](https://zabaglione.github.io/pyjr100emu/guide/mister.html)に掲載しています。オリジナルのJR-100実機は未確認です。
 
 [ビルド可能なソースと開発手順](https://github.com/zabaglione/jr100dev/tree/main/games)
 
