@@ -22,7 +22,7 @@ node --test docs/guide/tests/language.test.cjs
 
 生成した54ページ、CSS、JavaScript、ライセンス、`downloads/` 内の51本のPRG・ZIP・日英READMEだけを `manifest.json` に登録します。ZIPには `JR100/` 以下にゲーム・日英README・MITライセンスを収め、ROMやコア本体は含めません。Web版の配布ビルドはファイル一覧・ハッシュ・元PRGとの対応・ZIPの内容を検証してコピーします。
 
-MiSTerの案内原稿は `en/mister.md` と `ja/mister.md`、オフライン説明は `download-readme/` です。MiSTer側のメニュー名と自動起動仕様は [JR100_MiSTer](https://github.com/MiSTer-devel/JR100_MiSTer) に合わせています。`Autostart loaded program = Yes` と `Load PRG` を使い、必要時は `A=USR($0300)` で起動します。SS1で確認した4作品の基本動作と、実機所有者が確認したSTAR LANCEの音声・物理パッド操作を区別し、全51作品の実機確認済みとは記載しません。RELIC DIVEの共同著作者表示をガイド・ZIP・LICENSEに残します。
+MiSTerの案内原稿は `en/mister.md` と `ja/mister.md`、オフライン説明は `download-readme/` です。MiSTer側のメニュー名と自動起動仕様は [JR100_MiSTer](https://github.com/MiSTer-devel/JR100_MiSTer) に合わせています。`Autostart loaded program = Yes` と `Load PRG` を使い、必要時は `A=USR($0300)` で起動します。SS1で確認した4作品の基本動作と、実機所有者が確認した同4作品の音声・物理パッド操作を、確認した版と併記します。改修後のSTAR LANCE 4.0.0はSS1で再確認待ちで、全51作品の実機確認済みとは記載しません。RELIC DIVEの共同著作者表示をガイド・ZIP・LICENSEに残します。
 
 翻訳を照合した後の記録更新例（対象だけ指定）：
 

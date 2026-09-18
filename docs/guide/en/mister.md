@@ -33,4 +33,4 @@ Tested on MiSTer (SuperStation One) on 18 September 2026, using `JR100_20260801.
 | STAR LANCE | 3.0.0 | Starting, movement, and normal/heavy shots |
 | NIGHT SWARM | 3.0.0 | Starting, movement, and pulse attacks |
 
-The device owner also confirmed STAR LANCE 3.0.0's physical pad controls and sound effects. The updated STAR LANCE 4.0.0 has been tested in the emulator; its SS1 check is still pending. Sound and physical pad input for the other three games, all stages, and the remaining 47 games have not been tested on SS1. Original JR-100 hardware remains untested.
+The device owner also confirmed physical pad controls and sound effects for all four versions listed above. The updated STAR LANCE 4.0.0 has been tested in the emulator; its SS1 check is still pending. The remaining 47 games have not been tested on SS1, and the checks above do not cover every stage. Original JR-100 hardware remains untested.
