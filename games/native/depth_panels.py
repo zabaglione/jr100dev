@@ -211,10 +211,8 @@ def decorate(screen, game):
         text(1, 13, "|___________|/")
         text(3, 14, "|       |")
     elif game == "metro-weave":
-        for y in (7, 12, 17):
-            text(8, y, "\\____________________/")
-            if y < 17:
-                text(9, y + 1, "| .  .  .  .  .  . |")
+        for left, y in ((19, 7), (24, 12), (23, 17)):
+            text(left, y, "\\" + "_" * (29 - left) + "/")
         hline(1, 18, 30)
     elif game == "cargo-balance":
         text(0, 16, "/______________________________/")

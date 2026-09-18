@@ -1,19 +1,14 @@
 {
   "id": "metro-weave",
   "title": "METRO WEAVE",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
   "levels": 1,
-  "rate": 15,
+  "rate": 10,
   "hud": [
-    [
-      2,
-      1,
-      "SEND TO THE LIT STATION"
-    ],
     [
       19,
       1,
@@ -46,12 +41,13 @@
     ]
   ],
   "help": [
-    "W/S : SELECT A JUNCTION",
+    "W/S : SELECT JUNCTION 1 OR 2",
     "A/D OR RETURN : SWITCH TRACK",
-    "J1=A OR DOWN. J2=B OR C.",
-    "SEND TO THE LARGE LIT STATION.",
-    "SET ROUTE BEFORE THIRD STEP.",
-    "NEXT SHOWS THREE MORE TRAINS.",
+    "1: RIGHT TO A / DOWN TO 2",
+    "2: RIGHT TO B / DOWN TO C",
+    "BOLD RAILS SHOW THE SET ROUTE.",
+    "SET EACH POINT BEFORE PASSING.",
+    "SWITCH SETTINGS STAY AS SET.",
     "DELIVER 12. THREE MISSES END."
   ],
   "footer": "W/S SELECT A/D/RET SWITCH",

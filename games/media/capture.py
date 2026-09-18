@@ -27,8 +27,6 @@ from replay import Player, solve_stage
 CALLBACK = C.CFUNCTYPE(None, C.c_void_p)
 lib.record_frames.argtypes = [C.c_void_p, CALLBACK, C.c_void_p]
 lib.record_frames.restype = None
-lib.host_mutations.argtypes = [C.c_void_p]
-lib.host_mutations.restype = C.c_uint
 CLOCK = 894000
 FPS = 30
 LUT = bytes([0] + [255] * 255)
@@ -200,6 +198,10 @@ class DemoPlayer(Player):
 
     def wait(self):
         super().wait()
+        if self.rec and self.name == "metro_weave" and self.s.y in (8, 13):
+            self.rec.mark(
+                "turn", junction=1 if self.s.y == 8 else 2, x=self.s.x, y=self.s.y
+            )
         if self.rec and self.name == "iron_script":
             self.rec.mark(
                 "command", step=self.s.steps, pc=self.s.pc, notice=self.s.notice
@@ -356,6 +358,12 @@ def encode(rec, destination, clear_time, outcome, extra):
             )
             + 0.1
         )
+    if rec.m.metadata["id"] == "metro-weave":
+        middle = next(
+            e["time"]
+            for e in rec.events
+            if e["kind"] == "turn" and e["junction"] == 2
+        ) + 0.05
     subprocess.run(
         [
             "ffmpeg",

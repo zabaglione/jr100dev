@@ -38,6 +38,7 @@ for name, args, result in [
     ("poke", [C.c_void_p, C.c_int, C.c_int], None),
     ("fixture_pc", [C.c_void_p, C.c_int, C.c_int], None),
     ("reset_stats", [C.c_void_p], None),
+    ("host_mutations", [C.c_void_p], C.c_uint),
     ("pc", [C.c_void_p], C.c_int),
     ("min_sp", [C.c_void_p], C.c_int),
     ("clocks", [C.c_void_p], C.c_longlong),

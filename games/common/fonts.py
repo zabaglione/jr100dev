@@ -114,6 +114,8 @@ def free_slots(metadata):
     occupied = {t * 4 + q for t in tiles for q in range(4)}
     if gid == "fuse-box":
         occupied.update(range(10, 16))  # Inverted row/column hints, digits 0..5.
+    if gid == "metro-weave":
+        occupied.add(30)  # The diagonal rail's landing curve.
     if metadata.get("rankedCampaign"):
         occupied.update(range(24, 30))
     return [], sorted(set(range(32)) - occupied)

@@ -51,7 +51,7 @@
 | [TIDAL NETS](https://github.com/zabaglione/jr100dev/wiki/TIDAL-NETS) | 浅い魚群と2倍流される深い魚群を、隣接2列を覆う網で狙います。9回で30匹が目標です。投入、魚の移動、網の引き揚げ、加点を順に描きます。 |
 | [POTION PATH](https://github.com/zabaglione/jr100dev/wiki/POTION-PATH) | 異なる20の注文を用意しました。素材を投入し、フラスコが途中の位置を通って移動します。注文に到達すると光と音が出ます。 |
 | [AUCTION HOUSE](https://github.com/zabaglione/jr100dev/wiki/AUCTION-HOUSE) | 鑑定額を範囲で示し、相手は高値まで競ることもあります。自分の入札、相手の上乗せ、落札と売却額を順に表示します。6品終了時に62コインが目標です。 |
-| [METRO WEAVE](https://github.com/zabaglione/jr100dev/wiki/METRO-WEAVE) | 今回の目的地は、盤面右端の大きなA・B・Cのうち、白く点灯して枠が点滅する駅です。A・B・Cすべてを使い、同じ駅が続く配車もあります。到着演出中は目的地とNEXTの3本の予告を固定し、次の出発時に一度だけ更新します。到着は光と音、誤配は原因表示と停止で示し、最後の列車は到着したホームに残ります。 |
+| [METRO WEAVE](https://github.com/zabaglione/jr100dev/wiki/METRO-WEAVE) | 切替ポイント1はA駅への直進／ポイント2への下り、ポイント2はB駅への直進／C駅への下りを選びます。選んだ経路は太い線路でつながり、列車は連絡線を1マスずつ曲がって進みます。各ポイントは列車がそこへ来た時点で判定し、設定は手で変えるまで保ちます。目的駅の大型看板は点灯と枠の点滅で示し、到着中は行先と次の3本の予告を固定します。 |
 | [CARGO BALANCE](https://github.com/zabaglione/jr100dev/wiki/CARGO-BALANCE) | 次の2つの荷重を予告します。積荷が船倉へ落下し、重い側へ船体が傾きます。左右の重さに加え、危険な偏りまでの距離を目盛で示します。 |
 | [NUMBER VAULT](https://github.com/zabaglione/jr100dev/wiki/NUMBER-VAULT) | 暗号を開始時に変えます。ダイヤルを回す途中と4桁の照合を描き、直近6回の入力と位置一致・数字一致の数を残します。 |
 | [SAND RESCUE](https://github.com/zabaglione/jr100dev/wiki/SAND-RESCUE) | 水がマスの中間を通り、堰が途中の形を経て開きます。作物が必要な水を受け取ると光と音で示します。 |

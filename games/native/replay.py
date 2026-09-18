@@ -790,7 +790,7 @@ def solve_realtime(p):
                 p.press(5)
         elif name == "metro_weave":
             desired = [0, r.c[1]] if s.dest == 0 else [1, s.dest - 1]
-            if s.age < 3:
+            if not s.j1:
                 for i, v in enumerate(desired):
                     if r.c[i] != v:
                         if s.cursor != i:
