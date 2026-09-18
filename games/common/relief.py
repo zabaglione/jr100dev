@@ -430,7 +430,7 @@ NATIVE = {
     "tidal-nets": {0: "floor-water", 3: "fish", 4: "net"},
     "potion-path": {0: "floor-grid", 3: "socket", 4: "flask"},
     "auction-house": {3: "gem", 4: "crate"},
-    "metro-weave": {2: "train", 6: "switch"},
+    "metro-weave": {2: "train", 3: "socket", 4: "socket", 5: "socket", 6: "switch"},
     "cargo-balance": {4: "cargo"},
     "peg-garden": {0: "socket", 1: "stone", 4: "peg"},
     "number-vault": {7: "keycap"},

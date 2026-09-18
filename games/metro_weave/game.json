@@ -1,7 +1,7 @@
 {
   "id": "metro-weave",
   "title": "METRO WEAVE",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -11,28 +11,65 @@
   "hud": [
     [
       2,
-      2,
-      "JUNCTION CONTROL"
+      1,
+      "SEND TO THE LIT STATION"
     ],
     [
-      18,
-      10,
-      "DEST"
+      19,
+      1,
+      "LIVES"
     ],
     [
-      18,
-      23,
+      19,
+      17,
       "SERVED"
+    ],
+    [
+      19,
+      27,
+      "/12"
+    ],
+    [
+      21,
+      1,
+      "NEXT"
+    ],
+    [
+      21,
+      8,
+      ">"
+    ],
+    [
+      21,
+      12,
+      ">"
     ]
   ],
   "help": [
     "W/S : SELECT A JUNCTION",
-    "A/D OR BUTTON : SWITCH TRACK",
-    "J1=0 ROUTES A. J1=1 USES J2.",
-    "J2=0 ROUTES B / J2=1 ROUTES C",
-    "SET THE ROUTE BEFORE TICK3.",
-    "DELIVER TWELVE TRAINS."
+    "A/D OR RETURN : SWITCH TRACK",
+    "J1=A OR DOWN. J2=B OR C.",
+    "SEND TO THE LARGE LIT STATION.",
+    "SET ROUTE BEFORE THIRD STEP.",
+    "NEXT SHOWS THREE MORE TRAINS.",
+    "DELIVER 12. THREE MISSES END."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY",
-  "fullDemo": true
+  "footer": "W/S SELECT A/D/RET SWITCH",
+  "fullDemo": true,
+  "dataTables": {
+    "timetable": [
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      2,
+      1,
+      2,
+      2,
+      1,
+      2
+    ]
+  }
 }

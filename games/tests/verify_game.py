@@ -67,6 +67,7 @@ if metadata["id"] in (
     "five-forge",
     "orbit-draft",
     "iron-script",
+    "metro-weave",
 ):
     subprocess.run(
         [sys.executable, str(game.parent / "tests" / f"check_{game.name}.py")],

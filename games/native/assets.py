@@ -171,6 +171,10 @@ def generate(output, metadata, directory):
         from iron_script.presentation import prepare as prepare_iron
 
         face_assets += prepare_iron(bank, hud)
+    if info["id"] == "metro-weave":
+        from metro_weave.presentation import prepare as prepare_metro
+
+        face_assets += prepare_metro(bank)
     text = face_assets + (
         emit("TITLE_PCG", pcg) + emit("TITLE_SCREEN", screen) + emit("GAME_PCG", bank)
     )
