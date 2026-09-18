@@ -1,5 +1,7 @@
 # METRO WEAVE
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/metro-weave.html)
+
 [ホーム](Home) → [戦術・自動化](Genre-Tactics) → METRO WEAVE
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=metro-weave) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/metro_weave)

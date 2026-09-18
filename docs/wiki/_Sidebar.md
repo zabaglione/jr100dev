@@ -1,3 +1,5 @@
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)
+
 [JR-100 Games](Home)
 
 - [パズル](Genre-Puzzle)

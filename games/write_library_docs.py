@@ -9,6 +9,9 @@ ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT / "common"))
 from fonts import STYLES
 
+sys.path.insert(0, str(ROOT.parent / "docs/guide"))
+from wiki_links import update_wiki_links
+
 WIKI = ROOT.parent / "docs/wiki"
 BASE = "https://github.com/zabaglione/jr100dev"
 PLAY = "https://zabaglione.github.io/pyjr100emu/?game="
@@ -285,7 +288,7 @@ for g in games:
         path = WIKI / (g["id"].upper() + ".md")
         text = path.read_text()
         lines = text.splitlines()
-        if not lines[2].startswith("[ホーム]"):
+        if not any(line.startswith("[ホーム]") for line in lines):
             lines[2:2] = [breadcrumb, ""]
         layout = json.loads((directory / "build/layout.json").read_text())
         text = "\n".join(lines) + "\n"
@@ -388,4 +391,5 @@ readme += "\n`native/` は新作44本のコンパイラー、画面構成、共�
 (WIKI / "Second-Review.md").write_text(
     (ROOT.parent / "docs/game-second-review.md").read_text()
 )
+update_wiki_links()
 print(f"Generated {len(games)} game manuals and {len(genres)} genre navigation pages")

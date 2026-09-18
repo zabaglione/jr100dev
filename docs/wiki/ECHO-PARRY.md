@@ -1,5 +1,7 @@
 # ECHO PARRY
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/echo-parry.html)
+
 [ホーム](Home) → [アクション](Genre-Action) → ECHO PARRY
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=echo-parry) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/echo_parry)

@@ -1,5 +1,7 @@
 # 戦術・自動化
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)
+
 [ホーム](Home) → 戦術・自動化
 
 手順・配置・流れを組み立てるゲーム。タイトルを選ぶと操作と複数のゲーム画面を確認できます。

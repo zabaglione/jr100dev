@@ -1,5 +1,7 @@
 # QUIET ROUTE
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/quiet-route.html)
+
 [ホーム](Home) → [探索・アドベンチャー](Genre-Exploration) → QUIET ROUTE
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=quiet-route) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/quiet_route)

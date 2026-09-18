@@ -1,5 +1,7 @@
 # FROST STEPS
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/frost-steps.html)
+
 [ホーム](Home) → [パズル](Genre-Puzzle) → FROST STEPS
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=frost-steps) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/frost_steps)

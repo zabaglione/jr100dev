@@ -1,5 +1,7 @@
 # NIGHT SWARM
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/night-swarm.html)
+
 [ホーム](Home) → [アクション](Genre-Action) → NIGHT SWARM
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=night-swarm) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/night_swarm)

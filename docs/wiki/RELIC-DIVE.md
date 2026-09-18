@@ -1,5 +1,7 @@
 # RELIC DIVE
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/relic-dive.html)
+
 [ホーム](Home) → [探索・アドベンチャー](Genre-Exploration) → RELIC DIVE
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=relic-dive) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/relic_dive) · [詳しい説明書・敵と品物の図鑑](https://github.com/zabaglione/jr100dev/blob/main/games/relic_dive/README.md)

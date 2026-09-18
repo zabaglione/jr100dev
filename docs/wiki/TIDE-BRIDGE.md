@@ -1,5 +1,7 @@
 # TIDE BRIDGE
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/tide-bridge.html)
+
 [ホーム](Home) → [パズル](Genre-Puzzle) → TIDE BRIDGE
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=tide-bridge) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/tide_bridge)

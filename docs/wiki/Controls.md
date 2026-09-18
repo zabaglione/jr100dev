@@ -1,5 +1,7 @@
 # 操作と起動方法
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/controls.html)
+
 [ホーム](Home) → 共通操作
 
 ## 4方向の基本

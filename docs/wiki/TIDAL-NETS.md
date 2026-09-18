@@ -1,5 +1,7 @@
 # TIDAL NETS
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/tidal-nets.html)
+
 [ホーム](Home) → [経営・サバイバル](Genre-Management) → TIDAL NETS
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=tidal-nets) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/tidal_nets)

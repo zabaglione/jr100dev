@@ -1,5 +1,7 @@
 # FUSE BOX
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/fuse-box.html)
+
 [ホーム](Home) → [パズル](Genre-Puzzle) → FUSE BOX
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=fuse-box) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/fuse_box)

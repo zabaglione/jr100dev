@@ -1,5 +1,7 @@
 # CHRONO BREACH
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/chrono-breach.html)
+
 [ホーム](Home) → [戦術・自動化](Genre-Tactics) → CHRONO BREACH
 
 **動けば、時間が動く。止まれば、弾も止まる。**

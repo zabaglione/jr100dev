@@ -1,5 +1,7 @@
 # GATE RUNNER
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/gate-runner.html)
+
 [ホーム](Home) → [アクション](Genre-Action) → GATE RUNNER
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=gate-runner) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/gate_runner)

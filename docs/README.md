@@ -16,6 +16,7 @@
 
 ## サンプル設計
 
+- [`guide/README.md`](guide/README.md): 日英ゲームガイドの生成・翻訳・公開
 - [`maze_design.md`](maze_design.md): 現在のmazeサンプルの構成とアルゴリズム
 - [`maze_sample_notes.md`](maze_sample_notes.md): maze開発時の実装・デバッグ記録
 

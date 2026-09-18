@@ -1,5 +1,7 @@
 # POTION PATH
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/potion-path.html)
+
 [ホーム](Home) → [経営・サバイバル](Genre-Management) → POTION PATH
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=potion-path) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/potion_path)

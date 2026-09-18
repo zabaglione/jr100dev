@@ -1,5 +1,7 @@
 # DICE RELIC
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/dice-relic.html)
+
 [ホーム](Home) → [カード・ボード](Genre-Tabletop) → DICE RELIC
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=dice-relic) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/dice_relic)

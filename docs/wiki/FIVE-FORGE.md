@@ -1,5 +1,7 @@
 # FIVE FORGE
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/five-forge.html)
+
 [ホーム](Home) → [カード・ボード](Genre-Tabletop) → FIVE FORGE
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=five-forge) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/five_forge)

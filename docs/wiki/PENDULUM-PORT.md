@@ -1,5 +1,7 @@
 # PENDULUM PORT
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/pendulum-port.html)
+
 [ホーム](Home) → [アクション](Genre-Action) → PENDULUM PORT
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=pendulum-port) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/pendulum_port)

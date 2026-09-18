@@ -1,5 +1,7 @@
 # TWENTY ONE
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/twenty-one.html)
+
 [ホーム](Home) → [カード・ボード](Genre-Tabletop) → TWENTY ONE
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=twenty-one) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/twenty_one)

@@ -1,5 +1,7 @@
 # カード・ボード
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)
+
 [ホーム](Home) → カード・ボード
 
 札・ダイス・盤面を使う読み合い。タイトルを選ぶと操作と複数のゲーム画面を確認できます。

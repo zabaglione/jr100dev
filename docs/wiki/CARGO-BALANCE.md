@@ -1,5 +1,7 @@
 # CARGO BALANCE
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/cargo-balance.html)
+
 [ホーム](Home) → [経営・サバイバル](Genre-Management) → CARGO BALANCE
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=cargo-balance) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/cargo_balance)

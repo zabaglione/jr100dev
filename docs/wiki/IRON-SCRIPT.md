@@ -1,5 +1,7 @@
 # IRON SCRIPT
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/iron-script.html)
+
 [ホーム](Home) → [戦術・自動化](Genre-Tactics) → IRON SCRIPT
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=iron-script) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/iron_script)

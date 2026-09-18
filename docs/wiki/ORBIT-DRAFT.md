@@ -1,5 +1,7 @@
 # ORBIT DRAFT
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/orbit-draft.html)
+
 [ホーム](Home) → [カード・ボード](Genre-Tabletop) → ORBIT DRAFT
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=orbit-draft) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/orbit_draft)

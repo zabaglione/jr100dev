@@ -1,5 +1,7 @@
 # 経営・サバイバル
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)
+
 [ホーム](Home) → 経営・サバイバル
 
 資源を配分し、状況の変化に備えるゲーム。タイトルを選ぶと操作と複数のゲーム画面を確認できます。

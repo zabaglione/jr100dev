@@ -1,5 +1,7 @@
 # MAGNET VAULT
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/magnet-vault.html)
+
 [ホーム](Home) → [パズル](Genre-Puzzle) → MAGNET VAULT
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=magnet-vault) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/magnet_vault)

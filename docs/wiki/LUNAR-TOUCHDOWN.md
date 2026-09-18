@@ -1,5 +1,7 @@
 # LUNAR TOUCHDOWN
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/lunar-touchdown.html)
+
 [ホーム](Home) → [アクション](Genre-Action) → LUNAR TOUCHDOWN
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=lunar-touchdown) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/lunar_touchdown)

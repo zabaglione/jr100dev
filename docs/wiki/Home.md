@@ -1,5 +1,7 @@
 # JR-100 Games
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)
+
 標準RAM 16KB向けのオリジナルゲーム51作品です。ジャンルから選ぶと、各作品の画面・遊び方・起動リンクを探せます。
 
 各作品に3枚以上の紹介画像と、最初の目標達成までの音付きプレイ動画を掲載しています。[全51作品の動画ギャラリー](https://zabaglione.github.io/pyjr100emu/gameplay.html)からも選べます。

@@ -1,5 +1,7 @@
 # 探索・アドベンチャー
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)
+
 [ホーム](Home) → 探索・アドベンチャー
 
 地図・手掛かり・環境を読み解くゲーム。タイトルを選ぶと操作と複数のゲーム画面を確認できます。

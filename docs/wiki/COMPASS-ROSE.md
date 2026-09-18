@@ -1,5 +1,7 @@
 # COMPASS ROSE
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/compass-rose.html)
+
 [ホーム](Home) → [探索・アドベンチャー](Genre-Exploration) → COMPASS ROSE
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=compass-rose) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/compass_rose)

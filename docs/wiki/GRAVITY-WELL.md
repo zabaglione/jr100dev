@@ -1,5 +1,7 @@
 # GRAVITY WELL
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/gravity-well.html)
+
 [ホーム](Home) → [パズル](Genre-Puzzle) → GRAVITY WELL
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=gravity-well) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/gravity_well)

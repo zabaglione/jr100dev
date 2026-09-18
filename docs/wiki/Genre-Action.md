@@ -1,5 +1,7 @@
 # アクション
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)
+
 [ホーム](Home) → アクション
 
 移動・照準・タイミングを使うゲーム。タイトルを選ぶと操作と複数のゲーム画面を確認できます。

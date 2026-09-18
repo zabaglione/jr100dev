@@ -1,5 +1,7 @@
 # WORD FOUNDRY
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/word-foundry.html)
+
 [ホーム](Home) → [パズル](Genre-Puzzle) → WORD FOUNDRY
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=word-foundry) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/word_foundry)

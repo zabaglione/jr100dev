@@ -1,5 +1,7 @@
 # ORCHARD DAYS
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/orchard-days.html)
+
 [ホーム](Home) → [経営・サバイバル](Genre-Management) → ORCHARD DAYS
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=orchard-days) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/orchard_days)

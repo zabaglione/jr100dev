@@ -1,5 +1,7 @@
 # SIGIL DECK
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/sigil-deck.html)
+
 [ホーム](Home) → [カード・ボード](Genre-Tabletop) → SIGIL DECK
 
 **紋章を集め、自分のデッキで虚空の王を封じる。**

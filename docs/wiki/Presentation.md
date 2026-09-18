@@ -1,5 +1,7 @@
 # 動きと音の紹介
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)
+
 [ホーム](Home) · [操作・起動方法](Controls)
 
 **[全51作品のプレイ動画ギャラリー](https://zabaglione.github.io/pyjr100emu/gameplay.html)**

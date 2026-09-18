@@ -1,5 +1,7 @@
 # NUMBER VAULT
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/number-vault.html)
+
 [ホーム](Home) → [パズル](Genre-Puzzle) → NUMBER VAULT
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=number-vault) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/number_vault)

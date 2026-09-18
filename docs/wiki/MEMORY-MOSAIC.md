@@ -1,5 +1,7 @@
 # MEMORY MOSAIC
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/memory-mosaic.html)
+
 [ホーム](Home) → [カード・ボード](Genre-Tabletop) → MEMORY MOSAIC
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=memory-mosaic) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/memory_mosaic)

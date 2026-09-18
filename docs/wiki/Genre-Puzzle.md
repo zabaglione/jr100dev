@@ -1,5 +1,7 @@
 # パズル
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)
+
 [ホーム](Home) → パズル
 
 考える時間を楽しむ、経路・反転・数のゲーム。タイトルを選ぶと操作と複数のゲーム画面を確認できます。

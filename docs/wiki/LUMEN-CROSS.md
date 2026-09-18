@@ -1,5 +1,7 @@
 # LUMEN CROSS
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/lumen-cross.html)
+
 [ホーム](Home) → [パズル](Genre-Puzzle) → LUMEN CROSS
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=lumen-cross) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/lumen_cross)

@@ -1,5 +1,7 @@
 # SEED MERGE
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/seed-merge.html)
+
 [ホーム](Home) → [パズル](Genre-Puzzle) → SEED MERGE
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=seed-merge) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/seed_merge)

@@ -1,5 +1,7 @@
 # ORBIT DODGE
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/orbit-dodge.html)
+
 [ホーム](Home) → [アクション](Genre-Action) → ORBIT DODGE
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=orbit-dodge) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/orbit_dodge)

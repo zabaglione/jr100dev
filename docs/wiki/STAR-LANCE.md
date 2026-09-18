@@ -1,5 +1,7 @@
 # STAR LANCE
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/star-lance.html)
+
 [ホーム](Home) → [アクション](Genre-Action) → STAR LANCE
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=star-lance) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/star_lance)

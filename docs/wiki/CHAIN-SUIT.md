@@ -1,5 +1,7 @@
 # CHAIN SUIT
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/chain-suit.html)
+
 [ホーム](Home) → [カード・ボード](Genre-Tabletop) → CHAIN SUIT
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=chain-suit) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/chain_suit)

@@ -1,5 +1,7 @@
 # HEARTH ZERO
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/hearth-zero.html)
+
 [ホーム](Home) → [経営・サバイバル](Genre-Management) → HEARTH ZERO
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=hearth-zero) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/hearth_zero)

@@ -1,5 +1,7 @@
 # PRISM TRACE
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/prism-trace.html)
+
 [ホーム](Home) → [パズル](Genre-Puzzle) → PRISM TRACE
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=prism-trace) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/prism_trace)

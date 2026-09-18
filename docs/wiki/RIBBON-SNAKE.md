@@ -1,5 +1,7 @@
 # RIBBON SNAKE
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/ribbon-snake.html)
+
 [ホーム](Home) → [アクション](Genre-Action) → RIBBON SNAKE
 
 [プレイ](https://zabaglione.github.io/pyjr100emu/?game=ribbon-snake) · [ビルドソース](https://github.com/zabaglione/jr100dev/tree/main/games/ribbon_snake)

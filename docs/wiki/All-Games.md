@@ -1,5 +1,7 @@
 # 全作品・タイトル順
 
+> [Read this guide in English / 日本語のゲームガイド](https://zabaglione.github.io/pyjr100emu/guide/)
+
 [ホーム](Home) · [ジャンルから探す](Home)
 
 | タイトル | ジャンル | ゲーム・概要 | 起動 |
