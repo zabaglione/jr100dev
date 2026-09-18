@@ -84,7 +84,7 @@
 | [<img src="https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/orbit-dodge/title.png" width="300" alt="ORBIT DODGE">](ORBIT-DODGE) | **[ORBIT DODGE](ORBIT-DODGE)**<br>2軌道を渡り、同時光線と連続回収に挑む6面<br>[プレイ](https://zabaglione.github.io/pyjr100emu/?game=orbit-dodge) · [遊び方を見る](ORBIT-DODGE) |
 | [<img src="https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/pendulum-port/title.png" width="300" alt="PENDULUM PORT">](PENDULUM-PORT) | **[PENDULUM PORT](PENDULUM-PORT)**<br>ロープ長と振りを合わせ、中央着地を狙う6区間<br>[プレイ](https://zabaglione.github.io/pyjr100emu/?game=pendulum-port) · [遊び方を見る](PENDULUM-PORT) |
 | [<img src="https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/ribbon-snake/title.png" width="300" alt="RIBBON SNAKE">](RIBBON-SNAKE) | **[RIBBON SNAKE](RIBBON-SNAKE)**<br>岩の庭で逃げ道を作り、3回のブレーキを使う<br>[プレイ](https://zabaglione.github.io/pyjr100emu/?game=ribbon-snake) · [遊び方を見る](RIBBON-SNAKE) |
-| [<img src="https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/star-lance/title.png" width="300" alt="STAR LANCE">](STAR-LANCE) | **[STAR LANCE](STAR-LANCE)**<br>装甲・追尾射撃・熱管理に挑む6波の宇宙戦<br>[プレイ](https://zabaglione.github.io/pyjr100emu/?game=star-lance) · [遊び方を見る](STAR-LANCE) |
+| [<img src="https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/star-lance/title.png" width="300" alt="STAR LANCE">](STAR-LANCE) | **[STAR LANCE](STAR-LANCE)**<br>攻撃予告を撃ち落として冷却。回避と熱管理で突破する6波の宇宙戦<br>[プレイ](https://zabaglione.github.io/pyjr100emu/?game=star-lance) · [遊び方を見る](STAR-LANCE) |
 
 ### [探索・アドベンチャー](Genre-Exploration)
 

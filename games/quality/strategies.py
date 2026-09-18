@@ -370,7 +370,6 @@ def solve(p):
         "pendulum_port",
         "lunar_touchdown",
         "night_swarm",
-        "star_lance",
         "ribbon_snake",
     ):
         play_action(p)
@@ -418,34 +417,6 @@ def play_action(p):
                 p.press(4 if s.x < target else 3)
             if s.speed >= 2:
                 p.press(5)
-        elif name == "star_lance":
-            danger = {r.d[i] for i in range(3) if 5 <= r.c[i] < 8}
-            if s.ship in danger:
-                choices = [
-                    x
-                    for x in (s.ship - 1, s.ship + 1)
-                    if 0 <= x <= 7 and x not in danger
-                ]
-                if choices:
-                    p.press(3 if choices[0] < s.ship else 4)
-            elif s.cool == 0:
-                targets = [
-                    (abs((i % 8 + s.shift) % 8 - s.ship), i)
-                    for i in range(24)
-                    if r.b[i]
-                ]
-                if targets:
-                    _, enemy = min(targets)
-                    target = (enemy % 8 + s.shift) % 8
-                    if s.ship != target:
-                        p.press(4 if target > s.ship else 3)
-                    elif s.heat <= 4:
-                        bottom = max(
-                            i
-                            for i in range(24)
-                            if r.b[i] and (i % 8 + s.shift) % 8 == s.ship
-                        )
-                        p.press(1 if r.b[bottom] > 1 else 5)
         elif name == "night_swarm":
             distance = lambda a, b: abs(a % 8 - b % 8) + abs(a // 8 - b // 8)
             enemies = [pos for pos in r.b[:8] if pos != 255]

@@ -35,7 +35,7 @@
 | [WORD FOUNDRY](https://github.com/zabaglione/jr100dev/wiki/WORD-FOUNDRY) | 中継単語を経由して辿る16の単語迷路 |
 | [NUMBER VAULT](https://github.com/zabaglione/jr100dev/wiki/NUMBER-VAULT) | 推理の履歴を読み、動く扉を開く暗証番号パズル |
 | [RUIN LEXICON](https://github.com/zabaglione/jr100dev/wiki/RUIN-LEXICON) | 石板を回し、条件の一致を確かめる20の碑文 |
-| [STAR LANCE](https://github.com/zabaglione/jr100dev/wiki/STAR-LANCE) | 装甲・追尾射撃・熱管理に挑む6波の宇宙戦 |
+| [STAR LANCE](https://github.com/zabaglione/jr100dev/wiki/STAR-LANCE) | 攻撃予告を撃ち落として冷却。回避と熱管理で突破する6波の宇宙戦 |
 | [RIBBON SNAKE](https://github.com/zabaglione/jr100dev/wiki/RIBBON-SNAKE) | 岩の庭で逃げ道を作り、3回のブレーキを使う |
 | [MIRROR RELIC](https://github.com/zabaglione/jr100dev/wiki/MIRROR-RELIC) | 左右の鏡回転と位相を合わせる6つの遺跡 |
 | [SHADOW ARCHIVE](https://github.com/zabaglione/jr100dev/wiki/SHADOW-ARCHIVE) | 必要な調書を選び、少ない閲覧で解決する12事件 |

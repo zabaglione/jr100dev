@@ -147,6 +147,9 @@ class Compiler:
         elif name == "held":
             assert not n.args, "held() takes no arguments"
             self.emit("    LDAA KEY_LAST")
+        elif name == "buttons":
+            assert not n.args, "buttons() takes no arguments"
+            self.emit("    JSR N_BUTTONS")
         elif name == "entropy":
             assert not n.args, "entropy() takes no arguments"
             self.emit("    LDAA TICK")

@@ -87,21 +87,9 @@ def twenty_one():
 
 
 def star_lance():
-    r = Model("star_lance")
-    r.b[:] = bytes(128)
-    r.b[3], r.s.left = 2, 1
-    r.action(5)
-    assert r.b[3] == 1 and r.s.left == 1 and r.s.heat == 2
-    r.s.cool, r.s.heat = 0, 6
-    r.action(1)
-    assert r.b[3] == 1 and r.s.heat == 6 and r.s.notice
-    r.s.heat = 4
-    r.action(1)
-    assert r.b[3] == 0 and r.s.mode == 2 and r.s.heat == 8
-    r.init()
-    r.s.ship = 0
-    r.action(3)
-    assert r.s.ship == 0
+    from check_star_lance import constraints
+
+    constraints()
 
 
 def orbit_dodge():

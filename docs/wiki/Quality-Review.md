@@ -44,7 +44,7 @@
 | [TWENTY ONE](https://github.com/zabaglione/jr100dev/wiki/TWENTY-ONE) | 個々のカードと合計を表示します。配札と追加カードが山から移動し、ディーラーも一枚ずつ引きます。勝ち・バスト・負け・引き分けと収支を残してから次の手へ進みます。 |
 | [ORBIT DODGE](https://github.com/zabaglione/jr100dev/wiki/ORBIT-DODGE) | 機体が軌道上の中間位置を通り、予告地点へ攻撃の線が伸びます。6回の回避後から2地点への攻撃が加わります。 |
 | [GATE RUNNER](https://github.com/zabaglione/jr100dev/wiki/GATE-RUNNER) | 3車線を廃止し、横27段階を1文字ずつ移動する6コースへ作り直しました。タイトルと同じセミグラフィックスの遠景に、拡大して迫る壁・穴・低い梁を描きます。各コース3か所の全幅の穴はジャンプ必須です。危険な位置の結晶を集めると評価が上がり、走行・跳躍・被弾に動きとSEがあります。 |
-| [STAR LANCE](https://github.com/zabaglione/jr100dev/wiki/STAR-LANCE) | 発射した弾が敵へ飛び、編隊も中間位置を通って移動します。装甲列は2発必要で、一撃目の点滅と撃破時の四段階の消滅を区別します。 |
+| [STAR LANCE](https://github.com/zabaglione/jr100dev/wiki/STAR-LANCE) | 長押しで連続移動し、射撃と同時に操作できます。敵の攻撃予告を撃破で止めると冷却し、過熱すると一時的に撃てなくなります。命中と撃破の途中も戦闘が進みます。 |
 | [RIBBON SNAKE](https://github.com/zabaglione/jr100dev/wiki/RIBBON-SNAKE) | 頭だけでなく胴体もマスの中間を通ります。食べると光と音が出て体が伸び、画面端と自分の体への衝突をそれぞれ説明します。 |
 | [LUNAR TOUCHDOWN](https://github.com/zabaglione/jr100dev/wiki/LUNAR-TOUCHDOWN) | 降下の中間位置と噴射炎を描きます。着陸台の上へ速度0〜2で降りると、機体の停止を確認する間と着陸音を挟んでクリアします。 |
 | [ECHO PARRY](https://github.com/zabaglione/jr100dev/wiki/ECHO-PARRY) | 敵の攻撃、盾での受け止め、反撃の飛翔、命中を順に描きます。攻撃の高さは単純な交互から8手のパターンへ変えました。 |

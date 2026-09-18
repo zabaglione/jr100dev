@@ -75,6 +75,7 @@ if metadata["id"] in (
     "metro-weave",
     "sand-rescue",
     "gate-runner",
+    "star-lance",
 ):
     subprocess.run(
         [sys.executable, str(game.parent / "tests" / f"check_{game.name}.py")],

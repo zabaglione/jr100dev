@@ -7,7 +7,17 @@ import sys
 from collections import Counter, deque
 from pathlib import Path
 
-from checks import ROOT, Model, action, assert_state, begin, lib, solve_lights, tick
+from checks import (
+    ROOT,
+    Model,
+    action,
+    assert_state,
+    begin,
+    controls,
+    lib,
+    solve_lights,
+    tick,
+)
 from design_levels import search, step
 
 sys.path.insert(0, str(ROOT))
@@ -91,6 +101,15 @@ class Player:
             self.press(3)
         while self.s.cursor % width < target % width:
             self.press(4)
+
+    def controls(self, mask):
+        controls(self.m, self.r, mask, self.pad)
+        self.actions += mask != getattr(self, "last_buttons", 0)
+        self.last_buttons = mask
+        self.ticks += 1
+        assert self.ticks < 6000
+        if self.capture and self.ticks == 80:
+            self.m.capture(self.directory / "images/play-02.png")
 
     def choice(self, field, target, action_code=4, cap=20):
         for _ in range(cap):
@@ -879,16 +898,10 @@ def solve_realtime(p):
         elif name == "metro_weave":
             metro_dispatch(p)
         elif name == "star_lance":
-            if s.cool == 0:
-                enemy = next((i for i in range(23, -1, -1) if r.b[i]), None)
-                if enemy is not None:
-                    target = (enemy % 8 + s.shift) % 8
-                    if s.ship != target:
-                        p.press(4 if (target - s.ship) % 8 <= 4 else 3)
-                    else:
-                        p.press(5)
-            if s.mode == 1 and s.bullet >= 6 and s.bullet != 255 and s.ship == s.bx:
-                p.press(4)
+            from star_lance.ai import choose
+
+            p.controls(choose(r))
+            continue
         elif name == "ribbon_snake":
             if not snake_path:
                 snake_path = snake_route(r.b[: s.length], s.food)

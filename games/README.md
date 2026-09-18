@@ -55,7 +55,7 @@
 | [ORBIT DODGE](orbit_dodge/) | 2軌道を渡り、同時光線と連続回収に挑む6面 |
 | [GATE RUNNER](gate_runner/) | 横位置を細かく調整し、壁・全幅の穴・低い梁を越える疑似3Dランニング |
 | [BRICK PULSE](brick_pulse/) | 装甲ブロック・アイテム・ドローンに挑む12面のブロック崩し |
-| [STAR LANCE](star_lance/) | 装甲・追尾射撃・熱管理に挑む6波の宇宙戦 |
+| [STAR LANCE](star_lance/) | 攻撃予告を撃ち落として冷却。回避と熱管理で突破する6波の宇宙戦 |
 | [RIBBON SNAKE](ribbon_snake/) | 岩の庭で逃げ道を作り、3回のブレーキを使う |
 | [LUNAR TOUCHDOWN](lunar_touchdown/) | 横風と燃料を読み、狭い着陸場の追加点を狙う |
 | [ECHO PARRY](echo_parry/) | フェイントを見抜き、後退と遅い受け流しを使い分ける |

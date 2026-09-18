@@ -50,7 +50,7 @@
 | [SEED MERGE](SEED-MERGE) | [パズル](Genre-Puzzle) | 同じ芽を合成して大樹を育てる | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=seed-merge) |
 | [SHADOW ARCHIVE](SHADOW-ARCHIVE) | [探索・アドベンチャー](Genre-Exploration) | 必要な調書を選び、少ない閲覧で解決する12事件 | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=shadow-archive) |
 | [SIGIL DECK](SIGIL-DECK) | [カード・ボード](Genre-Tabletop) | カードを組み合わせて虚空の王を封じる | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=sigil-deck) |
-| [STAR LANCE](STAR-LANCE) | [アクション](Genre-Action) | 装甲・追尾射撃・熱管理に挑む6波の宇宙戦 | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=star-lance) |
+| [STAR LANCE](STAR-LANCE) | [アクション](Genre-Action) | 攻撃予告を撃ち落として冷却。回避と熱管理で突破する6波の宇宙戦 | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=star-lance) |
 | [STONE BALANCE](STONE-BALANCE) | [カード・ボード](Genre-Tabletop) | 最後の石が勝ちから負けへ変わる10局の取り合い | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=stone-balance) |
 | [TIDAL NETS](TIDAL-NETS) | [経営・サバイバル](Genre-Management) | 深浅の流れを読み、細い網と広い網を使い分ける | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=tidal-nets) |
 | [TIDE BRIDGE](TIDE-BRIDGE) | [パズル](Genre-Puzzle) | 潮位の連動する橋を切り替えて渡る | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=tide-bridge) |

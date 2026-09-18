@@ -1,5 +1,6 @@
 """Generate genre navigation and native-game manuals from the authored catalogue."""
 
+import argparse
 import json
 import re
 import sys
@@ -22,6 +23,14 @@ visuals = json.loads((ROOT / "visual-design.json").read_text())
 titles = json.loads((ROOT / "title-design.json").read_text())
 genres = {g["id"]: g for g in library["genres"]}
 games = library["games"]
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument(
+    "games",
+    nargs="*",
+    help="Directories to update; navigation always includes all games",
+)
+selected = set(parser.parse_args().games)
+assert selected <= {g["directory"] for g in games}, "Unknown game directory"
 assert set(visuals) == {g["id"] for g in games}
 assert set(titles) == set(visuals)
 MOTION = {
@@ -82,6 +91,8 @@ def launch_note():
 
 
 def font_description(game):
+    if game["id"] == "star-lance":
+        return "PCG32文字を敵・自機・発光と破片・弾に使います。装甲の損傷と撃破は対象の文字だけを切り替えるため、同じ絵柄の別の敵には影響しません。数値と案内には通常フォントを使っています。"
     if game["id"] == "gate-runner":
         return "遠景はROMのセミグラフィックス、壁・穴・梁はPCGの陰影で描きます。主人公は4文字のPCGを走行とジャンプの形に書き換えます。説明と数値は通常フォントに揃え、描画の速さを優先しています。"
     if game["id"] == "sand-rescue":
@@ -282,6 +293,8 @@ ROMを削除した場合や別のブラウザーでは、ROMの設定が必要�
 """)
 for g in games:
     directory = ROOT / g["directory"]
+    if selected and g["directory"] not in selected:
+        continue
     meta = json.loads((directory / "game.json").read_text())
     breadcrumb = f"[ホーム](Home) → [{genres[g['genre']]['title']}]({page(g['genre'])}) → {g['title']}"
     if not meta.get("nativeRules"):
@@ -326,7 +339,11 @@ for g in games:
     )
     body += "やり直し確認はNOが初期選択です。A/Dで選び、RETURNで確定、SPACEで取り消します。確認中は進行を止めます。CTRL+CでBASICへ戻ります。\n\n"
     if g["id"] in MOTION and MOTION[g["id"]] != hud:
-        body += MOTION[g["id"]] + "演出が終わってから次のキーを押してください。\n\n"
+        body += MOTION[g["id"]] + (
+            "射撃・命中・撃破の演出中も移動と射撃を続けられます。\n\n"
+            if g["id"] == "star-lance"
+            else "演出が終わってから次のキーを押してください。\n\n"
+        )
     body += f"{hud}\n\n![ゲーム開始時]({IMAGES}/{g['id']}/play-01.png)\n\n![プレイ中の場面]({IMAGES}/{g['id']}/play-02.png)\n\n"
     if g["id"] == "brick-pulse":
         body += f"![落下アイテム]({IMAGES}/brick-pulse/items.png)\n\n![後半のドローンと装甲ブロック]({IMAGES}/brick-pulse/drone.png)\n\n![やり直し確認]({IMAGES}/brick-pulse/reset.png)\n\n"
@@ -392,4 +409,6 @@ readme += "\n`native/` は新作44本のコンパイラー、画面構成、共�
     (ROOT.parent / "docs/game-second-review.md").read_text()
 )
 update_wiki_links()
-print(f"Generated {len(games)} game manuals and {len(genres)} genre navigation pages")
+print(
+    f"Generated {len(selected) if selected else len(games)} game manuals and {len(genres)} genre navigation pages"
+)

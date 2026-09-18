@@ -72,16 +72,9 @@ def check():
 
     auction_house()
 
-    # A hit on armour removes one health point; the enemy remains until the next.
-    r = Model("star_lance")
-    r.b[:] = bytes(128)
-    r.b[3] = 2
-    r.s.left = 1
-    r.action(5)
-    assert r.b[3] == 1 and r.s.left == 1 and r.s.mode == 1
-    r.s.cool = 0
-    r.action(5)
-    assert r.b[3] == 0 and r.s.left == 0 and r.s.mode == 2
+    from check_star_lance import constraints
+
+    constraints()
 
     review = json.loads((ROOT / "quality/review.json").read_text())
     phases = 0

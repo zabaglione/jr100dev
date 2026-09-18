@@ -102,6 +102,8 @@ def free_slots(metadata):
         return [], []  # Water channels, gates, crops and their growth poses.
     if gid == "gate-runner":
         return [], []  # Direct screen-code blitting keeps the road responsive.
+    if gid == "star-lance":
+        return [], []  # Seven actors/effects and four projectile glyphs.
     if gid == "prism-trace":
         return [], list(range(21, 32))  # Shared optical glyphs occupy 0..20.
     if gid == "orbit-draft":

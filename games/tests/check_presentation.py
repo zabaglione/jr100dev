@@ -153,27 +153,6 @@ def timed_start(rom=None):
     print("PASS: LOOP TEN keeps all 600 game ticks through the start scene")
 
 
-def defeat_animation(rom=None, capture=None):
-    m = Machine("star_lance", rom)
-    m.action(5)
-    bank = m.read(0xC000, 256)
-    lib.key(m.p, *KEYS[5], 1)
-    m.until("N_VANISH")
-    frames = []
-    for phase in range(4):
-        m.until("VANISH_VISIBLE")
-        frames.append(m.read(0xC100, 768))
-        assert m.read(0xC000, 256) == bank
-        if capture:
-            m.capture(capture / f"vanish-{phase}.png")
-    assert len(set(frames)) == 4
-    changed = {i for i, (a, b) in enumerate(zip(frames[0], frames[-1])) if a != b}
-    assert changed == {9 * 32 + 13, 9 * 32 + 14, 10 * 32 + 13, 10 * 32 + 14}
-    m.until("FRAME_READY")
-    assert sum(bool(hp) for hp in m.read("B_ARRAY", 24)) == 17
-    assert m.get("MODE") == 1 and not m.get("KEY_PENDING")
-    assert lib.audio_peak(m.p) > 0
-    print("PASS: four local destruction frames, SE, unchanged shared enemy PCG")
 
 
 if __name__ == "__main__":
@@ -191,4 +170,6 @@ if __name__ == "__main__":
     independent_actors(rom)
     timed_start(rom)
     impact_and_loss(rom, args.capture)
+    from check_star_lance import defeat_animation
+
     defeat_animation(rom, args.capture)

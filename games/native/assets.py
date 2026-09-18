@@ -195,6 +195,10 @@ def generate(output, metadata, directory):
         from gate_runner.presentation import prepare as prepare_runner
 
         face_assets += prepare_runner(bank, hud)
+    if info["id"] == "star-lance":
+        from star_lance.presentation import prepare as prepare_lance
+
+        face_assets += prepare_lance(bank, hud)
     text = face_assets + (
         emit("TITLE_PCG", pcg) + emit("TITLE_SCREEN", screen) + emit("GAME_PCG", bank)
     )

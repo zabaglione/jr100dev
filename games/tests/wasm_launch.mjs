@@ -90,6 +90,36 @@ for(const game of selected) {
   for (let i = 0; i < 240 && peek(modeAddress) !== 1; i++) frame(1);
   assert.equal(peek(modeAddress),1,`${game.id} did not begin play`);
   checkFont('game');
+  if (game.id === 'star-lance') {
+    const directory = path.join(gamesRoot, 'star_lance');
+    const slots = JSON.parse(fs.readFileSync(path.join(directory, 'build/state_slots.json'), 'utf8'));
+    const symbols = JSON.parse(fs.readFileSync(path.join(directory, 'build/symbols.json'), 'utf8'));
+    const value = field => peek(symbols[slots[`s.${field}`]]);
+    for (const pad of [false, true]) {
+      const start = value('ship'), time = value('time');
+      if (pad) check(wasm._jr_set_joystick(18));
+      else {
+        check(wasm._jr_set_key(1, 2, 1));
+        check(wasm._jr_set_key(8, 3, 1));
+      }
+      frame(60);
+      assert(pad ? value('ship') <= start - 6 : value('ship') >= start + 6,
+        'Held movement must continue while firing');
+      assert(((value('time') - time) & 255) >= 6, 'Shooting must not stop physics');
+      assert(value('heat') > 0, 'The simultaneous fire input must shoot');
+      if (pad) check(wasm._jr_set_joystick(0));
+      else {
+        check(wasm._jr_set_key(1, 2, 0));
+        check(wasm._jr_set_key(8, 3, 0));
+      }
+      frame(8);
+      const stopped = value('ship');
+      frame(12);
+      assert.equal(value('ship'), stopped, 'Release must stop movement');
+      assert.equal(peek(modeAddress), 1);
+      console.log(`PASS: star-lance, shipping WASM ${pad ? 'pad' : 'keyboard'} continuous movement, simultaneous fire and release`);
+    }
+  }
   if (game.id === 'brick-pulse') {
     const directory = path.join(gamesRoot, 'brick_pulse');
     const slots = JSON.parse(fs.readFileSync(path.join(directory, 'build/state_slots.json'), 'utf8'));

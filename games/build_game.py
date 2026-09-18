@@ -190,6 +190,22 @@ N_STATUS_ERASE:
             _, after = after.split("    JSR COPY\n", 1)
             module_source = before + "N_RENDER:\n    JSR R_BACKGROUND\n" + after
             module_source = module_source.replace("CMPA #GAME_RATE", "CMPA RUN_RATE")
+        if path.name == "runtime.asm" and metadata["id"] == "star-lance":
+            from star_lance.presentation import runtime_hook
+
+            module_source = runtime_hook(module_source)
+        if path.name == "platform.asm" and metadata["id"] == "star-lance":
+            module_source = module_source.replace(
+                "PRESENT_ROWS:\n",
+                "PRESENT_ROWS:\n    TST INTRO_PHASE\n    BEQ SL_PRESENT\n",
+            )
+        if path.name == "pacing.asm" and metadata["id"] == "star-lance":
+            # Continuous fire must wait for release of the title/start input.
+            module_source = module_source.replace(
+                "    STAA TICK\n    RTS",
+                "    STAA TICK\n    LDAA #$FF\n    STAA KEY_LAST\n    CLR KEY_PENDING\n    RTS",
+                1,
+            )
         if path.name == "platform.asm" and metadata["id"] == "gate-runner":
             module_source = module_source.replace(
                 "PRESENT_ROWS:\n",

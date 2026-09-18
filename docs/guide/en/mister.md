@@ -24,13 +24,13 @@ See each game's guide for its rules and [Getting started](Controls) for keyboard
 
 RELIC DIVE is co-developed with **JR-800 Web Emulator contributors**. Their credit is retained in the collection's [MIT license](LICENSE.txt).
 
-Tested on MiSTer (SuperStation One) on 18 September 2026, using `JR100_20260801.rbf`. With standard 16 KB RAM, the four downloads below autostarted and reached gameplay. Their checks cover:
+Tested on MiSTer (SuperStation One) on 18 September 2026, using `JR100_20260801.rbf`. With standard 16 KB RAM, the four game versions below autostarted and reached gameplay. Their checks cover:
 
-| Game | Confirmed on SS1 |
-| --- | --- |
-| FROST STEPS | Starting, movement, and collecting a crystal |
-| GATE RUNNER | Starting, obstacle progression, and the pit-failure display |
-| STAR LANCE | Starting, movement, and normal/heavy shots |
-| NIGHT SWARM | Starting, movement, and pulse attacks |
+| Game | Tested version | Confirmed on SS1 |
+| --- | --- | --- |
+| FROST STEPS | 1.7.2 | Starting, movement, and collecting a crystal |
+| GATE RUNNER | 3.0.0 | Starting, obstacle progression, and the pit-failure display |
+| STAR LANCE | 3.0.0 | Starting, movement, and normal/heavy shots |
+| NIGHT SWARM | 3.0.0 | Starting, movement, and pulse attacks |
 
-The device owner also confirmed STAR LANCE's physical pad controls and sound effects. Sound and physical pad input for the other three games, all stages, and the remaining 47 games have not been tested on SS1. Original JR-100 hardware remains untested.
+The device owner also confirmed STAR LANCE 3.0.0's physical pad controls and sound effects. The updated STAR LANCE 4.0.0 has been tested in the emulator; its SS1 check is still pending. Sound and physical pad input for the other three games, all stages, and the remaining 47 games have not been tested on SS1. Original JR-100 hardware remains untested.

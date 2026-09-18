@@ -1,0 +1,106 @@
+; Active-high MiSTer-compatible pad. $FF means no adapter is attached.
+SL_PAD: .equ $CC02
+N_BUTTONS:
+    CLRB
+    LDAA KEY_LAST
+    CMPA #$FF
+    BEQ SL_BUTTONS_DONE
+    LDAA SL_PAD
+    CMPA #$FF
+    BEQ SL_KEYS
+    ANDA #$17
+    TAB
+SL_KEYS:
+    LDAA KEYS + 1
+    BITA #1
+    BEQ SL_RIGHT
+    ORAB #2
+SL_RIGHT:
+    BITA #4
+    BEQ SL_HEAVY
+    ORAB #1
+SL_HEAVY:
+    LDAA KEYS + 2
+    BITA #2
+    BEQ SL_FIRE
+    ORAB #4
+SL_FIRE:
+    LDAA KEYS + 8
+    BITA #8
+    BEQ SL_BUTTONS_DONE
+    ORAB #16
+SL_BUTTONS_DONE:
+    TBA
+    RTS
+
+SL_BLOCKS: .equ $378E
+SL_ROW_TABLE:
+    .word $3000,$3020,$3040,$3060,$3080,$30A0,$30C0,$30E0
+    .word $3100,$3120,$3140,$3160,$3180,$31A0,$31C0,$31E0
+    .word $3200,$3220,$3240,$3260,$3280,$32A0,$32C0,$32E0
+SL_SFX_TABLE:
+    .word SL_SHOT,SL_HIT,SL_HEAVY_SHOT,SL_HOT,SL_COOL,SL_WARNING
+SL_SHOT:
+    .byte 1,2,32,1,18,1
+SL_HIT:
+    .byte 2,3,27,1,14,2,7,2
+SL_HEAVY_SHOT:
+    .byte 2,3,20,1,10,2,6,2
+SL_HOT:
+    .byte 3,3,8,3,0,2,6,3
+SL_COOL:
+    .byte 3,3,16,2,24,2,28,3
+SL_WARNING:
+    .byte 2,3,25,2,0,2,25,2
+SL_SCREEN_DELTA:
+    .word $9100
+SL_BUFFER_DELTA:
+    .word $6F00
+
+SL_BACKGROUND:
+    CLR SL_BLOCKS
+    LDX #HUD_SCREEN
+    STX SRC
+    LDX #FRAMEBUFFER
+    STX DST
+SL_BACKGROUND_NEXT:
+    LDX SRC
+    LDAB 0,X
+    BEQ SL_BACKGROUND_DONE
+    LDAA 1,X
+    INX
+    INX
+    STX SRC
+    LDX DST
+SL_BACKGROUND_RUN:
+    STAA 0,X
+    INX
+    DECB
+    BNE SL_BACKGROUND_RUN
+    STX DST
+    INC SL_BLOCKS
+    LDAA SL_BLOCKS
+    ANDA #7
+    BNE SL_BACKGROUND_NEXT
+    JSR CLOCK_SERVICE
+    BRA SL_BACKGROUND_NEXT
+SL_BACKGROUND_DONE:
+    RTS
+
+; Keep the shared filtered renderer during the staged introductory reveal.
+SL_PRESENT:
+    LDX #FRAMEBUFFER
+SL_PRESENT_ROW:
+    LDAB #32
+SL_PRESENT_BYTE:
+    LDAA 0,X
+    ADX SL_SCREEN_DELTA
+    STAA 0,X
+    ADX SL_BUFFER_DELTA
+    INX
+    DECB
+    BNE SL_PRESENT_BYTE
+    JSR CLOCK_SERVICE
+    CPX #FRAMEBUFFER + 768
+    BNE SL_PRESENT_ROW
+    RTS

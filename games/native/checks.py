@@ -24,6 +24,7 @@ class Model:
         self.metadata = json.loads((ROOT / name / "game.json").read_text())
         self.best = bytearray(self.metadata.get("levels", 10))
         self.held = 0
+        self.buttons = 0
         self.s = State()
         self.s.mode = 1
         self.b = bytearray(128)
@@ -55,6 +56,7 @@ class Model:
             "vanish": lambda *a: None,
             "mover": lambda *a: None,
             "held": lambda: self.held,
+            "buttons": lambda: self.buttons,
             "entropy": lambda: self.entropy(),
             "reschedule": lambda: None,
             "win": self.win,
@@ -77,6 +79,7 @@ class Model:
         self.init()
 
     def init(self, level=0):
+        self.buttons = 0
         retained = None
         if self.metadata.get("carryCampaign"):
             if level > self.s.level:
@@ -201,6 +204,22 @@ def begin(name, rom=None):
     return m, r
 
 
+def sample_input(m, r):
+    r.held = m.get("KEY_LAST")
+    if m.metadata["id"] != "star-lance":
+        return
+    r.buttons = 0
+    if r.held == 255:
+        return
+    pad = m.get(0xCC02)
+    if pad != 255:
+        r.buttons = pad & 23
+    row = m.get(m.sym["KEYS"] + 1)
+    r.buttons |= (2 if row & 1 else 0) | (1 if row & 4 else 0)
+    r.buttons |= 4 if m.get(m.sym["KEYS"] + 2) & 2 else 0
+    r.buttons |= 16 if m.get(m.sym["KEYS"] + 8) & 8 else 0
+
+
 def action(m, r, a, pad=False, confirm=None):
     if m.metadata.get("rankedCampaign") and (
         a == 6 and r.s.mode in (1, 2, 3, 4) or a == 8 and r.s.mode == 1
@@ -225,7 +244,7 @@ def action(m, r, a, pad=False, confirm=None):
         assert event, "No input or clock event"
         if event == 1:
             break
-        r.held = m.get("KEY_LAST")  # Input becomes visible at the matrix scan.
+        sample_input(m, r)
         r.tick()
         m.until("FRAME_READY")
         assert_state(m, r)
@@ -309,7 +328,7 @@ def action(m, r, a, pad=False, confirm=None):
         assert event
         if event == 1:
             break
-        r.held = m.get("KEY_LAST")  # Input becomes visible at the matrix scan.
+        sample_input(m, r)
         r.tick()
         m.until("FRAME_READY")
         assert_state(m, r)
@@ -318,10 +337,33 @@ def action(m, r, a, pad=False, confirm=None):
 
 def tick(m, r):
     m.until("FN_TICK")
-    r.held = m.get("KEY_LAST")
+    sample_input(m, r)
     r.tick()
     m.until("FRAME_READY")
     assert_state(m, r)
+
+
+def controls(m, r, mask, pad=True):
+    """Hold a set of ordinary buttons through one STAR LANCE physics frame."""
+    assert m.metadata["id"] == "star-lance" and r.s.mode == 1
+    if pad:
+        lib.pad(m.p, mask)
+    else:
+        for bit, action_code in ((1, 4), (2, 3), (4, 1), (16, 5)):
+            lib.key(m.p, *KEYS[action_code], bool(mask & bit))
+    while True:
+        event = lib.until_either(m.p, m.sym["DISPATCH"], m.sym["FN_TICK"], 10_000_000)
+        assert event
+        if event == 1:
+            r.action(m.get("KEY_PENDING"))
+            m.until("FRAME_READY")
+            assert_state(m, r)
+        else:
+            sample_input(m, r)
+            r.tick()
+            m.until("FRAME_READY")
+            assert_state(m, r)
+            return
 
 
 def go(m, r, target, width, pad=False):

@@ -169,6 +169,13 @@ class DemoPlayer(Player):
                 self.rec.mark("read-clues")
                 idle(self.m, FUSE_READ_SECONDS)
 
+    def controls(self, mask):
+        if self.rec and mask != getattr(self, "last_buttons", 0):
+            self.rec.mark("held-input", buttons=mask)
+        super().controls(mask)
+        if self.rec:
+            self.rec.mark("settled", buttons=mask, mode=self.s.mode)
+
     def press(self, a):
         if self.rec and (
             self.m.metadata.get("rate", 255) == 255
