@@ -3,11 +3,14 @@
 import argparse
 import itertools
 import json
+import sys
 from collections import Counter, deque
 from pathlib import Path
 
 from checks import ROOT, Model, action, assert_state, begin, lib, solve_lights, tick
 from design_levels import search, step
+
+sys.path.insert(0, str(ROOT))
 
 
 class Player:
@@ -91,6 +94,12 @@ class Player:
 
     def next(self):
         assert self.s.mode == 2, (self.name, "did not clear", self.s.__dict__)
+        if self.m.metadata.get("endless"):
+            self.m.action(5, pad=self.pad)
+            self.r.env["advance"]()
+            self.s.action = 5
+            assert_state(self.m, self.r)
+            return True
         if self.m.metadata.get("rankedCampaign"):
             assert self.s.stars == 3 and self.s.runes == 3
             assert self.s.moves == self.s.par
@@ -118,7 +127,8 @@ class Player:
         return not last
 
     def finish(self):
-        assert self.s.mode == 4
+        endless = self.m.metadata.get("endless")
+        assert self.s.mode == (2 if endless else 4)
         if self.capture:
             self.m.capture(self.directory / "images/ending.png")
             if not (self.directory / "images/play-02.png").exists():
@@ -129,7 +139,8 @@ class Player:
                 self.m.capture(self.directory / "images/stage-select.png")
         assert lib.audio_peak(self.m.p) > 0, "No PCM produced"
         print(
-            f"PASS: {self.name}, {self.actions} inputs, {self.ticks} clock steps, full campaign, min SP {lib.min_sp(self.m.p):04X}",
+            f"PASS: {self.name}, {self.actions} inputs, {self.ticks} clock steps, "
+            f"{'eight continuous rounds' if endless else 'full campaign'}, min SP {lib.min_sp(self.m.p):04X}",
             flush=True,
         )
 
@@ -173,55 +184,41 @@ def fuse_plan(rows, cols):
     return plan
 
 
-def orbit_rotate(p, axis, orbit):
-    """Select a row/column through the same three-command menu as the player."""
+def orbit_tool(p, tool):
     if p.s.phase == 0:
         p.press(2)
-    p.go(10 + axis, 3)
+    p.go(16 + tool, 4)
     p.press(5)
-    while p.s.orbit != orbit:
-        p.press(2 if axis == 0 else 4)
+
+
+def orbit_rotate(p, axis, orbit):
+    if p.s.tool != axis + 1 or p.s.phase == 0:
+        orbit_tool(p, axis + 1)
+    target = orbit * 4 + p.s.cursor % 4 if axis == 0 else p.s.cursor // 4 * 4 + orbit
+    p.go(target, 4)
     p.press(5)
 
 
 def solve_orbit(p):
-    """Read the seed cards, make room for the goal, then draft nearby matches."""
-    level = p.s.level
-    if level == 0:
-        orbit_rotate(p, 0, 0)
-        goal = (2, 0, 1) * 3
-    elif level == 1:
-        orbit_rotate(p, 1, 0)
-        goal = (1, 1, 1, 0, 0, 0, 2, 2, 2)
-    else:
-        orbit_rotate(p, 0, 0)
-        orbit_rotate(p, 0, 2)
-        goal = (0, 1, 0, 1, 0, 2, 0, 2, 0)
-    p.go(9, 3)
-    p.press(5)
+    from orbit_draft.strategy import View, choose
+
+    start = p.actions
     while p.s.mode == 1:
-        options = [
-            (offer, pos)
-            for offer in range(2)
-            for pos in range(9)
-            if p.r.b[pos] == 255 and goal[pos] == p.r.d[16 + offer]
-        ]
-        assert options, ("No suitable offered card", level, list(p.r.b[:9]))
-        offer, pos = min(
-            options,
-            key=lambda choice: (
-                abs(choice[1] // 3 - p.s.cell // 3)
-                + abs(choice[1] % 3 - p.s.cell % 3)
-                + (choice[0] != p.s.offer),
-                choice[1],
-            ),
+        view = View(
+            tuple(p.r.b[:16]), tuple(p.r.d[16:18]), tuple(p.r.d[18:21]), p.s.spins
         )
-        if p.s.offer != offer:
-            p.press(4)
-        p.press(5)
-        p.go(pos, 3)
-        p.press(5)
-    assert tuple(p.r.b[:9]) == goal
+        kind, pick, target = choose(view, p.s.target - p.s.progress)
+        if kind == "drop":
+            if p.s.tool != 0 or p.s.phase != 0:
+                orbit_tool(p, 0)
+            if p.s.offer != pick:
+                p.press(4)
+            p.press(5)
+            p.go(p.s.cursor // 4 * 4 + target, 4)
+            p.press(5)
+        else:
+            orbit_rotate(p, pick, target)
+        assert p.actions - start < 600, ("Orbit round stalled", vars(p.s))
 
 
 def solve_stage(p):
@@ -826,16 +823,24 @@ def solve_board_match(p):
 
 def replay(name, rom=None, capture=False, pad=True):
     p = Player(name, rom, capture, pad)
-    while True:
-        solve_stage(p)
-        if not p.next():
-            break
+    if p.m.metadata.get("endless"):
+        for round_number in range(8):
+            solve_stage(p)
+            if capture and round_number == 0:
+                p.m.capture(p.directory / "images/play-02.png")
+            if round_number < 7:
+                p.next()
+    else:
+        while True:
+            solve_stage(p)
+            if not p.next():
+                break
     p.finish()
     return {
         "actions": p.actions,
         "ticks": p.ticks,
         "min_sp": lib.min_sp(p.m.p),
-        "levels": p.m.metadata.get("levels", 10),
+        "levels": 8 if p.m.metadata.get("endless") else p.m.metadata.get("levels", 10),
     }
 
 

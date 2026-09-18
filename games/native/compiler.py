@@ -147,6 +147,9 @@ class Compiler:
         elif name == "held":
             assert not n.args, "held() takes no arguments"
             self.emit("    LDAA KEY_LAST")
+        elif name == "entropy":
+            assert not n.args, "entropy() takes no arguments"
+            self.emit("    LDAA TICK")
         elif name in ("animate", "hold"):
             assert len(n.args) == 1
             self.load(n.args[0])
@@ -252,8 +255,8 @@ class Compiler:
             else:
                 raise TypeError(ast.dump(n))
 
-    def compile(self):
-        reachable = {"init", "act", "tick", "draw"}
+    def compile(self, extra_entries=()):
+        reachable = {"init", "act", "tick", "draw", *extra_entries}
         pending = list(reachable)
         while pending:
             name = pending.pop()
@@ -287,10 +290,10 @@ class Compiler:
         )
 
 
-def compile_file(path):
+def compile_file(path, extra_entries=()):
     compiler = Compiler(
         Path(__file__).with_name("support.py").read_text()
         + "\n"
         + Path(path).read_text()
     )
-    return compiler.compile(), compiler.slots
+    return compiler.compile(extra_entries), compiler.slots

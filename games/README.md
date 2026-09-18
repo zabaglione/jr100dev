@@ -30,7 +30,7 @@
 | [SIGIL DECK](sigil_deck/) | カードを組み合わせて虚空の王を封じる |
 | [DICE RELIC](dice_relic/) | 出目を使い、ダイスの面そのものを鍛える |
 | [CHAIN SUIT](chain_suit/) | 手札交換と役の選択で得点ノルマに挑む |
-| [ORBIT DRAFT](orbit_draft/) | 候補2枚から札を選び、行・列を回して3面の天体目標を満たす |
+| [ORBIT DRAFT](orbit_draft/) | 4×4・5種類の天体を、候補2枚と次の3枚を読んで揃える。回転と落下連鎖で得点を伸ばすエンドレスパズル |
 | [FIVE FORGE](five_forge/) | 妨害と四連の脅威を読む五目対戦 |
 | [CORNER CROWN](corner_crown/) | 挟み取りと角の支配を競う盤面対戦 |
 | [STONE BALANCE](stone_balance/) | 三つの山の取り方を読み切る石取り |

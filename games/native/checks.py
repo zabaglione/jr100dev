@@ -19,7 +19,7 @@ class State:
 
 
 class Model:
-    def __init__(self, name):
+    def __init__(self, name, machine=None):
         self.name = name
         self.metadata = json.loads((ROOT / name / "game.json").read_text())
         self.best = bytearray(self.metadata.get("levels", 10))
@@ -29,6 +29,12 @@ class Model:
         self.b = bytearray(128)
         self.c = bytearray(128)
         self.d = bytearray(128)
+        self.entropy = lambda: 0
+        if machine is not None and self.metadata.get("seededDeck"):
+            slots = json.loads((ROOT / name / "build/state_slots.json").read_text())
+            # The timer is an external input, sampled once at the new-game edge.
+            # Read the retained sample; all subsequent PRNG steps are modeled.
+            self.entropy = lambda: machine.get(slots["s.origin"])
         self.env = {
             "s": self.s,
             "b": self.b,
@@ -48,6 +54,7 @@ class Model:
             "vanish": lambda *a: None,
             "mover": lambda *a: None,
             "held": lambda: self.held,
+            "entropy": lambda: self.entropy(),
             "win": self.win,
             "lose": lambda *a: setattr(self.s, "mode", 3),
         }
@@ -178,8 +185,8 @@ def assert_state(machine, model):
 
 def begin(name, rom=None):
     m = Machine(name, rom=rom)
-    r = Model(name)
     m.action(5)
+    r = Model(name, machine=m)
     r.s.action = 5
     assert_state(m, r)
     return m, r
@@ -225,7 +232,11 @@ def action(m, r, a, pad=False, confirm=None):
                 lib.pad(m.p, PADS[a])
             else:
                 lib.key(m.p, *keys[a], 1)
-    if a == 6 and not m.metadata.get("rankedCampaign") and r.s.mode == 1:
+    if (
+        a == 6
+        and not m.metadata.get("rankedCampaign")
+        and (r.s.mode == 1 or m.metadata.get("endless") and r.s.mode in (2, 3))
+    ):
         assert confirm is not None, "Reset needs an explicit test answer"
         m.until("CONFIRM_READY")
         if pad:
@@ -265,6 +276,8 @@ def action(m, r, a, pad=False, confirm=None):
         if a == 5:
             if mode == 3:
                 r.init(r.s.level)
+            elif mode == 2 and m.metadata.get("endless"):
+                r.env["advance"]()
             elif mode == 2:
                 level = r.s.level + 1
                 if level == m.metadata.get("levels", 10):

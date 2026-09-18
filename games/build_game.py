@@ -77,7 +77,9 @@ def build(directory):
         from compiler import compile_file
 
         native_assets.generate(output, metadata, directory)
-        compiled, state_slots = compile_file(directory / "rules.py")
+        compiled, state_slots = compile_file(
+            directory / "rules.py", ("advance",) if metadata.get("endless") else ()
+        )
         if metadata["id"] == "phase-pairs":
             compiled += f"\nPHASE_FIRST: .equ {state_slots['s.first']}\n"
         if metadata.get("rankedCampaign"):
@@ -135,6 +137,10 @@ def build(directory):
         source += f"GAME_RATE: .equ {metadata.get('rate', 255)}\nGAME_LEVELS: .equ {metadata.get('levels', 10)}\n"
     for path in modules:
         module_source = path.read_text()
+        if path.name == "runtime.asm" and metadata["id"] == "orbit-draft":
+            from orbit_draft.presentation import runtime_hook
+
+            module_source = runtime_hook(module_source)
         if path.name == "runtime.asm" and metadata["id"] == "phase-pairs":
             from phase_pairs.presentation import hint_hook
 

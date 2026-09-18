@@ -153,14 +153,15 @@ class DemoPlayer(Player):
         self.actions = self.ticks = 0
         self.directory = ROOT / name
         self.m = Machine(name, rom)
-        self.r = Model(name)
         self.pacing = pacing
         self.rng = random.Random(name)
         self.rec = Recorder(self.m, recorder) if recorder else None
-        if self.rec:
+        if self.rec or self.m.metadata.get("seededDeck"):
             idle(self.m, 1.8)
+        if self.rec:
             self.rec.mark("input", action=5)
         self.m.action(5)
+        self.r = Model(name, machine=self.m)
         self.r.s.action = 5
         assert_state(self.m, self.r)
         if self.rec:

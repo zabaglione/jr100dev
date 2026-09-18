@@ -1,176 +1,137 @@
-"""Independent mission/draft checks and native card/rotation animation checks."""
+"""Independent 4x4 scoring, draft, gravity and input-only native motion checks."""
 
 import argparse
-import itertools
 import json
 import random
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "native"))
 from checks import Model, action, assert_state
-from machine import KEYS, lib
-from replay import Player, orbit_rotate, solve_orbit
-
-LINES = (
-    (0, 1, 2),
-    (3, 4, 5),
-    (6, 7, 8),
-    (0, 3, 6),
-    (1, 4, 7),
-    (2, 5, 8),
-    (0, 4, 8),
-    (2, 4, 6),
-)
-
-
-def oracle(board, level):
-    lines = [
-        line
-        for line in LINES
-        if board[line[0]] != 255 and len({board[i] for i in line}) == 1
-    ]
-    kinds = {board[line[0]] for line in lines}
-    progress = (
-        len(lines),
-        len(kinds),
-        sum(all(board[i] == 0 for i in line) for line in LINES[-2:]),
-    )[level]
-    return len(lines), progress, kinds, {i for line in lines for i in line}
-
-
-def shifted(board, axis, orbit):
-    result = list(board)
-    positions = LINES[orbit if axis == 0 else 3 + orbit]
-    for source, target in zip(positions, positions[1:] + positions[:1]):
-        result[target] = board[source]
-    return result
-
-
-def can_fill(board, level):
-    holes = [i for i, value in enumerate(board) if value == 255]
-    for values in itertools.product(range(3), repeat=len(holes)):
-        trial = list(board)
-        for i, value in zip(holes, values):
-            trial[i] = value
-        if oracle(trial, level)[1] >= (3 if level == 1 else 2):
-            return True
-    return False
+from machine import KEYS, Machine, lib
+from orbit_draft.strategy import EMPTY, LINES, View, matches, play, resolve
+from replay import Player, orbit_rotate, orbit_tool, solve_orbit
 
 
 def rules_checks():
-    model = Model("orbit_draft")
+    r = Model("orbit_draft")
     rng = random.Random(71)
-    boards = [[255] * 9, [0] * 9, [1] * 9, [0, 1, 0, 1, 0, 2, 0, 2, 0]]
+    assert len(set(LINES)) == 24
+    assert set(LINES) == {tuple(r.env["paths"][i : i + 3]) for i in range(0, 72, 3)}
+    # Exhaust all occupied-cell masks to bound each 8-bit score addition.
+    maximum = [0] * 17
+    masks = [sum(1 << i for i in line) for line in LINES]
+    for mask in range(1 << 16):
+        lines = sum(mask & line == line for line in masks)
+        count = mask.bit_count()
+        maximum[count] = max(maximum[count], lines)
+    for chain in range(1, 6):
+        for count in range(3, 17 - (chain - 1) * 3):
+            assert count * 2 * chain + max(0, maximum[count] - 1) * 2 < 100
+
+    boards = [[EMPTY] * 16, [0] * 16]
     for line in LINES:
-        board = [255] * 9
+        board = [EMPTY] * 16
         for i in line:
             board[i] = 2
         boards.append(board)
-    boards += [[rng.choice((0, 1, 2, 255)) for _ in range(9)] for _ in range(100)]
-    for level in range(3):
-        for board in boards:
-            model.init(level)
-            model.b[:9] = bytes(board)
-            expected, progress, kinds, marked = oracle(board, level)
-            model.env["evaluate"]()
-            assert (model.s.lines, model.s.progress) == (expected, progress)
-            assert model.s.types == sum(1 << kind for kind in kinds)
-            assert {i for i, value in enumerate(model.c[:9]) if value} == marked
-            model.env["evaluate"]()
-            assert model.s.gain == 0 and not any(model.d[:9])
-            # Breaking a line removes its marks and goal progress immediately.
-            model.b[:9] = bytes([255] * 9)
-            model.env["evaluate"]()
-            assert model.s.lines == model.s.progress == model.s.types == 0
-            assert not any(model.c[:9]) and not any(model.d[:9])
+    boards += [
+        [rng.choice((0, 1, 2, 3, 4, EMPTY)) for _ in range(16)] for _ in range(400)
+    ]
+    chains = set()
+    for board in boards:
+        r.init()
+        r.b[:16] = bytes(board)
+        lines, marked = matches(board)
+        r.env["evaluate"]()
+        assert r.s.lines == len(lines)
+        assert {i for i, v in enumerate(r.c[:16]) if v} == marked
+        expected, waves = resolve(tuple(board))
+        r.env["resolve"]()
+        assert tuple(r.b[:16]) == expected
+        points = sum(w[2] for w in waves)
+        assert r.s.score_hi * 100 + r.s.score_lo == points
+        assert r.s.progress == min(99, points)
+        assert r.s.chain == len(waves)
+        assert r.s.spins == min(4, 2 + len(waves))
+        chains.add(len(waves))
+    assert {0, 1, 2} <= chains
+    # Cross-check more action outcomes, including both offers and both axes.
+    for _ in range(160):
+        r.init()
+        board = [rng.choice((0, 1, 2, 3, 4, EMPTY)) for _ in range(16)]
+        r.b[:16] = bytes(board)
+        view = View(tuple(board), tuple(r.d[16:18]), tuple(r.d[18:21]), r.s.spins)
+        spin = rng.randrange(2)
+        pick, target = rng.randrange(2), rng.randrange(4)
+        choice = ("spin" if spin else "drop", pick, target)
+        expected = play(view, choice)
+        r.s.phase = 1
+        r.s.tool = pick + 1 if spin else 0
+        r.s.cursor = target * 4 if spin and pick == 0 else target
+        r.s.offer = pick
+        r.s.card = r.d[16 + pick]
+        r.action(5)
+        if expected:
+            future, points, waves = expected
+            assert tuple(r.b[:16]) == future.board
+            assert r.s.spins == future.spins
+            assert r.s.score_hi * 100 + r.s.score_lo == points
+            if not spin:
+                assert tuple(r.d[16:18]) == future.hand
+                assert tuple(r.d[18:20]) == future.forecast
+        if spin:
+            assert r.s.tool == pick + 1 and r.s.phase == 1
 
-        model.init(level)
-        start = list(model.b[:9])
-        assert can_fill(start, level) == (level == 0)
-        one_spin = [
-            shifted(start, axis, orbit) for axis in range(2) for orbit in range(3)
-        ]
-        assert any(can_fill(board, level) for board in one_spin) == (level != 2)
-        if level == 2:
-            assert any(
-                can_fill(shifted(board, axis, orbit), level)
-                for board in one_spin
-                for axis in range(2)
-                for orbit in range(3)
-            )
-        # Initial blockers cannot meet the later missions with fewer rotations,
-        # even when later cards are unrestricted and rotation timing is arbitrary.
-
-    for axis in range(2):
-        for orbit in range(3):
-            model.init()
-            model.b[:9] = bytes([0, 255, 2, 1, 2, 255, 255, 0, 1])
-            before = list(model.b[:9])
-            model.s.axis, model.s.orbit = axis, orbit
-            model.env["rotate"]()
-            assert list(model.b[:9]) == shifted(before, axis, orbit)
-            assert model.s.spins == 1 and model.s.placed == 3
-    model.init()
-    model.s.orbit = 1
-    model.env["rotate"]()
-    assert model.s.notice == 3 and model.s.spins == 2
-
-    for level in range(3):
-        # Exhaust every sequence of six left/right draft choices.
-        for choices in itertools.product(range(2), repeat=6):
-            model.init(level)
-            cards = model.metadata["dataTables"]["decks"][level * 7 : level * 7 + 7]
-            expected_hand = cards[:2]
-            for turn, offer in enumerate(choices):
-                if model.s.offer != offer:
-                    model.action(4)
-                assert model.s.card == expected_hand[offer]
-                model.action(5)
-                occupied = next(i for i in range(9) if model.b[i] != 255)
-                model.s.cursor = occupied
-                before = bytes(model.b)
-                model.action(5)
-                assert bytes(model.b) == before and model.s.placed == turn + 3
-                target = next(i for i in range(9) if model.b[i] == 255)
-                model.s.cursor = target
-                model.action(5)
-                assert model.b[target] == expected_hand[offer]
-                if turn < 5:
-                    expected_hand[offer] = cards[turn + 2]
-                assert list(model.d[16:18]) == expected_hand
-                assert model.s.drawn == min(turn + 3, 7)
-                assert model.s.placed == turn + 4
-
-    # A full board can still be rescued by its remaining spin.
-    model.init()
-    goal = [0, 1, 2] * 3
-    model.b[:9] = bytes(shifted(shifted(goal, 0, 0), 0, 0))
-    model.s.placed, model.s.spins = 9, 1
-    model.env["evaluate"]()
-    model.env["finish"]()
-    assert model.s.mode == 1 and model.s.cursor == 10 and model.s.notice == 2
-    model.action(5)
-    model.action(5)
-    assert model.s.mode == 2 and list(model.b[:9]) == goal and model.s.spins == 0
-
-    for level, message in enumerate(
-        ("NEED TWO MATCHING LINES", "NEED A, B AND C LINES", "NEED BOTH A DIAGONALS")
-    ):
-        for spins in (0, 1):
-            model.init(level)
-            causes = []
-            model.env["lose"] = causes.append
-            model.b[:9] = bytes([0, 1, 2, 2, 0, 1, 1, 2, 1])
-            model.s.placed, model.s.spins = 9, spins
-            model.env["evaluate"]()
-            model.env["finish"]()
-            if spins:
-                assert not causes
-                model.s.cursor = 9
-                model.action(5)
-            assert causes == [message]
+    # Every external timer seed starts with four distinct cards and two offers.
+    decks = set()
+    for seed in range(256):
+        r.entropy = lambda seed=seed: seed
+        r.init()
+        assert len(set(r.b[12:16])) == 4
+        assert r.d[16] not in r.b[12:16] and r.d[17] in r.b[12:16]
+        decks.add(tuple(r.d[16:21]))
+    assert len(decks) > 100
+    start = (r.s.rng_hi, r.s.rng_lo)
+    seen = set()
+    counts = [0] * 5
+    for _ in range(65535):
+        key = (r.s.rng_hi, r.s.rng_lo)
+        assert key not in seen
+        seen.add(key)
+        counts[r.env["deal"]()] += 1
+    assert (r.s.rng_hi, r.s.rng_lo) == start
+    assert max(counts) - min(counts) < 300
+    r.init()
+    r.s.score_hi, r.s.score_lo, r.s.points = 99, 96, 78
+    r.env["credit"]()
+    assert (r.s.score_hi, r.s.score_lo) == (99, 99)
+    r.env["credit"]()
+    assert (r.s.score_hi, r.s.score_lo) == (99, 99)
+    for _ in range(300):
+        r.env["advance"]()
+    assert r.s.level == 254 and r.s.target == 60
+    r.init()
+    r.b[:16] = bytes((row + 2 * col) % 5 for row in range(4) for col in range(4))
+    r.s.phase, r.s.tool, r.s.cursor = 1, 2, 4
+    r.env["finish"]()
+    assert r.s.mode == 1 and r.s.tool == 2 and r.s.cursor == 4
+    r.s.spins = 0
+    r.env["finish"]()
+    assert r.s.mode == 3
+    r.init()
+    r.b[:16] = bytes([EMPTY] * 16)
+    r.s.phase, r.s.tool = 1, 1
+    r.action(5)
+    assert r.s.spins == 2 and r.s.notice == 4 and r.s.tool == 1
+    r.s.cursor = 18
+    r.action(4)
+    assert r.s.cursor == 18
+    print(
+        "PASS: independent 24-line oracle, 4x4 gravity/chains, five-card drafts, 65535-state deck, score bounds and saturation"
+    )
 
 
 class MotionPlayer(Player):
@@ -179,24 +140,21 @@ class MotionPlayer(Player):
         self.motion_capture = capture
         self.slots = json.loads((self.directory / "build/state_slots.json").read_text())
         self.bank = self.m.read(0xC000, 256)
+        self.covered = set()
         self.flights = self.rotations = self.matches = 0
 
     def field(self, name):
         return self.m.get(self.slots["s." + name])
 
     def press(self, a):
-        placement = (
-            self.s.phase == 1 and self.s.cursor < 9 and self.r.b[self.s.cursor] == 255
-        )
-        rotation = self.s.phase == 2
-        if a != 5 or not (placement or rotation):
+        moving = self.s.phase == 1 and self.s.cursor < 16
+        if a != 5 or not moving:
             return super().press(a)
         before = bytes(self.r.b)
-        hand = bytes(self.r.d[16:18])
-        placed, spins, offer = self.s.placed, self.s.spins, self.s.offer
-        target = (3 + self.s.cursor % 3 * 6, 6 + self.s.cursor // 3 * 5)
+        hand = bytes(self.r.d[16:21])
+        tool, cursor = self.s.tool, self.s.cursor
         self.r.action(5)
-        motions, slides, glows = [], [], []
+        flights, slides, glows, falls = [], [], [], []
         lib.key(self.m.p, *KEYS[5], 1)
         self.m.until("DISPATCH")
         frame = 0
@@ -212,26 +170,37 @@ class MotionPlayer(Player):
                 break
             self.m.until("MOTION_VISIBLE")
             frame += 1
-            assert self.m.get("MODE") == 1
-            assert self.m.read("D_ARRAY", 18)[16:18] == hand
-            bank = self.m.read(0xC000, 256)
-            assert bank[:96] == self.bank[:96] and bank[128:] == self.bank[128:]
+            assert self.m.read(0xC000, 256) == self.bank
+            assert self.m.read("D_ARRAY", 21)[16:21] == hand
+            stage = None
+            if self.field("flying"):
+                flights.append((self.field("fx"), self.field("fy")))
+                stage = "flight"
+            elif self.field("rotating"):
+                slides.append(self.field("slide"))
+                stage = "row" if tool == 1 else "col"
+            elif self.field("glow"):
+                glows.append(self.field("glow"))
+                stage = "burst"
+            elif self.field("falling"):
+                falls.append(self.field("slide"))
+                stage = "fall"
             if self.field("flying") or self.field("rotating"):
                 assert self.m.read("B_ARRAY", 128) == before
-                assert self.field("placed") == placed and self.field("spins") == spins
-                if self.field("flying"):
-                    motions.append((self.field("fx"), self.field("fy")))
-                else:
-                    slides.append(self.field("slide"))
-            else:
-                assert self.m.read("B_ARRAY", 128) == bytes(self.r.b)
-                glows.append(self.field("glow"))
-                assert self.field("progress") == oracle(self.r.b, self.s.level)[1]
-            if self.motion_capture and (self.rotations == 0 or self.s.gain):
-                self.m.capture(
-                    self.motion_capture
-                    / f"action-{self.actions:02}-frame-{frame:02}.png"
-                )
+            if stage:
+                if self.motion_capture and stage not in self.covered:
+                    self.m.capture(self.motion_capture / f"{stage}-{frame:02}.png")
+                if (
+                    stage == "burst"
+                    and self.field("glow") == 3
+                    or stage == "fall"
+                    and self.field("slide") == 4
+                    or stage == "flight"
+                    and len(flights) == 5
+                    or stage in ("row", "col")
+                    and len(slides) == 4
+                ):
+                    self.covered.add(stage)
             lib.key(self.m.p, *KEYS[5], 0)
             if frame == 2:
                 lib.key(self.m.p, *KEYS[4], 1)
@@ -242,72 +211,128 @@ class MotionPlayer(Player):
         self.m.until("INPUT_DONE")
         assert_state(self.m, self.r)
         assert self.m.get("MOTION_ACTIVE") == self.m.get("KEY_PENDING") == 0
-        if placement:
-            assert len(motions) == len(set(motions)) == 5
-            assert motions[0] == (23 + offer * 4, 5) and motions[-1] == target
+        if flights:
+            assert len(flights) == 5
+            target = max(i for i in range(cursor % 4, 16, 4) if before[i] == EMPTY)
+            assert flights[0] == (2 + cursor % 4 * 5, 3)
+            assert flights[-1] == (2 + cursor % 4 * 5, 4 + target // 4 * 4)
             self.flights += 1
-        else:
-            assert slides == ([0, 2, 4, 6] if self.s.axis == 0 else [0, 2, 4, 5])
+        if slides:
+            assert slides == ([0, 1, 3, 5] if tool == 1 else [0, 1, 2, 4])
             self.rotations += 1
-        assert glows == ([0, 1, 2, 3, 0] if self.s.gain else [0])
-        self.matches += int(self.s.gain > 0)
+        assert glows == [1, 2, 3] * (len(glows) // 3)
+        assert falls == [0, 2, 4] * (len(falls) // 3)
+        self.matches += len(glows) // 3
         self.actions += 1
 
 
 def check(rom=None, capture=None):
     rules_checks()
     p = MotionPlayer(rom, capture)
-    for level in range(3):
+    # Explicit repeat inputs keep either tool selected, even at zero budget.
+    orbit_rotate(p, 0, 3)
+    p.press(5)
+    assert p.s.tool == 1 and p.s.spins == 0
+    p.press(5)
+    assert p.s.tool == 1 and p.s.notice == 1
+    orbit_tool(p, 2)
+    p.press(5)
+    assert p.s.tool == 2 and p.s.notice == 1
+    orbit_tool(p, 0)
+    assert p.s.tool == 0 and p.s.phase == 0
+    # Restart through the confirmation to restore budget and draw a new deck.
+    action(p.m, p.r, 6, confirm=True)
+    orbit_rotate(p, 1, 0)
+    p.press(5)
+    assert p.s.tool == 2
+    action(p.m, p.r, 6, confirm=True)
+    for level in range(8):
         solve_orbit(p)
         assert p.s.mode == 2 and p.s.level == level
         assert p.s.progress >= p.s.target
-        p.next()
-    assert p.flights == 18 and p.rotations == 4 and p.matches >= 7
+        if level < 7:
+            before = (
+                bytes(p.r.b),
+                bytes(p.r.d),
+                p.s.rng_hi,
+                p.s.rng_lo,
+                p.s.tool,
+                p.s.score_hi,
+                p.s.score_lo,
+                p.s.spins,
+            )
+            goal = p.s.target
+            p.next()
+            after = (
+                bytes(p.r.b),
+                bytes(p.r.d),
+                p.s.rng_hi,
+                p.s.rng_lo,
+                p.s.tool,
+                p.s.score_hi,
+                p.s.score_lo,
+                p.s.spins,
+            )
+            assert (
+                before == after
+                and p.s.progress == 0
+                and p.s.target == min(60, goal + 6)
+            )
+    assert {"flight", "row", "col", "burst", "fall"} <= p.covered
     p.finish()
-    # Exercise cancellation, no-op and depleted-spin menu through the CPU too.
-    p = Player("orbit_draft")
-    p.press(2)
-    p.go(10, 3)
-    p.press(5)
-    p.press(2)
-    p.press(5)
-    assert p.s.phase == 2 and p.s.notice == 3 and p.s.spins == 2
-    p.press(3)
-    assert p.s.phase == 1 and p.s.spins == 2
-    orbit_rotate(p, 1, 0)
-    p.go(11, 3)
-    p.press(5)
-    p.press(1)
-    assert p.s.phase == 1 and p.s.spins == 1
-    orbit_rotate(p, 1, 0)
-    p.go(11, 3)
-    p.press(5)
-    assert p.s.phase == 1 and p.s.notice == 1 and p.s.spins == 0
-    p = Player("orbit_draft", rom, pad=False)
-    for message in (
-        "NEED TWO MATCHING LINES",
-        "NEED A, B AND C LINES",
-        "NEED BOTH A DIAGONALS",
-    ):
-        for _ in range(6):
-            p.press(5)
-            p.go(next(i for i in range(9) if p.r.b[i] == 255), 3)
-            p.press(5)
-        assert p.s.mode == 1 and p.s.placed == 9 and p.s.spins == 2
-        p.go(9, 3)
-        p.press(5)
-        assert p.s.mode == 3
-        address = p.m.get("LOSS_MESSAGE") * 256 + p.m.get(p.m.sym["LOSS_MESSAGE"] + 1)
-        assert p.m.read(address, len(message)) == message.encode("ascii")
-        assert p.m.read(0xC100 + 21 * 32 + 1, len(message)) == bytes(
-            64 if c == " " else ord(c) - 32 for c in message
+    # A new game after round eight must not index a nonexistent level table.
+    old_score = p.s.score_hi, p.s.score_lo
+    action(p.m, p.r, 6, confirm=False)
+    assert p.s.level == 7 and (p.s.score_hi, p.s.score_lo) == old_score
+    action(p.m, p.r, 6, confirm=True)
+    assert p.s.level == 0 and p.s.target == 12 and p.s.score_hi == p.s.score_lo == 0
+    # Reach defeat with ordinary inputs while deliberately avoiding matches.
+    failed = Player("orbit_draft", rom, pad=False)
+    orbit_rotate(failed, 0, 3)
+    failed.press(5)
+    orbit_tool(failed, 0)
+    for _ in range(12):
+        view = View(
+            tuple(failed.r.b[:16]),
+            tuple(failed.r.d[16:18]),
+            tuple(failed.r.d[18:21]),
+            failed.s.spins,
         )
-        action(p.m, p.r, 5, confirm=True)
-        assert p.s.placed == 3 and p.s.spins == 2
-        solve_orbit(p)
-        p.next()
+        choices = []
+        for offer in range(2):
+            for col in range(4):
+                result = play(view, ("drop", offer, col))
+                if result and result[1] == 0:
+                    choices.append((offer, col))
+        assert choices
+        offer, col = choices[0]
+        if failed.s.offer != offer:
+            failed.press(4)
+        failed.press(5)
+        failed.go(failed.s.cursor // 4 * 4 + col, 4)
+        failed.press(5)
+    assert failed.s.mode == 3 and failed.s.spins == 0
+    address = failed.m.get("LOSS_MESSAGE") * 256 + failed.m.get(
+        failed.m.sym["LOSS_MESSAGE"] + 1
+    )
+    message = b"FULL BOARD - NO SPINS"
+    assert failed.m.read(address, len(message)) == message
+    action(failed.m, failed.r, 5, confirm=False)
+    assert failed.s.mode == 3
+    action(failed.m, failed.r, 5, confirm=True)
+    assert failed.s.mode == 1 and failed.s.level == 0
+    origins = set()
+    for delay in (10000, 120000, 280000, 610000):
+        m = Machine("orbit_draft", rom=rom)
+        lib.ticks(m.p, delay)
+        m.action(5)
+        r = Model("orbit_draft", machine=m)
+        r.s.action = 5
+        assert_state(m, r)
+        origins.add(r.s.origin)
+    assert len(origins) > 1
     print(
-        "PASS: orbit_draft, independent three-mission oracle, minimum spins, all drafts, cyclic rows/columns, full-board rescue, failure causes, three-stage native motion and input isolation"
+        "PASS: persistent ROW/COL, eight rounds carry state, new-game reset, timer seeds, five motion types, immutable PCG and input isolation"
     )
 
 

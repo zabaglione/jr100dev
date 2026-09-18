@@ -100,7 +100,9 @@ def free_slots(metadata):
         return [], []  # Tall numerals, card frames and four live fusion glyphs.
     if gid == "prism-trace":
         return [], list(range(21, 32))  # Shared optical glyphs occupy 0..20.
-    if gid in ("chain-suit", "orbit-draft"):
+    if gid == "orbit-draft":
+        return [], list(range(22, 32))  # Five cards and two border glyphs.
+    if gid == "chain-suit":
         return [], list(range(22, 32))  # Four suits and six card-border glyphs.
     if gid == "five-forge":
         return [], list(range(20, 32))  # Grid, two stones, landing and cursor.

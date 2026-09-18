@@ -33,7 +33,7 @@
 | [NIGHT SWARM](NIGHT-SWARM) | [アクション](Genre-Action) | 迫る群れを誘導し射線を開いて生還する | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=night-swarm) |
 | [NUMBER VAULT](NUMBER-VAULT) | [パズル](Genre-Puzzle) | 一致数の手掛かりから暗証番号を解く | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=number-vault) |
 | [ORBIT DODGE](ORBIT-DODGE) | [アクション](Genre-Action) | 円軌道を移動して放射状の攻撃を避ける | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=orbit-dodge) |
-| [ORBIT DRAFT](ORBIT-DRAFT) | [カード・ボード](Genre-Tabletop) | 候補2枚から札を選び、行・列を回して3面の天体目標を満たす | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=orbit-draft) |
+| [ORBIT DRAFT](ORBIT-DRAFT) | [カード・ボード](Genre-Tabletop) | 4×4・5種類の天体を、候補2枚と次の3枚を読んで揃える。回転と落下連鎖で得点を伸ばすエンドレスパズル | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=orbit-draft) |
 | [ORCHARD DAYS](ORCHARD-DAYS) | [経営・サバイバル](Genre-Management) | 種まきと水やりを配分して果樹園を育てる | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=orchard-days) |
 | [PEG GARDEN](PEG-GARDEN) | [パズル](Genre-Puzzle) | 飛び越しで石を取り除く庭園パズル | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=peg-garden) |
 | [PENDULUM PORT](PENDULUM-PORT) | [アクション](Genre-Action) | 振り子の頂点で次の足場へ跳ぶ | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=pendulum-port) |

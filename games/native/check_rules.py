@@ -15,7 +15,7 @@ def check(name):
     m.action(5)
     assert m.get("MODE") == 0
     m.action(5)
-    r = Model(name)
+    r = Model(name, machine=m)
     r.s.action = 5
     assert_state(m, r)
     levels = m.metadata.get("levels", 10)
@@ -24,6 +24,12 @@ def check(name):
     )
     for i in range(160):
         if r.s.mode != 1:
+            if r.metadata.get("endless") and r.s.mode == 2:
+                m.action(5)
+                r.env["advance"]()
+                r.s.action = 5
+                assert_state(m, r)
+                continue
             level = r.s.level + (1 if r.s.mode == 2 else 0)
             m.action(5)
             if m.get("CN_ACTIVE"):

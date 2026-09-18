@@ -174,6 +174,8 @@ def generate(output, metadata, directory):
         ("STATUS_LOSE", "TRY AGAIN - BUTTON TO RESTART"),
         ("STATUS_END", "ALL STAGES CLEAR - THANK YOU"),
     ]:
+        if info["id"] == "orbit-draft" and label == "STATUS_CLEAR":
+            value = "ROUND CLEAR - RETURN CONTINUE"
         if info["id"] == "brick-pulse":
             value = value.ljust(31)
         text += emit(label, [*value.encode(), 0])
