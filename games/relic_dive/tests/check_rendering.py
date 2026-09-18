@@ -20,7 +20,9 @@ def stats(before, after):
 
 
 def check():
-    # Unchanged gameplay screens from the original direct-VRAM renderer.
+    # Gameplay baselines include the HUD cleanup and consolidated help.
+    # Restoring the old footer and idle hint / removing the new help line
+    # reproduces the original direct-VRAM renderer goldens byte for byte.
     # The redesigned title has separate pixel/text/bank checks in check_title.
     goldens = json.loads(Path(__file__).with_name("render_goldens.json").read_text())
     for r in goldens:

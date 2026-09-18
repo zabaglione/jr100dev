@@ -1,7 +1,7 @@
 {
   "id": "twenty-one",
   "title": "TWENTY ONE",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -48,6 +48,5 @@
     "HIGHER TOTAL WINS TWO COINS.",
     "KEEP EIGHT COINS AFTER 5 HANDS."
   ],
-  "footer": "WASD HIT/STAND  RET CONFIRM",
   "fullDemo": true
 }

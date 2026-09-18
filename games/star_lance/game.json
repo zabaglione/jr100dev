@@ -1,7 +1,7 @@
 {
   "id": "star-lance",
   "title": "STAR LANCE",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -26,8 +26,8 @@
     "THE FORMATION SHIFTS SIDEWAYS.",
     "DODGE THE FALLING MISSILES.",
     "DESTROY ALL EIGHTEEN SHIPS.",
-    "TIME LIMIT: 220 FLIGHT TICKS."
+    "TIME LIMIT: 220 FLIGHT TICKS.",
+    "ARMOURED TOP ROW NEEDS 2 SHOTS."
   ],
-  "footer": "A/D MOVE  RETURN FIRE",
   "fullDemo": true
 }

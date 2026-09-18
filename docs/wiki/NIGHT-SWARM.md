@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/night-swarm/demo-clear.png)
 
-**[音付きプレイ動画を見る（約61秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=night-swarm)**
+**[音付きプレイ動画を見る（約60秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=night-swarm)**
 
 1ステージのクリアまでを収録。
 

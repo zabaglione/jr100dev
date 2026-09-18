@@ -14,7 +14,7 @@
 
 ![最初の目標を達成した場面](images/demo-clear.png)
 
-**[音付きプレイ動画を見る（約61秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=night-swarm)**
+**[音付きプレイ動画を見る（約60秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=night-swarm)**
 
 1ステージのクリアまでを収録。
 
@@ -50,7 +50,7 @@ QWE／AD／ZXCで8方向移動、RETURNで準備済みのパルスを放ちま�
 
 ## ビルドと検証
 
-バージョン 2.0.0。開始番地 `$0300`、ゲーム本体と定数は 8,745 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
+バージョン 2.0.1。開始番地 `$0300`、ゲーム本体と定数は 8,764 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
 
 ```sh
 make -C games/night_swarm

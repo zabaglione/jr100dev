@@ -193,6 +193,4 @@ def draw():
     else:
         for i in range(16):
             letter(1 + i, 21, messages[s.notice * 16 + i])
-    if s.running:
-        text(19, 21, "RET STOP")
     effect_draw()

@@ -14,10 +14,10 @@
       35.6
     ]
   ],
-  "clear_time": 32.609,
+  "clear_time": 32.6022,
   "outcome": "first stage cleared",
   "host_state_writes": 0,
-  "prg_sha256": "b8fab643d5c82553e8f8c1b08c1f965a406794bc149ba8dabc8241d8c6d12986",
+  "prg_sha256": "8ad1a7f21fcabb0615580b617d4b9e101fc1068f10bf68de489b521aa34658a3",
   "images": [
     "demo-start.png",
     "demo-play.png",
@@ -30,71 +30,71 @@
       "action": 5
     },
     {
-      "time": 3.0764,
+      "time": 3.0776,
       "kind": "stage-start"
     },
     {
-      "time": 6.0529,
+      "time": 6.0697,
       "kind": "input",
       "action": 4
     },
     {
-      "time": 6.2783,
+      "time": 6.2893,
       "kind": "settled",
       "action": 4
     },
     {
-      "time": 10.3186,
+      "time": 10.3508,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 11.4023,
+      "time": 11.4192,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 14.4892,
-      "kind": "input",
-      "action": 4
-    },
-    {
-      "time": 14.717,
-      "kind": "settled",
-      "action": 4
-    },
-    {
-      "time": 19.8729,
-      "kind": "input",
-      "action": 5
-    },
-    {
-      "time": 20.9902,
-      "kind": "settled",
-      "action": 5
-    },
-    {
-      "time": 24.0275,
+      "time": 14.5223,
       "kind": "input",
       "action": 4
     },
     {
-      "time": 24.2573,
+      "time": 14.7444,
       "kind": "settled",
       "action": 4
     },
     {
-      "time": 29.8727,
+      "time": 19.9273,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 32.609,
+      "time": 20.9839,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 32.609,
+      "time": 24.0374,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 24.2615,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 29.9063,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 32.6022,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 32.6022,
       "kind": "clear"
     }
   ],

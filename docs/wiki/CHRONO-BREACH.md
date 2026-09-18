@@ -20,7 +20,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/chrono-breach/demo-clear.png)
 
-**[音付きプレイ動画を見る（約32秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=chrono-breach)**
+**[音付きプレイ動画を見る（約31秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=chrono-breach)**
 
 1ステージのクリアまでを収録。
 

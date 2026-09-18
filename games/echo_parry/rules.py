@@ -62,9 +62,9 @@ def draw():
     tile(5, 14 - s.stance * 3, 2)
     tile(24, 14 - s.attack * 3, 6)
     if s.phase == 0:
-        text(11, 10, "READ THE TELL")
+        text(11, 10, "READY")
     if s.phase == 1:
-        text(11, 10, "PARRY NOW")
+        text(11, 10, "ATTACK")
     if s.phase == 2:
         text(11, 10, "RECOVERY")
     digits(9, 19, s.hp)

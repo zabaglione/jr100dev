@@ -1,7 +1,7 @@
 {
   "id": "peg-garden",
   "title": "PEG GARDEN",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -32,6 +32,5 @@
     "THE JUMPED PEG IS REMOVED.",
     "LEAVE FIVE PEGS OR FEWER.",
     "SPACE : RESTORE THE GARDEN"
-  ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  ]
 }

@@ -14,7 +14,7 @@
 
 ![最初の目標を達成した場面](images/demo-clear.png)
 
-**[音付きプレイ動画を見る（約57秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=star-lance)**
+**[音付きプレイ動画を見る（約56秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=star-lance)**
 
 1ステージのクリアまでを収録。
 
@@ -50,7 +50,7 @@ A/Dで自機を移動、RETURNで発射します。連射には待ち時間が�
 
 ## ビルドと検証
 
-バージョン 2.0.0。開始番地 `$0300`、ゲーム本体と定数は 6,923 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
+バージョン 2.0.1。開始番地 `$0300`、ゲーム本体と定数は 6,953 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
 
 ```sh
 make -C games/star_lance

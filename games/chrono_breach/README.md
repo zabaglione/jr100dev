@@ -14,7 +14,7 @@
 
 ![最初の目標を達成した場面](images/demo-clear.png)
 
-**[音付きプレイ動画を見る（約32秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=chrono-breach)**
+**[音付きプレイ動画を見る（約31秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=chrono-breach)**
 
 1ステージのクリアまでを収録。
 
@@ -103,7 +103,7 @@ JR100EMU_ROOT=/path/to/pyjr100emu python3 games/chrono_breach/replay.py \
 
 1.1.0は標準16KBで、独立したルールモデルと実機械語の状態を323行動分照合しました。キーボードとパッドの両リプレイ、死亡・再挑戦・弾切れ・メニュー・入力保持を確認しました。実BASIC経由の起動、ブラウザーでのプレイ、Web AudioのPCM出力も確認しています。**実機未確認**です。
 
-コード・データは9,552 bytes。画面バッファは`$3000-$32FF`、状態領域は`$3300-$37FF`、表示復帰用の保存領域は`$3900-$3DFF`の一部、スタックは`$3E00-$3FFF`。全20面リプレイでの最小SPは`$3FF5`でした。PCGはタイトル・プレイそれぞれ32スロット以内です。
+コード・データは9,489 bytes。画面バッファは`$3000-$32FF`、状態領域は`$3300-$37FF`、表示復帰用の保存領域は`$3900-$3DFF`の一部、スタックは`$3E00-$3FFF`。全20面リプレイでの最小SPは`$3FF5`でした。PCGはタイトル・プレイそれぞれ32スロット以内です。
 
 `assets.py`が自作の字形・曲・画像配置を生成し、`levels.json`が20面の配置を保持します。`solve.py`は独立ルールモデルから解法を探索し、`solutions.json`を作ります。`art/`のJSONはPCG / CRT Workbenchに読み込める実画面の編集用資料です。ROM字形は含まず、読み込み時にWorkbenchの近似字形を使います。
 

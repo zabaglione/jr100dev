@@ -1,7 +1,7 @@
 {
   "id": "auction-house",
   "title": "AUCTION HOUSE",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -43,7 +43,6 @@
     "PASS BEFORE YOU OVERPAY.",
     "FINISH SIX LOTS WITH 62 COINS."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY",
   "dataTables": {
     "lots": [
       24,

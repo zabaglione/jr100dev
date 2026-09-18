@@ -4,20 +4,20 @@
   "boot": "owned BASIC ROM and PRG autostart",
   "clock_hz": 894000,
   "fps": 30,
-  "source_seconds": 99.867,
-  "video_seconds": 99.867,
+  "source_seconds": 38.033,
+  "video_seconds": 38.033,
   "playback_speed": 1,
   "edited": false,
   "source_segments": [
     [
       0,
-      99.8667
+      38.0333
     ]
   ],
-  "clear_time": 96.8836,
+  "clear_time": 35.0524,
   "outcome": "first stage cleared",
   "host_state_writes": 0,
-  "prg_sha256": "6d365e738c263c4d483797e097f6a44cf8bf63460161408499ada0ab9d97aa70",
+  "prg_sha256": "abc84976b3251b741c731315d5b77d211b2061c1a378fcd029d2c40ba293c729",
   "images": [
     "demo-start.png",
     "demo-play.png",
@@ -30,210 +30,901 @@
       "action": 5
     },
     {
-      "time": 3.0307,
+      "time": 3.0387,
       "kind": "stage-start"
     },
     {
-      "time": 9.671,
+      "time": 3.2657,
+      "kind": "traffic",
+      "active": 1,
+      "score": 0,
+      "turning": false
+    },
+    {
+      "time": 3.4453,
+      "kind": "traffic",
+      "active": 1,
+      "score": 0,
+      "turning": false
+    },
+    {
+      "time": 3.6249,
+      "kind": "traffic",
+      "active": 1,
+      "score": 0,
+      "turning": false
+    },
+    {
+      "time": 3.6249,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 3.7818,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 3.9388,
+      "kind": "traffic",
+      "active": 1,
+      "score": 0,
+      "turning": false
+    },
+    {
+      "time": 4.1095,
+      "kind": "traffic",
+      "active": 1,
+      "score": 0,
+      "turning": false
+    },
+    {
+      "time": 4.2904,
+      "kind": "traffic",
+      "active": 1,
+      "score": 0,
+      "turning": false
+    },
+    {
+      "time": 4.4714,
+      "kind": "traffic",
+      "active": 1,
+      "score": 0,
+      "turning": true
+    },
+    {
+      "time": 4.4714,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 9.8224,
+      "time": 4.6378,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 13.072,
-      "kind": "turn",
-      "junction": 1,
-      "x": 11,
-      "y": 8
+      "time": 4.8053,
+      "kind": "traffic",
+      "active": 2,
+      "score": 0,
+      "turning": true
     },
     {
-      "time": 17.4849,
-      "kind": "input",
-      "action": 5
+      "time": 4.9715,
+      "kind": "traffic",
+      "active": 2,
+      "score": 0,
+      "turning": true
     },
     {
-      "time": 17.6339,
-      "kind": "settled",
-      "action": 5
+      "time": 5.152,
+      "kind": "traffic",
+      "active": 2,
+      "score": 0,
+      "turning": true
     },
     {
-      "time": 24.1783,
-      "kind": "input",
-      "action": 5
+      "time": 5.3324,
+      "kind": "traffic",
+      "active": 2,
+      "score": 0,
+      "turning": false
     },
     {
-      "time": 24.3296,
-      "kind": "settled",
-      "action": 5
+      "time": 5.513,
+      "kind": "traffic",
+      "active": 2,
+      "score": 0,
+      "turning": false
     },
     {
-      "time": 27.5793,
-      "kind": "turn",
-      "junction": 1,
-      "x": 11,
-      "y": 8
-    },
-    {
-      "time": 31.9921,
-      "kind": "input",
-      "action": 5
-    },
-    {
-      "time": 32.1411,
-      "kind": "settled",
-      "action": 5
-    },
-    {
-      "time": 45.2646,
-      "kind": "input",
-      "action": 5
-    },
-    {
-      "time": 45.417,
-      "kind": "settled",
-      "action": 5
-    },
-    {
-      "time": 45.417,
+      "time": 5.513,
       "kind": "input",
       "action": 2
     },
     {
-      "time": 45.7191,
+      "time": 5.6753,
       "kind": "settled",
       "action": 2
     },
     {
-      "time": 45.7191,
+      "time": 5.6753,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 6.0045,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 6.1714,
+      "kind": "traffic",
+      "active": 2,
+      "score": 0,
+      "turning": true
+    },
+    {
+      "time": 6.3365,
+      "kind": "traffic",
+      "active": 2,
+      "score": 0,
+      "turning": true
+    },
+    {
+      "time": 6.516,
+      "kind": "traffic",
+      "active": 2,
+      "score": 0,
+      "turning": true
+    },
+    {
+      "time": 6.6954,
+      "kind": "traffic",
+      "active": 2,
+      "score": 0,
+      "turning": true
+    },
+    {
+      "time": 6.875,
+      "kind": "traffic",
+      "active": 2,
+      "score": 0,
+      "turning": true
+    },
+    {
+      "time": 7.0547,
+      "kind": "traffic",
+      "active": 2,
+      "score": 0,
+      "turning": true
+    },
+    {
+      "time": 7.2347,
+      "kind": "traffic",
+      "active": 2,
+      "score": 0,
+      "turning": false
+    },
+    {
+      "time": 7.4146,
+      "kind": "traffic",
+      "active": 2,
+      "score": 0,
+      "turning": false
+    },
+    {
+      "time": 7.5947,
+      "kind": "traffic",
+      "active": 2,
+      "score": 0,
+      "turning": false
+    },
+    {
+      "time": 7.7751,
+      "kind": "traffic",
+      "active": 2,
+      "score": 0,
+      "turning": true
+    },
+    {
+      "time": 9.0016,
+      "kind": "traffic",
+      "active": 1,
+      "score": 2,
+      "turning": true
+    },
+    {
+      "time": 9.0016,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 46.0205,
+      "time": 9.1722,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 48.9228,
-      "kind": "turn",
-      "junction": 1,
-      "x": 11,
-      "y": 8
+      "time": 9.3426,
+      "kind": "traffic",
+      "active": 2,
+      "score": 2,
+      "turning": true
     },
     {
-      "time": 51.5112,
-      "kind": "turn",
-      "junction": 2,
-      "x": 20,
-      "y": 13
+      "time": 9.5193,
+      "kind": "traffic",
+      "active": 2,
+      "score": 2,
+      "turning": true
     },
     {
-      "time": 54.076,
+      "time": 9.6993,
+      "kind": "traffic",
+      "active": 2,
+      "score": 2,
+      "turning": false
+    },
+    {
+      "time": 9.8795,
+      "kind": "traffic",
+      "active": 2,
+      "score": 2,
+      "turning": false
+    },
+    {
+      "time": 10.0597,
+      "kind": "traffic",
+      "active": 2,
+      "score": 2,
+      "turning": false
+    },
+    {
+      "time": 10.24,
+      "kind": "traffic",
+      "active": 2,
+      "score": 2,
+      "turning": false
+    },
+    {
+      "time": 10.4193,
+      "kind": "traffic",
+      "active": 2,
+      "score": 2,
+      "turning": true
+    },
+    {
+      "time": 10.5969,
+      "kind": "traffic",
+      "active": 2,
+      "score": 2,
+      "turning": true
+    },
+    {
+      "time": 10.7787,
+      "kind": "traffic",
+      "active": 2,
+      "score": 2,
+      "turning": true
+    },
+    {
+      "time": 10.9607,
+      "kind": "traffic",
+      "active": 2,
+      "score": 2,
+      "turning": true
+    },
+    {
+      "time": 11.1428,
+      "kind": "traffic",
+      "active": 2,
+      "score": 2,
+      "turning": false
+    },
+    {
+      "time": 12.3758,
+      "kind": "traffic",
+      "active": 1,
+      "score": 10,
+      "turning": false
+    },
+    {
+      "time": 12.3758,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 54.2273,
+      "time": 12.5485,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 57.4752,
-      "kind": "turn",
-      "junction": 1,
-      "x": 11,
-      "y": 8
+      "time": 12.7199,
+      "kind": "traffic",
+      "active": 2,
+      "score": 10,
+      "turning": false
     },
     {
-      "time": 61.892,
+      "time": 12.8976,
+      "kind": "traffic",
+      "active": 2,
+      "score": 10,
+      "turning": false
+    },
+    {
+      "time": 13.0785,
+      "kind": "traffic",
+      "active": 2,
+      "score": 10,
+      "turning": false
+    },
+    {
+      "time": 13.2599,
+      "kind": "traffic",
+      "active": 2,
+      "score": 10,
+      "turning": true
+    },
+    {
+      "time": 13.4377,
+      "kind": "traffic",
+      "active": 2,
+      "score": 10,
+      "turning": true
+    },
+    {
+      "time": 13.6191,
+      "kind": "traffic",
+      "active": 2,
+      "score": 10,
+      "turning": true
+    },
+    {
+      "time": 13.7976,
+      "kind": "traffic",
+      "active": 2,
+      "score": 10,
+      "turning": true
+    },
+    {
+      "time": 13.9745,
+      "kind": "traffic",
+      "active": 2,
+      "score": 10,
+      "turning": true
+    },
+    {
+      "time": 14.1514,
+      "kind": "traffic",
+      "active": 2,
+      "score": 10,
+      "turning": true
+    },
+    {
+      "time": 14.3285,
+      "kind": "traffic",
+      "active": 2,
+      "score": 10,
+      "turning": true
+    },
+    {
+      "time": 14.5057,
+      "kind": "traffic",
+      "active": 2,
+      "score": 10,
+      "turning": false
+    },
+    {
+      "time": 15.7414,
+      "kind": "traffic",
+      "active": 1,
+      "score": 22,
+      "turning": false
+    },
+    {
+      "time": 15.7414,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 62.0449,
+      "time": 15.925,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 65.3025,
-      "kind": "turn",
-      "junction": 1,
-      "x": 11,
-      "y": 8
+      "time": 16.1062,
+      "kind": "traffic",
+      "active": 2,
+      "score": 22,
+      "turning": false
     },
     {
-      "time": 67.8909,
-      "kind": "turn",
-      "junction": 2,
-      "x": 20,
-      "y": 13
+      "time": 16.2873,
+      "kind": "traffic",
+      "active": 2,
+      "score": 22,
+      "turning": false
     },
     {
-      "time": 73.7424,
-      "kind": "turn",
-      "junction": 1,
-      "x": 11,
-      "y": 8
+      "time": 16.4685,
+      "kind": "traffic",
+      "active": 2,
+      "score": 22,
+      "turning": false
     },
     {
-      "time": 76.3308,
-      "kind": "turn",
-      "junction": 2,
-      "x": 20,
-      "y": 13
+      "time": 16.4685,
+      "kind": "input",
+      "action": 2
     },
     {
-      "time": 78.8959,
+      "time": 16.6446,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 16.6446,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 17.0028,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 17.1829,
+      "kind": "traffic",
+      "active": 2,
+      "score": 22,
+      "turning": true
+    },
+    {
+      "time": 17.3643,
+      "kind": "traffic",
+      "active": 2,
+      "score": 22,
+      "turning": true
+    },
+    {
+      "time": 17.5459,
+      "kind": "traffic",
+      "active": 2,
+      "score": 22,
+      "turning": true
+    },
+    {
+      "time": 17.7253,
+      "kind": "traffic",
+      "active": 2,
+      "score": 22,
+      "turning": false
+    },
+    {
+      "time": 17.907,
+      "kind": "traffic",
+      "active": 2,
+      "score": 22,
+      "turning": false
+    },
+    {
+      "time": 18.09,
+      "kind": "traffic",
+      "active": 2,
+      "score": 22,
+      "turning": false
+    },
+    {
+      "time": 18.2705,
+      "kind": "traffic",
+      "active": 2,
+      "score": 22,
+      "turning": false
+    },
+    {
+      "time": 19.5179,
+      "kind": "traffic",
+      "active": 1,
+      "score": 34,
+      "turning": false
+    },
+    {
+      "time": 19.5179,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 79.0473,
+      "time": 19.6882,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 82.296,
-      "kind": "turn",
-      "junction": 1,
-      "x": 11,
-      "y": 8
+      "time": 19.8602,
+      "kind": "traffic",
+      "active": 2,
+      "score": 34,
+      "turning": false
     },
     {
-      "time": 86.7102,
+      "time": 20.0319,
+      "kind": "traffic",
+      "active": 2,
+      "score": 34,
+      "turning": false
+    },
+    {
+      "time": 20.2028,
+      "kind": "traffic",
+      "active": 2,
+      "score": 34,
+      "turning": false
+    },
+    {
+      "time": 20.3805,
+      "kind": "traffic",
+      "active": 2,
+      "score": 34,
+      "turning": false
+    },
+    {
+      "time": 20.558,
+      "kind": "traffic",
+      "active": 2,
+      "score": 34,
+      "turning": false
+    },
+    {
+      "time": 20.7358,
+      "kind": "traffic",
+      "active": 2,
+      "score": 34,
+      "turning": false
+    },
+    {
+      "time": 20.9138,
+      "kind": "traffic",
+      "active": 2,
+      "score": 34,
+      "turning": false
+    },
+    {
+      "time": 21.0901,
+      "kind": "traffic",
+      "active": 2,
+      "score": 34,
+      "turning": false
+    },
+    {
+      "time": 21.2664,
+      "kind": "traffic",
+      "active": 2,
+      "score": 34,
+      "turning": false
+    },
+    {
+      "time": 21.4429,
+      "kind": "traffic",
+      "active": 2,
+      "score": 34,
+      "turning": false
+    },
+    {
+      "time": 21.6194,
+      "kind": "traffic",
+      "active": 2,
+      "score": 34,
+      "turning": false
+    },
+    {
+      "time": 22.8399,
+      "kind": "traffic",
+      "active": 1,
+      "score": 46,
+      "turning": false
+    },
+    {
+      "time": 22.8399,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 86.8631,
+      "time": 23.0115,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 90.1215,
-      "kind": "turn",
-      "junction": 1,
-      "x": 11,
-      "y": 8
+      "time": 23.1844,
+      "kind": "traffic",
+      "active": 2,
+      "score": 46,
+      "turning": false
     },
     {
-      "time": 92.7106,
-      "kind": "turn",
-      "junction": 2,
-      "x": 20,
-      "y": 13
+      "time": 23.3562,
+      "kind": "traffic",
+      "active": 2,
+      "score": 46,
+      "turning": false
     },
     {
-      "time": 96.8836,
+      "time": 23.5345,
+      "kind": "traffic",
+      "active": 2,
+      "score": 46,
+      "turning": false
+    },
+    {
+      "time": 23.7131,
+      "kind": "traffic",
+      "active": 2,
+      "score": 46,
+      "turning": false
+    },
+    {
+      "time": 23.8916,
+      "kind": "traffic",
+      "active": 2,
+      "score": 46,
+      "turning": false
+    },
+    {
+      "time": 24.0703,
+      "kind": "traffic",
+      "active": 2,
+      "score": 46,
+      "turning": false
+    },
+    {
+      "time": 24.2492,
+      "kind": "traffic",
+      "active": 2,
+      "score": 46,
+      "turning": false
+    },
+    {
+      "time": 24.4265,
+      "kind": "traffic",
+      "active": 2,
+      "score": 46,
+      "turning": false
+    },
+    {
+      "time": 24.6069,
+      "kind": "traffic",
+      "active": 2,
+      "score": 46,
+      "turning": false
+    },
+    {
+      "time": 24.7876,
+      "kind": "traffic",
+      "active": 2,
+      "score": 46,
+      "turning": false
+    },
+    {
+      "time": 24.9683,
+      "kind": "traffic",
+      "active": 2,
+      "score": 46,
+      "turning": false
+    },
+    {
+      "time": 26.1976,
+      "kind": "traffic",
+      "active": 1,
+      "score": 58,
+      "turning": false
+    },
+    {
+      "time": 26.1976,
+      "kind": "input",
+      "action": 5
+    },
+    {
+      "time": 26.3859,
+      "kind": "settled",
+      "action": 5
+    },
+    {
+      "time": 26.5728,
+      "kind": "traffic",
+      "active": 2,
+      "score": 58,
+      "turning": false
+    },
+    {
+      "time": 26.7587,
+      "kind": "traffic",
+      "active": 2,
+      "score": 58,
+      "turning": false
+    },
+    {
+      "time": 26.9446,
+      "kind": "traffic",
+      "active": 2,
+      "score": 58,
+      "turning": false
+    },
+    {
+      "time": 26.9446,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 27.1276,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 27.3146,
+      "kind": "traffic",
+      "active": 2,
+      "score": 58,
+      "turning": false
+    },
+    {
+      "time": 27.5014,
+      "kind": "traffic",
+      "active": 2,
+      "score": 58,
+      "turning": false
+    },
+    {
+      "time": 27.6885,
+      "kind": "traffic",
+      "active": 2,
+      "score": 58,
+      "turning": false
+    },
+    {
+      "time": 27.8767,
+      "kind": "traffic",
+      "active": 2,
+      "score": 58,
+      "turning": true
+    },
+    {
+      "time": 28.0627,
+      "kind": "traffic",
+      "active": 2,
+      "score": 58,
+      "turning": true
+    },
+    {
+      "time": 28.2487,
+      "kind": "traffic",
+      "active": 2,
+      "score": 58,
+      "turning": true
+    },
+    {
+      "time": 28.436,
+      "kind": "traffic",
+      "active": 2,
+      "score": 58,
+      "turning": true
+    },
+    {
+      "time": 28.6225,
+      "kind": "traffic",
+      "active": 2,
+      "score": 58,
+      "turning": false
+    },
+    {
+      "time": 29.92,
+      "kind": "traffic",
+      "active": 1,
+      "score": 70,
+      "turning": false
+    },
+    {
+      "time": 29.92,
+      "kind": "input",
+      "action": 2
+    },
+    {
+      "time": 30.088,
+      "kind": "settled",
+      "action": 2
+    },
+    {
+      "time": 30.088,
+      "kind": "input",
+      "action": 4
+    },
+    {
+      "time": 30.4281,
+      "kind": "settled",
+      "action": 4
+    },
+    {
+      "time": 30.5992,
+      "kind": "traffic",
+      "active": 1,
+      "score": 70,
+      "turning": false
+    },
+    {
+      "time": 30.7702,
+      "kind": "traffic",
+      "active": 1,
+      "score": 70,
+      "turning": false
+    },
+    {
+      "time": 30.9482,
+      "kind": "traffic",
+      "active": 1,
+      "score": 70,
+      "turning": false
+    },
+    {
+      "time": 31.1259,
+      "kind": "traffic",
+      "active": 1,
+      "score": 70,
+      "turning": false
+    },
+    {
+      "time": 31.3038,
+      "kind": "traffic",
+      "active": 1,
+      "score": 70,
+      "turning": false
+    },
+    {
+      "time": 31.4818,
+      "kind": "traffic",
+      "active": 1,
+      "score": 70,
+      "turning": false
+    },
+    {
+      "time": 31.6599,
+      "kind": "traffic",
+      "active": 1,
+      "score": 70,
+      "turning": false
+    },
+    {
+      "time": 31.838,
+      "kind": "traffic",
+      "active": 1,
+      "score": 70,
+      "turning": false
+    },
+    {
+      "time": 32.0134,
+      "kind": "traffic",
+      "active": 1,
+      "score": 70,
+      "turning": false
+    },
+    {
+      "time": 32.192,
+      "kind": "traffic",
+      "active": 1,
+      "score": 70,
+      "turning": false
+    },
+    {
+      "time": 35.0524,
+      "kind": "traffic",
+      "active": 0,
+      "score": 82,
+      "turning": false
+    },
+    {
+      "time": 35.0524,
       "kind": "clear"
     }
   ],
-  "actions": 11,
-  "ticks": 246,
+  "actions": 15,
+  "ticks": 105,
   "final_mode": 2,
   "stages_cleared": 1
 }

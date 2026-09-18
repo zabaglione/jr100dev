@@ -80,9 +80,7 @@ def draw():
     if s.mode == 2:
         text(1, 20, "ALL EIGHT PAIRS FOUND")
     elif s.notice == 1:
-        text(1, 20, "MATCHED! RETURN FOR NEXT PAIR")
+        text(1, 20, "MATCHED!")
     elif s.notice == 2:
-        text(1, 20, "REMEMBER BOTH. RETURN TO CLOSE")
-    else:
-        text(1, 20, "REVEAL TWO CARDS TO FIND A PAIR")
+        text(1, 20, "MISMATCH")
     effect_draw()

@@ -112,8 +112,6 @@ def generate(output):
             (5, 25, "MARKED"),
             (8, 25, "PATH"),
             (11, 25, "COMBO"),
-            (22, 0, "WASD PLAN  SPACE UNDO  F CUT"),
-            (23, 0, "BUTTON MENU  CTRL+C EXIT"),
         ],
         "WIN_TEXT": [
             (5, 7, "THE LAST BLADE"),

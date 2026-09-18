@@ -1,7 +1,7 @@
 {
   "id": "five-forge",
   "title": "FIVE FORGE",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -16,6 +16,5 @@
     "THE RIVAL BLOCKS IMMEDIATE WINS",
     "AND BUILDS ITS OWN THREATS.",
     "A FULL BOARD WITHOUT FIVE LOSES"
-  ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  ]
 }

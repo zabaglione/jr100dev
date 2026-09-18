@@ -71,12 +71,10 @@ def draw():
     text(1, 4, "TIDE")
     letter(6, 4, 62 if s.tide == 1 else 60)
     letter(8, 4, 48 + s.force)
-    text(13, 4, "DEEP DRIFTS X2")
     text(1, 6, "SHOAL +2")
     text(1, 9, "DEEP +3")
     digits(12, 19, s.catch)
     digits(28, 19, 9 - s.casts)
-    text(1, 21, "NET COVERS TWO ADJACENT COLUMNS")
     if s.notice:
         text(19, 2, "CAUGHT +")
         letter(27, 2, 48 + s.notice)

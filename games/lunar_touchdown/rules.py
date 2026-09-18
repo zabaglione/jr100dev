@@ -58,5 +58,4 @@ def draw():
     digits(26, 12, 30 - s.height)
     if s.landed:
         text(3, 15, "TOUCHDOWN! ENGINES OFF")
-    text(1, 22, "LAND ON PAD WITH SPEED 0-2")
     effect_draw()

@@ -1,71 +1,51 @@
 {
   "id": "metro-weave",
   "title": "METRO WEAVE",
-  "version": "1.8.0",
+  "version": "2.0.0",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
   "nativeRules": true,
-  "levels": 1,
+  "levels": 3,
   "rate": 10,
   "hud": [
     [
-      19,
-      1,
-      "LIVES"
-    ],
-    [
-      19,
-      17,
-      "SERVED"
-    ],
-    [
-      19,
-      27,
-      "/12"
-    ],
-    [
-      21,
-      1,
-      "NEXT"
-    ],
-    [
-      21,
       8,
-      ">"
+      1,
+      "TRAINS"
+    ],
+    [
+      9,
+      1,
+      "ID TO WAIT"
+    ],
+    [
+      19,
+      1,
+      "HP   DONE  /8  CHAIN X"
+    ],
+    [
+      20,
+      1,
+      "PTS     /      TARGET"
     ],
     [
       21,
-      12,
-      ">"
+      1,
+      "NEXT         AUTO"
     ]
   ],
   "help": [
-    "W/S : SELECT JUNCTION 1 OR 2",
-    "A/D OR RETURN : SWITCH TRACK",
-    "1: RIGHT TO A / DOWN TO 2",
-    "2: RIGHT TO B / DOWN TO C",
-    "BOLD RAILS SHOW THE SET ROUTE.",
-    "SET EACH POINT BEFORE PASSING.",
-    "SWITCH SETTINGS STAY AS SET.",
-    "DELIVER 12. THREE MISSES END."
+    "W/S: SELECT POINT 1 OR 2.",
+    "D: SWITCH TRACK. A: STOP/GO.",
+    "RETURN: SEND AN EXPRESS.",
+    "MATCH TRAIN AND STATION LETTERS",
+    "BUSY: WAIT FOR UNLOADING.",
+    "REG 2PTS / EXPRESS 4PTS / X3",
+    "LATE/WRONG: -1 HP, CHAIN LOST.",
+    "8 TRAINS: TARGET 24 / 30 / 36.",
+    "SILVER:44 / GOLD:60 POINTS."
   ],
-  "footer": "W/S SELECT A/D/RET SWITCH",
   "fullDemo": true,
-  "dataTables": {
-    "timetable": [
-      0,
-      1,
-      0,
-      1,
-      0,
-      0,
-      2,
-      1,
-      2,
-      2,
-      1,
-      2
-    ]
-  }
+  "seededDeck": true
 }

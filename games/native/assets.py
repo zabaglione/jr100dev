@@ -53,11 +53,20 @@ def generate(output, metadata, directory):
     put(hud, 25, 0, "STG")
     for y, x, value in metadata["hud"]:
         put(hud, x, y, value)
-    put(hud, 0, 23, metadata.get("footer", "WASD MOVE  RET USE  SPACE RETRY"))
     put(guide, 0, 0, info["title"])
     for i, value in enumerate(metadata["help"]):
         put(guide, 1, 3 + i * 2, value)
-    put(guide, 1, 22, "ANY INPUT : TITLE")
+    put(
+        guide,
+        1,
+        21,
+        "CTRL+C: EXIT"
+        if metadata.get("disableSpaceReset")
+        else "SPACE: NEW GAME / CTRL+C: EXIT"
+        if metadata.get("endless")
+        else "SPACE: RESTART / CTRL+C: EXIT",
+    )
+    put(guide, 1, 23, "ANY INPUT : TITLE")
     bank = native_bank(info)
     if info["id"] == "brick-pulse":
         # Flat arcade shapes: matching two-pixel outlines, armor and a drone.
@@ -120,7 +129,7 @@ def generate(output, metadata, directory):
             130,
             0,
         ]
-        put(hud, 1, 21, "BEST       F MAP  NOW")
+        put(hud, 1, 21, "BEST              NOW")
     face_assets = actor_assets(info["id"], bank)
     if info["id"] == "chain-suit":
         from chain_suit.presentation import prepare

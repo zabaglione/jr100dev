@@ -152,6 +152,38 @@ class Player:
         )
 
 
+def metro_dispatch(p, express=True):
+    """Read the nearest approaching train; dispatch only after the yard clears."""
+    r, s = p.r, p.s
+    for junction, x, y in ((0, 8, 5), (1, 17, 10)):
+        approaching = [
+            i for i in range(3) if r.b[i] and r.b[3 + i] == y and x - 3 <= r.b[i] <= x
+        ]
+        if approaching:
+            i = max(approaching, key=lambda i: r.b[i])
+            setting = int(r.b[9 + i] != 0) if junction == 0 else int(r.b[9 + i] == 2)
+            if r.c[junction] != setting:
+                if s.cursor != junction:
+                    p.press(2)
+                p.press(4)
+    # Reserve unloading time for visible trains bound for the same station.
+    # Leave a few spare ticks rather than betting every express on its deadline.
+    target = r.c[16]
+    available = r.c[8 + target]
+    for distance in sorted(
+        26 - r.b[i] for i in range(3) if r.b[i] and r.b[9 + i] == target
+    ):
+        available = max(available, distance) + 12
+    if (
+        express
+        and s.issued < 8
+        and s.active < s.capacity
+        and available <= 29
+        and all(x == 0 or x >= 8 for x in r.b[:3])
+    ):
+        p.press(5)
+
+
 def feedback(guess, code):
     exact = sum(a == b for a, b in zip(guess, code))
     common = sum((Counter(guess) & Counter(code)).values())
@@ -789,13 +821,7 @@ def solve_realtime(p):
             ):
                 p.press(5)
         elif name == "metro_weave":
-            desired = [0, r.c[1]] if s.dest == 0 else [1, s.dest - 1]
-            if not s.j1:
-                for i, v in enumerate(desired):
-                    if r.c[i] != v:
-                        if s.cursor != i:
-                            p.press(2)
-                        p.press(5)
+            metro_dispatch(p)
         elif name == "sand_rescue":
             desired = (s.released // 4) % 3
             oldgate = next((i for i in range(3) if r.b[26 + i * 2] == 0), None)

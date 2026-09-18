@@ -24,8 +24,8 @@
       "status": "verified",
       "changes": "移動の中間位置と発射後の線を表示し、倒した敵は発光・破片・細かな粒の順に消えます。",
       "evidence": {
-        "video_seconds": 31.5,
-        "prg_sha256": "3a8fb4b7b6df543c40beeb7a06d9508f84e01d00ce2597cd34c1e9268d62da6a",
+        "video_seconds": 31.433,
+        "prg_sha256": "55e2970e472906dedfc284bf80f22519272f352d2b48b171eac00d1826322b3f",
         "host_state_writes": 0
       }
     },
@@ -36,7 +36,7 @@
       "changes": "使用した札の発光、攻撃によるHP変化、防御値の増加、回復、敵の応答を順に表示します。補充される手札も一枚ずつ確認できます。",
       "evidence": {
         "video_seconds": 30.0,
-        "prg_sha256": "b298e95420aa8b7a893c2d4eb928f1ba9dabe84d3d5d0757fd4e9290cb9f83b3",
+        "prg_sha256": "b014ff3b60e45ba3807f2e01b94b01cdaa63aab26638cf586c588f5fcf0037a2",
         "host_state_writes": 0
       }
     },
@@ -46,8 +46,8 @@
       "status": "verified",
       "changes": "潜水艇はマスの中間を通って移動します。ソナーを使うと、観測範囲を横切る走査線と音で探査を示します。",
       "evidence": {
-        "video_seconds": 102.6,
-        "prg_sha256": "694034a1e64f88983a2847a330f551e76866ad6614c7d87f8facc46686e5bc1b",
+        "video_seconds": 102.133,
+        "prg_sha256": "77bde7ec1a2483bd981528f1e12193c29d9035bd1f2c285c711add9f014ec992",
         "host_state_writes": 0
       }
     },
@@ -57,8 +57,8 @@
       "status": "verified",
       "changes": "剣士が計画した経路を中間位置を通って進み、標的を一体ずつ、光・破片・粒に変えて斬ります。",
       "evidence": {
-        "video_seconds": 31.6,
-        "prg_sha256": "fc3ab584ec7d90dc0492ab69ae2892e11d957fe7b96e487f64354a78ebced464",
+        "video_seconds": 31.5,
+        "prg_sha256": "2404b3e6f0b2935b83411242e167c3aa0edef871c0366af68547ae4e715b3acb",
         "host_state_writes": 0
       }
     },
@@ -69,7 +69,7 @@
       "changes": "移動の中間位置、封印の反応、危険地形への接触、手動巻き戻しに途中の絵と音があります。移動演出の時間も10秒の制限に含まれます。",
       "evidence": {
         "video_seconds": 30.0,
-        "prg_sha256": "9ef5c7a46dd4df91d9a87c490fe0c2d4deeb681588cff007c8367758aa03aade",
+        "prg_sha256": "56c450b20db56f031200f468bf615610f89a1da4137e7954bbb2c3451fe6d788",
         "host_state_writes": 0
       }
     },
@@ -79,8 +79,8 @@
       "status": "verified",
       "changes": "ロボットは矢印の方向を向き、マスの中間を通って移動します。扉は途中の開き方を挟んで開閉し、弾が前方へ飛びます。装甲敵は1発目で点滅して装甲が外れ、撃破時は4段階で消滅します。各動作にSEがあり、失敗時は原因と該当する命令枠を残して停止します。",
       "evidence": {
-        "video_seconds": 31.1,
-        "prg_sha256": "852869ce561cb69978beaebb4e9dd11c06634570100597bc2503336ce1b18366",
+        "video_seconds": 30.433,
+        "prg_sha256": "438ef8bd1d089cf1b7c20ce6edd10c72398097fb5c6ff4c56f90a1662760d44d",
         "host_state_writes": 0
       }
     },
@@ -91,7 +91,7 @@
       "changes": "探索者と警備員が向きを変えて中間位置を通ります。静音・通常歩行と音の届く距離を明記し、機密取得と出口の解放を光と音で示します。",
       "evidence": {
         "video_seconds": 30.0,
-        "prg_sha256": "f4fecfb7aa3256cc1e43985f8539006a21558b14131d2fa382afa78c8a187c7b",
+        "prg_sha256": "cd7a5116be7ad406c507f42eee963f8fd2eadc10616eb2e483ac93333bdd1409",
         "host_state_writes": 0
       }
     },
@@ -102,7 +102,7 @@
       "changes": "3入力・8行の真理値表を使う22問です。各入力の信号が3段のゲートを通る過程を順番に見せ、正解した行数を表示します。",
       "evidence": {
         "video_seconds": 30.0,
-        "prg_sha256": "014de4783acbe8f0329f99f1cc6d44c44a62c0767286cfe2d9902182e9f9c149",
+        "prg_sha256": "3ead1cfe2dbcf040e961e352f9f9fb8c75266818020d5d685ca1c743dc39c70f",
         "host_state_writes": 0
       }
     },
@@ -112,8 +112,8 @@
       "status": "verified",
       "changes": "3種類の寒波を、それぞれ12日間生き延びます。今夜と続く2夜の寒さを予告し、作業、食事、暖かさの消費を音と間を挟んで順に見せます。",
       "evidence": {
-        "video_seconds": 47.0,
-        "prg_sha256": "79bb552d4eeca97fbdace3372c0164623d57283ff8efd88c78987e2871d622f1",
+        "video_seconds": 46.1,
+        "prg_sha256": "662d221b6546a6e8a82a240c0249f21879752da610c7addca47057cd88050ac1",
         "host_state_writes": 0
       }
     },
@@ -123,8 +123,8 @@
       "status": "verified",
       "changes": "主人公と敵の中間移動、広がるパルス、再使用可能の表示を追加しました。装甲のある敵は2回の命中が必要で、被弾点滅と撃破時の破片を区別します。",
       "evidence": {
-        "video_seconds": 61.333,
-        "prg_sha256": "5430814dd9f2ef3702511880fa1006b5ed66729f122a65ef11c3ddbf0923b944",
+        "video_seconds": 60.2,
+        "prg_sha256": "d4b2bab5a66632e2475ae1d07d0ab91c23a4574ee83e40cd0cd69f6534f81acd",
         "host_state_writes": 0
       }
     },
@@ -134,8 +134,8 @@
       "status": "verified",
       "changes": "18種類の盤面で、操作した中心から周囲へ点灯・消灯が波及します。一灯ずつの反応を音と光で確認できます。",
       "evidence": {
-        "video_seconds": 32.033,
-        "prg_sha256": "84c6fc23bdb151a10719221f718f263c55479ccd16199d79c97dace863643ed8",
+        "video_seconds": 32.0,
+        "prg_sha256": "9ee6f1b2cf0ac567bba26a971cff1a41d037d5d950455d118abb669f2c07606d",
         "host_state_writes": 0
       }
     },
@@ -145,8 +145,8 @@
       "status": "verified",
       "changes": "自分と相手が取った石を、一つずつ盤面から移動させます。相手の応答を確認する間があり、最後の石を取った側が勝ちます。",
       "evidence": {
-        "video_seconds": 31.9,
-        "prg_sha256": "ebbcbeec72089b339a3655ba6f6ad8bd18e76dd5b85e57dae34785aa4abd9ca8",
+        "video_seconds": 31.967,
+        "prg_sha256": "40eecb476ed78514aed4c9ac3500fa2253cb263e5186285c8eb352d42e1b21dd",
         "host_state_writes": 0
       }
     },
@@ -156,8 +156,8 @@
       "status": "verified",
       "changes": "配札を開始時にシャッフルします。札は幅が細くなり側面を経て表裏が入れ替わります。一致は光と音、不一致は2枚を覚える間で示します。",
       "evidence": {
-        "video_seconds": 84.533,
-        "prg_sha256": "f48e0b9fa7a5def2c3f70ac0fe74a0486e02c4c369cf29ebee8c6e24868087f9",
+        "video_seconds": 82.033,
+        "prg_sha256": "e41ef2f8af3fb49599cbb4680329e2be9c435fac96f833f051cbdb4e28074b46",
         "host_state_writes": 0
       }
     },
@@ -167,8 +167,8 @@
       "status": "verified",
       "changes": "個々のカードと合計を表示します。配札と追加カードが山から移動し、ディーラーも一枚ずつ引きます。勝ち・バスト・負け・引き分けと収支を残してから次の手へ進みます。",
       "evidence": {
-        "video_seconds": 48.633,
-        "prg_sha256": "fd38f62d7ff406fe236d48617dfd1b911c38dbf03c48819d1043c7abbf9eaeed",
+        "video_seconds": 48.1,
+        "prg_sha256": "2a767318be054a5b06dd977c6fadc59504f6b78a5d6f4e2a7ebc3545c48c5b3e",
         "host_state_writes": 0
       }
     },
@@ -178,8 +178,8 @@
       "status": "verified",
       "changes": "機体が軌道上の中間位置を通り、予告地点へ攻撃の線が伸びます。6回の回避後から2地点への攻撃が加わります。",
       "evidence": {
-        "video_seconds": 45.133,
-        "prg_sha256": "b5fe187909f6bbef3c85914efbb6e6a8826ca0ca565445e2fad6c73b0e505449",
+        "video_seconds": 44.8,
+        "prg_sha256": "dd4c2e787ea7858c7a0a8a4b8f4e7956df2923baa8bdb3059c67ab3adb8a9dcf",
         "host_state_writes": 0
       }
     },
@@ -189,8 +189,8 @@
       "status": "verified",
       "changes": "左右移動とジャンプの途中を示します。6つの障害を越えると2車線に障害が現れ、安全な車線へ移るか穴を跳び越えるかを判断します。",
       "evidence": {
-        "video_seconds": 45.4,
-        "prg_sha256": "cc4e91ab84370d193c4cf29c64cb07a7a54352d9f0e216d7df42d2a238afffa8",
+        "video_seconds": 45.0,
+        "prg_sha256": "194840b2a3edd9069c50e0bd977a390a7cca5f63d15c7a37f38405a39ae2dfb9",
         "host_state_writes": 0
       }
     },
@@ -200,8 +200,8 @@
       "status": "verified",
       "changes": "発射した弾が敵へ飛び、編隊も中間位置を通って移動します。装甲列は2発必要で、一撃目の点滅と撃破時の四段階の消滅を区別します。",
       "evidence": {
-        "video_seconds": 56.8,
-        "prg_sha256": "94c1b2e77cd021bbd4d3d45a0f7779e4bd86409a9ce8d85bd63c73f8213551fd",
+        "video_seconds": 55.5,
+        "prg_sha256": "1373d30f44fbe3093216022d2f633c175b914f3945a95191b31f2e50e0c671f8",
         "host_state_writes": 0
       }
     },
@@ -211,8 +211,8 @@
       "status": "verified",
       "changes": "頭だけでなく胴体もマスの中間を通ります。食べると光と音が出て体が伸び、画面端と自分の体への衝突をそれぞれ説明します。",
       "evidence": {
-        "video_seconds": 58.533,
-        "prg_sha256": "18141e7f32292d481eeba6f1945596496e38748706d5139e1816b27ef73f525f",
+        "video_seconds": 57.667,
+        "prg_sha256": "8f3f6446ca36827d291dac73fc84b81363ad2c5990779ef4da661f70ada355fb",
         "host_state_writes": 0
       }
     },
@@ -223,7 +223,7 @@
       "changes": "降下の中間位置と噴射炎を描きます。着陸台の上へ速度0〜2で降りると、機体の停止を確認する間と着陸音を挟んでクリアします。",
       "evidence": {
         "video_seconds": 30.0,
-        "prg_sha256": "33a1e95c2d162aa4028a267f65b8673cbb38998b9df247877789f069fcd34c62",
+        "prg_sha256": "b05ef0abeb1666e94fa233f4b4626c6947c809f43abc269a94f5a09bc1142392",
         "host_state_writes": 0
       }
     },
@@ -233,8 +233,8 @@
       "status": "verified",
       "changes": "敵の攻撃、盾での受け止め、反撃の飛翔、命中を順に描きます。攻撃の高さは単純な交互から8手のパターンへ変えました。",
       "evidence": {
-        "video_seconds": 42.867,
-        "prg_sha256": "d655c73d75fbcae85c1ca7720c82f225cda7b9de7c24b0a88aeccfad686f6340",
+        "video_seconds": 42.267,
+        "prg_sha256": "a8aec28637f8f9246b12ef55d33fcb59514caee69a61ab105e9a1827c76ae4f9",
         "host_state_writes": 0
       }
     },
@@ -244,8 +244,8 @@
       "status": "verified",
       "changes": "振り子を離れた主人公が弧を描いて足場へ着地し、着地の光と音を確認してから次の足場へ進みます。",
       "evidence": {
-        "video_seconds": 40.2,
-        "prg_sha256": "c3b43834a2a42588b549d7b42a512a76a28091b77600dec37062108d6fc51a76",
+        "video_seconds": 39.2,
+        "prg_sha256": "8850b5019796c5d9f86985580e2f40f1ebfba67c77e8bb2e3531c47a16670dd4",
         "host_state_writes": 0
       }
     },
@@ -256,7 +256,7 @@
       "changes": "1〜4を一度ずつ使う20問です。隣り合う文字の合計と不等式を手掛かりに解読し、確定時は4文字を順に照合します。",
       "evidence": {
         "video_seconds": 30.0,
-        "prg_sha256": "3a3b2742215a268b5390370b7423816409e32ec99ecc0d3a7b6b061d7b793944",
+        "prg_sha256": "cd338ac94a7fcbe7dc15d6de1bd229c4362a90372f1b6070e3184fb20f7428f9",
         "host_state_writes": 0
       }
     },
@@ -266,8 +266,8 @@
       "status": "verified",
       "changes": "帽子・眼鏡・ネクタイが異なる6人から、3つの資料で容疑者を絞る12事件です。資料を開く途中を描き、証拠と合わない人物にはXを付けます。",
       "evidence": {
-        "video_seconds": 34.067,
-        "prg_sha256": "493344b4f3171089c1273e90bc0fed15f96701f117f77c5c5494ac544e3e4b28",
+        "video_seconds": 34.033,
+        "prg_sha256": "73c0ca68a900b2c6a80df1c7e12ae6e0d57fb45e99b1e6b80b944f7a2999dfae",
         "host_state_writes": 0
       }
     },
@@ -278,7 +278,7 @@
       "changes": "岩を避けて方角を読みながら進みます。未探索の地面と岩を描き分け、掘る途中の動作と、発見の光・音を加えました。",
       "evidence": {
         "video_seconds": 30.0,
-        "prg_sha256": "4179d5e61bd73784cfd784482ffa860f0cd5e09014f4d78fffb2dae8db5d24b4",
+        "prg_sha256": "c62f8ee194bbaf9b303d2aa2177c2a93d2c0e977faaeff909844c0373d7a1948",
         "host_state_writes": 0
       }
     },
@@ -289,7 +289,7 @@
       "changes": "6つの遺物配置を用意しました。鏡で移る位置まで主人公が移動する過程を描き、回収と出口の解放を光とメッセージで示します。",
       "evidence": {
         "video_seconds": 33.5,
-        "prg_sha256": "5624fe711f6ee447c5d2bd7a36936197a8b690ca644c1f0e8752fa6ee253cba3",
+        "prg_sha256": "da07ba82c29abc4ce1904bbe8e24c0fc50b2507d04a21c276d49a6f095ab1175",
         "host_state_writes": 0
       }
     },
@@ -299,8 +299,8 @@
       "status": "verified",
       "changes": "種・芽・木・果実を別の絵で示します。種まき、水やり、成長、収穫物の移動を順に描き、次の雨までの日数を表示します。",
       "evidence": {
-        "video_seconds": 39.767,
-        "prg_sha256": "5f8e9d1d8cb6028e79e4e92171d459c731f37b47f4a9fd97773f026f73091c8c",
+        "video_seconds": 39.667,
+        "prg_sha256": "57061865d77bf38772d474e079d25ee30cb156d4bf747be00e7e76af7ca6fdb6",
         "host_state_writes": 0
       }
     },
@@ -310,8 +310,8 @@
       "status": "verified",
       "changes": "浅い魚群と2倍流される深い魚群を、隣接2列を覆う網で狙います。9回で30匹が目標です。投入、魚の移動、網の引き揚げ、加点を順に描きます。",
       "evidence": {
-        "video_seconds": 47.767,
-        "prg_sha256": "3cd98184f9b8ce8b6578ce5a9f75869dc07f553943ea5074cdbee9934c18e828",
+        "video_seconds": 46.2,
+        "prg_sha256": "61dedd7e7a81dcb6b6b6baca2824f4d92f063b7f2ef82253c834a7b2c832126d",
         "host_state_writes": 0
       }
     },
@@ -322,7 +322,7 @@
       "changes": "異なる20の注文を用意しました。素材を投入し、フラスコが途中の位置を通って移動します。注文に到達すると光と音が出ます。",
       "evidence": {
         "video_seconds": 34.733,
-        "prg_sha256": "a083907c46662276aa7fea8fc9ea240ef75070741ce301a14006f4904806c9fb",
+        "prg_sha256": "4849fbf41630a51552c5b4be248bf4a57bc13184cad14bd5a423ae0166700caa",
         "host_state_writes": 0
       }
     },
@@ -332,19 +332,19 @@
       "status": "verified",
       "changes": "鑑定額を範囲で示し、相手は高値まで競ることもあります。自分の入札、相手の上乗せ、落札と売却額を順に表示します。6品終了時に62コインが目標です。",
       "evidence": {
-        "video_seconds": 36.1,
-        "prg_sha256": "0928461dd5441d5237969baabb9d8719d72b03092512afc831d792c73b0d155b",
+        "video_seconds": 35.9,
+        "prg_sha256": "f2cd54677ac6622a5195a4cd971e566a92ae379278eddc938946103a040d0a9e",
         "host_state_writes": 0
       }
     },
     {
       "directory": "metro_weave",
-      "plan": "切り替えた線路と列車の通過経路を一致させ、2段階の分岐と斜め移動の途中を見えるようにする。",
+      "plan": "複数列車・信号・駅の混雑を組み合わせ、通常便と急行の配車判断で得点を伸ばす運行ゲームにする。",
       "status": "verified",
-      "changes": "切替ポイント1はA駅への直進／ポイント2への下り、ポイント2はB駅への直進／C駅への下りを選びます。選んだ経路は太い線路でつながり、列車は連絡線を1マスずつ曲がって進みます。各ポイントは列車がそこへ来た時点で判定し、設定は手で変えるまで保ちます。目的駅の大型看板は点灯と枠の点滅で示し、到着中は行先と次の3本の予告を固定します。",
+      "changes": "3シフトで自動配車が速まり、同時運行数が2本から3本へ増えます。毎回変わる次の3本を読み、急行を手動増発できます。急行は得点が高い一方、信号待ち・荷下ろし待ちで遅延し、HPと連続成功を失います。車体は1マスずつ動き、自動で車間を保ちます。常設の操作説明はタイトル・ヘルプへ移し、本編は列車・進路・行先・待ち時間・得点を表示します。",
       "evidence": {
-        "video_seconds": 99.867,
-        "prg_sha256": "6d365e738c263c4d483797e097f6a44cf8bf63460161408499ada0ab9d97aa70",
+        "video_seconds": 38.033,
+        "prg_sha256": "abc84976b3251b741c731315d5b77d211b2061c1a378fcd029d2c40ba293c729",
         "host_state_writes": 0
       }
     },
@@ -354,8 +354,8 @@
       "status": "verified",
       "changes": "次の2つの荷重を予告します。積荷が船倉へ落下し、重い側へ船体が傾きます。左右の重さに加え、危険な偏りまでの距離を目盛で示します。",
       "evidence": {
-        "video_seconds": 35.8,
-        "prg_sha256": "ca135b5494ae964593272bbbbfec932ddbb0e465ee3ca360f5254c0c479d7d10",
+        "video_seconds": 35.567,
+        "prg_sha256": "b6ac7b90dae70aac8ca672fd6650ef4d59c24861ff1890c565e6a88242a09ee0",
         "host_state_writes": 0
       }
     },
@@ -366,7 +366,7 @@
       "changes": "暗号を開始時に変えます。ダイヤルを回す途中と4桁の照合を描き、直近6回の入力と位置一致・数字一致の数を残します。",
       "evidence": {
         "video_seconds": 30.0,
-        "prg_sha256": "6ab6eea9ce6a0a87b0d891b09c989021fb99c4aaf814afe770c2068576553081",
+        "prg_sha256": "22606cbb7f08717ed9bdb3559f9b78f84841d593286738cf88b9883df36a3788",
         "host_state_writes": 0
       }
     },
@@ -376,8 +376,8 @@
       "status": "verified",
       "changes": "水がマスの中間を通り、堰が途中の形を経て開きます。作物が必要な水を受け取ると光と音で示します。",
       "evidence": {
-        "video_seconds": 43.0,
-        "prg_sha256": "d533965bff709d39eb3913086e1949289cab5b99547f622f4bc72a588b5f4e9c",
+        "video_seconds": 43.1,
+        "prg_sha256": "be2205a548b3f08d5dad62e3e7af3e77ace63b6af1e0b8e4ff1ef2b8dfc91376",
         "host_state_writes": 0
       }
     },
@@ -388,7 +388,7 @@
       "changes": "一文字だけ置き換えられる候補すべてに印を付けます。変更する文字の移動と、ここまでの単語の経路を表示します。",
       "evidence": {
         "video_seconds": 35.6,
-        "prg_sha256": "b8fab643d5c82553e8f8c1b08c1f965a406794bc149ba8dabc8241d8c6d12986",
+        "prg_sha256": "8ad1a7f21fcabb0615580b617d4b9e101fc1068f10bf68de489b521aa34658a3",
         "host_state_writes": 0
       }
     },
@@ -398,8 +398,8 @@
       "status": "verified",
       "changes": "敵を攻撃すると、命中した一文字だけが打撃・破片・粒の三段階に変わり、音を鳴らします。他の同種の敵には影響しません。既存の被弾音と結果のジングルも維持しています。",
       "evidence": {
-        "video_seconds": 63.033,
-        "prg_sha256": "e560dd59bdd8ca2964c1d33516a34c4e8507e710b923e98b0c3345ce8c0d8915",
+        "video_seconds": 62.2,
+        "prg_sha256": "d069370610d7cdd247ea8b2f63a719e5ebd01b7528ed8dd00d16e1c8c97edcf1",
         "host_state_writes": 0
       }
     }
@@ -409,6 +409,7 @@
     "built_and_checked_games": 51,
     "source_unit_tests": 47,
     "quality_checks": "64 shuffled decks; 22 truth tables; 20 unique deductions; 12 witness cases; auction alternatives; two-hit armour; 5059 intermediate frames within screen bounds",
-    "physical_hardware": "not tested"
+    "physical_hardware": "not tested",
+    "metro_weave": "192 seeded shift/policy runs; 24 train campaign; normal/express fares; 8/9-tick deadline; station queues; signal stops; no host state writes"
   }
 }

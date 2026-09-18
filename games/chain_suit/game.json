@@ -1,7 +1,7 @@
 {
   "id": "chain-suit",
   "title": "CHAIN SUIT",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -22,6 +22,5 @@
     "HIGH 3 / PAIR 8 / MULTI 16",
     "ALL SAME SUIT SCORES 25.",
     "MAKE 25 POINTS IN THREE HANDS."
-  ],
-  "footer": "A/D CARD  W SWAP  RET SCORE"
+  ]
 }

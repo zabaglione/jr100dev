@@ -1,7 +1,7 @@
 {
   "id": "compass-rose",
   "title": "COMPASS ROSE",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -33,7 +33,6 @@
     "THREE DIGS / 32 TRAVEL UNITS",
     "WALLS AND EDGES SPEND NO FUEL."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY",
   "fullDemo": true,
   "dataTables": {
     "goals": [

@@ -46,7 +46,7 @@ def draw():
         digits(11, 5 + i * 4, d[i] + d[i + 1])
     text(3, 17, "A   D")
     letter(5, 17, 60 if d[0] < d[3] else 62)
-    text(1, 20, "USE EACH VALUE 1-4 ONCE")
+    text(20, 20, "TRIES")
     digits(27, 20, 5 - s.errors)
     for i in range(4):
         letter(21, 4 + i * 4, 65 + i)

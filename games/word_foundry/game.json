@@ -1,7 +1,7 @@
 {
   "id": "word-foundry",
   "title": "WORD FOUNDRY",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -36,9 +36,9 @@
     "CHANGE EXACTLY ONE LETTER.",
     "REACH THE TARGET IN 8 STEPS.",
     "ONLY THE SIXTEEN WORDS COUNT.",
-    "SPACE : RESTART THE LADDER"
+    "SPACE : RESTART THE LADDER",
+    "* MARKS POSSIBLE NEXT WORDS."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY",
   "dataTables": {
     "words": [
       67,

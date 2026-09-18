@@ -14,10 +14,10 @@
       30.0
     ]
   ],
-  "clear_time": 25.7588,
+  "clear_time": 25.7749,
   "outcome": "first stage cleared",
   "host_state_writes": 0,
-  "prg_sha256": "014de4783acbe8f0329f99f1cc6d44c44a62c0767286cfe2d9902182e9f9c149",
+  "prg_sha256": "3ead1cfe2dbcf040e961e352f9f9fb8c75266818020d5d685ca1c743dc39c70f",
   "images": [
     "demo-start.png",
     "demo-play.png",
@@ -30,41 +30,41 @@
       "action": 5
     },
     {
-      "time": 3.0183,
+      "time": 3.0253,
       "kind": "stage-start"
     },
     {
-      "time": 6.799,
+      "time": 6.8035,
       "kind": "input",
       "action": 2
     },
     {
-      "time": 6.9496,
+      "time": 6.9495,
       "kind": "settled",
       "action": 2
     },
     {
-      "time": 10.5046,
+      "time": 10.5023,
       "kind": "input",
       "action": 2
     },
     {
-      "time": 10.6544,
+      "time": 10.6484,
       "kind": "settled",
       "action": 2
     },
     {
-      "time": 17.321,
+      "time": 17.3099,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 25.7588,
+      "time": 25.7749,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 25.7588,
+      "time": 25.7749,
       "kind": "clear"
     }
   ],

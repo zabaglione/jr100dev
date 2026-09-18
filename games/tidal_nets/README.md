@@ -14,7 +14,7 @@
 
 ![最初の目標を達成した場面](images/demo-clear.png)
 
-**[音付きプレイ動画を見る（約48秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=tidal-nets)**
+**[音付きプレイ動画を見る（約46秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=tidal-nets)**
 
 1ステージのクリアまでを収録。
 
@@ -50,7 +50,7 @@ A/Dで網の左端を選び、RETURNで投げます。8列目の隣は1列目で
 
 ## ビルドと検証
 
-バージョン 2.0.0。開始番地 `$0300`、ゲーム本体と定数は 7,223 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
+バージョン 2.0.1。開始番地 `$0300`、ゲーム本体と定数は 7,136 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
 
 ```sh
 make -C games/tidal_nets

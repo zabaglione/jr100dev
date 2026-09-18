@@ -65,6 +65,4 @@ def draw():
         text(1, 21, "QUARTER TURN AROUND THE CENTRE")
     elif s.left == 0:
         text(1, 21, "ALL RELICS FOUND - EXIT IS OPEN")
-    else:
-        text(1, 21, "TURN BETWEEN THE FOUR CHAMBERS")
     effect_draw()

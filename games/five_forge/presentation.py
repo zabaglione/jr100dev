@@ -63,7 +63,6 @@ def prepare(bank, screen):
     for i in range(8):
         put(screen, 1 + i * 2, 2, chr(65 + i))
         put(screen, 0, 4 + i * 2, str(i + 1))
-    put(screen, 1, 1, "FORGE A LINE OF FIVE")
     for y in (3, 9, 15):
         housing(20, y, 12, 6)
     put(screen, 22, 4, "YOU / O")

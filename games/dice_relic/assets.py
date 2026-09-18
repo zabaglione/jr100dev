@@ -146,8 +146,6 @@ def generate(output):
             (11, 1, "DIE 1"),
             (11, 11, "DIE 2"),
             (11, 21, "DIE 3"),
-            (22, 0, "A/D DIE  W/S ACTION  BUTTON USE"),
-            (23, 0, "CTRL+C EXIT"),
         ],
         "SHOP_TEXT": [
             (0, 0, "HP"),
@@ -161,8 +159,6 @@ def generate(output):
             (11, 1, "DIE 1"),
             (11, 11, "DIE 2"),
             (11, 21, "DIE 3"),
-            (22, 0, "A/D DIE  W/S FACE  BUTTON MENU"),
-            (23, 0, "NEW FACES STAY FOR ALL BATTLES"),
         ],
         "HELP_TEXT": [
             (1, 10, "DICE RELIC"),

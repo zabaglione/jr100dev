@@ -354,8 +354,6 @@ def generate(output):
             (7, 22, "ECHO"),
             (9, 22, "THORN"),
             (19, 11, "END TURN"),
-            (22, 0, "A/D PICK  RETURN PLAY"),
-            (23, 0, "SPACE END  W DECK  CTRL+C EXIT"),
         ],
         "HELP_TEXT": [
             (1, 10, "SIGIL DECK"),

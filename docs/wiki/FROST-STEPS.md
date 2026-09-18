@@ -30,7 +30,7 @@ WASDで滑走方向を選びます。実際に滑れた1回を1手と数え、�
 
 氷上を滑る途中の位置を細かく表示し、向きの変化と移動音で進路を追えます。1回の方向入力は、滑走距離にかかわらず1手です。演出が終わってから次のキーを押してください。
 
-右側のICE COMPASSには必須クリスタルの菱形の絵柄と残数を表示します。CRYSTALSの下のCOLLECT ALLは、この絵柄をすべて集めるとクリアになることを示します。ICE RUNESの丸い絵柄とOPTIONALは任意の回収物です。下部のMOVは使用手数、PARは規定手数、RUNESは任意ルーンの回収数です。
+右側のICE COMPASSには必須クリスタルの菱形の絵柄と残数を表示します。この菱形のクリスタルをすべて集めるとクリアです。ICE RUNESの丸い絵柄とOPTIONALは任意の回収物です。下部のMOVは使用手数、PARは規定手数、RUNESは任意ルーンの回収数です。
 
 ![ゲーム開始時](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/frost-steps/play-01.png)
 

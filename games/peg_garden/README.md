@@ -14,7 +14,7 @@
 
 ![最初の目標を達成した場面](images/demo-clear.png)
 
-**[音付きプレイ動画を見る（約45秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=peg-garden)**
+**[音付きプレイ動画を見る（約44秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=peg-garden)**
 
 1ステージのクリアまでを収録。
 
@@ -52,7 +52,7 @@ WASDで位置を選び、RETURNで石を選択し、2マス先の空き位置を
 
 ## ビルドと検証
 
-バージョン 1.5.0。開始番地 `$0300`、ゲーム本体と定数は 6,515 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
+バージョン 1.5.1。開始番地 `$0300`、ゲーム本体と定数は 6,513 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
 
 ```sh
 make -C games/peg_garden

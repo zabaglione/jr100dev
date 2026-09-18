@@ -158,7 +158,7 @@ def draw():
     if s.scoring:
         text(1, 15, "HAND SCORED!")
     else:
-        text(1, 15, "RETURN TO SCORE")
+        text(1, 15, "HAND READY")
     small_number(6, 18, s.score)
     small_number(16, 18, s.target)
     small_number(27, 18, s.discards)

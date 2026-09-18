@@ -40,8 +40,6 @@ def prepare(bank, hud):
         (28, 9, "/12"),
         (1, 1, "GOAL: DIAMOND / 24 ROOMS"),
         (18, 20, "STEPS"),
-        (19, 21, "RET RUN "),
-        (0, 22, ".WAIT F.FIRE U.USE L.LOOP"),
     ]:
         put(hud, x, y, value)
     for i in range(12):

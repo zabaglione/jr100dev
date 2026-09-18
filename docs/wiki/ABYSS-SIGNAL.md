@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/abyss-signal/demo-clear.png)
 
-**[音付きプレイ動画を見る（約103秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=abyss-signal)**
+**[音付きプレイ動画を見る（約102秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=abyss-signal)**
 
 5つの記録を回収し、基地へ帰還するまでを収録。
 

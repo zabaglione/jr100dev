@@ -1,7 +1,7 @@
 {
   "id": "lunar-touchdown",
   "title": "LUNAR TOUCHDOWN",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -33,6 +33,5 @@
     "SAFE LANDING SPEED IS 0 TO 2.",
     "FUEL IS LIMITED TO 24 BURNS."
   ],
-  "footer": "A/D MOVE  W/RET THRUST",
   "fullDemo": true
 }

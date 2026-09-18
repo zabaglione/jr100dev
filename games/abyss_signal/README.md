@@ -12,7 +12,7 @@
 
 ![最初の目標を達成した場面](images/demo-clear.png)
 
-**[音付きプレイ動画を見る（約103秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=abyss-signal)**
+**[音付きプレイ動画を見る（約102秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=abyss-signal)**
 
 5つの記録を回収し、基地へ帰還するまでを収録。
 
@@ -62,7 +62,7 @@ HUDは酸素と残量バー、船体、深度、次の未記録地点への距�
 
 ## ビルドと検証
 
-リポジトリの開発環境を用意して `make -C games/abyss_signal` を実行します。出力は `build/abyss-signal.prg`、開始番地は `$0300`。ゲーム本体と定数は10,969 bytes、画面・状態・保存領域・512 bytesのスタックを含めて標準16KB内です。PCGは場面ごとに32文字を使います。
+リポジトリの開発環境を用意して `make -C games/abyss_signal` を実行します。出力は `build/abyss-signal.prg`、開始番地は `$0300`。ゲーム本体と定数は10,910 bytes、画面・状態・保存領域・512 bytesのスタックを含めて標準16KB内です。PCGは場面ごとに32文字を使います。
 
 `make -C games/abyss_signal test` は独立したPythonのルールモデルとC++エミュレーターの結果を照合し、岩礁・海流4方向・酸素枯渇・被弾・ソナー・静音・記録・帰還を検査します。入力だけで全5地点を観測して帰還する試験は117行動、酸素80・船体4を残して成功しました。キーボードとパッドの両方を確認しています。
 

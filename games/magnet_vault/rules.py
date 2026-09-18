@@ -78,5 +78,5 @@ def draw():
         else (83 if s.facing == 2 else (87 if s.facing == 3 else 69)),
     )
     tile(23, 13, 6)
-    text(20, 16, "WALK OVER")
+    text(20, 16, "RUNES")
     ranked_hud()

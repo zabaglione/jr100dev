@@ -78,5 +78,4 @@ def draw():
             letter(i % 8 * 2, 3 + i // 8 * 2, 79)
     if s.digging:
         letter(s.pos % 8 * 2, 3 + s.pos // 8 * 2, 47 if s.dig_frame == 1 else 45)
-    text(1, 21, "FOLLOW N/E/S/W AROUND THE ROCKS")
     effect_draw()

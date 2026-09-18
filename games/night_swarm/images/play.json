@@ -4,20 +4,20 @@
   "boot": "owned BASIC ROM and PRG autostart",
   "clock_hz": 894000,
   "fps": 30,
-  "source_seconds": 61.333,
-  "video_seconds": 61.333,
+  "source_seconds": 60.2,
+  "video_seconds": 60.2,
   "playback_speed": 1,
   "edited": false,
   "source_segments": [
     [
       0,
-      61.3333
+      60.2
     ]
   ],
-  "clear_time": 58.3496,
+  "clear_time": 57.2045,
   "outcome": "first stage cleared",
   "host_state_writes": 0,
-  "prg_sha256": "5430814dd9f2ef3702511880fa1006b5ed66729f122a65ef11c3ddbf0923b944",
+  "prg_sha256": "d4b2bab5a66632e2475ae1d07d0ab91c23a4574ee83e40cd0cd69f6534f81acd",
   "images": [
     "demo-start.png",
     "demo-play.png",
@@ -30,141 +30,141 @@
       "action": 5
     },
     {
-      "time": 4.0273,
+      "time": 4.0183,
       "kind": "stage-start"
     },
     {
-      "time": 8.0352,
+      "time": 7.9126,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 9.6392,
+      "time": 9.4949,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 11.3459,
+      "time": 11.136,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 12.9618,
+      "time": 12.7304,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 14.6537,
+      "time": 14.3823,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 16.8754,
+      "time": 16.5802,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 18.5832,
+      "time": 18.2378,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 21.1313,
+      "time": 20.7629,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 22.829,
+      "time": 22.4141,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 24.7604,
+      "time": 24.3151,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 26.4704,
+      "time": 25.9596,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 28.0863,
+      "time": 27.5507,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 29.7968,
+      "time": 29.1957,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 32.0147,
+      "time": 31.3827,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 33.742,
+      "time": 33.0479,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 36.2941,
+      "time": 35.573,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 37.9954,
+      "time": 37.2244,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 39.9356,
+      "time": 39.14,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 41.6493,
+      "time": 40.7882,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 43.2621,
+      "time": 42.3795,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 44.9689,
+      "time": 44.0282,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 47.1876,
+      "time": 46.2263,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 48.9153,
+      "time": 47.8952,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 51.4637,
+      "time": 50.4206,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 53.1764,
+      "time": 52.0761,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 58.3496,
+      "time": 57.2045,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 58.3496,
+      "time": 57.2045,
       "kind": "clear"
     }
   ],

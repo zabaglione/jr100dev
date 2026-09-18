@@ -17,12 +17,16 @@ def station(char, lit):
 
 
 def prepare(bank, hud):
+    # All simultaneous cars share a direction-neutral roof seen from above.
+    # Destinations and car IDs are drawn beside them, not into shared PCG.
     car = Pixels(contact_shadow=False)
-    car.poly([(1, 4), (4, 1), (14, 11), (11, 14)], fill=True)
-    car.poly([(4, 5), (5, 4), (10, 9), (9, 10)], fill=True, value=0)
-    for x, y in ((2, 7), (7, 2), (8, 13), (13, 8)):
+    car.rect(2, 2, 12, 12, fill=True)
+    car.rect(4, 4, 8, 8, fill=True, value=0)
+    car.rect(5, 5, 6, 3, fill=True)
+    for x, y in ((0, 4), (0, 10), (14, 4), (14, 10)):
         car.rect(x, y, 2, 2, fill=True)
-    frames = emit("FACE_2_FRAMES", bank[64:96] + car.pack())
+    bank[64:96] = car.pack()
+    frames = ""
     for tile, char in enumerate("ABC", 3):
         off, on = station(char, False), station(char, True)
         bank[tile * 32 : tile * 32 + 32] = off

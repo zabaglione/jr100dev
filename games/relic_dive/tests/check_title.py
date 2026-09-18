@@ -27,8 +27,8 @@ def check():
         assert text_stack < 64
         # A long expansion at the last column must not overwrite game state.
         guard = m.read("STATE_BEGIN", 32)
-        text = strings["S_WAND_CONTROLS"]
-        m.call("TEXT", 0x32, 0xFC, SYMS["S_WAND_CONTROLS"])
+        text = strings["HELP_LINES_0"]
+        m.call("TEXT", 0x32, 0xFC, SYMS["HELP_LINES_0"])
         assert m.read(0x32FC, 4) == display(text[:4])
         assert m.read("STATE_BEGIN", 32) == guard
 

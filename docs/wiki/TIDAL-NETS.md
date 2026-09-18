@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/tidal-nets/demo-clear.png)
 
-**[音付きプレイ動画を見る（約48秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=tidal-nets)**
+**[音付きプレイ動画を見る（約46秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=tidal-nets)**
 
 1ステージのクリアまでを収録。
 

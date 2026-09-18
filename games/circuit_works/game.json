@@ -1,7 +1,7 @@
 {
   "id": "circuit-works",
   "title": "CIRCUIT WORKS",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -43,7 +43,6 @@
     "BUTTON : TEST ALL EIGHT INPUTS",
     "MATCH EVERY OUTPUT TO WIN."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY",
   "dataTables": {
     "targets": [
       0,

@@ -109,4 +109,3 @@ def draw():
     digits(24, 16, s.cooldown)
     if s.cooldown == 0:
         text(19, 18, "PULSE READY")
-    text(1, 21, "ARMOURED SWARM NEEDS TWO HITS")

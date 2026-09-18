@@ -1,7 +1,7 @@
 {
   "id": "glyph-shift",
   "title": "GLYPH SHIFT",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -31,6 +31,5 @@
     "SPACE RETRY / F STAGE SELECT",
     "X : PASSWORD (TITLE / MAP)"
   ],
-  "footer": "WASD MOVE RET USE SPACE RETRY",
   "rankedCampaign": true
 }

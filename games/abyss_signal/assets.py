@@ -283,8 +283,6 @@ def generate(output):
             (15, 22, "ENGINE"),
             (18, 22, "SONAR"),
             (21, 0, "TO:"),
-            (22, 0, "WASD MOVE  F PING  X WAIT"),
-            (23, 0, "BUTTON MENU  CTRL+C EXIT"),
         ],
         "HELP_TEXT": [
             (1, 9, "ABYSS SIGNAL"),

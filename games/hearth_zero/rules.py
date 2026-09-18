@@ -85,6 +85,4 @@ def draw():
         text(1, 21, "WORK DONE - RESOURCES ADDED")
     elif s.phase == 2:
         text(1, 21, "NIGHT: EAT 2, THEN LOSE HEAT")
-    else:
-        text(1, 21, "COLD FORECAST MINUS YOUR WALL")
     effect_draw()

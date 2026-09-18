@@ -44,7 +44,7 @@
 | [CHRONO BREACH](chrono_breach/) | 弾道を読んで突破する20面の時間停止戦術 |
 | [IRON SCRIPT](iron_script/) | 射撃・スイッチ・繰り返しの命令で24の工場を攻略 |
 | [CIRCUIT WORKS](circuit_works/) | 3入力の真理値表に合わせて論理ゲートを組む |
-| [METRO WEAVE](metro_weave/) | 分岐と信号を操作して乗客を運ぶ |
+| [METRO WEAVE](metro_weave/) | 分岐と信号で複数列車をさばき、混雑を読んで急行を増発する |
 | [SAND RESCUE](sand_rescue/) | 堰を開閉して水を作物へ導く |
 
 ## アクション

@@ -115,7 +115,6 @@ def prepare(bank, screen):
     put(screen, 22, 14, "CHAIN X")
     put(screen, 22, 17, "GOAL  /  ")
     put(screen, 22, 19, "SPIN  /4")
-    put(screen, 1, 1, "3 IN LINE / CHAIN THE FALL")
     put(screen, 25, 0, "RND")
     return ""
 

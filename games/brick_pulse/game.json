@@ -1,7 +1,7 @@
 {
   "id": "brick-pulse",
   "title": "BRICK PULSE",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -33,6 +33,5 @@
     "HIT DRONES / DODGE THEIR BOMBS.",
     "CLEAR BRICKS AND DRONE TO WIN."
   ],
-  "footer": "HOLD A/D MOVE   W/S/G ITEMS",
   "disableSpaceReset": true
 }

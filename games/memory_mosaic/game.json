@@ -1,7 +1,7 @@
 {
   "id": "memory-mosaic",
   "title": "MEMORY MOSAIC",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -33,7 +33,6 @@
     "TWELVE MISMATCHES LOSE.",
     "CARDS ARE SHUFFLED EACH START."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY",
   "seededDeck": true,
   "fullDemo": true
 }

@@ -1,10 +1,12 @@
 {
   "id": "phase-pairs",
   "title": "PHASE PAIRS",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "ramKiB": 16,
   "entry": 768,
-  "modules": ["hints.asm"],
+  "modules": [
+    "hints.asm"
+  ],
   "nativeRules": true,
   "levels": 10,
   "rate": 255,
@@ -16,6 +18,5 @@
     "REMOVE ALL SIXTEEN NUMBERS.",
     "SIX WRONG PAIRS END A ROUND.",
     "SPACE : RESTART"
-  ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  ]
 }

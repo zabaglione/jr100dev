@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/five-forge/demo-clear.png)
 
-**[音付きプレイ動画を見る（約35秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=five-forge)**
+**[音付きプレイ動画を見る（約34秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=five-forge)**
 
 1ステージのクリアまでを収録。
 

@@ -1,7 +1,7 @@
 {
   "id": "frost-steps",
   "title": "FROST STEPS",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -30,6 +30,5 @@
     "SPACE RETRY / F STAGE SELECT",
     "X : PASSWORD (TITLE / MAP)"
   ],
-  "footer": "WASD MOVE RET USE SPACE RETRY",
   "rankedCampaign": true
 }

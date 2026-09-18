@@ -198,9 +198,14 @@ class DemoPlayer(Player):
 
     def wait(self):
         super().wait()
-        if self.rec and self.name == "metro_weave" and self.s.y in (8, 13):
+        if self.rec and self.name == "metro_weave":
             self.rec.mark(
-                "turn", junction=1 if self.s.y == 8 else 2, x=self.s.x, y=self.s.y
+                "traffic",
+                active=self.s.active,
+                score=self.s.score,
+                turning=any(
+                    self.r.b[i] and self.r.b[3 + i] not in (5, 10, 15) for i in range(3)
+                ),
             )
         if self.rec and self.name == "iron_script":
             self.rec.mark(
@@ -359,11 +364,13 @@ def encode(rec, destination, clear_time, outcome, extra):
             + 0.1
         )
     if rec.m.metadata["id"] == "metro-weave":
-        middle = next(
+        traffic = [
             e["time"]
             for e in rec.events
-            if e["kind"] == "turn" and e["junction"] == 2
-        ) + 0.05
+            if e["kind"] == "traffic" and e["active"] >= 2 and e["turning"]
+        ]
+        if traffic:
+            middle = traffic[len(traffic) // 2] + 0.05
     subprocess.run(
         [
             "ffmpeg",

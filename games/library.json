@@ -374,7 +374,7 @@
       "id": "metro-weave",
       "title": "METRO WEAVE",
       "genre": "tactics",
-      "summary": "分岐と信号を操作して乗客を運ぶ",
+      "summary": "分岐と信号で複数列車をさばき、混雑を読んで急行を増発する",
       "motif": "metro"
     },
     {

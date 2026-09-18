@@ -1,7 +1,7 @@
 {
   "id": "orbit-dodge",
   "title": "ORBIT DODGE",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -32,6 +32,5 @@
     "SURVIVE TWENTY WAVES.",
     "THREE HITS DESTROY THE SHIP."
   ],
-  "footer": "A/D ORBIT    SPACE RETRY",
   "fullDemo": true
 }

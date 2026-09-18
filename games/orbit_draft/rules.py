@@ -310,7 +310,3 @@ def draw():
             text(0, 22, "COLUMN FULL: PICK ANOTHER")
         elif s.notice == 4:
             text(0, 22, "SAME CARDS: NO SPIN USED")
-        elif not s.phase:
-            text(0, 22, "A/D PICK RET SELECT S MENU")
-        else:
-            text(0, 22, "WASD TARGET/MENU RET USE")

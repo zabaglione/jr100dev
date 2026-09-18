@@ -1,7 +1,7 @@
 {
   "id": "seed-merge",
   "title": "SEED MERGE",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -31,6 +31,5 @@
     "A NEW TWO APPEARS AFTER A MOVE",
     "GROW A SIXTY FOUR TO WIN.",
     "NO POSSIBLE MERGES ENDS GAME."
-  ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY"
+  ]
 }

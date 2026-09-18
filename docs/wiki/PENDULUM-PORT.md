@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/pendulum-port/demo-clear.png)
 
-**[音付きプレイ動画を見る（約40秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=pendulum-port)**
+**[音付きプレイ動画を見る（約39秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=pendulum-port)**
 
 1ステージのクリアまでを収録。
 

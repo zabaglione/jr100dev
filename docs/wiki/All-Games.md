@@ -28,7 +28,7 @@
 | [LUNAR TOUCHDOWN](LUNAR-TOUCHDOWN) | [アクション](Genre-Action) | 燃料と降下速度を調整する着陸挑戦 | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=lunar-touchdown) |
 | [MAGNET VAULT](MAGNET-VAULT) | [パズル](Genre-Puzzle) | 押せない金属塊を磁力で引いて収納する。40面・規定手数と任意ルーンによる3段階評価・パスワード対応。 | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=magnet-vault) |
 | [MEMORY MOSAIC](MEMORY-MOSAIC) | [カード・ボード](Genre-Tabletop) | 失敗回数を抑えて模様の対を探す | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=memory-mosaic) |
-| [METRO WEAVE](METRO-WEAVE) | [戦術・自動化](Genre-Tactics) | 分岐と信号を操作して乗客を運ぶ | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=metro-weave) |
+| [METRO WEAVE](METRO-WEAVE) | [戦術・自動化](Genre-Tactics) | 分岐と信号で複数列車をさばき、混雑を読んで急行を増発する | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=metro-weave) |
 | [MIRROR RELIC](MIRROR-RELIC) | [探索・アドベンチャー](Genre-Exploration) | 四つの視点を回して遺物の通路を開く | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=mirror-relic) |
 | [NIGHT SWARM](NIGHT-SWARM) | [アクション](Genre-Action) | 迫る群れを誘導し射線を開いて生還する | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=night-swarm) |
 | [NUMBER VAULT](NUMBER-VAULT) | [パズル](Genre-Puzzle) | 一致数の手掛かりから暗証番号を解く | [プレイ](https://zabaglione.github.io/pyjr100emu/?game=number-vault) |

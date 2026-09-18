@@ -120,9 +120,6 @@ def draw():
         else:
             text(20, 6, "COL")
         number(24, 6, s.cursor + 1)
-        text(20, 10, "W/S SELECT")
-        text(20, 11, "A/D AXIS")
-        text(20, 13, "RET SWITCH")
         if s.axis == 0:
             letter(1, 5 + s.cursor * 2, 62)
             letter(14, 5 + s.cursor * 2, 60)

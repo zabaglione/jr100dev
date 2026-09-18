@@ -67,7 +67,6 @@ def prepare(bank, hud, game):
             hud[y * 32 + x : y * 32 + x + n] = [13] * n
 
         if game == "number-vault":
-            put(hud, 2, 2, "FOUR DIALS / TEN ATTEMPTS")
             for y in (7, 9, 21):
                 line(1, y, 30)
             for y in range(10, 21):

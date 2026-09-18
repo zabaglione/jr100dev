@@ -1,95 +1,156 @@
 # ruff: noqa: F821
-# s, b, c, d and drawing functions are supplied by the native compiler.
+# Native byte arrays: x/y/route/destination/deadline/express, three slots each.
 def init():
     s.hp = 3
-    departure()
+    s.origin = entropy()
+    s.seed = s.origin ^ (37 + s.level * 17)
+    s.capacity = min(3, 2 + s.level)
+    s.interval = 24 - s.level * 8
+    s.quota = 24 + s.level * 6
+    for i in range(3):
+        c[16 + i] = rand() % 3
+    dispatch(0)
 
 
-def departure():
-    # The current train and its forecast change together, after arrival finishes.
-    s.dest = timetable[s.service]
-    s.next1 = timetable[(s.service + 1) % 12]
-    s.next2 = timetable[(s.service + 2) % 12]
-    s.next3 = timetable[(s.service + 3) % 12]
-    s.age = 0
-    s.x = 2
-    s.y = 5
-    s.route = 0
-    s.j1 = 0
-    s.j2 = 0
-    s.slope = 0
-    s.arrival = 0
-    s.wrong = 0
-    s.ready = 6
-    reschedule()
+def dispatch(express):
+    if s.issued == 8 or s.active == s.capacity:
+        return
+    for i in range(3):
+        if b[i] and b[i] < 5:
+            return
+    for i in range(3):
+        if b[i] == 0:
+            b[i] = 2
+            b[3 + i] = 5
+            b[6 + i] = 0
+            b[9 + i] = c[16]
+            b[12 + i] = 32
+            b[15 + i] = express
+            c[16] = c[17]
+            c[17] = c[18]
+            c[18] = rand() % 3
+            s.issued += 1
+            s.active += 1
+            s.cool = s.interval
+            s.notice = 4 if express else 0
+            s.notice_time = 8
+            sound(2 if express else 0)
+            return
 
 
 def act():
     if s.action == 1 or s.action == 2:
         s.cursor ^= 1
-    if s.action == 3 or s.action == 4 or s.action == 5:
+    elif s.action == 3:
+        c[2 + s.cursor] ^= 1
+        sound(0)
+    elif s.action == 4:
         c[s.cursor] ^= 1
         sound(0)
+    elif s.action == 5:
+        dispatch(1)
+
+
+def arrive(i):
+    s.arrival = i + 1
+    c[8 + b[6 + i]] = 12
+    s.done += 1
+    s.active -= 1
+    s.reward = 0
+    if b[6 + i] != b[9 + i]:
+        s.notice = 2
+    elif b[15 + i] == 2:
+        s.notice = 3
+    else:
+        s.notice = 1
+        s.chain = min(3, s.chain + 1)
+        s.reward = (4 if b[15 + i] else 2) * s.chain
+        s.score += s.reward
+    s.notice_time = 10
+    if s.reward:
+        sound(1)
+        sparkle(26, b[3 + i])
+        animate(12)
+    else:
+        s.hp -= 1
+        s.chain = 0
+        sound(3)
+        impact(26, b[3 + i])
+        animate(30)
+    if s.hp == 0:
+        if s.notice == 3:
+            lose("EXPRESS LATE")
+        else:
+            lose("WRONG PLATFORM")
+        return
+    if s.done == 8:
+        if s.score < s.quota:
+            lose("NOT ENOUGH POINTS THIS SHIFT")
+        else:
+            s.medal = 3 if s.score >= 60 else (2 if s.score >= 44 else 1)
+            win()
+        return
+    b[i] = 0
+
+
+def advance_train(i):
+    if b[15 + i] == 1:
+        if b[12 + i]:
+            b[12 + i] -= 1
+        else:
+            b[15 + i] = 2
+    if b[i] == 8 and b[3 + i] == 5:
+        if c[2]:
+            return
+        b[6 + i] = c[0]
+    if b[i] == 17 and b[3 + i] == 10:
+        if c[3]:
+            return
+        b[6 + i] = 1 + c[1]
+    if b[i] == 25 and c[8 + b[6 + i]]:
+        return
+    nx = b[i] + 1
+    ny = b[3 + i] + (1 if b[3 + i] < 5 + b[6 + i] * 5 else 0)
+    # Automatic braking keeps the two-character cars visibly separated.
+    for j in range(3):
+        if j != i and b[j]:
+            dx = nx - b[j] if nx >= b[j] else b[j] - nx
+            dy = ny - b[3 + j] if ny >= b[3 + j] else b[3 + j] - ny
+            if dx < 3 and dy < 2:
+                return
+    b[i] = nx
+    b[3 + i] = ny
+    if nx == 26:
+        arrive(i)
 
 
 def tick():
-    if s.ready:
-        s.ready -= 1
-        if s.ready == 0:
-            sound(0)
-        return
-    oldx = s.x
-    oldy = s.y
+    s.arrival = 0
     s.age += 1
-    # Each point is read only when the train reaches that physical junction.
-    if s.x == 8 and s.y == 5:
-        s.j1 = 1
-        if c[0]:
-            s.route = 1
-        sound(0)
-    if s.x == 17 and s.y == 10:
-        s.j2 = 1
-        if c[1]:
-            s.route = 2
-        sound(0)
-    targety = 5 + s.route * 5
-    if s.y < targety:
-        s.x += 1
-        s.y += 1
-    else:
-        s.x += 2 if s.x < 25 else 1
-    s.slope = 1 if s.y > oldy and s.y < targety else 0
-    s.travel = 1
-    cruise(oldx, oldy, s.x, s.y, 2)
-    s.travel = 0
-    if s.x == 26:
-        s.arrival = 1
-        if s.route == s.dest:
-            s.delivered += 1
-            sound(1)
-            sparkle(26, 5 + s.route * 5)
-            animate(18)
-        else:
-            s.hp -= 1
-            s.wrong = 1
-            sound(3)
-            impact(26, 5 + s.route * 5)
-            animate(30)
-        if s.hp == 0:
-            lose("THREE TRAINS REACHED WRONG PLATFORMS")
-        elif s.delivered == 12:
-            win()
-        else:
-            s.service = (s.service + 1) % 12
-            departure()
+    if s.notice_time:
+        s.notice_time -= 1
+    if s.cool:
+        s.cool -= 1
+    for i in range(3):
+        if c[8 + i]:
+            c[8 + i] -= 1
+    for i in range(3):
+        if b[i]:
+            advance_train(i)
+            if s.mode != 1:
+                return
+    if s.cool == 0:
+        dispatch(0)
 
 
 def draw():
-    face(2, 1 + s.slope)
-    face(3, 2 if s.dest == 0 else 1)
-    face(4, 2 if s.dest == 1 else 1)
-    face(5, 2 if s.dest == 2 else 1)
-    # Bold rails are the connected route; the other tracks remain thin.
+    goals = 0
+    for i in range(3):
+        if b[i]:
+            goals |= 1 << b[9 + i]
+    face(3, 2 if goals & 1 else 1)
+    face(4, 2 if goals & 2 else 1)
+    face(5, 2 if goals & 4 else 1)
     for x in range(25 if c[0] == 0 else 6):
         letter(3 + x, 6, 186)
     if c[0]:
@@ -104,49 +165,61 @@ def draw():
             letter(23, 16, 190)
             for x in range(4):
                 letter(24 + x, 16, 186)
-    letter(9, 6, 184 + c[0])
-    letter(18, 11, 184 + c[1])
+    for i in range(2):
+        x = 9 + i * 9
+        y = 4 + i * 5
+        letter(x, y + 2, 184 + c[i])
+        letter(x, y, 105 if c[i] == 0 else 103)
+        if c[2 + i]:
+            text(x + 2, y - 1, "STOP")
+        else:
+            text(x + 2, y - 1, "GO  ")
     letter(6 + s.cursor * 9, 3 + s.cursor * 5, 105)
-    letter(9, 4, 105 if c[0] == 0 else 103)
-    letter(18, 9, 105 if c[1] == 0 else 103)
-    if c[0]:
-        text(11, 3, "DOWN")
-    else:
-        text(11, 3, "A")
-    letter(20, 8, 66 + c[1])
     for i in range(3):
-        tile(29, 5 + i * 5, 3 + i)
-    y = 5 + s.dest * 5
-    text(24, y - 2, "GOAL")
-    for x in range(4):
-        letter(28 + x, y - 1, 110 if (s.age + s.ready) % 2 or s.arrival else 142)
-        letter(28 + x, y + 2, 110 if (s.age + s.ready) % 2 or s.arrival else 116)
-    for row in range(2):
-        letter(28, y + row, 136)
-        letter(31, y + row, 146)
-    if not s.travel:
-        tile(s.x, s.y, 2)
-    letter(7, 19, 48 + s.hp)
-    digits(24, 19, s.delivered)
-    letter(6, 21, 65 + s.next1)
-    letter(10, 21, 65 + s.next2)
-    letter(14, 21, 65 + s.next3)
-    text(18, 21, "ROUTE")
-    letter(24, 21, 65 if c[0] == 0 else 66 + c[1])
-    if s.wrong:
-        text(1, 2, "WRONG PLATFORM! CHECK DEST")
-    elif s.arrival:
-        text(1, 2, "DELIVERED - TRAIN AT PLATFORM")
-    elif s.ready:
-        text(1, 2, "SET ROUTE - TRAIN READY")
-    elif s.j1 and s.route == 0:
-        text(1, 2, "TO A - JUNCTION 1 PASSED")
-    elif s.j2:
-        text(1, 2, "TO")
-        letter(4, 2, 65 + s.route)
-        text(6, 2, "- JUNCTION 2 PASSED")
-    elif s.j1:
-        text(1, 2, "NEXT TURN: JUNCTION 2")
-    else:
-        text(1, 2, "SET 1:A/DOWN   2:B/C")
+        y = 5 + i * 5
+        tile(29, y, 3 + i)
+        if c[8 + i]:
+            text(24, y - 2, "BUSY")
+        if goals & (1 << i):
+            letter(28, y, 62)
+            for x in range(4):
+                letter(28 + x, y - 1, 110 if s.age % 2 else 142)
+                letter(28 + x, y + 2, 110 if s.age % 2 else 116)
+        if b[i]:
+            tile(b[i], b[3 + i], 2)
+            letter(b[i], b[3 + i] - 1, 49 + i)
+            letter(b[i] + 1, b[3 + i] - 1, 65 + b[9 + i])
+            letter(1, 10 + i * 2, 49 + i)
+            letter(3, 10 + i * 2, 65 + b[9 + i])
+            if b[15 + i]:
+                margin = b[12 + i] - (26 - b[i]) if b[12 + i] >= 26 - b[i] else 0
+                letter(5, 10 + i * 2, 43 if b[15 + i] == 1 else 33)
+                digits(6, 10 + i * 2, margin)
+            else:
+                text(5, 10 + i * 2, "REG")
+    letter(4, 19, 48 + s.hp)
+    letter(11, 19, 48 + s.done)
+    letter(24, 19, 48 + max(1, s.chain))
+    number(5, 20, s.score)
+    number(11, 20, s.quota)
+    for i in range(3):
+        letter(6 + i * 2, 21, 65 + c[16 + i] if s.issued + i < 8 else 45)
+    digits(18, 21, s.cool)
+    if s.mode == 2 or s.mode == 4:
+        if s.medal == 3:
+            text(1, 2, "GOLD DISPATCHER!")
+        elif s.medal == 2:
+            text(1, 2, "SILVER DISPATCHER!")
+        else:
+            text(1, 2, "BRONZE DISPATCHER!")
+    elif s.notice_time and s.notice == 1:
+        text(1, 2, "DELIVERED +")
+        digits(12, 2, s.reward)
+        text(16, 2, "CHAIN BONUS!")
+    elif s.notice_time and s.notice == 2:
+        text(1, 2, "WRONG STATION! CHAIN LOST")
+    elif s.notice_time and s.notice == 3:
+        text(1, 2, "EXPRESS LATE! CHAIN LOST")
+    elif s.notice_time and s.notice == 4:
+        text(1, 2, "EXPRESS DEPARTED")
     effect_draw()

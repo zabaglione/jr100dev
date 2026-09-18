@@ -14,10 +14,10 @@
       30.0
     ]
   ],
-  "clear_time": 26.4674,
+  "clear_time": 26.4026,
   "outcome": "first stage cleared",
   "host_state_writes": 0,
-  "prg_sha256": "4179d5e61bd73784cfd784482ffa860f0cd5e09014f4d78fffb2dae8db5d24b4",
+  "prg_sha256": "c62f8ee194bbaf9b303d2aa2177c2a93d2c0e977faaeff909844c0373d7a1948",
   "images": [
     "demo-start.png",
     "demo-play.png",
@@ -30,101 +30,101 @@
       "action": 5
     },
     {
-      "time": 4.2571,
+      "time": 4.2493,
       "kind": "stage-start"
     },
     {
-      "time": 5.6343,
+      "time": 5.6339,
       "kind": "input",
       "action": 3
     },
     {
-      "time": 6.0927,
+      "time": 6.0744,
       "kind": "settled",
       "action": 3
     },
     {
-      "time": 7.6707,
+      "time": 7.6606,
       "kind": "input",
       "action": 3
     },
     {
-      "time": 8.1191,
+      "time": 8.0991,
       "kind": "settled",
       "action": 3
     },
     {
-      "time": 9.6211,
+      "time": 9.609,
       "kind": "input",
       "action": 1
     },
     {
-      "time": 10.0665,
+      "time": 10.045,
       "kind": "settled",
       "action": 1
     },
     {
-      "time": 11.4519,
+      "time": 11.4369,
       "kind": "input",
       "action": 1
     },
     {
-      "time": 11.9058,
+      "time": 11.877,
       "kind": "settled",
       "action": 1
     },
     {
-      "time": 13.7248,
+      "time": 13.705,
       "kind": "input",
       "action": 4
     },
     {
-      "time": 14.1742,
+      "time": 14.1412,
       "kind": "settled",
       "action": 4
     },
     {
-      "time": 15.9494,
+      "time": 15.9259,
       "kind": "input",
       "action": 4
     },
     {
-      "time": 16.4003,
+      "time": 16.3601,
       "kind": "settled",
       "action": 4
     },
     {
-      "time": 17.9184,
+      "time": 17.8857,
       "kind": "input",
       "action": 4
     },
     {
-      "time": 18.362,
+      "time": 18.3191,
       "kind": "settled",
       "action": 4
     },
     {
-      "time": 19.9512,
+      "time": 19.916,
       "kind": "input",
       "action": 4
     },
     {
-      "time": 20.3955,
+      "time": 20.351,
       "kind": "settled",
       "action": 4
     },
     {
-      "time": 22.9343,
+      "time": 22.902,
       "kind": "input",
       "action": 5
     },
     {
-      "time": 26.4674,
+      "time": 26.4026,
       "kind": "settled",
       "action": 5
     },
     {
-      "time": 26.4674,
+      "time": 26.4026,
       "kind": "clear"
     }
   ],

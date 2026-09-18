@@ -14,7 +14,7 @@
 
 ![最初の目標を達成した場面](images/demo-clear.png)
 
-**[音付きプレイ動画を見る（約40秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=pendulum-port)**
+**[音付きプレイ動画を見る（約39秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=pendulum-port)**
 
 1ステージのクリアまでを収録。
 
@@ -50,7 +50,7 @@ RETURNで振り子を放します。ダイヤが次の着地点です。
 
 ## ビルドと検証
 
-バージョン 1.6.0。開始番地 `$0300`、ゲーム本体と定数は 6,528 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
+バージョン 1.6.1。開始番地 `$0300`、ゲーム本体と定数は 6,542 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
 
 ```sh
 make -C games/pendulum_port

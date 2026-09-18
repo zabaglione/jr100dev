@@ -1,7 +1,7 @@
 {
   "id": "potion-path",
   "title": "POTION PATH",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -48,7 +48,6 @@
     "REACH THE DIAMOND ORDER.",
     "TWELVE DOSES PER POTION."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY",
   "dataTables": {
     "orders": [
       1,

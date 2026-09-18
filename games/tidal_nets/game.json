@@ -1,7 +1,7 @@
 {
   "id": "tidal-nets",
   "title": "TIDAL NETS",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -33,6 +33,5 @@
     "SHOAL +2 / DEEP +3 / BOTH +5",
     "CATCH 30 FISH IN NINE CASTS."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY",
   "fullDemo": true
 }

@@ -93,7 +93,6 @@ def generate(output):
             (0, 0, "TIME"),
             (0, 10, "LOOP"),
             (0, 22, "ROOM"),
-            (23, 0, "WASD MOVE  RET USE  SPACE LOOP"),
         ],
         "HELP_TEXT": [
             (1, 11, "LOOP TEN"),

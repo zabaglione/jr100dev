@@ -1,7 +1,7 @@
 {
   "id": "ribbon-snake",
   "title": "RIBBON SNAKE",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -32,6 +32,5 @@
     "EAT TWELVE DIAMONDS TO WIN.",
     "REVERSING DIRECTION IS IGNORED."
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY",
   "fullDemo": true
 }

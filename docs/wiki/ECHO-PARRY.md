@@ -18,7 +18,7 @@
 
 ![最初の目標を達成した場面](https://raw.githubusercontent.com/wiki/zabaglione/jr100dev/images/echo-parry/demo-clear.png)
 
-**[音付きプレイ動画を見る（約43秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=echo-parry)**
+**[音付きプレイ動画を見る（約42秒）](https://zabaglione.github.io/pyjr100emu/gameplay.html?game=echo-parry)**
 
 1ステージのクリアまでを収録。
 

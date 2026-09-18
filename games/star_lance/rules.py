@@ -84,4 +84,3 @@ def draw():
     if s.shot:
         letter(1 + s.ship * 4, s.sy, 145)
         letter(1 + s.ship * 4, s.sy + 1, 145)
-    text(1, 22, "ARMOURED ROW NEEDS TWO SHOTS")

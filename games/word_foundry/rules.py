@@ -49,7 +49,6 @@ def draw():
             letter(2 + i % 4 * 8 + j, 8 + i // 4 * 3, words[i * 3 + j])
     letter(1 + s.cursor % 4 * 8, 8 + s.cursor // 4 * 3, 62)
     digits(25, 20, s.steps)
-    text(1, 6, "* = ONE LETTER CAN CHANGE")
     for i in range(min(s.steps + 1, 8)):
         for j in range(3):
             letter(i * 4 + j, 19, words[d[i] * 3 + j])

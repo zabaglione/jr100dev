@@ -1,7 +1,7 @@
 {
   "id": "prism-trace",
   "title": "PRISM TRACE",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [
@@ -20,11 +20,6 @@
       8,
       20,
       "ROTATIONS"
-    ],
-    [
-      14,
-      20,
-      "TURN MIRROR"
     ]
   ],
   "help": [
@@ -35,7 +30,6 @@
     "THE TRACE UPDATES IMMEDIATELY.",
     "SPACE : RESTORE THE MIRRORS"
   ],
-  "footer": "WASD MOVE  RET USE  SPACE RETRY",
   "dataTables": {
     "optics": [
       128,

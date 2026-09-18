@@ -1,7 +1,7 @@
 {
   "id": "orbit-draft",
   "title": "ORBIT DRAFT",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -19,7 +19,6 @@
     "CLEAR LINES TO EARN SPINS.",
     "REACH GOAL. KEEP BOARD + SCORE."
   ],
-  "footer": "SPACE NEW GAME  CTRL+C EXIT",
   "dataTables": {
     "paths": [
       0,

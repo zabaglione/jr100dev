@@ -72,7 +72,6 @@ def draw():
     else:
         text(2, 20, "OPEN FILE")
         letter(12, 20, 49 + s.choice % 3)
-    text(2, 22, "W/S READ/ACCUSE  A/D SELECT")
     if s.opening:
         text(19, 18 - s.page, "__________")
     if s.accusing:

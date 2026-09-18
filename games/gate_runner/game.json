@@ -1,7 +1,7 @@
 {
   "id": "gate-runner",
   "title": "GATE RUNNER",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "ramKiB": 16,
   "entry": 768,
   "modules": [],
@@ -28,6 +28,5 @@
     "CLEAR EIGHTEEN OBSTACLES.",
     "THREE COLLISIONS END THE RUN."
   ],
-  "footer": "A/D LANE  W/RET JUMP",
   "fullDemo": true
 }
