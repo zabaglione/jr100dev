@@ -104,6 +104,14 @@
 
 ![Victory](images/victory.png)
 
+## ソースコード
+
+ゲーム本体は [`src/`](src/) のアセンブリと定数定義です。
+
+描画・データ生成などの補助ソース: [`assets.py`](assets.py)。
+
+ビルド設定は [`game.json`](game.json) と [`Makefile`](Makefile) です。共有コードと生成物の関係は[全ゲームのソース一覧](../SOURCES.md)を参照してください。
+
 ## ビルドと検証
 
 ```sh

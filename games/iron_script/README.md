@@ -66,6 +66,14 @@ AMMOは残弾、DIRは射撃する向き、DOORは扉の開閉状態、STEPSは�
 
 ![プレイ中の場面](images/play-02.png)
 
+## ソースコード
+
+ゲーム本体は [`rules.py`](rules.py) です。ビルド時にMB8861Hの機械語へ変換します。
+
+描画・データ生成などの補助ソース: [`presentation.py`](presentation.py)。
+
+ビルド設定は [`game.json`](game.json) と [`Makefile`](Makefile) です。共有コードと生成物の関係は[全ゲームのソース一覧](../SOURCES.md)を参照してください。
+
 ## ビルドと検証
 
 バージョン 2.0.1。開始番地 `$0300`、ゲーム本体と定数は 10,935 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
@@ -75,7 +83,7 @@ make -C games/iron_script
 make -C games/iron_script test
 ```
 
-出力はゲームの `build/` ディレクトリに作られます。`rules.py` はビルド時にMB8861Hの機械語へ変換されます。JR-100上でPythonを実行する方式ではありません。
+出力はゲームの `build/` ディレクトリに作られます。JR-100上でPythonを実行する方式ではありません。
 
 `campaign.py` が24面の設計と独立した経路探索、`levels.json` が生成した盤面、`solutions.json` が入力リプレイです。`.venv/bin/python games/iron_script/campaign.py` で再生成できます。盤面はビルド時に2マスを1バイトへ圧縮します。`tests/check_iron_script.py` は全24面の独立検証、失敗後の命令保持、ROM矢印、開閉と撃破の途中フレーム、装甲とレーザー周期を検査します。
 

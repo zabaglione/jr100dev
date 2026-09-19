@@ -66,6 +66,14 @@ ATTACKは出目の値だけ攻撃、GUARDは同じ値の防御、HEALは同じ�
 ![Workshop](images/workshop.png)
 ![The First King](images/battle-09.png)
 
+## ソースコード
+
+ゲーム本体は [`src/`](src/) のアセンブリと定数定義です。
+
+描画・データ生成などの補助ソース: [`assets.py`](assets.py)。
+
+ビルド設定は [`game.json`](game.json) と [`Makefile`](Makefile) です。共有コードと生成物の関係は[全ゲームのソース一覧](../SOURCES.md)を参照してください。
+
 ## ビルドと検証
 
 開発環境を用意して `make -C games/dice_relic` を実行します。出力は `build/dice-relic.prg`、開始番地 `$0300`。本体・定数は9,577 bytes。画面・状態・保存領域・512 bytesのスタックを含め標準16KB内、PCGは32文字です。

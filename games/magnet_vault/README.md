@@ -100,6 +100,12 @@ ACDEFGHJKMNPQRTW
 
 ![再起動後の記録復元](images/password-restored.png)
 
+## ソースコード
+
+ゲーム本体は [`rules.py`](rules.py) です。ビルド時にMB8861Hの機械語へ変換します。
+
+ビルド設定は [`game.json`](game.json) と [`Makefile`](Makefile) です。共有コードと生成物の関係は[全ゲームのソース一覧](../SOURCES.md)を参照してください。
+
 ## ビルドと検証
 
 バージョン 1.6.1。開始番地 `$0300`、ゲーム本体と定数は 11,343 bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。
@@ -109,7 +115,7 @@ make -C games/magnet_vault
 make -C games/magnet_vault test
 ```
 
-出力はゲームの `build/` ディレクトリに作られます。`rules.py` はビルド時にMB8861Hの機械語へ変換されます。JR-100上でPythonを実行する方式ではありません。
+出力はゲームの `build/` ディレクトリに作られます。JR-100上でPythonを実行する方式ではありません。
 
 盤面はビルド時に2マスを1バイトへ圧縮します。`levels.json` が編集用の面データ、`challenges.json` がクリア経路とルーン回収経路、`solutions.json` が全40面の3つ星リプレイです。`native/campaign_levels.py` で再生成でき、`native/campaign_checks.py` は全盤面の解探索、評価条件、再挑戦、面選択、最高評価の保持、手数カウンターの上限を検査します。回転・鏡映だけの地形の重複は除外しています。`native/password_checks.py` はパスワードの圧縮・展開、誤入力の検出、別作品のコード拒否と、再起動後のキー／パッド入力による記録復元を検証します。
 

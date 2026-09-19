@@ -154,6 +154,50 @@ def update_visual_section(text, game):
     )
 
 
+def update_source_section(text, directory, metadata):
+    """Link editable inputs in each local README without changing playing guides."""
+    text = re.sub(
+        r"^## ソースコード\n.*?(?=^## |\Z)",
+        "",
+        text,
+        flags=re.DOTALL | re.MULTILINE,
+    )
+    if metadata.get("nativeRules"):
+        main = "[`rules.py`](rules.py) です。ビルド時にMB8861Hの機械語へ変換します。"
+    else:
+        main = "[`src/`](src/) のアセンブリと定数定義です。"
+    extra = (
+        [f"src/{name}" for name in metadata.get("modules", [])]
+        if metadata.get("nativeRules")
+        else []
+    )
+    extra += [
+        name
+        for name in (
+            "assets.py",
+            "presentation.py",
+            "graphics.py",
+            "build_source.py",
+            "pack_text.py",
+            "title_art.py",
+        )
+        if (directory / name).is_file()
+    ]
+    section = f"## ソースコード\n\nゲーム本体は {main}\n\n"
+    if extra:
+        section += (
+            "描画・データ生成などの補助ソース: "
+            + "、".join(f"[`{name}`]({name})" for name in extra)
+            + "。\n\n"
+        )
+    section += "ビルド設定は [`game.json`](game.json) と [`Makefile`](Makefile) です。共有コードと生成物の関係は[全ゲームのソース一覧](../SOURCES.md)を参照してください。\n\n"
+    text, count = re.subn(
+        r"(?=^## (?:ビルド[^\n]*|起動)\n)", section, text, count=1, flags=re.MULTILINE
+    )
+    assert count == 1, f"Missing build section: {directory.name}"
+    return text
+
+
 def player_manual(text):
     """Keep game rules and screenshots in the public playing guide."""
     for heading in (
@@ -320,6 +364,7 @@ for g in games:
             f"{layout['code_bytes']:,} bytes",
             readme_text,
         )
+        readme_text = update_source_section(readme_text, directory, meta)
         readme_path.write_text(with_media(readme_text, g, local=True))
         continue
     objective, controls, hud = manuals[g["directory"]]
@@ -365,7 +410,7 @@ for g in games:
         body += f"![パスワード入力]({IMAGES}/{g['id']}/password-entry.png)\n\n![再起動後の記録復元]({IMAGES}/{g['id']}/password-restored.png)\n\n"
     body += f"## ビルドと検証\n\nバージョン {meta['version']}。開始番地 `$0300`、ゲーム本体と定数は {layout['code_bytes']:,} bytes。画面・作業領域・復帰用の保存領域・512 bytesのスタックを含めて標準RAM 16KB内で動作します。PCGは32文字を場面ごとに切り替えます。\n\n"
     body += f"```sh\nmake -C games/{g['directory']}\nmake -C games/{g['directory']} test\n```\n\n"
-    body += "出力はゲームの `build/` ディレクトリに作られます。`rules.py` はビルド時にMB8861Hの機械語へ変換されます。JR-100上でPythonを実行する方式ではありません。\n\n"
+    body += "出力はゲームの `build/` ディレクトリに作られます。JR-100上でPythonを実行する方式ではありません。\n\n"
     if meta.get("rankedCampaign"):
         body += "盤面はビルド時に2マスを1バイトへ圧縮します。`levels.json` が編集用の面データ、`challenges.json` がクリア経路とルーン回収経路、`solutions.json` が全40面の3つ星リプレイです。`native/campaign_levels.py` で再生成でき、`native/campaign_checks.py` は全盤面の解探索、評価条件、再挑戦、面選択、最高評価の保持、手数カウンターの上限を検査します。回転・鏡映だけの地形の重複は除外しています。`native/password_checks.py` はパスワードの圧縮・展開、誤入力の検出、別作品のコード拒否と、再起動後のキー／パッド入力による記録復元を検証します。\n\n"
     if g["id"] == "iron-script":
@@ -384,6 +429,7 @@ for g in games:
     )
     readme = f"# {g['title']}\n\n[Wiki]({BASE}/wiki/{g['id'].upper()}) · [プレイ]({PLAY}{g['id']})\n\n"
     readme += body.replace(f"{IMAGES}/{g['id']}/", "images/")
+    readme = update_source_section(readme, directory, meta)
     (directory / "README.md").write_text(with_media(readme, g, local=True))
 readme = f"# JR-100 Games\n\n標準RAM 16KB向けの独立したオリジナルゲーム{len(games)}作品です。教材用の `samples/` とは分けて管理します。\n\n"
 readme += f"[Wikiのジャンル別一覧]({BASE}/wiki) · [共通操作]({BASE}/wiki/Controls)\n\n"

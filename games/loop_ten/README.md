@@ -55,6 +55,14 @@ HUDは残り秒数、太い時間バー、ループ回数、部屋番号、12個
 ![The last second](images/last-second.png)
 ![Escape](images/ending.png)
 
+## ソースコード
+
+ゲーム本体は [`src/`](src/) のアセンブリと定数定義です。
+
+描画・データ生成などの補助ソース: [`assets.py`](assets.py)。
+
+ビルド設定は [`game.json`](game.json) と [`Makefile`](Makefile) です。共有コードと生成物の関係は[全ゲームのソース一覧](../SOURCES.md)を参照してください。
+
 ## ビルドと検証
 
 開発環境を用意して `make -C games/loop_ten` を実行します。出力は `build/loop-ten.prg`、開始番地は `$0300`。本体と定数は7,904 bytes。画面・状態・保存領域・512 bytesのスタックを含めて標準16KB内、PCGは32文字です。

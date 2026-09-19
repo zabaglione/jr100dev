@@ -56,6 +56,14 @@ HUDのTARGETは標的数、MARKEDは経路に入った数、PATHは歩数、COMB
 
 やり直し／プレイ中のタイトル移動は実行前に確認します。NOが初期選択です。A/Dで選びRETURNで確定、SPACEで取り消します。
 
+## ソースコード
+
+ゲーム本体は [`src/`](src/) のアセンブリと定数定義です。
+
+描画・データ生成などの補助ソース: [`assets.py`](assets.py)。
+
+ビルド設定は [`game.json`](game.json) と [`Makefile`](Makefile) です。共有コードと生成物の関係は[全ゲームのソース一覧](../SOURCES.md)を参照してください。
+
 ## ビルドと検証
 
 開発環境を用意して `make -C games/trace_blade` を実行します。出力は `build/trace-blade.prg`、開始番地は `$0300`。本体・定数は9,346 bytesで、状態、画面、BASICへ戻すための保存領域、512 bytesのスタックを含めて標準16KB内です。PCGは32文字です。
