@@ -23,6 +23,7 @@ make -C samples/hello
 | --- | --- |
 | JR-100固有の制約を知る | [`rules/`](rules/) |
 | 公開ゲームを遊ぶ・ビルドする | [`games/`](games/)・[Wiki](https://github.com/zabaglione/jr100dev/wiki) |
+| Python 方式で新作を作り、テスト・撮影・配布まで進める | [Python ゲーム開発キット](docs/python-games/README.md) |
 | 動くコードから学ぶ | [`samples/`](samples/) |
 | 標準マクロやPRG形式の詳細を調べる | [`docs/`](docs/) |
 | アセンブラとリンカの実装を調べる | [`src/jr100dev/`](src/jr100dev/) |

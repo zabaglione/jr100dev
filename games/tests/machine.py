@@ -83,14 +83,14 @@ class Machine:
             self.fonts = None
         self.sym = json.loads((self.directory / "build/symbols.json").read_text())
         self.code = (
-            self.directory / "build" / f"{game.replace('_', '-')}.bin"
+            self.directory / "build" / f"{self.metadata['id']}.bin"
         ).read_bytes()
         if rom:
             self.p = lib.create(rom, len(rom))
             for _ in range(100):
                 lib.frame(self.p)
             data = (
-                self.directory / "build" / f"{game.replace('_', '-')}.prg"
+                self.directory / "build" / f"{self.metadata['id']}.prg"
             ).read_bytes()
             assert lib.load_prg(self.p, data, len(data))
             # The genuine BASIC ROM consumes the core's automatic USR command.

@@ -4,6 +4,7 @@
 
 ## ツールチェーン
 
+- [`python-games/README.md`](python-games/README.md): Python ゲームの初期化、エラー修正、操作テスト、撮影、配布
 - [`project_structure.md`](project_structure.md): リポジトリと生成プロジェクトの構成
 - [`project_quickstart.md`](project_quickstart.md): `jr100dev new`で始める手順
 - [`std_macros.md`](std_macros.md): VRAM、キー、簡易ビープなどの標準マクロ

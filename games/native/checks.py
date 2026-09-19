@@ -70,12 +70,15 @@ class Model:
                 .items()
             }
         )
-        exec(  # noqa: S102 - executes only project-owned rule sources for QA
-            (ROOT / "native/support.py").read_text()
-            + "\n"
-            + (ROOT / name / "rules.py").read_text(),
-            self.env,
-        )
+        rules = ROOT / name / self.metadata.get("rulesSource", "rules.py")
+        source = (ROOT / "native/support.py").read_text() + "\n" + rules.read_text()
+        if self.metadata.get("devkit"):
+            sys.path.insert(0, str(ROOT))
+            from devkit.language import model_code
+
+            self.env.update(_byte=lambda n: int(n) & 255, _truth=lambda n: int(bool(n)))
+            source = model_code(source, rules)
+        exec(source, self.env)  # noqa: S102 - project-owned source used as a QA oracle
         self.init()
 
     def init(self, level=0):
@@ -159,9 +162,14 @@ def render_bounds(model):
             height,
         )
 
+    def tile_check(x, y, glyph):
+        check(x, y, 2, 2)
+        if model.metadata.get("devkit"):
+            assert 0 <= glyph < 8, f"Tile index outside the 32-glyph PCG bank: {glyph}"
+
     model.env.update(
         {
-            "tile": lambda x, y, g: check(x, y, 2, 2),
+            "tile": tile_check,
             "stamp": lambda x, y, g: check(x, y, 2, 2),
             "mover": lambda dest, start, g, left: check(
                 left + dest % 8 + start % 8, 3 + dest // 8 + start // 8, 2, 2

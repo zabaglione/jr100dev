@@ -68,6 +68,10 @@ def long_branches(source):
 def build(directory):
     directory = directory.resolve()
     metadata = json.loads((directory / "game.json").read_text())
+    if metadata.get("devkit"):
+        from devkit.project import validate
+
+        validate(directory)
     output = directory / "build"
     output.mkdir(exist_ok=True)
     if metadata.get("nativeRules"):
@@ -76,11 +80,18 @@ def build(directory):
         import assets as native_assets
         from compiler import compile_file
 
-        native_assets.generate(output, metadata, directory)
+        if metadata.get("devkit"):
+            from devkit.assets import generate
+
+            generate(output, metadata, directory)
+        else:
+            native_assets.generate(output, metadata, directory)
         extra_entries = ("advance",) if metadata.get("endless") else ()
         if metadata.get("carryCampaign"):
             extra_entries += ("checkpoint",)
-        compiled, state_slots = compile_file(directory / "rules.py", extra_entries)
+        from devkit.project import rules_path
+
+        compiled, state_slots = compile_file(rules_path(directory, metadata), extra_entries)
         if metadata["id"] == "phase-pairs":
             compiled += f"\nPHASE_FIRST: .equ {state_slots['s.first']}\n"
         if metadata["id"] == "gate-runner":

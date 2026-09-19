@@ -11,6 +11,7 @@ requires-python = ">=3.9"
 
 [project.optional-dependencies]
 test = ["pytest>=7"]
+media = ["Pillow>=10"]
 
 [project.scripts]
 jr100dev = "jr100dev.cli.main:main"

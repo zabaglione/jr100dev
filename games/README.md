@@ -2,6 +2,8 @@
 
 標準RAM 16KB向けの独立したオリジナルゲーム51作品です。教材用の `samples/` とは分けて管理します。
 
+新しくゲームを作る場合は[Python ゲーム開発キット](../docs/python-games/README.md)を使います。雛形の初期化から検査・テスト・撮影・配布までの共通入口は `games/dev.py` です。
+
 [Wikiのジャンル別一覧](https://github.com/zabaglione/jr100dev/wiki) · [共通操作](https://github.com/zabaglione/jr100dev/wiki/Controls)
 
 ## パズル

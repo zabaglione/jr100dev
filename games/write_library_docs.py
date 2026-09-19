@@ -432,6 +432,7 @@ for g in games:
     readme = update_source_section(readme, directory, meta)
     (directory / "README.md").write_text(with_media(readme, g, local=True))
 readme = f"# JR-100 Games\n\n標準RAM 16KB向けの独立したオリジナルゲーム{len(games)}作品です。教材用の `samples/` とは分けて管理します。\n\n"
+readme += "新しくゲームを作る場合は[Python ゲーム開発キット](../docs/python-games/README.md)を使います。雛形の初期化から検査・テスト・撮影・配布までの共通入口は `games/dev.py` です。\n\n"
 readme += f"[Wikiのジャンル別一覧]({BASE}/wiki) · [共通操作]({BASE}/wiki/Controls)\n\n"
 for gid, genre in genres.items():
     readme += f"## {genre['title']}\n\n| ゲーム | 内容 |\n| --- | --- |\n"

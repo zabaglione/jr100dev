@@ -173,6 +173,14 @@ FONT_RAW:
 
 def apply(output, metadata):
     """Replace unused bank bytes, then emit one 64-byte text map per bank."""
+    if metadata.get("devkit"):
+        # The authored sprite atlas owns all 32 glyphs; text uses the ROM font.
+        (output / "fonts.json").write_text(json.dumps({
+            "style": "rom",
+            "title": {"free_slots": [], "characters": {}},
+            "game": {"free_slots": [], "characters": {}},
+        }) + "\n")
+        return False
     gid = metadata["id"]
     art = json.loads((output / "art.json").read_text())
     source = (output / "assets.inc").read_text()

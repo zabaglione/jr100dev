@@ -3,7 +3,7 @@ PYTHONPATH := $(CURDIR)/src
 GAMES := $(shell $(PYTHON) -c 'import json; print(" ".join(json.load(open("games/collection.json"))["games"]))')
 SAMPLES := hello counter io_demo key_display multi pcg_clock pcg_animation sound_demo maze
 
-.PHONY: samples games test games-test clean
+.PHONY: samples games test games-test devkit-test clean
 
 samples:
 	@for sample in $(SAMPLES); do \
@@ -22,6 +22,9 @@ games-test:
 
 test:
 	PYTHONPATH=$(PYTHONPATH) $(PYTHON) -m pytest tests
+
+devkit-test:
+	PYTHONPATH=$(PYTHONPATH) $(PYTHON) -m pytest tests/unit/test_game_devkit.py tests/integ/test_game_devkit_native.py
 
 clean:
 	@for sample in $(SAMPLES); do \
